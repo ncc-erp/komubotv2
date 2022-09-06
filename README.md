@@ -1,12 +1,12 @@
 ## Description
 
-Sample with slash commands
+### KOMUBOT V2
 
 ## Installation
 
 ```bash
 # In root project
-$ npm install
+$ yarn
 ```
 
 Add next `.env` config in root
@@ -14,15 +14,19 @@ Add next `.env` config in root
 ```dotenv
 TOKEN=YourToken
 GUILD_ID_WITH_COMMANDS=YourGuildId
-ROLE_WITHOUT_PLAYLIST_PERMISSION=YourRoleId
+POSTGRES_HOST=YourHost
+POSTGRES_PORT=YourPort
+POSTGRES_USER=YourUser
+POSTGRES_PASSWORD=YourPassword
+POSTGRES_DB=YourDB
 ```
 
 ## Running the app
 
 ```bash
 # In root project
-$ npm run build
+$ yarn run build
 
 # In this sample
-$ npm run start:dev
+$ yarn run start:dev
 ```
