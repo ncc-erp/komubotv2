@@ -11,11 +11,12 @@ import { ChannelType, Client, Message, MessageType } from "discord.js";
 import * as fs from "fs";
 import { DataSource, Repository } from "typeorm";
 import * as util from "util";
-
-import DailyCommand from "../commands/daily.command";
+import { DiscoveryService } from "@nestjs/core";
+import { DailyCommand } from "../commands/daily.command";
 import { MessageFromUserGuard } from "../guards/message-from-user.guard";
 import { Daily } from "../models/daily.entity";
 import { MessageToUpperPipe } from "../pipes/message-to-upper.pipe";
+import { DECORATOR_COMMAND_LINE } from "../base/command.constans";
 
 @Injectable()
 export class BotGateway {
@@ -24,7 +25,8 @@ export class BotGateway {
   constructor(
     @InjectDiscordClient()
     private readonly client: Client,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private discoveryService: DiscoveryService
   ) {}
 
   @Once("ready")
@@ -54,31 +56,35 @@ export class BotGateway {
         argument = message.content.slice("*".length).trim().split(/ +/);
       }
       const r = argument.shift().toLowerCase();
-      const commandFile = fs
-        .readdirSync("./src/bot/commands")
-        .filter((file) => file.endsWith(".command.ts"))
-        .filter((item) => item.split(".").shift() === r)
-        .shift();
-      if (!commandFile) return;
-      const commandFileSliceLasPrefixTs = commandFile?.slice(
-        0,
-        commandFile.length - 3
-      );
-      // ${commandFileSliceLasPrefixTs}
-      const module = require(`../commands/${commandFileSliceLasPrefixTs}`);
-      if (r === module.default.prototype.name) {
-        module.default.prototype.execute(
-          message,
-          argument,
-          client,
-          guildDB,
-          module,
-          this.dataSource
-        );
-      }
+      // check command and excute
+      this.discoveryService.getProviders().forEach((provider) => {
+        if (typeof provider !== "string") {
+          const instance = provider.instance;
+          if (!instance || typeof instance === "string") return;
+          if (!Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)) return;
+          if (
+            !Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)?.name ||
+            !Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)?.description
+          ) {
+            this.logger.error(
+              "please make property name and description in decorator @CommandLine"
+            );
+          }
+          if (
+            r === Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)?.name
+          ) {
+            instance.execute(
+              message,
+              argument,
+              client,
+              guildDB,
+              module,
+              this.dataSource
+            );
+            return;
+          }
+        }
+      });
     }
-
-    this.logger.log(`Incoming message: ${message.content}`);
-    // await message.reply(`hello <@${message.author.id}>`);
   }
 }

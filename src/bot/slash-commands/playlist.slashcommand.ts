@@ -1,16 +1,16 @@
-import { Command, DiscordCommand } from '@discord-nestjs/core';
+import { Command, DiscordCommand } from "@discord-nestjs/core";
 import {
   ApplicationCommandType,
   ContextMenuCommandInteraction,
-} from 'discord.js';
+} from "discord.js";
 
 @Command({
-  name: 'playlist',
+  name: "playlist",
   type: ApplicationCommandType.User,
 })
-export class PlaylistCommand implements DiscordCommand {
+export class PlaylistSlashCommand implements DiscordCommand {
   handler(interaction): string {
     // ContextMenuCommandInteraction
-    return 'Your playlist...';
+    return "Your playlist...";
   }
 }

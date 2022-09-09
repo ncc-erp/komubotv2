@@ -11,9 +11,11 @@ import { Daily } from "../models/daily.entity";
   name: "daily",
   description: "daily work",
 })
-export default class DailyCommand implements CommandLineClass {
-  constructor() {}
-  async execute(message: Message, args, _, __, ___, dataSource: DataSource) {
+export class DailyCommand implements CommandLineClass {
+  constructor(
+    @InjectRepository(Daily) private dailyRepository: Repository<Daily>
+  ) {}
+  async execute(message: Message, args) {
     try {
       let authorId = message.author.id;
       const daily = args.join(" ");
@@ -36,7 +38,7 @@ export default class DailyCommand implements CommandLineClass {
         createdAt: new Date(),
         channelid: message.channel.id,
       });
-      await dataSource.getRepository(Daily).insert({
+      await this.dailyRepository.insert({
         userid: message.author.id,
         email:
           message.member != null || message.member != undefined
