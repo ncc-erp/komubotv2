@@ -5,22 +5,22 @@ import {
   Payload,
   TransformedCommandExecutionContext,
   UsePipes,
-} from '@discord-nestjs/core';
+} from "@discord-nestjs/core";
 
-import { PlayDto } from '../dto/play.dto';
+import { PlayDto } from "../dto/play.dto";
 
 @Command({
-  name: 'play',
-  description: 'Plays a song',
+  name: "play",
+  description: "Plays a song",
 })
 // @UsePipes(TransformPipe)
-export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
+export class PlaySlashCommand implements DiscordTransformedCommand<PlayDto> {
   handler(
     @Payload() dto: PlayDto,
-    { interaction }: TransformedCommandExecutionContext,
+    { interaction }: TransformedCommandExecutionContext
   ): string {
-    console.log('DTO', dto);
-    console.log('Interaction', interaction);
+    console.log("DTO", dto);
+    console.log("Interaction", interaction);
 
     return `Start playing ${dto.song}.`;
   }

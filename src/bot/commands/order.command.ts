@@ -27,8 +27,7 @@ export default class OrderCommand implements CommandLineClass {
   ) {}
 
   async execute(message: Message, args, _, __, ___, dataSource: DataSource) {
-    const orderData = dataSource.getRepository(Order);
-
+    const orderData = this.orderReposistory;
     try {
       let channelId = message.channelId;
       let author = message.author.id;
