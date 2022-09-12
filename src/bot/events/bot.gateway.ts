@@ -6,10 +6,15 @@ import {
   UsePipes,
 } from "@discord-nestjs/core";
 import { Injectable, Logger } from "@nestjs/common";
-import { ChannelType, Client, Message } from "discord.js";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ChannelType, Client, Message, MessageType } from "discord.js";
+import * as fs from "fs";
 import { DataSource, Repository } from "typeorm";
+import * as util from "util";
 import { DiscoveryService } from "@nestjs/core";
+import { DailyCommand } from "../commands/daily.command";
 import { MessageFromUserGuard } from "../guards/message-from-user.guard";
+import { Daily } from "../models/daily.entity";
 import { MessageToUpperPipe } from "../pipes/message-to-upper.pipe";
 import { DECORATOR_COMMAND_LINE } from "../base/command.constans";
 
