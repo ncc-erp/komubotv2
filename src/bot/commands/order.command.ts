@@ -4,7 +4,6 @@ import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 import { TABLE } from "../constants/table";
 import { Order } from "../models/order.entity";
-import { getTomorrowDate, getYesterdayDate } from "../utils/date.utils";
 
 // interface IOrder {
 //   komu_order_id: number;
@@ -28,6 +27,7 @@ export default class OrderCommand implements CommandLineClass {
 
   async execute(message: Message, args, _, __, ___, dataSource: DataSource) {
     const orderData = this.orderReposistory;
+
     try {
       let channelId = message.channelId;
       let author = message.author.id;
@@ -84,8 +84,8 @@ export default class OrderCommand implements CommandLineClass {
             .andWhere(`${TABLE.ORDER}.isCancel IS NOT TRUE`, {
               isCancel: false,
             })
-            .andWhere(`${TABLE.ORDER}.createdTimestamp > ${getYesterdayDate()}`)
-            .andWhere(`${TABLE.ORDER}.createdTimestamp < ${getTomorrowDate()}`)
+            // .andWhere(`${TABLE.ORDER}.createdTimestamp > ${}`)
+            // .andWhere(`${TABLE.ORDER}.createdTimestamp < ${}`)
             .execute();
           let mess;
           if (!listOrder) {

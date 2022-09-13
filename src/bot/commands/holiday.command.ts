@@ -3,7 +3,7 @@ import { Message, Client } from "discord.js";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 import { Holiday } from "../models/holiday.entity";
-import { sendErrorToDevTest } from "../utils/komubotrest.utils";
+// import { sendErrorToDevTest } from "../utils/komubotrest.utils";
 
 const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
 @CommandLine({
@@ -46,7 +46,7 @@ export default class holidayCommand implements CommandLineClass {
         })
         .catch((err) => console.log(err));
       message.reply({ content: "`✅` holiday saved." }).catch((err) => {
-        sendErrorToDevTest(client, authorId, err);
+        // sendErrorToDevTest(client, authorId, err);
       });
     } catch (err) {
       console.log(err);

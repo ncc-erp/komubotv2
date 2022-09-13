@@ -1,10 +1,10 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client, EmbedBuilder } from "discord.js";
-import { getTomorrowDate, getYesterdayDate } from "../utils/date.utils";
+// import { getTomorrowDate, getYesterdayDate } from "../utils/date.utils";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 
-import { sendErrorToDevTest } from "../utils/komubotrest.utils";
+// import { sendErrorToDevTest } from "../utils/komubotrest.utils";
 import { TABLE } from "../constants/table";
 import { Leave } from "../models/leave.entity";
 
@@ -25,7 +25,7 @@ export default class LeaveCommand implements CommandLineClass {
         return message
           .reply("```" + "*leave minute reason " + "```")
           .catch((err) => {
-            sendErrorToDevTest(Client, authorId, err);
+            // sendErrorToDevTest(Client, authorId, err);
           });
       }
       const minute =
@@ -33,7 +33,7 @@ export default class LeaveCommand implements CommandLineClass {
 
       if (!minute) {
         return message.reply("Minute must be a number").catch((err) => {
-          sendErrorToDevTest(Client, authorId, err);
+          // sendErrorToDevTest(Client, authorId, err);
         });
       }
       const reason = args.slice(1, args.length).join(" ");
@@ -45,7 +45,7 @@ export default class LeaveCommand implements CommandLineClass {
       });
 
       return message.reply("✅ Leave saved").catch((err) => {
-        sendErrorToDevTest(Client, authorId, err);
+        // sendErrorToDevTest(Client, authorId, err);
       });
     } catch (err) {
       console.log(err);

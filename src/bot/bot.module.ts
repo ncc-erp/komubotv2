@@ -2,6 +2,8 @@ import { DiscordModule } from "@discord-nestjs/core";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { BotController } from "./bot.controller";
+import { BotService } from "./bot.service";
 
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
@@ -23,8 +25,17 @@ import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
     TypeOrmModule.forFeature([Order]),
     TypeOrmModule.forFeature([Leave]),
     TypeOrmModule.forFeature([Holiday]),
-
   ],
-  providers: [PlaySlashCommand, PlaylistSlashCommand, BotGateway, DailyCommand, OrderCommand, holidayCommand, LeaveCommand],
+  providers: [
+    PlaySlashCommand,
+    PlaylistSlashCommand,
+    BotGateway,
+    DailyCommand,
+    OrderCommand,
+    holidayCommand,
+    LeaveCommand,
+    BotService,
+  ],
+  controllers: [BotController],
 })
 export class BotModule {}
