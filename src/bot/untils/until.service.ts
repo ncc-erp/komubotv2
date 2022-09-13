@@ -1,3 +1,5 @@
+import { Injectable } from "@nestjs/common";
+
 function withoutFirstTime(dateTime) {
   const date = new Date(dateTime);
   date.setHours(0, 0, 0, 0);
@@ -10,14 +12,14 @@ function withoutLastTime(dateTime) {
   return date;
 }
 
-export function getYesterdayDate() {
+function getYesterdayDate() {
   const today = new Date();
   const yesterday = new Date(withoutLastTime(today));
   yesterday.setDate(yesterday.getDate() - 1);
   return new Date(yesterday).valueOf();
 }
 
-export function getTomorrowDate() {
+function getTomorrowDate() {
   const today = new Date();
   const yesterday = new Date(withoutFirstTime(today));
   yesterday.setDate(yesterday.getDate() + 1);
@@ -27,7 +29,7 @@ function setTime(date, hours, minute, second, msValue) {
   return date.setHours(hours, minute, second, msValue);
 }
 
-export function checkTimeSchulderNCC8() {
+function checkTimeSchulderNCC8() {
   let result = false;
   const time = new Date();
   const cur = new Date();
@@ -39,4 +41,14 @@ export function checkTimeSchulderNCC8() {
     result = true;
   }
   return result;
+}
+const checkNumber = (string) =>
+  !isNaN(parseFloat(string)) && !isNaN(string - 0) && parseInt(string);
+
+@Injectable()
+export class UntilService {
+  constructor(checkTimeSchulderNCC8, getYesterdayDate) {
+    checkTimeSchulderNCC8;
+    getYesterdayDate;
+  }
 }
