@@ -6,7 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
 import LeaveCommand from "./commands/leave.command";
-import OrderCommand from "./commands/ncc8.command";
+import OrderCommand from "./commands/order.command";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";

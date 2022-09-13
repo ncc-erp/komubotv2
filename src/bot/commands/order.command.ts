@@ -6,15 +6,15 @@ import { TABLE } from "../constants/table";
 import { Order } from "../models/order.entity";
 import { getTomorrowDate, getYesterdayDate } from "../utils/date.utils";
 
-interface IOrder {
-  komu_order_id: number;
-  komu_order_userId: string;
-  komu_order_channelId: string;
-  komu_order_menu: string;
-  komu_order_username: string;
-  komu_order_isCancel: Boolean;
-  komu_order_createdTimestamp: number;
-}
+// interface IOrder {
+//   komu_order_id: number;
+//   komu_order_userId: string;
+//   komu_order_channelId: string;
+//   komu_order_menu: string;
+//   komu_order_username: string;
+//   komu_order_isCancel: Boolean;
+//   komu_order_createdTimestamp: number;
+// }
 
 @CommandLine({
   name: "order",
@@ -33,7 +33,7 @@ export default class OrderCommand implements CommandLineClass {
       let author = message.author.id;
       let username = message.author.username;
       if (args[0] === "cancel") {
-        const userCancel: IOrder[] = await orderData
+        const userCancel = await orderData
           .createQueryBuilder(TABLE.ORDER)
           .where(`${TABLE.ORDER}.channelId = :channelId`, {
             channelId: channelId,
@@ -59,7 +59,7 @@ export default class OrderCommand implements CommandLineClass {
           content: "Bạn đã hủy đơn đặt hàng!!!",
         });
       } else if (args[0] === "finish") {
-        const userCancel: IOrder[] = await orderData
+        const userCancel = await orderData
           .createQueryBuilder(TABLE.ORDER)
           .where(`${TABLE.ORDER}.channelId = :channelId`, {
             channelId: channelId,
@@ -71,7 +71,7 @@ export default class OrderCommand implements CommandLineClass {
           })
           .execute();
         if (userCancel && userCancel.length > 0) {
-          const listOrder: IOrder[] = await orderData
+          const listOrder = await orderData
             .createQueryBuilder(TABLE.ORDER)
             .distinctOn([`${TABLE.ORDER}.username`])
             .orderBy(`${TABLE.ORDER}.username`)

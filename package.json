@@ -21,6 +21,7 @@
   "dependencies": {
     "@discord-nestjs/common": "^4.0.6",
     "@discord-nestjs/core": "*",
+    "@discordjs/voice": "^0.11.0",
     "@hapi/joi": "^17.1.1",
     "@nestjs/common": "9.0.7",
     "@nestjs/config": "2.2.0",
