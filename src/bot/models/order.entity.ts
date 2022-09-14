@@ -10,7 +10,7 @@ export class Order {
   @Column({ type: "text" })
   userId: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   channelId: string;
 
   @Column({ type: "text" })

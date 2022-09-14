@@ -14,17 +14,16 @@ import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Order } from "./models/order.entity";
+import { OrderService } from "./service/order.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { UntilService } from "./untils/until.service";
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
     DiscoveryModule,
-    TypeOrmModule.forFeature([Daily]),
-    TypeOrmModule.forFeature([Order]),
-    TypeOrmModule.forFeature([Leave]),
-    TypeOrmModule.forFeature([Holiday]),
+    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday]),
   ],
   providers: [
     PlaySlashCommand,
@@ -35,6 +34,8 @@ import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
     holidayCommand,
     LeaveCommand,
     BotService,
+    OrderService,
+    UntilService,
   ],
   controllers: [BotController],
 })
