@@ -1,9 +1,8 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client } from "discord.js";
 import { DataSource, Repository } from "typeorm";
-import { CommandLine, CommandLineClass } from "../base/command.base";
-import { Holiday } from "../models/holiday.entity";
-// import { sendErrorToDevTest } from "../utils/komubotrest.utils";
+import { CommandLine, CommandLineClass } from "../../base/command.base";
+import { Holiday } from "../../models/holiday.entity";
 
 const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
 @CommandLine({
@@ -19,9 +18,6 @@ export default class holidayCommand implements CommandLineClass {
     message: Message,
     args,
     client,
-    __,
-    ___,
-    dataSource: DataSource
   ) {
     try {
       const holidayData = this.leaveReposistory;

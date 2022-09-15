@@ -1,78 +1,86 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { EmbedBuilder } from "discord.js";
+import { Repository } from "typeorm";
 import { TABLE } from "../constants/table";
+import { Order } from "../models/order.entity";
 import { UntilService } from "../untils/until.service";
 
 @Injectable()
 export class OrderService {
-  constructor(private untilService: UntilService) {}
-  async orderCommand(message, args, orderData, Order) {
+  constructor(
+    @InjectRepository(Order)
+    private orderReposistory: Repository<Order>,
+
+    private untilService: UntilService
+  ) {}
+
+  async orderCommand(message, args, ) {
+    const orderData = this.orderReposistory;
+
     try {
       let channelId = message.channelId;
       let author = message.author.id;
       let username = message.author.username;
-
-      if (args[0] === "cancel") {
+      if (!args[0]) {
+        return message.reply({
+          content: "Order không được để trống!",
+        });
+      } else if (args[0] === "cancel") {
         const userCancel = await orderData
-          .createQueryBuilder(TABLE.ORDER)
-          .where(`${TABLE.ORDER}.channelId = :channelId`, {
+          .createQueryBuilder()
+          .where(`"channelId" = :channelId`, {
             channelId: channelId,
           })
-          .andWhere(`${TABLE.ORDER}.isCancel IS NOT True`, { isCancel: false })
-          .andWhere(`${TABLE.ORDER}.userId = :userId`, {
+          .andWhere(`"isCancel" IS NOT True`, { isCancel: false })
+          .andWhere(`"userId" = :userId`, {
             userId: author,
           })
-          .andWhere(`${TABLE.ORDER}.username= :username`, {
+          .andWhere(`"username" = :username`, {
             username: username,
           })
           .execute();
-        userCancel.map(async (item) => {
+
+        userCancel.forEach(async (item) => {
           await orderData
-            .createQueryBuilder(TABLE.ORDER)
+            .createQueryBuilder()
             .update(Order)
             .set({ isCancel: true })
-            .where(`id = :id`, { id: item.komu_order_id })
+            .where("id = :id", { id: item.id })
             .execute();
         });
+
         message.reply({
           content: "Bạn đã hủy đơn đặt hàng!!!",
         });
       } else if (args[0] === "finish") {
         const userCancel = await orderData
-          .createQueryBuilder(TABLE.ORDER)
-          .where(`${TABLE.ORDER}.channelId = :channelId`, {
+          .createQueryBuilder()
+          .where(`"channelId" = :channelId`, {
             channelId: channelId,
           })
-          .andWhere(`${TABLE.ORDER}.isCancel IS NOT TRUE`, { isCancel: false })
-          .andWhere(`${TABLE.ORDER}.userId = :userId`, { userId: author })
-          .andWhere(`${TABLE.ORDER}.username= :username`, {
+          .andWhere(`"isCancel" IS NOT TRUE`)
+          .andWhere(`"userId" = :userId`, { userId: author })
+          .andWhere(`"username" = :username`, {
             username: username,
           })
           .execute();
         if (userCancel && userCancel.length > 0) {
           const listOrder = await orderData
-            .createQueryBuilder(TABLE.ORDER)
-            .distinctOn([`${TABLE.ORDER}.username`])
-            .orderBy(`${TABLE.ORDER}.username`)
-            .where(`${TABLE.ORDER}.channelId = :channelId`, {
+            .createQueryBuilder('orders')
+            .distinctOn(["username"])
+            .orderBy("username")
+            .where(`"channelId" = :channelId`, {
               channelId: channelId,
             })
-            .andWhere(`${TABLE.ORDER}.isCancel IS NOT TRUE`, {
-              isCancel: false,
-            })
-            .andWhere(`${TABLE.ORDER}.isCancel IS NOT TRUE`, {
-              isCancel: false,
-            })
+            .andWhere(`"isCancel" IS NOT TRUE`)
             .andWhere(
-              `${
-                TABLE.ORDER
-              }.createdTimestamp > ${this.untilService.getYesterdayDate()}`
+              `"createdTimestamp" > ${this.untilService.getYesterdayDate()}`
             )
             .andWhere(
-              `${
-                TABLE.ORDER
-              }.createdTimestamp < ${this.untilService.getTomorrowDate()}`
+              `"createdTimestamp" < ${this.untilService.getTomorrowDate()}`
             )
+            .select("orders.*")
             .execute();
           let mess;
           if (!listOrder) {
@@ -87,9 +95,7 @@ export class OrderService {
                 .slice(i * 50, (i + 1) * 50)
                 .map(
                   (list) =>
-                    `<${
-                      list.komu_order_username
-                    }> order ${list.komu_order_menu.toUpperCase()}`
+                    `<${list.username}> order ${list.menu.toUpperCase()}`
                 )
                 .join("\n");
               const Embed = new EmbedBuilder()
@@ -100,20 +106,20 @@ export class OrderService {
             }
           }
           const reportOrder = await orderData
-            .createQueryBuilder(TABLE.ORDER)
-            .where(`${TABLE.ORDER}.channelId = :channelId`, {
+            .createQueryBuilder('orders')
+            .where(`"channelId" = :channelId`, {
               channelId: channelId,
             })
-            .andWhere(`${TABLE.ORDER}.isCancel IS NOT True`, {
+            .andWhere(`"isCancel" IS NOT True`, {
               isCancel: false,
             })
             .execute();
           reportOrder.map(async (item) => {
             await orderData
-              .createQueryBuilder(TABLE.ORDER)
+              .createQueryBuilder('orders')
               .update(Order)
               .set({ isCancel: true })
-              .where(`id = :id`, { id: item.komu_order_id })
+              .where(`id = :id`, { id: item.id })
               .execute();
           });
         } else {

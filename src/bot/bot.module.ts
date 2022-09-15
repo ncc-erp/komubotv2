@@ -6,9 +6,9 @@ import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 
 import { DailyCommand } from "./commands/daily.command";
-import holidayCommand from "./commands/holiday.command";
+import holidayCommand from "./commands/holiday/holiday.command";
 import LeaveCommand from "./commands/leave.command";
-import OrderCommand from "./commands/order.command";
+import { OrderCommand } from "./commands/order.command";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
@@ -35,7 +35,7 @@ import { UntilService } from "./untils/until.service";
     LeaveCommand,
     BotService,
     OrderService,
-    UntilService,
+    UntilService
   ],
   controllers: [BotController],
 })
