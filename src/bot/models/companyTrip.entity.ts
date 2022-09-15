@@ -2,8 +2,10 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
-@Entity(TABLE.CHECK_CAMERA)
+@Entity(TABLE.COMPANYTRIP)
 export class CompanyTrip {
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ nullable: false })
   year: string;
 

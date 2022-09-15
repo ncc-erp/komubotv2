@@ -4,8 +4,17 @@ import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 import { TABLE } from "../constants/table";
 import { Order } from "../models/order.entity";
-import { OrderService } from "../service/order.service";
-import { UntilService } from "../untils/until.service";
+import {UntilService} from '../untils/until.service';
+
+interface IOrder {
+  komu_order_id: number;
+  komu_order_userId: string;
+  komu_order_channelId: string;
+  komu_order_menu: string;
+  komu_order_username: string;
+  komu_order_isCancel: Boolean;
+  komu_order_createdTimestamp: number;
+}
 
 @CommandLine({
   name: "order",

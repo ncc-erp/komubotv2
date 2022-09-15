@@ -4,12 +4,12 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.CHECKLIST)
 export class CheckList {
-  @Column()
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({type : "text"})
   subcategory: string;
 
-  @Column({ type: "array" })
+  @Column({ type: "text" })
   category: string;
 }
