@@ -1,0 +1,17 @@
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { TABLE } from "../constants/table";
+
+@Entity(TABLE.KEEP)
+export class Keep {
+  @Column({ nullable: true })
+  userId: string;
+
+  @Column({ nullable: true })
+  note: string;
+
+  @Column({ type: "decimal" })
+  start_time: number;
+
+  @Column({ nullable: true })
+  status: string;
+}

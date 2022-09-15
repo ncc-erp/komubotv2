@@ -1,5 +1,6 @@
-import { Client, Message } from 'discord.js';
-import { DataSource } from 'typeorm';
+import { Client, Message } from "discord.js";
+import { DataSource } from "typeorm";
+import { DECORATOR_COMMAND_LINE } from "./command.constans";
 
 export interface CommandLineArgument {
   name: string;
@@ -12,12 +13,11 @@ export class CommandLineClass {
     client: Client,
     guildDB: any,
     module: any,
-    dataSource: DataSource,
+    dataSource: DataSource
   ) => void;
 }
-export function CommandLine({ name, description }: CommandLineArgument) {
+export function CommandLine(args: CommandLineArgument) {
   return function (constructor: Function) {
-    constructor.prototype.name = name;
-    constructor.prototype.description = description;
+    Reflect.defineMetadata(DECORATOR_COMMAND_LINE, args, constructor.prototype);
   };
 }
