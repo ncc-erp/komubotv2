@@ -15,12 +15,12 @@ export class UntilService {
   }
 
   getYesterdayDate() {
-    console.log('hello');
+    console.log("hello");
     const today = new Date();
     const yesterday = new Date(this.withoutLastTime(today));
     yesterday.setDate(yesterday.getDate() - 1);
     console.log(new Date(yesterday).valueOf());
-    
+
     return new Date(yesterday).valueOf();
   }
 
@@ -51,6 +51,26 @@ export class UntilService {
     }
     return result;
   }
+
+  padTo2Digits(num) {
+    return num.toString().padStart(2, "0");
+  }
+
+  formatDate(date) {
+    const d = [
+      this.padTo2Digits(date.getDate()),
+      this.padTo2Digits(date.getMonth() + 1),
+      date.getFullYear(),
+    ].join("/");
+
+    const t = [
+      this.padTo2Digits(date.getHours()),
+      this.padTo2Digits(date.getMinutes()),
+    ].join(":");
+
+    return `${d} ${t}`;
+  }
+
   checkNumber = (string) =>
     !isNaN(parseFloat(string)) && !isNaN(string - 0) && parseInt(string);
 }

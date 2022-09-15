@@ -25,14 +25,13 @@ import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { UntilService } from "./untils/until.service";
 
-
 @Module({
   imports: [
     DiscordModule.forFeature(),
     DiscoveryModule,
     TypeOrmModule.forFeature([Daily, Order, Leave, Holiday]),
     forwardRef(() => CheckListModule),
-    CompanyModule
+    CompanyModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -46,7 +45,7 @@ import { UntilService } from "./untils/until.service";
     LeaveCommand,
     BotService,
     OrderService,
-    UntilService
+    UntilService,
   ],
   controllers: [BotController],
 })
