@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD:src/bot/untils/requestorder.until.ts
 export class RequestOrder {
   withoutFirstTime(dateTime) {
     const date = new Date(dateTime);
@@ -48,6 +49,22 @@ export class RequestOrder {
     }
     return result;
   }
+=======
+@Injectable()
+export class Komubotrest {
+>>>>>>> 9aadc0606b7c05ae6748aea24a3abbfc40bb50d5:src/bot/untils/komubotrest.service.ts
   checkNumber = (string) =>
     !isNaN(parseFloat(string)) && !isNaN(string - 0) && parseInt(string);
+     sendErrorToDevTest = async (client, authorId, err) => {
+      const msg = `KOMU không gửi được tin nhắn cho <@${authorId}> message: ${err.message} httpStatus: ${err.httpStatus} code: ${err.code}.`;
+      await client.channels.cache
+        .get(process.env.KOMUBOTREST_DEVTEST_CHANNEL_ID)
+        .send(msg)
+        .catch(console.error);
+      return null;
+    };
 }
+<<<<<<< HEAD:src/bot/untils/requestorder.until.ts
+=======
+
+>>>>>>> 9aadc0606b7c05ae6748aea24a3abbfc40bb50d5:src/bot/untils/komubotrest.service.ts

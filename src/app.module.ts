@@ -4,9 +4,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GatewayIntentBits } from 'discord.js';
-
 import { BotModule } from './bot/bot.module';
+<<<<<<< HEAD
 import { CheckListModule } from './bot/commands/checklist/checklist.module';
+=======
+>>>>>>> 9aadc0606b7c05ae6748aea24a3abbfc40bb50d5
 
 @Module({
   imports: [
