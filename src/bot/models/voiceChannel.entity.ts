@@ -26,11 +26,11 @@ export class VoiceChannels {
   @Column({ nullable: false })
   newRoomName: string;
 
-  @Column({nullable:false,default:0})
+  @Column({ nullable: false, default: 0 })
   people: number;
 
   @Column()
-  status: number;
+  status: string;
 
   @Column()
   createdTimestamp: string;

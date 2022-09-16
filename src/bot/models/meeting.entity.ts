@@ -4,11 +4,14 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.MEETING)
 export class Meeting {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column({ type: "date", nullable: true })
-  createdTimestamp: Date;
+  @Column({ type: "decimal", nullable: true })
+  createdTimestamp: number;
 
   @Column({ type: "text", nullable: true })
   task: string;
@@ -21,4 +24,7 @@ export class Meeting {
 
   @Column({ nullable: true })
   reminder: boolean;
+
+  @Column({ nullable: true })
+  repeatTime: string;
 }
