@@ -4,8 +4,11 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.USER)
 export class User {
-  @Column({ nullable: true, unique: true})
-  id: string;
+  @PrimaryGeneratedColumn({})
+  id: number
+
+  @Column({ nullable: true, unique: true })
+  userId: string;
 
   @Column({ type: "text", nullable: true })
   username: string;
@@ -58,7 +61,7 @@ export class User {
   @Column({ default: 0 })
   scores_quiz: number;
 
-  @Column({ type: "array", default: [] })
+  @Column({ type: "text", array: true })
   roles: string;
 
   @Column({ nullable: true })
@@ -70,7 +73,7 @@ export class User {
   @Column({})
   deactive: boolean;
 
-  @Column({ type: "array", default: [] })
+  @Column({ type: "text", array: true })
   roles_discord: string;
   @Column({ default: false })
   botPing: boolean;
