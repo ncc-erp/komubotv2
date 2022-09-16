@@ -1,6 +1,5 @@
-import { Message, Client, EmbedBuilder } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
 import { RequestOrder } from "src/bot/untils/requestorder.until";
 import { ElsaService } from "./elsa.service";
 

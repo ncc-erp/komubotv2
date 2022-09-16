@@ -4,7 +4,7 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.USER)
 export class User {
-  @Column({ nullable: true, unique: true })
+  @Column({ nullable: true, unique: true})
   id: string;
 
   @Column({ type: "text", nullable: true })

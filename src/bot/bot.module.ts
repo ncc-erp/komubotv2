@@ -4,63 +4,59 @@ import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
-<<<<<<< HEAD
-import { ChecklistCommand } from "./commands/checklist.command";
-import { CheckListController } from "./commands/checklist/checklist.controller";
-import { CheckListModule } from "./commands/checklist/checklist.module";
-import { CheckListService } from "./commands/checklist/checklist.service";
-import { CompantripCommand } from "./commands/companytrip/companytrip.command";
-import { CompanyModule } from "./commands/companytrip/companytrip.module";
-=======
-import { CompantripCommand } from "./commands/Companytrip/companytrip.command";
-import { CompanytripService } from "./commands/Companytrip/companytrip.service";
->>>>>>> 9aadc0606b7c05ae6748aea24a3abbfc40bb50d5
+import { ChecklistCommand } from "./commands/checklist/checklist.command";
+import { Message , Client} from "discord.js";
+
 
 import { DailyCommand } from "./commands/daily.command";
+import { ElsaCommand } from "./commands/elsa/elsa.command";
+import { ElsaService } from "./commands/elsa/elsa.service";
 import holidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
 import LeaveCommand from "./commands/leave.command";
-import { OrderCommand } from "./commands/Order/order.command";
-import { OrderService } from "./commands/Order/order.service";
+import { OrderCommand } from "./commands/order/order.command";
+import { OrderService } from "./commands/order/order.service";
 import { BotGateway } from "./events/bot.gateway";
-import { CompanyTrip } from "./models/companyTrip.entity";
+
 import { Daily } from "./models/daily.entity";
+import { ElsaDaily } from "./models/elsaDaily.entity";
 import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Order } from "./models/order.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
-import { Komubotrest } from "./untils/komubotrest.service";
-import { UntilService } from "./untils/until.service";
+import { RequestOrder } from "./untils/requestorder.until";
+import { CheckListController } from "./commands/checklist/checklist.controller";
+import { CheckListService } from "./commands/checklist/checklist.service";
+import { CheckList } from "./models/checklist.entity";
+import { Subcategorys } from "./models/subcategoryData.entity";
+import { CompanyModule } from "./commands/companytrip/companytrip.module";
+import { GemrankCommand } from "./commands/gemrank/gemrank.command";
+
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
     DiscoveryModule,
-    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday,CompanyTrip]),
+    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday, ElsaDaily, CheckList, Subcategorys]), 
+    CompanyModule,
   ],
   providers: [
     PlaySlashCommand,
     PlaylistSlashCommand,
-<<<<<<< HEAD
-    ChecklistCommand,
-=======
-    CompantripCommand,
->>>>>>> 9aadc0606b7c05ae6748aea24a3abbfc40bb50d5
     BotGateway,
+    ChecklistCommand,
+    CheckListController,
+    CheckListService,
     DailyCommand,
+    GemrankCommand,
     holidayCommand,
     LeaveCommand,
-    BotService,
-<<<<<<< HEAD
-    UntilService
-=======
-    OrderService,
-    UntilService,
-    Komubotrest,
-    CompanytripService,
     HolidayService,
->>>>>>> 9aadc0606b7c05ae6748aea24a3abbfc40bb50d5
+    BotService,
+    ElsaCommand,
+    ElsaService,
+    RequestOrder
   ],
   controllers: [BotController],
 })
