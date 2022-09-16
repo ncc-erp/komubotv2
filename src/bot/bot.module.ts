@@ -4,14 +4,18 @@ import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
+<<<<<<< HEAD
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
+=======
+import { CompantripCommand } from "./commands/companytrip/companytrip.command";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
+>>>>>>> develop
 
 import { DailyCommand } from "./commands/daily.command";
 import { ElsaCommand } from "./commands/elsa/elsa.command";
 import { ElsaService } from "./commands/elsa/elsa.service";
 import holidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
-import LeaveCommand from "./commands/leave.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
 import { OrderCommand } from "./commands/Order/order.command";
@@ -25,6 +29,7 @@ import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
 import { Order } from "./models/order.entity";
 import { VoiceChannels } from "./models/voiceChannel.entity";
+import { User } from "./models/user.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { RequestOrder } from "./untils/requestorder.until";
@@ -35,6 +40,7 @@ import { Subcategorys } from "./models/subcategoryData.entity";
 import { CompanyModule } from "./commands/companytrip/companytrip.module";
 import { GemrankCommand } from "./commands/gemrank/gemrank.command";
 import { UntilService } from "./untils/until.service";
+<<<<<<< HEAD
 import { CompanytripService } from "./commands/Companytrip/companytrip.service";
 import { CompanyTrip } from "./models/companyTrip.entity";
 import { KomubotrestService } from "./untils/komubotrest/komubotrest.service";
@@ -45,6 +51,10 @@ import { NotifiService } from "./commands/notification/noti.service";
 import { User } from "./models/user.entity";
 import { WFHCommand } from "./commands/WFH/wfh.command";
 import { ReportTracker } from "./untils/reportTracker";
+=======
+import { LeaveService } from "./commands/leave/leave.service";
+import LeaveCommand from "./commands/leave/leave.command";
+>>>>>>> develop
 
 @Module({
   imports: [
@@ -67,6 +77,7 @@ import { ReportTracker } from "./untils/reportTracker";
       WorkFromHome,
       ReportTracker,
     ]),
+    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday,CompanyTrip,User]),
   ],
   providers: [
     PlaySlashCommand,
@@ -91,6 +102,7 @@ import { ReportTracker } from "./untils/reportTracker";
     KomubotrestService,
     CompanytripService,
     HolidayService,
+<<<<<<< HEAD
     BotService,
     ReportTracker,
     ElsaCommand,
@@ -98,6 +110,9 @@ import { ReportTracker } from "./untils/reportTracker";
     RequestOrder,
     NotificationCommand,
     NotifiService,
+=======
+    LeaveService
+>>>>>>> develop
   ],
   controllers: [BotController],
 })

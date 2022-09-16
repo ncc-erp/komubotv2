@@ -1930,7 +1930,14 @@ for-own@^0.1.3:
   integrity sha512-SKmowqGTJoPzLO1T0BBJpkfp3EMacCMOuH40hOUbrbzElVktk4DioXVM99QkLCyKoiuOmyjgcWMpVz2xjE7LZw==
   dependencies:
     for-in "^1.0.1"
+<<<<<<< HEAD
 >>>>>>> c760a3f6a3adfb7efb3fde47a59cdf715d28b63c
+=======
+follow-redirects@^1.14.9:
+  version "1.15.2"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
+  integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
+>>>>>>> develop
 
 fork-ts-checker-webpack-plugin@7.2.11:
   version "7.2.11"
