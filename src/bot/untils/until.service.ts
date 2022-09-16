@@ -15,7 +15,6 @@ export class UntilService {
   }
 
   getYesterdayDate() {
-    console.log("hello");
     const today = new Date();
     const yesterday = new Date(this.withoutLastTime(today));
     yesterday.setDate(yesterday.getDate() - 1);
