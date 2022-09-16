@@ -1,11 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn,  } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.USER)
 export class User {
-  @Column({ nullable: true, unique: true })
-  id: string;
+  @PrimaryColumn()
+  userId: string;
 
   @Column({ type: "text", nullable: true })
   username: string;
@@ -58,7 +58,7 @@ export class User {
   @Column({ default: 0 })
   scores_quiz: number;
 
-  @Column({ type: "array", default: [] })
+  @Column({type : 'text', array : true})
   roles: string;
 
   @Column({ nullable: true })
@@ -67,11 +67,12 @@ export class User {
   @Column({ type: "text", nullable: true })
   last_bot_message_id: string;
 
-  @Column({})
+  @Column({type:"boolean"})
   deactive: boolean;
 
-  @Column({ type: "array", default: [] })
+  @Column({type : 'text', array : true})
   roles_discord: string;
+
   @Column({ default: false })
   botPing: boolean;
 }

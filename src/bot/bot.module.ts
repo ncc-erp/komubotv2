@@ -4,13 +4,12 @@ import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
-import { CompantripCommand } from "./commands/Companytrip/companytrip.command";
-import { CompanytripService } from "./commands/Companytrip/companytrip.service";
+import { CompantripCommand } from "./commands/companytrip/companytrip.command";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
 
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
-import LeaveCommand from "./commands/leave.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
 import { OrderCommand } from "./commands/Order/order.command";
@@ -23,10 +22,13 @@ import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
 import { Order } from "./models/order.entity";
 import { VoiceChannels } from "./models/voiceChannel.entity";
+import { User } from "./models/user.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { Komubotrest } from "./untils/komubotrest.service";
 import { UntilService } from "./untils/until.service";
+import { LeaveService } from "./commands/leave/leave.service";
+import LeaveCommand from "./commands/leave/leave.command";
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { UntilService } from "./untils/until.service";
       Meeting,
       VoiceChannels,
     ]),
+    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday,CompanyTrip,User]),
   ],
   providers: [
     PlaySlashCommand,
@@ -59,6 +62,7 @@ import { UntilService } from "./untils/until.service";
     Komubotrest,
     CompanytripService,
     HolidayService,
+    LeaveService
   ],
   controllers: [BotController],
 })
