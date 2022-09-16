@@ -1,11 +1,8 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client, EmbedBuilder } from "discord.js";
-// import { getTomorrowDate, getYesterdayDate } from "../utils/date.utils";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 
-// import { sendErrorToDevTest } from "../utils/komubotrest.utils";
-import { TABLE } from "../constants/table";
 import { Leave } from "../models/leave.entity";
 
 @CommandLine({

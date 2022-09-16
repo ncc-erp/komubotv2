@@ -29,10 +29,60 @@ export class OrderService {
   }
   async upDateUserCancel(item) {
     return await this.orderReposistory
-      .createQueryBuilder()
+      .createQueryBuilder("orders")
       .update(Order)
       .set({ isCancel: true })
       .where("id = :id", { id: item.id })
       .execute();
+  }
+  async getListUserOrderPending(channelId, author, username) {
+    return await this.orderReposistory
+      .createQueryBuilder("orders")
+      .where(`"channelId" = :channelId`, {
+        channelId: channelId,
+      })
+      .andWhere(`"isCancel" IS NOT TRUE`)
+      .andWhere(`"userId" = :userId`, { userId: author })
+      .andWhere(`"username" = :username`, {
+        username: username,
+      })
+      .execute();
+  }
+  async getListUserFinish(channelId, yesterdayDate, tomorrowDate) {
+    return await this.orderReposistory
+      .createQueryBuilder("orders")
+      .distinctOn(["username"])
+      .orderBy("username")
+      .where(`"channelId" = :channelId`, {
+        channelId: channelId,
+      })
+      .andWhere(`"isCancel" IS NOT TRUE`)
+      .andWhere(`"createdTimestamp" > ${yesterdayDate}`)
+      .andWhere(`"createdTimestamp" < ${tomorrowDate}`)
+      .select("orders.*")
+      .execute();
+  }
+
+  async updateFinishOrder(channelId) {
+    return await this.orderReposistory
+      .createQueryBuilder("orders")
+      .where(`"channelId" = :channelId`, {
+        channelId: channelId,
+      })
+      .andWhere(`"isCancel" IS NOT True`, {
+        isCancel: false,
+      })
+      .execute();
+  }
+  async order(channelId,author,username,list,){
+    return await this.orderReposistory
+    .insert({
+      channelId: channelId,
+      userId: author,
+      username: username,
+      menu: list,
+      createdTimestamp: Date.now(),
+      isCancel: false,
+    })
   }
 }

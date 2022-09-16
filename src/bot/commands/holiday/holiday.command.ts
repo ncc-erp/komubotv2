@@ -1,8 +1,10 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client } from "discord.js";
+import { sendErrorToDevTest } from "src/bot/untils/komu.until";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { Holiday } from "../../models/holiday.entity";
+import { HolidayService } from "./holiday.service";
 
 const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
 @CommandLine({
@@ -10,17 +12,10 @@ const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
   description: "Holiday",
 })
 export default class holidayCommand implements CommandLineClass {
-  constructor(
-    @InjectRepository(Holiday)
-    private leaveReposistory: Repository<Holiday>
-  ) {}
-  async execute(
-    message: Message,
-    args,
-    client,
-  ) {
+  constructor(private holidayService: HolidayService) {}
+  async execute(message: Message, args, client) {
     try {
-      const holidayData = this.leaveReposistory;
+      const holidayData = this.holidayService;
       let authorId = message.author.id;
       if (!args[0] && !args[1] && !args[2]) {
         return message.channel.send(messHelp);
@@ -36,13 +31,10 @@ export default class holidayCommand implements CommandLineClass {
       }
 
       await holidayData
-        .insert({
-          dateTime: dateTime,
-          content: messageHoliday,
-        })
+        .addHoliday(dateTime, messageHoliday)
         .catch((err) => console.log(err));
       message.reply({ content: "`✅` holiday saved." }).catch((err) => {
-        // sendErrorToDevTest(client, authorId, err);
+        sendErrorToDevTest(client, authorId, err);
       });
     } catch (err) {
       console.log(err);
