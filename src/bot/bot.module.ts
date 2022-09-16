@@ -6,7 +6,6 @@ import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
 
-
 import { DailyCommand } from "./commands/daily.command";
 import { ElsaCommand } from "./commands/elsa/elsa.command";
 import { ElsaService } from "./commands/elsa/elsa.service";
@@ -44,7 +43,8 @@ import { WorkFromHome } from "./models/wfh.entity";
 import NotificationCommand from "./commands/notification/noti.controller";
 import { NotifiService } from "./commands/notification/noti.service";
 import { User } from "./models/user.entity";
-
+import { WFHCommand } from "./commands/WFH/wfh.command";
+import { ReportTracker } from "./untils/reportTracker";
 
 @Module({
   imports: [
@@ -52,9 +52,9 @@ import { User } from "./models/user.entity";
     DiscoveryModule,
     CompanyModule,
     TypeOrmModule.forFeature([
-      ElsaDaily, 
-      CheckList, 
-      Subcategorys, 
+      ElsaDaily,
+      CheckList,
+      Subcategorys,
       User,
       Daily,
       Order,
@@ -64,7 +64,8 @@ import { User } from "./models/user.entity";
       Meeting,
       VoiceChannels,
       Message,
-      WorkFromHome
+      WorkFromHome,
+      ReportTracker,
     ]),
   ],
   providers: [
@@ -81,6 +82,7 @@ import { User } from "./models/user.entity";
     OrderCommand,
     MeetingCommand,
     holidayCommand,
+    WFHCommand,
     LeaveCommand,
     BotService,
     MeetingService,
@@ -90,12 +92,13 @@ import { User } from "./models/user.entity";
     CompanytripService,
     HolidayService,
     BotService,
+    ReportTracker,
     ElsaCommand,
     ElsaService,
     RequestOrder,
     NotificationCommand,
-    NotifiService
+    NotifiService,
   ],
   controllers: [BotController],
 })
-export class BotModule { }
+export class BotModule {}
