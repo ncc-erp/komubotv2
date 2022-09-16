@@ -191,10 +191,6 @@ export class MeetingCommand implements CommandLineClass {
               .send("```" + "*report help" + "```")
               .catch(console.error);
           const id = args[1];
-          // const findId = await meetingData.findOneAndUpdate(
-          //   { _id: id },
-          //   { cancel: true }
-          // );
           const findId = await this.meetingService.cancelMeetingById(id);
           if (!findId) {
             return message
