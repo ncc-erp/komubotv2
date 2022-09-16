@@ -5,7 +5,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
-import { Message , Client} from "discord.js";
 
 
 import { DailyCommand } from "./commands/daily.command";
@@ -14,15 +13,10 @@ import { ElsaService } from "./commands/elsa/elsa.service";
 import holidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
 import LeaveCommand from "./commands/leave.command";
-<<<<<<< HEAD
-import { OrderCommand } from "./commands/order/order.command";
-import { OrderService } from "./commands/order/order.service";
-=======
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
 import { OrderCommand } from "./commands/Order/order.command";
 import { OrderService } from "./commands/Order/order.service";
->>>>>>> c760a3f6a3adfb7efb3fde47a59cdf715d28b63c
 import { BotGateway } from "./events/bot.gateway";
 
 import { Daily } from "./models/daily.entity";
@@ -41,17 +35,27 @@ import { CheckList } from "./models/checklist.entity";
 import { Subcategorys } from "./models/subcategoryData.entity";
 import { CompanyModule } from "./commands/companytrip/companytrip.module";
 import { GemrankCommand } from "./commands/gemrank/gemrank.command";
+import { UntilService } from "./untils/until.service";
+import { CompanytripService } from "./commands/Companytrip/companytrip.service";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import { KomubotrestService } from "./untils/komubotrest/komubotrest.service";
+import { Message } from "./models/msg.entity";
+import { WorkFromHome } from "./models/wfh.entity";
+import NotificationCommand from "./commands/notification/noti.controller";
+import { NotifiService } from "./commands/notification/noti.service";
+import { User } from "./models/user.entity";
 
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
     DiscoveryModule,
-<<<<<<< HEAD
-    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday, ElsaDaily, CheckList, Subcategorys]), 
     CompanyModule,
-=======
     TypeOrmModule.forFeature([
+      ElsaDaily, 
+      CheckList, 
+      Subcategorys, 
+      User,
       Daily,
       Order,
       Leave,
@@ -59,8 +63,9 @@ import { GemrankCommand } from "./commands/gemrank/gemrank.command";
       CompanyTrip,
       Meeting,
       VoiceChannels,
+      Message,
+      WorkFromHome
     ]),
->>>>>>> c760a3f6a3adfb7efb3fde47a59cdf715d28b63c
   ],
   providers: [
     PlaySlashCommand,
@@ -70,11 +75,9 @@ import { GemrankCommand } from "./commands/gemrank/gemrank.command";
     CheckListController,
     CheckListService,
     DailyCommand,
-<<<<<<< HEAD
     GemrankCommand,
     holidayCommand,
     LeaveCommand,
-=======
     OrderCommand,
     MeetingCommand,
     holidayCommand,
@@ -83,15 +86,16 @@ import { GemrankCommand } from "./commands/gemrank/gemrank.command";
     MeetingService,
     OrderService,
     UntilService,
-    Komubotrest,
+    KomubotrestService,
     CompanytripService,
->>>>>>> c760a3f6a3adfb7efb3fde47a59cdf715d28b63c
     HolidayService,
     BotService,
     ElsaCommand,
     ElsaService,
-    RequestOrder
+    RequestOrder,
+    NotificationCommand,
+    NotifiService
   ],
   controllers: [BotController],
 })
-export class BotModule {}
+export class BotModule { }
