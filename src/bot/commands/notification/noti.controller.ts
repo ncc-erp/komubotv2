@@ -43,8 +43,35 @@ export default class NotificationCommand implements CommandLineClass {
                         },
                     }
                 );
-            }
+                message
+                    .reply({ content: '`✅` Notification saved.', })
+                    .catch((err) => {
+                        sendErrorToDevTest(client, authorId, err);
+                    });
+                const fetchChannel = [
+                    '1019791326025355275'];
 
+                fetchChannel.map(async (channel) => {
+                    const userDiscord = await client.channels.fetch(channel);
+                    if (message.attachments && message.attachments.first())
+                        userDiscord
+                            .send({
+                                content: `${noti}`,
+                                files: [message.attachments.first().url],
+                            })
+                            .catch(console.error);
+                    else userDiscord.send(`${noti} `).catch(console.error);
+                });
+            } else {
+                return message
+                    .reply({
+                        content:
+                            '```You do not have permission to execute this command!```',
+                    })
+                    .catch((err) => {
+                        sendErrorToDevTest(client, authorId, err);
+                    });
+            }
         } catch (err) {
             console.log(err);
         }
