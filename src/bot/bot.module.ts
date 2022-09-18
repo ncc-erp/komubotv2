@@ -1,76 +1,102 @@
 import { DiscordModule } from "@discord-nestjs/core";
-<<<<<<< HEAD
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-
-import DailyCommand from "./commands/daily.command";
-import { BotGateway } from "./events/bot.gateway";
-import { Daily } from "./models/daily.entity";
-import { Order } from "./models/order.entity";
-import { Leave } from "./models/leave.enity";
-import { Channel } from "./models/channel.entity";
-import { Meeting } from "./models/meeting.entity";
-import { PlayCommand } from "./slash-commands/play.slashcommand";
-import { PlaylistCommand } from "./slash-commands/playlist.slashcommand";
-=======
-import { forwardRef, Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
-import { ChecklistCommand } from "./commands/checklist.command";
-import { CheckListController } from "./commands/Checklist/checklist.controller";
-import { CheckListModule } from "./commands/Checklist/checklist.module";
-import { CheckListService } from "./commands/Checklist/checklist.service";
-import { CompantripCommand } from "./commands/Companytrip/companytrip.command";
-import { CompanyModule } from "./commands/Companytrip/companytrip.module";
+import { ChecklistCommand } from "./commands/checklist/checklist.command";
+
 
 import { DailyCommand } from "./commands/daily.command";
-import holidayCommand from "./commands/holiday.command";
+import { ElsaCommand } from "./commands/elsa/elsa.command";
+import { ElsaService } from "./commands/elsa/elsa.service";
+import holidayCommand from "./commands/holiday/holiday.command";
+import { HolidayService } from "./commands/holiday/holiday.service";
 import LeaveCommand from "./commands/leave.command";
-import OrderCommand from "./commands/order.command";
+import { MeetingCommand } from "./commands/meeting/meeting.command";
+import { MeetingService } from "./commands/meeting/meeting.service";
+import { OrderCommand } from "./commands/Order/order.command";
+import { OrderService } from "./commands/Order/order.service";
 import { BotGateway } from "./events/bot.gateway";
+
 import { Daily } from "./models/daily.entity";
+import { ElsaDaily } from "./models/elsaDaily.entity";
 import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
+import { Meeting } from "./models/meeting.entity";
 import { Order } from "./models/order.entity";
+import { Voicechannel } from "./models/voiceChannel.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { RequestOrder } from "./untils/requestorder.until";
+import { CheckListController } from "./commands/checklist/checklist.controller";
+import { CheckListService } from "./commands/checklist/checklist.service";
+import { CheckList } from "./models/checklist.entity";
+import { Subcategorys } from "./models/subcategoryData.entity";
+import { CompanyModule } from "./commands/companytrip/companytrip.module";
+import { GemrankCommand } from "./commands/gemrank/gemrank.command";
 import { UntilService } from "./untils/until.service";
+import { CompanytripService } from "./commands/Companytrip/companytrip.service";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import { KomubotrestService } from "./untils/komubotrest/komubotrest.service";
+import { Msg } from "./models/msg.entity";
+import { Wth } from "./models/wfh.entity";
+import NotificationCommand from "./commands/notification/noti.controller";
+import { NotifiService } from "./commands/notification/noti.service";
+import { User } from "./models/user.entity";
+import Test from "./commands/test";
 
->>>>>>> task/entity
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
-<<<<<<< HEAD
-    TypeOrmModule.forFeature([Daily]),
-    TypeOrmModule.forFeature([Order]),
-    TypeOrmModule.forFeature([Leave]),
-    TypeOrmModule.forFeature([Meeting]),
-    TypeOrmModule.forFeature([Channel]),
-  ],
-  providers: [PlayCommand, PlaylistCommand, BotGateway],
-=======
     DiscoveryModule,
-    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday]),
-    forwardRef(() => CheckListModule),
-    CompanyModule
+    CompanyModule,
+    TypeOrmModule.forFeature([
+      ElsaDaily,
+      CheckList,
+      Subcategorys,
+      User,
+      Daily,
+      Order,
+      Leave,
+      Holiday,
+      CompanyTrip,
+      Meeting,
+      Msg,
+      Voicechannel, Wth
+    ]),
   ],
   providers: [
     PlaySlashCommand,
     PlaylistSlashCommand,
-    ChecklistCommand,
-    CompantripCommand,
     BotGateway,
+    ChecklistCommand,
+    CheckListController,
+    CheckListService,
     DailyCommand,
-    OrderCommand,
+    GemrankCommand,
     holidayCommand,
     LeaveCommand,
-    BotService, 
-    UntilService
+    OrderCommand,
+    MeetingCommand,
+    holidayCommand,
+    LeaveCommand,
+    BotService,
+    MeetingService,
+    OrderService,
+    UntilService,
+    KomubotrestService,
+    CompanytripService,
+    HolidayService,
+    BotService,
+    ElsaCommand,
+    ElsaService,
+    RequestOrder,
+    NotificationCommand,
+    NotifiService,
+    Test
   ],
   controllers: [BotController],
->>>>>>> task/entity
 })
-export class BotModule {}
+export class BotModule { }

@@ -1,17 +1,11 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client, EmbedBuilder } from "discord.js";
-<<<<<<< HEAD
 import { getTomorrowDate, getYesterdayDate } from "../utils/date.utils";
-=======
->>>>>>> task/entity
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 import { TABLE } from "../constants/table";
 import { Order } from "../models/order.entity";
-<<<<<<< HEAD
-=======
 import {UntilService} from '../untils/until.service';
->>>>>>> task/entity
 
 interface IOrder {
   komu_order_id: number;
@@ -30,21 +24,12 @@ interface IOrder {
 export default class OrderCommand implements CommandLineClass {
   constructor(
     @InjectRepository(Order)
-<<<<<<< HEAD
     private orderReposistory: Repository<Order>
   ) {}
 
   async execute(message: Message, args, _, __, ___, dataSource: DataSource) {
     const orderData = dataSource.getRepository(Order);
 
-=======
-    private orderReposistory: Repository<Order>, 
-    private untilService : UntilService,
-  ) {}
-
-  async execute(message: Message, args, _, __, ___, dataSource: DataSource) {
-    const orderData = this.orderReposistory;
->>>>>>> task/entity
     try {
       let channelId = message.channelId;
       let author = message.author.id;
@@ -101,13 +86,8 @@ export default class OrderCommand implements CommandLineClass {
             .andWhere(`${TABLE.ORDER}.isCancel IS NOT TRUE`, {
               isCancel: false,
             })
-<<<<<<< HEAD
             .andWhere(`${TABLE.ORDER}.createdTimestamp > ${getYesterdayDate()}`)
             .andWhere(`${TABLE.ORDER}.createdTimestamp < ${getTomorrowDate()}`)
-=======
-            .andWhere(`${TABLE.ORDER}.createdTimestamp > ${this.untilService.getYesterdayDate()}`)
-            .andWhere(`${TABLE.ORDER}.createdTimestamp < ${this.untilService.getTomorrowDate()}`)
->>>>>>> task/entity
             .execute();
           let mess;
           if (!listOrder) {
@@ -176,8 +156,4 @@ export default class OrderCommand implements CommandLineClass {
       console.log(err);
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> task/entity

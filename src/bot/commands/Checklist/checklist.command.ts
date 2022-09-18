@@ -1,7 +1,7 @@
 import { Message , Client} from "discord.js";
 
-import { CommandLine, CommandLineClass } from "../base/command.base";
-import { CheckListController } from "./Checklist/checklist.controller";
+import { CommandLine, CommandLineClass } from "../../base/command.base";
+import { CheckListController } from "./checklist.controller";
 
 @CommandLine({
   name: "checklist",
@@ -9,7 +9,7 @@ import { CheckListController } from "./Checklist/checklist.controller";
 })
 export class ChecklistCommand implements CommandLineClass {
   constructor(private checklistController: CheckListController, ) {}
-    private client : Client;
+  private client : Client;
     async execute(message: Message, args) {
       try {
       //  checkList(message, args, Client);

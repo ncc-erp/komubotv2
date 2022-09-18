@@ -1,7 +1,6 @@
-import { Injectable } from "@nestjs/common";
 
-@Injectable()
-export class UntilService {
+
+export class RequestOrder {
   withoutFirstTime(dateTime) {
     const date = new Date(dateTime);
     date.setHours(0, 0, 0, 0);
@@ -15,11 +14,11 @@ export class UntilService {
   }
 
   getYesterdayDate() {
+    console.log('hello');
     const today = new Date();
     const yesterday = new Date(this.withoutLastTime(today));
     yesterday.setDate(yesterday.getDate() - 1);
     console.log(new Date(yesterday).valueOf());
-
     return new Date(yesterday).valueOf();
   }
 
@@ -50,26 +49,19 @@ export class UntilService {
     }
     return result;
   }
-
-  padTo2Digits(num) {
-    return num.toString().padStart(2, "0");
   }
-
-  formatDate(date) {
-    const d = [
-      this.padTo2Digits(date.getDate()),
-      this.padTo2Digits(date.getMonth() + 1),
-      date.getFullYear(),
-    ].join("/");
-
-    const t = [
-      this.padTo2Digits(date.getHours()),
-      this.padTo2Digits(date.getMinutes()),
-    ].join(":");
-
-    return `${d} ${t}`;
-  }
-
-  checkNumber = (string) =>
-    !isNaN(parseFloat(string)) && !isNaN(string - 0) && parseInt(string);
-}
+// =======
+// @Injectable()
+// export class Komubotrest {
+// >>>>>>> 9aadc0606b7c05ae6748aea24a3abbfc40bb50d5:src/bot/untils/komubotrest.service.ts
+//   checkNumber = (string) =>
+//     !isNaN(parseFloat(string)) && !isNaN(string - 0) && parseInt(string);
+//      sendErrorToDevTest = async (client, authorId, err) => {
+//       const msg = `KOMU không gửi được tin nhắn cho <@${authorId}> message: ${err.message} httpStatus: ${err.httpStatus} code: ${err.code}.`;
+//       await client.channels.cache
+//         .get(process.env.KOMUBOTREST_DEVTEST_CHANNEL_ID)
+//         .send(msg)
+//         .catch(console.error);
+//       return null;
+//     };
+// }

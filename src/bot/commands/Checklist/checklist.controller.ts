@@ -5,12 +5,7 @@ import { sendErrorToDevTest } from 'src/bot/untils/komu.until';
 import { CheckListService } from "./checklist.service";
 
 
-let categorys = ['tester', 'loren', 'inter', 'dev', 'hr'];
-let subcategorys = [];
-let arr = [];
-for (let i = 1; i <= categorys.length; i++) {
-  arr.push(`${i}`);
-}
+
 
 @Controller()
 export class CheckListController{
@@ -18,13 +13,21 @@ export class CheckListController{
         private checklistService : CheckListService,
     
     ){}
+    private categorys = ['tester', 'loren', 'inter', 'dev', 'hr'];
+    private subcategorys = [];
+    private arr = [];
     async execute(message : Message, args, client) {
+      
+    
+      for (let i = 1; i <= this.categorys.length; i++) {
+        this.arr.push(`${i}`);
+      }
        let authorId = message.author.id;
        if (!args[0]) {
          let mess;
-         for (let i = 0; i <= Math.ceil(categorys.length / 50); i += 1) {
-           if (categorys.slice(i * 50, (i + 1) * 50).length === 0) break;
-           mess = categorys
+         for (let i = 0; i <= Math.ceil(this.categorys.length / 50); i += 1) {
+           if (this.categorys.slice(i * 50, (i + 1) * 50).length === 0) break;
+           mess = this.categorys
              .slice(i * 50, (i + 1) * 50)
              .map((item, index) => {
                return `${index + 1}: ${item}`;
@@ -40,10 +43,10 @@ export class CheckListController{
          }
        } else if (args[0] && !args[1]) {
          let option;
-         subcategorys = [];
+         this.subcategorys = [];
      
-         if (arr.includes(args[0])) {
-           option = categorys[args[0] - 1];
+         if (this.arr.includes(args[0])) {
+           option = this.categorys[args[0] - 1];
          } else {
            option = args[0];
          }
@@ -57,7 +60,7 @@ export class CheckListController{
            });
          } else {
            for (let i = 0; i < checklists.length; i++) {
-             subcategorys = [...subcategorys].concat({
+             this.subcategorys = [...this.subcategorys].concat({
                id: checklists[i].id,
                categoryId: option,
                category: checklists[i].subcategory,
@@ -85,26 +88,26 @@ export class CheckListController{
          let optionSubcategory;
          let arrSub = [];
      
-         if (categorys.length === 0 || subcategorys.length === 0) {
+         if (this.categorys.length === 0 || this.subcategorys.length === 0) {
            return message.reply(`Please *checklist category`).catch((err) => {
              sendErrorToDevTest(client, authorId, err);
            });
          }
      
-         if (arr.includes(args[0])) {
-           optionCategory = categorys[args[0] - 1];
+         if (this.arr.includes(args[0])) {
+           optionCategory = this.categorys[args[0] - 1];
          } else {
            optionCategory = args[0];
          }
      
-         for (let i = 1; i <= subcategorys.length; i++) {
+         for (let i = 1; i <= this.subcategorys.length; i++) {
            arrSub.push(`${i}`);
          }
      
          if (arrSub.includes(args[1])) {
-           optionSubcategory = subcategorys[(args[1] - 1)];
+           optionSubcategory = this.subcategorys[(args[1] - 1)];
          } else {
-           optionSubcategory = subcategorys.find((element) => {
+           optionSubcategory = this.subcategorys.find((element) => {
              if (element.category === args.slice(1).join(' ')) {
                return true;
              } else {
@@ -155,7 +158,7 @@ export class CheckListController{
                sendErrorToDevTest(client, authorId, err);
              });
            }
-           subcategorys = [];
+           this.subcategorys = [];
          }
     
    }
