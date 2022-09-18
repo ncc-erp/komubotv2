@@ -12,13 +12,11 @@ export class NotifiService {
     ) { }
 
     async checkrole(authorId) {
-        return await this.userData
-            .createQueryBuilder('users')
-            .where('"userId" = :userId', { userId: authorId })
-            .andWhere('"deactive" IS NOT True')
-            .orWhere('"roles_discord" = :roles_discord', { roles_discord: ["ADMIN"] })
-            .andWhere('"roles_discord" = :roles_discord', { roles_discord: ["HR"] })
-            .select('users.*')
-            .getMany()
+        const users = await this.userData
+            .createQueryBuilder("users")
+            .where('"userId" = :userId AND ("roles_discord" @> :admin OR "roles_discord" @> :hr)', { userId: authorId, admin: ['ADMIN'], hr: ['HR'] })
+            .select("users.*")
+            .execute()
+        return users;
     }
 }

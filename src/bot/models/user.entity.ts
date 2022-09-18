@@ -7,7 +7,7 @@ export class User {
   @PrimaryGeneratedColumn({})
   id: number
 
-  @Column({ nullable: true, unique: true })
+  @Column({ type: "text",nullable: true, unique: true })
   userId: string;
 
   @Column({ type: "text", nullable: true })
@@ -61,8 +61,8 @@ export class User {
   @Column({ default: 0 })
   scores_quiz: number;
 
-  @Column({ type: "text", array: true })
-  roles: string;
+  @Column({ type: "text", array: true, nullable: true })
+  roles: string[];
 
   @Column({ nullable: true })
   pending_wfh: boolean;
@@ -70,11 +70,11 @@ export class User {
   @Column({ type: "text", nullable: true })
   last_bot_message_id: string;
 
-  @Column({})
+  @Column({ type: "boolean", nullable: true })
   deactive: boolean;
 
-  @Column({ type: "text", array: true })
-  roles_discord: string;
+  @Column({ type: "text", array: true, nullable: true })
+  roles_discord: string[];
   @Column({ default: false })
   botPing: boolean;
 }

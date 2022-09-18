@@ -23,14 +23,11 @@ export default class NotificationCommand implements CommandLineClass {
                 return message
                     .reply({
                         content: '```please add your text```',
-                        // ephemeral: true,
                     })
                     .catch((err) => {
                         sendErrorToDevTest(client, authorId, err);
                     });
             }
-            console.log(checkRole)
-
             if (checkRole.length > 0 || authorId === '871713984670216273') {
                 await axios.post(
                     client.config.noti.api_url_quickNews,
@@ -49,7 +46,15 @@ export default class NotificationCommand implements CommandLineClass {
                         sendErrorToDevTest(client, authorId, err);
                     });
                 const fetchChannel = [
-                    '1019791326025355275'];
+                    '922135616962068520',
+                    '922402247260909569',
+                    '935151571581423626',
+                    '921686261943635988',
+                    '921652536933499002',
+                    '969511102885019688',
+                    '921239541388554240',
+                    '990141662665777172',
+                ];
 
                 fetchChannel.map(async (channel) => {
                     const userDiscord = await client.channels.fetch(channel);
