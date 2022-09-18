@@ -85,11 +85,8 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.USER)
 export class User {
-  @PrimaryGeneratedColumn({})
-  id: number
-
-  @Column({ type: "text",nullable: true, unique: true })
-  userId: string;
+  @Column({ nullable: true, unique: true })
+  id: string;
 
   @Column({ type: "text", nullable: true })
   username: string;
@@ -142,8 +139,8 @@ export class User {
   @Column({ default: 0 })
   scores_quiz: number;
 
-  @Column({ type: "text", array: true, nullable: true })
-  roles: string[];
+  @Column({ type: "array", default: [] })
+  roles: string;
 
   @Column({ nullable: true })
   pending_wfh: boolean;
@@ -151,11 +148,11 @@ export class User {
   @Column({ type: "text", nullable: true })
   last_bot_message_id: string;
 
-  @Column({ type: "boolean", nullable: true })
+  @Column({})
   deactive: boolean;
 
-  @Column({ type: "text", array: true, nullable: true })
-  roles_discord: string[];
+  @Column({ type: "array", default: [] })
+  roles_discord: string;
   @Column({ default: false })
 >>>>>>> task/entity
   botPing: boolean;
