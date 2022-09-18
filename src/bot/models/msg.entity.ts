@@ -4,6 +4,9 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.MSG)
 export class Message {
+  @PrimaryGeneratedColumn()
+  msgid: number;
+
   @Column({ type: "text", nullable: true })
   channelId: string;
 
@@ -40,25 +43,25 @@ export class Message {
   @Column({ type: "text", nullable: true })
   nonce: string;
 
-  @Column({ type: "array", nullable: true })
+  @Column({ type: "text", nullable: true })
   embeds: string;
 
-  @Column({ type: "array", nullable: true })
+  @Column({ type: "text", nullable: true })
   components: string;
 
-  @Column({ type: "array", nullable: true })
+  @Column({ type: "text", nullable: true })
   attachments: string;
 
-  @Column({ type: "array", nullable: true })
+  @Column({ type: "text", nullable: true })
   stickers: string;
 
   @Column({ nullable: false })
   editedTimestamp: number;
 
-  @Column({ type: "array", nullable: true })
+  @Column({ type: "text", nullable: true })
   reactions: string;
 
-  @Column({ type: "array", nullable: true })
+  @Column({ type: "text", nullable: true })
   mentions: string;
 
   @Column({ type: "text", nullable: true })

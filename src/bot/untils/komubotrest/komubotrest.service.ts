@@ -75,6 +75,18 @@ export class KomubotrestService {
             status : _status
         }).execute();
     }
+    async findUserOne(_id){
+        return await this.userReposistory
+        .createQueryBuilder(TABLE.USER)
+        .where(`${TABLE.USER}.id = :id`, {
+            id: _id,
+        }).getOne();
+    }
+    async findAllUser(){
+        return await this.userReposistory
+        .createQueryBuilder(TABLE.USER)
+        .getMany();
+    }
 }
 
 

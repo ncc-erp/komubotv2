@@ -36,7 +36,10 @@ export class ElsaCommand implements CommandLineClass {
     try {
       if (args[0] === "weekly") {
         const daily = args.join(" ");
+        console.log('args : ', args)
+        console.log('daily : ', daily)
         if (!daily || daily == undefined) {
+          console.log("lksjaf;lkasjfd")
           return message
             .reply({
               content: "```please add your daily text```",

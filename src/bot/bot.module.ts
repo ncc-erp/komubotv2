@@ -14,15 +14,8 @@ import { ElsaService } from "./commands/elsa/elsa.service";
 import holidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
 import LeaveCommand from "./commands/leave.command";
-<<<<<<< HEAD
 import { OrderCommand } from "./commands/order/order.command";
 import { OrderService } from "./commands/order/order.service";
-=======
-import { MeetingCommand } from "./commands/meeting/meeting.command";
-import { MeetingService } from "./commands/meeting/meeting.service";
-import { OrderCommand } from "./commands/Order/order.command";
-import { OrderService } from "./commands/Order/order.service";
->>>>>>> c760a3f6a3adfb7efb3fde47a59cdf715d28b63c
 import { BotGateway } from "./events/bot.gateway";
 
 import { Daily } from "./models/daily.entity";
@@ -41,26 +34,22 @@ import { CheckList } from "./models/checklist.entity";
 import { Subcategorys } from "./models/subcategoryData.entity";
 import { CompanyModule } from "./commands/companytrip/companytrip.module";
 import { GemrankCommand } from "./commands/gemrank/gemrank.command";
+import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
+import { KomubotrestController } from "./untils/komubotrest/komubotrest.controller";
+import { HeyboyService } from "./commands/heyboy/heyboy.service";
+import { UntilService } from "./untils/until.service";
+import { KomubotrestModule } from "./untils/komubotrest/kombotrest.module";
+import { User } from "./models/user.entity";
 
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
     DiscoveryModule,
-<<<<<<< HEAD
-    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday, ElsaDaily, CheckList, Subcategorys]), 
+    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday, ElsaDaily, CheckList, Subcategorys, User,       Meeting,
+      VoiceChannels]), 
     CompanyModule,
-=======
-    TypeOrmModule.forFeature([
-      Daily,
-      Order,
-      Leave,
-      Holiday,
-      CompanyTrip,
-      Meeting,
-      VoiceChannels,
-    ]),
->>>>>>> c760a3f6a3adfb7efb3fde47a59cdf715d28b63c
+    KomubotrestModule
   ],
   providers: [
     PlaySlashCommand,
@@ -69,28 +58,23 @@ import { GemrankCommand } from "./commands/gemrank/gemrank.command";
     ChecklistCommand,
     CheckListController,
     CheckListService,
+    HeyboyCommand,
     DailyCommand,
-<<<<<<< HEAD
     GemrankCommand,
     holidayCommand,
     LeaveCommand,
-=======
     OrderCommand,
-    MeetingCommand,
     holidayCommand,
     LeaveCommand,
     BotService,
-    MeetingService,
     OrderService,
-    UntilService,
-    Komubotrest,
-    CompanytripService,
->>>>>>> c760a3f6a3adfb7efb3fde47a59cdf715d28b63c
     HolidayService,
     BotService,
     ElsaCommand,
     ElsaService,
-    RequestOrder
+    RequestOrder, 
+    HeyboyService,
+    UntilService
   ],
   controllers: [BotController],
 })

@@ -4,6 +4,8 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.USER)
 export class User {
+  @PrimaryGeneratedColumn()
+  userID: number;
   @Column({ nullable: true, unique: true})
   id: string;
 
@@ -58,7 +60,7 @@ export class User {
   @Column({ default: 0 })
   scores_quiz: number;
 
-  @Column({ type: "array", default: [] })
+  @Column({ type: "text", default: [] })
   roles: string;
 
   @Column({ nullable: true })
@@ -70,7 +72,7 @@ export class User {
   @Column({})
   deactive: boolean;
 
-  @Column({ type: "array", default: [] })
+  @Column({ type: "text", default: [] })
   roles_discord: string;
   @Column({ default: false })
   botPing: boolean;
