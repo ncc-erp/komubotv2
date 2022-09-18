@@ -44,6 +44,7 @@ import { WorkFromHome } from "./models/wfh.entity";
 import NotificationCommand from "./commands/notification/noti.controller";
 import { NotifiService } from "./commands/notification/noti.service";
 import { User } from "./models/user.entity";
+import Test from "./commands/test";
 
 
 @Module({
@@ -94,7 +95,8 @@ import { User } from "./models/user.entity";
     ElsaService,
     RequestOrder,
     NotificationCommand,
-    NotifiService
+    NotifiService,
+    Test
   ],
   controllers: [BotController],
 })
