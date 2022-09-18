@@ -1,37 +1,27 @@
-// const mongoose = require('mongoose');
-
-// const voiceChannelDb = new mongoose.Schema({
-//   id: { type: String, required: true },
-//   originalName: { type: String, required: true },
-//   newRoomName: { type: String, required: true },
-//   people: { type: Number, required: true, default: 0 },
-//   status: { type: String, required: true, default: 'start' },
-//   createdTimestamp: { type: mongoose.Decimal128, required: false },
-// });
-
-// module.exports = mongoose.model('komu_voicechannels', voiceChannelDb);
-
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
-@Entity(TABLE.VOICECHANNELS)
-export class VoiceChannels {
+@Entity(TABLE.VOICECHANNEL)
+export class Voicechannel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  //   @Column({})
+  //   id: string;
+
+  @Column({ type: "text" })
   originalName: string;
 
-  @Column({ nullable: false })
+  @Column({ type: "text" })
   newRoomName: string;
 
-  @Column({ nullable: false, default: 0 })
+  @Column({ type: "decimal" })
   people: number;
 
-  @Column()
+  @Column({ type: "text" })
   status: string;
 
-  @Column()
-  createdTimestamp: string;
+  @Column({ type: "date" })
+  createdTimestamp: Date;
 }

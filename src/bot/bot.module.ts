@@ -25,7 +25,7 @@ import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
 import { Order } from "./models/order.entity";
-import { VoiceChannels } from "./models/voiceChannel.entity";
+import { Voicechannel } from "./models/voiceChannel.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { RequestOrder } from "./untils/requestorder.until";
@@ -39,8 +39,8 @@ import { UntilService } from "./untils/until.service";
 import { CompanytripService } from "./commands/Companytrip/companytrip.service";
 import { CompanyTrip } from "./models/companyTrip.entity";
 import { KomubotrestService } from "./untils/komubotrest/komubotrest.service";
-import { Message } from "./models/msg.entity";
-import { WorkFromHome } from "./models/wfh.entity";
+import { Msg } from "./models/msg.entity";
+import { Wth } from "./models/wfh.entity";
 import NotificationCommand from "./commands/notification/noti.controller";
 import { NotifiService } from "./commands/notification/noti.service";
 import { User } from "./models/user.entity";
@@ -53,9 +53,9 @@ import Test from "./commands/test";
     DiscoveryModule,
     CompanyModule,
     TypeOrmModule.forFeature([
-      ElsaDaily, 
-      CheckList, 
-      Subcategorys, 
+      ElsaDaily,
+      CheckList,
+      Subcategorys,
       User,
       Daily,
       Order,
@@ -63,9 +63,8 @@ import Test from "./commands/test";
       Holiday,
       CompanyTrip,
       Meeting,
-      VoiceChannels,
-      Message,
-      WorkFromHome
+      Msg,
+      Voicechannel, Wth
     ]),
   ],
   providers: [
