@@ -44,7 +44,6 @@ import { Wth } from "./models/wfh.entity";
 import NotificationCommand from "./commands/notification/noti.controller";
 import { NotifiService } from "./commands/notification/noti.service";
 import { User } from "./models/user.entity";
-import Test from "./commands/test";
 
 
 @Module({
@@ -95,7 +94,6 @@ import Test from "./commands/test";
     RequestOrder,
     NotificationCommand,
     NotifiService,
-    Test
   ],
   controllers: [BotController],
 })
