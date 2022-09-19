@@ -13,6 +13,8 @@ import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 // import { TestCommand } from "./commands/test";
 // import LeaveCommand from "./commands/leave.command";
 // import OrderCommand from "./commands/order.command";
@@ -59,6 +61,8 @@ import { UntilService } from "./untils/until.service";
     // TestCommand,
     MeetingCommand,
     MeetingService,
+    ToggleActiveCommand,
+    ToggleActiveService,
   ],
   controllers: [BotController],
 })
