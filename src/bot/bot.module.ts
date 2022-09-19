@@ -5,33 +5,44 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
-import { CheckListController } from "./commands/Checklist/checklist.controller";
 import { CheckListModule } from "./commands/Checklist/checklist.module";
-import { CheckListService } from "./commands/Checklist/checklist.service";
 import { CompantripCommand } from "./commands/Companytrip/companytrip.command";
 import { CompanyModule } from "./commands/Companytrip/companytrip.module";
 
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
+import { MeetingCommand } from "./commands/meeting/meeting.command";
+import { MeetingService } from "./commands/meeting/meeting.service";
+// import { TestCommand } from "./commands/test";
 // import LeaveCommand from "./commands/leave.command";
 // import OrderCommand from "./commands/order.command";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
+import { Meeting } from "./models/meeting.entity";
 import { Order } from "./models/order.entity";
+import { User } from "./models/user.entity";
+import { VoiceChannels } from "./models/voiceChannel.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { UntilService } from "./untils/until.service";
-
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
     DiscoveryModule,
-    TypeOrmModule.forFeature([Daily, Order, Leave, Holiday]),
+    TypeOrmModule.forFeature([
+      Daily,
+      Order,
+      Leave,
+      Holiday,
+      User,
+      Meeting,
+      VoiceChannels,
+    ]),
     forwardRef(() => CheckListModule),
-    CompanyModule
+    CompanyModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -43,8 +54,11 @@ import { UntilService } from "./untils/until.service";
     // OrderCommand,
     holidayCommand,
     // LeaveCommand,
-    BotService, 
-    UntilService
+    BotService,
+    UntilService,
+    // TestCommand,
+    MeetingCommand,
+    MeetingService,
   ],
   controllers: [BotController],
 })
