@@ -13,6 +13,10 @@ import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
+import { RemindCommand } from "./commands/remind/remind.command";
+import { UserStatusCommand } from "./commands/user_status/user_status.command";
+import { UserStatusService } from "./commands/user_status/user_status.service";
+import { WFHCommand } from "./commands/wfh/wfh.command";
 // import { TestCommand } from "./commands/test";
 // import LeaveCommand from "./commands/leave.command";
 // import OrderCommand from "./commands/order.command";
@@ -22,10 +26,13 @@ import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
 import { Order } from "./models/order.entity";
+import { Remind } from "./models/remind.entity";
 import { User } from "./models/user.entity";
 import { VoiceChannels } from "./models/voiceChannel.entity";
+import { WorkFromHome } from "./models/wfh.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { ReportTracker } from "./untils/report-tracker";
 import { UntilService } from "./untils/until.service";
 
 @Module({
@@ -40,6 +47,8 @@ import { UntilService } from "./untils/until.service";
       User,
       Meeting,
       VoiceChannels,
+      WorkFromHome,
+      Remind,
     ]),
     forwardRef(() => CheckListModule),
     CompanyModule,
@@ -54,8 +63,13 @@ import { UntilService } from "./untils/until.service";
     // OrderCommand,
     holidayCommand,
     // LeaveCommand,
+    WFHCommand,
+    RemindCommand,
+    UserStatusCommand,
+    UserStatusService,
     BotService,
     UntilService,
+    ReportTracker,
     // TestCommand,
     MeetingCommand,
     MeetingService,
