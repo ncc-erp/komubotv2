@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
-@Entity(TABLE.VOICECHANNEL)
+@Entity(TABLE.VOICECHANNELS)
 export class Voicechannel {
   @PrimaryGeneratedColumn()
   id: number;
