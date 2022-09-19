@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
@@ -7,24 +7,24 @@ export class Meeting {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({})
+  @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column({ type: "date" })
-  createdTimestamp: Date;
+  @Column({ type: "decimal", nullable: true })
+  createdTimestamp: number;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   task: string;
 
-  @Column({ type: "date"})
-  repeat: Date;
+  @Column({ type: "text", nullable: true })
+  repeat: string;
 
-  @Column({ type: "decimal" })
-  repeatTime: number;
-
-  @Column({ type: "boolean" })
+  @Column({ nullable: true })
   cancel: boolean;
 
-  @Column({ type: "boolean" })
+  @Column({ nullable: true })
   reminder: boolean;
+
+  @Column({ nullable: true })
+  repeatTime: string;
 }
