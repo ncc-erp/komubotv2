@@ -1,30 +1,26 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
 import { TABLE } from "../constants/table";
 
-@Entity(TABLE.MEETING)
-export class Meeting {
+@Entity(TABLE.REMIND)
+export class Remind {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column({ type: "decimal", nullable: true })
-  createdTimestamp: number;
+  @Column({ type: "text", nullable: true })
+  mentionUserId: string;
 
   @Column({ type: "text", nullable: true })
-  task: string;
+  authorId: string;
 
   @Column({ type: "text", nullable: true })
-  repeat: string;
+  content: string;
 
   @Column({ nullable: true })
   cancel: boolean;
 
-  @Column({ nullable: true })
-  reminder: boolean;
-
-  @Column({ nullable: true })
-  repeatTime: string;
+  @Column({ type: "decimal", nullable: true })
+  createdTimestamp: number;
 }
