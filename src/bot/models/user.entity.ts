@@ -1,11 +1,15 @@
+import { text } from "stream/consumers";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.USER)
 export class User {
-  @Column({ nullable: true, unique: true })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: "text", nullable: true, unique: true })
+  userId: string;
 
   @Column({ type: "text", nullable: true })
   username: string;
@@ -58,8 +62,8 @@ export class User {
   @Column({ default: 0 })
   scores_quiz: number;
 
-  @Column({ type: "array", default: [] })
-  roles: string;
+  @Column({ type: "text", array: true, nullable: true })
+  roles: string[];
 
   @Column({ nullable: true })
   pending_wfh: boolean;
@@ -67,11 +71,12 @@ export class User {
   @Column({ type: "text", nullable: true })
   last_bot_message_id: string;
 
-  @Column({})
+  @Column({ nullable: true })
   deactive: boolean;
 
-  @Column({ type: "array", default: [] })
-  roles_discord: string;
+  @Column({ type: "text", array: true, nullable: true })
+  roles_discord: string[];
+
   @Column({ default: false })
   botPing: boolean;
 }
