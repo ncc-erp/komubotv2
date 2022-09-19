@@ -82,100 +82,100 @@ export default class PenaltyCommand implements CommandLineClass {
         //   },
         // ];
 
-        const result = await this.PenaltyService(aggregatorOpts);
+        // const result = await this.PenaltyService(aggregatorOpts);
 
-        let mess;
-        if (Array.isArray(result) && result.length === 0) {
-          mess = "```" + "no result" + "```";
-        } else {
-          mess = result
-            .map((item) => `<@${item.id}>(${item.username}) : ${item.ammount}`)
-            .join("\n");
-        }
+        // let mess;
+        // if (Array.isArray(result) && result.length === 0) {
+        //   mess = "```" + "no result" + "```";
+        // } else {
+        //   mess = result
+        //     .map((item) => `<@${item.id}>(${item.username}) : ${item.ammount}`)
+        //     .join("\n");
+        // }
 
-        return message.channel
-          .send("```" + "Top bị phạt :" + "\n" + "```" + "\n" + mess)
-          .catch(console.error);
-      } else if (args[0] === "detail") {
-        // detail
-        let checkMention = message.mentions.members.first();
+      //   return message.channel
+      //     .send("```" + "Top bị phạt :" + "\n" + "```" + "\n" + mess)
+      //     .catch(console.error);
+      // } else if (args[0] === "detail") {
+      //   // detail
+      //   let checkMention = message.mentions.members.first();
 
-        if (!checkMention) return message.channel.send(messHelp);
-        let dataPen;
-        if (checkMention.user.id) {
-          dataPen = await penaltyData.insert({
-            user_id: checkMention.user.id,
-            channel_id: message.channel.id,
-          });
-        } else {
-          dataPen = await penaltyData.insert({
-            username: checkMention.user.username,
-            channel_id: message.channel.id,
-          });
-        }
+      //   if (!checkMention) return message.channel.send(messHelp);
+      //   let dataPen;
+      //   if (checkMention.user.id) {
+      //     dataPen = await penaltyData.insert({
+      //       user_id: checkMention.user.id,
+      //       channel_id: message.channel.id,
+      //     });
+      //   } else {
+      //     dataPen = await penaltyData.insert({
+      //       username: checkMention.user.username,
+      //       channel_id: message.channel.id,
+      //     });
+      //   }
 
-        if (!dataPen || (Array.isArray(dataPen) && dataPen.length === 0)) {
-          return message.channel.send("```" + "no result" + "```");
-        }
-        const mess = dataPen
-          .map(
-            (item, index) => `${index + 1} - ${item.reason} (${item.ammount})`
-          )
-          .join("\n");
-        return message.channel
-          .send(
-            "```" + `Lý do ${dataPen[0].username} bị phạt` + "\n" + mess + "```"
-          )
-          .catch(console.error);
-      } else if (args[0] === "clear") {
-        // clear
-        await penaltyData.insert(
-          {
-            channel_id: message.channel.id,
-            // delete: { $ne: true },
-          }
-          // { delete: true }
-        );
-        message
-          .reply({
-            content: "Clear penatly successfully",
-          })
-          .catch((err) => {
-            sendErrorToDevTest(Client, authorId, err);
-          });
-      } else {
-        if (!args[0] || !args[1] || !args[2]) {
-          return message.channel.send(messHelp);
-        }
-        const userArgs = message.mentions.members.first();
-        // tien
-        const ammount = transAmmount(args[1]);
+        // if (!dataPen || (Array.isArray(dataPen) && dataPen.length === 0)) {
+        //   return message.channel.send("```" + "no result" + "```");
+        // }
+      //   const mess = dataPen
+      //     .map(
+      //       (item, index) => `${index + 1} - ${item.reason} (${item.ammount})`
+      //     )
+      //     .join("\n");
+      //   return message.channel
+      //     .send(
+      //       "```" + `Lý do ${dataPen[0].username} bị phạt` + "\n" + mess + "```"
+      //     )
+      //     .catch(console.error);
+      // } else if (args[0] === "clear") {
+      //   // clear
+      //   await penaltyData.insert(
+      //     {
+      //       channel_id: message.channel.id,
+      //       // delete: { $ne: true },
+      //     }
+      //     // { delete: true }
+      //   );
+      //   message
+      //     .reply({
+      //       content: "Clear penatly successfully",
+      //     })
+      //     .catch((err) => {
+      //       sendErrorToDevTest(Client, authorId, err);
+      //     });
+      // } else {
+      //   if (!args[0] || !args[1] || !args[2]) {
+      //     return message.channel.send(messHelp);
+      //   }
+      //   const userArgs = message.mentions.members.first();
+      //   // tien
+      //   const ammount = transAmmount(args[1]);
 
-        if (!ammount || !userArgs) {
-          return message.channel.send(messHelp);
-        }
+      //   if (!ammount || !userArgs) {
+      //     return message.channel.send(messHelp);
+      //   }
         //li do
-        const reason = args.slice(2, args.length).join(" ");
-        let user = message.author.id;
-        const userChannel = userArgs?.user.id;
-        if (!user) return message.channel.send("```" + "no result" + "```");
+        // const reason = args.slice(2, args.length).join(" ");
+        // let user = message.author.id;
+        // const userChannel = userArgs?.user.id;
+        // if (!user) return message.channel.send("```" + "no result" + "```");
         // console.log("user mess", user);
         // console.log("user in channel", userChannel);
         // if (userChannel) {
-        await this.PenaltyService.addUserIntoPenalty(
-          message,
-          {
-            ammount: +ammount,
-            reason: reason,
-          },
-          userChannel,
-          userArgs?.user.username
-        );
-        return message
-          .reply({ content: "`✅` Penalty saved." })
-          .catch((err) => {
-            sendErrorToDevTest(Client, authorId, err);
-          });
+        // await this.PenaltyService.addUserIntoPenalty(
+        //   message,
+        //   {
+        //     ammount: +ammount,
+        //     reason: reason,
+        //   },
+        //   userChannel,
+        //   userArgs?.user.username
+        // );
+        // return message
+        //   .reply({ content: "`✅` Penalty saved." })
+        //   .catch((err) => {
+        //     sendErrorToDevTest(Client, authorId, err);
+        //   });
         // }
         // else {
         //   return message.reply({ content: "User not exit in channel" });
