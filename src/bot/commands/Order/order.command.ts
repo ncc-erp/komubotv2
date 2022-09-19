@@ -34,14 +34,13 @@ export class OrderCommand implements CommandLineClass {
           author,
           username
         );
-
-        userCancel.map(async (item) => {
+        userCancel?.forEach(async (item) => {
           await this.orderService.upDateUserCancel(item);
         });
 
-        message.reply({
-          content: "Bạn đã hủy đơn đặt hàng!!!",
-        });
+        // message.reply({
+        //   content: "Bạn đã hủy đơn đặt hàng!!!",
+        // });
       } else if (args[0] === "finish") {
         const userCancel = await orderData.getListUserOrderPending(
           channelId,
@@ -90,7 +89,7 @@ export class OrderCommand implements CommandLineClass {
       } else {
         const list = args.slice(0, args.length).join(" ");
         await orderData
-          .order(channelId,author,username,list)
+          .order(channelId, author, username, list)
           .catch((err) => console.log(err));
         message.reply({
           content: "`✅` Bạn đã đặt đơn!!!",

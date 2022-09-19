@@ -1,27 +1,24 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.VOICECHANNELS)
-export class Voicechannel {
+export class VoiceChannels {
   @PrimaryGeneratedColumn()
   id: number;
 
-  //   @Column({})
-  //   id: string;
-
-  @Column({ type: "text" })
+  @Column({ nullable: false })
   originalName: string;
 
-  @Column({ type: "text" })
+  @Column({ nullable: false })
   newRoomName: string;
 
-  @Column({ type: "decimal" })
+  @Column({ nullable: false, default: 0 })
   people: number;
 
-  @Column({ type: "text" })
+  @Column()
   status: string;
 
-  @Column({ type: "date" })
-  createdTimestamp: Date;
+  @Column()
+  createdTimestamp: string;
 }
