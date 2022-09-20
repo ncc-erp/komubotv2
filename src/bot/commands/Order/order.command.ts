@@ -38,9 +38,9 @@ export class OrderCommand implements CommandLineClass {
           await this.orderService.upDateUserCancel(item);
         });
 
-        // message.reply({
-        //   content: "Bạn đã hủy đơn đặt hàng!!!",
-        // });
+        message.reply({
+          content: "Bạn đã hủy đơn đặt hàng!!!",
+        });
       } else if (args[0] === "finish") {
         const userCancel = await orderData.getListUserOrderPending(
           channelId,

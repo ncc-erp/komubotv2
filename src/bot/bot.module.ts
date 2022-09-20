@@ -39,6 +39,10 @@ import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-s
 import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { HttpModule } from "@nestjs/axios";
+import { OrderCommand } from "./commands/Order/order.command";
+import { OrderService } from "./commands/Order/order.service";
+import { NotifiService } from "./commands/notification/noti.service";
+import NotificationCommand from "./commands/notification/noti.controller";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
@@ -71,7 +75,8 @@ import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
     BotGateway,
     DailyCommand,
     MeetingCommand,
-    // OrderCommand,
+    OrderCommand,
+    OrderService,
     holidayCommand,
     // LeaveCommand,
     WFHCommand,
@@ -90,6 +95,8 @@ import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
     MeetingService,
     ToggleActiveCommand,
     ToggleActiveService,
+    NotifiService,
+    NotificationCommand,
   ],
   controllers: [BotController],
 })
