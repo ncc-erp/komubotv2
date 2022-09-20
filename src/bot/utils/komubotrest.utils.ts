@@ -1,5 +1,5 @@
-const wfhData = require('../models/user.entity');
-const msgData = require('../models/msg.entity');
+const wfhData = require("../models/user.entity");
+const msgData = require("../models/msg.entity");
 
 const sendErrorToDevTest = async (client, authorId, err) => {
   const msg = `KOMU không gửi được tin nhắn cho <@${authorId}> message: ${err.message} httpStatus: ${err.httpStatus} code: ${err.code}.`;
@@ -14,7 +14,4 @@ const sendErrorToDevTest = async (client, authorId, err) => {
 //   sendErrorToDevTest,
 // };
 
-export {
-  sendErrorToDevTest
-}
-
+export { sendErrorToDevTest };

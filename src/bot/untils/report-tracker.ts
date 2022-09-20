@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Config } from "../constants/config";
 
 export class ReportTracker {
   getUserNameByEmail(string) {
@@ -12,8 +11,6 @@ export class ReportTracker {
     let wfhGetApi;
     let dataWfh = [];
     try {
-      console.log(Config.wfh.api_url, "abc");
-      console.log(process.env.TIMESHEET_API, "jhhjhj");
       wfhGetApi = await axios.get(
         `${process.env.TIMESHEET_API}Public/GetUserWorkFromHome?date=${date}`,
         {

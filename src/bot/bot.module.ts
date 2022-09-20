@@ -34,6 +34,12 @@ import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { ReportTracker } from "./untils/report-tracker";
 import { UntilService } from "./untils/until.service";
+import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
+import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
+import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
+import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
+import { HttpModule } from "@nestjs/axios";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 
 @Module({
   imports: [
@@ -52,6 +58,8 @@ import { UntilService } from "./untils/until.service";
     ]),
     forwardRef(() => CheckListModule),
     CompanyModule,
+    NestjsScheduleModule.forRoot(),
+    HttpModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -60,6 +68,7 @@ import { UntilService } from "./untils/until.service";
     CompantripCommand,
     BotGateway,
     DailyCommand,
+    MeetingCommand,
     // OrderCommand,
     holidayCommand,
     // LeaveCommand,
@@ -72,7 +81,12 @@ import { UntilService } from "./untils/until.service";
     ReportTracker,
     // TestCommand,
     MeetingCommand,
+    MeetingSchedulerService,
+    ReminderSchedulerService,
+    SendMessageSchedulerService,
     MeetingService,
+    ToggleActiveCommand,
+    ToggleActiveService,
   ],
   controllers: [BotController],
 })

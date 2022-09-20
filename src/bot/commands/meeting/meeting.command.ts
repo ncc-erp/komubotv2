@@ -367,8 +367,8 @@ export class MeetingCommand implements CommandLineClass {
 
           const fomat = `${month}/${day}/${year}`;
           const dateObject = new Date(fomat);
-          var timestamp = dateObject.getTime();
-          const response = await this.meetingRepository.insert({
+          const timestamp = dateObject.getTime();
+          await this.meetingRepository.insert({
             channelId: channel_id,
             task: task,
             createdTimestamp: timestamp,
