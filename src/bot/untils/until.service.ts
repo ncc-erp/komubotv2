@@ -199,9 +199,36 @@ export class UntilService {
       .catch(console.error);
     return null;
   };
+
   getUserNameByEmail(string) {
     if (string.includes("@ncc.asia")) {
       return string.slice(0, string.length - 9);
     }
+  }
+
+  checkTime(time) {
+    if (!time) return false;
+    let result = false;
+    const curDate = new Date();
+    const timezone = curDate.getTimezoneOffset() / -60;
+    const fFistTime = new Date(
+      this.setTime(curDate, 6 + timezone, 0, 0, 0)
+    ).getTime();
+    const lFistTime = new Date(
+      this.setTime(curDate, 6 + timezone, 30, 0, 0)
+    ).getTime();
+
+    const lLastTime = new Date(
+      this.setTime(curDate, 10 + timezone, 25, 0, 0)
+    ).getTime();
+
+    if (
+      (time.getTime() >= fFistTime && time.getTime() < lFistTime) ||
+      time.getTime() >= lLastTime
+    ) {
+      result = true;
+    }
+
+    return result;
   }
 }

@@ -4,6 +4,9 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.MENTIONED)
 export class Mentioned {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: "text", nullable: true })
   messageId: string;
 
