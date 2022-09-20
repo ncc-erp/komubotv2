@@ -5,7 +5,7 @@ import { CheckList } from "src/bot/models/checklistdata.entity";
 import { Message } from "src/bot/models/msg.entity";
 import { Subcategorys } from "src/bot/models/subcategoryData.entity";
 import { User } from "src/bot/models/user.entity";
-import { WorkFromHome } from "src/bot/models/wfh.entity";
+import { WFH } from "src/bot/models/wfh.entity";
 import { Brackets, Repository } from "typeorm";
 
 @Injectable()
@@ -15,8 +15,8 @@ export class KomubotrestService {
         private userReposistory : Repository<User>,
         @InjectRepository(Message)
         private messageReposistory : Repository<Message>,
-        @InjectRepository(WorkFromHome)
-        private wfhReposistory : Repository<WorkFromHome>,
+        @InjectRepository(WFH)
+        private wfhReposistory : Repository<WFH>,
     ){}
     async findUserData(_pramams){
         return await this.userReposistory

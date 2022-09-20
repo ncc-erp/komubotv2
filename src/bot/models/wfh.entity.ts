@@ -1,9 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
-@Entity(TABLE.WFH)
-export class WorkFromHome {
+@Entity(TABLE.WTH)
+export class WFH{
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,14 +19,18 @@ export class WorkFromHome {
   @Column({ type: "date" })
   createdAt: Date;
 
-  @Column()
+  @Column({ type: "boolean" })
   complain: boolean;
-  @Column()
+
+  @Column({ type: "boolean" })
   pmconfirm: boolean;
+
   @Column({ type: "text" })
   status: string;
+
   @Column({ type: "text" })
   data: string;
+
   @Column({ type: "text" })
   type: string;
 }

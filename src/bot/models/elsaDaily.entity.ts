@@ -16,7 +16,7 @@ export class ElsaDaily {
   @Column({ nullable: false })
   daily: string;
 
-  @Column({ type: "boolean",default:false })
+  @Column({ type: "date",default:false })
   attachment: boolean;
 
   @Column({ type: 'date' })

@@ -1,6 +1,6 @@
 import { Message , Client, EmbedBuilder} from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
+import { sendErrorToDevTest } from "../../utils/komu.util";
 import { CompanytripService } from "./companytrip.service";
 
 

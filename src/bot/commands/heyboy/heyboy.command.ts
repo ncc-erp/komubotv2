@@ -1,8 +1,7 @@
-import { EmbedBuilder, Client, Message } from "discord.js";
-import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { KomubotrestController } from "../../untils/komubotrest/komubotrest.controller";
 import axios from "axios";
+import { EmbedBuilder } from "discord.js";
+import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { KomubotrestController } from "../../utils/komubotrest/komubotrest.controller";
 import { HeyboyService } from "./heyboy.service";
 
 @CommandLine({

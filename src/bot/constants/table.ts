@@ -1,5 +1,7 @@
 export const TABLE = {
-  DAILY: "komu_daily",
+  DAILY: 'komu_daily',
+  OPENTALK: 'komu_opentalk',
+  WTH: 'komu_wfh',
   BIRTHDAY: "komu_birthdays",
   BWL: "komu_bwl",
   WIKI: "komu_wiki",

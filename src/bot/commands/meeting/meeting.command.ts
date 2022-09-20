@@ -1,8 +1,8 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { MeetingService } from "./meeting.service";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { UntilService } from "src/bot/untils/until.service";
+import { sendErrorToDevTest } from "../../utils/komu.util";
+import { UntilService } from "../../utils/until.service";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { InjectRepository } from "@nestjs/typeorm";

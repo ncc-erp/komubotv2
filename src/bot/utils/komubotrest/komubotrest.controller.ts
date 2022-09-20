@@ -6,10 +6,11 @@ import {
   ButtonBuilder,
   EmbedBuilder,
 } from "discord.js";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { deleteMessage } from "../deleteMessage.until";
+
 import { KomubotrestService } from "./komubotrest.service";
-import { async } from "rxjs";
+import { sendErrorToDevTest } from "../komu.util";
+import { deleteMessage } from "../deleteMessage.utils";
+
 
 @Controller()
 export class KomubotrestController {

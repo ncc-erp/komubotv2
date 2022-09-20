@@ -1,33 +1,14 @@
 import { Injectable } from "@nestjs/common";
+import { subDays } from "date-fns";
 
 @Injectable()
 export class UntilService {
-  withoutFirstTime(dateTime) {
-    const date = new Date(dateTime);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-
-  withoutLastTime(dateTime) {
-    const date = new Date(dateTime);
-    date.setHours(23, 59, 59, 999);
-    return date;
-  }
-
   getYesterdayDate() {
-    const today = new Date();
-    const yesterday = new Date(this.withoutLastTime(today));
-    yesterday.setDate(yesterday.getDate() - 1);
-    console.log(new Date(yesterday).valueOf());
-
-    return new Date(yesterday).valueOf();
+    return subDays(new Date().setHours(23, 59, 59, 999), 1).getTime();
   }
 
   getTomorrowDate() {
-    const today = new Date();
-    const yesterday = new Date(this.withoutFirstTime(today));
-    yesterday.setDate(yesterday.getDate() + 1);
-    return new Date(yesterday).valueOf();
+    return subDays(new Date().setHours(0, 0, 0, 0), -1).getTime();
   }
   setTime(date, hours, minute, second, msValue) {
     return date.setHours(hours, minute, second, msValue);

@@ -1,3 +1,4 @@
+import { text } from "stream/consumers";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
@@ -69,7 +70,7 @@ export class User {
   @Column({ type: "text", nullable: true })
   last_bot_message_id: string;
 
-  @Column({})
+  @Column({ nullable: true })
   deactive: boolean;
 
   @Column({ type: "text", default: [] })

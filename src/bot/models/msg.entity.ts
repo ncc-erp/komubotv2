@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
@@ -10,37 +10,34 @@ export class Message {
   @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   guildId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "boolean" })
   deleted: boolean;
 
-  @Column({ nullable: true, unique: true })
-  id: string;
+  @Column({ type: "date" })
+  createdTimestamp: Date;
 
-  @Column({ type: "date", nullable: true })
-  createdTimestamp: number;
-
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   type: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "boolean" })
   system: boolean;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   content: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   author: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "boolean" })
   pinned: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: "boolean" })
   tts: boolean;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   nonce: string;
 
   @Column({ type: "text", nullable: true })
@@ -55,8 +52,8 @@ export class Message {
   @Column({ type: "text", nullable: true })
   stickers: string;
 
-  @Column({ nullable: false })
-  editedTimestamp: number;
+  @Column({ type: "date" })
+  editedTimestamp: Date;
 
   @Column({ type: "text", nullable: true })
   reactions: string;
@@ -64,24 +61,24 @@ export class Message {
   @Column({ type: "text", nullable: true })
   mentions: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   webhookId: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   groupActivityApplication: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   applicationId: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   activity: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "decimal" })
   flags: number;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   reference: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   interaction: string;
 }

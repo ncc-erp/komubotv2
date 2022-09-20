@@ -4,27 +4,29 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.CHANNEL)
 export class Channel {
-  @Column({ nullable: true })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column()
+  @Column({ type: "text" })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text" })
   type: string;
 
-  @Column()
+  @Column({ type: "boolean" })
   nsfw: boolean;
 
-  @Column()
+  @Column({ type: "text" })
   rawPosition: number;
 
-  @Column()
+  @Column({ type: "text" })
   lastMessageId: string;
 
-  @Column()
+  @Column({ type: "decimal" })
   rateLimitPerUser: number;
 
-  @Column()
-  parentId: string;
+  @Column({ type: "text" })
+  nsparentIdfw: string;
+    static find: any;
+  static updateOne: any;
 }

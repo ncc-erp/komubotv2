@@ -1,7 +1,8 @@
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { RequestOrder } from "src/bot/untils/requestorder.until";
+import { RequestOrder } from "src/bot/utils/requestorder.utils";
 import { ElsaService } from "./elsa.service";
+
 
 @CommandLine({
   name: "elsa",
@@ -39,7 +40,7 @@ export class ElsaCommand implements CommandLineClass {
         console.log('args : ', args)
         console.log('daily : ', daily)
         if (!daily || daily == undefined) {
-          console.log("lksjaf;lkasjfd")
+    
           return message
             .reply({
               content: "```please add your daily text```",

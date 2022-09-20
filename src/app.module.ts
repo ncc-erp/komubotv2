@@ -4,9 +4,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GatewayIntentBits } from 'discord.js';
+
 import { BotModule } from './bot/bot.module';
-
-
 
 
 @Module({
