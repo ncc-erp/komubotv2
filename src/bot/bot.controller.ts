@@ -1,10 +1,17 @@
 import { Controller, Get, Post, Req, Res } from "@nestjs/common";
 import { BotService } from "./bot.service";
 import { Request, Response } from "express";
+import { Message, Client } from "discord.js";
+import { InjectDiscordClient } from "@discord-nestjs/core";
 
 @Controller("bot")
 export class BotController {
-  constructor(private botService: BotService) {}
+  constructor(
+    private botService: BotService,
+    @InjectDiscordClient()
+    private client: Client
+  ) {}
+
   @Post("/getUserIdByUsername")
   async getUserIdByUsername(@Req() req: Request, @Res() res: Response) {
     return this.botService.getUserIdByUsername(req, res);
@@ -15,7 +22,7 @@ export class BotController {
   }
   @Post("/sendMessageToChannel")
   async sendMessageToChannel(@Req() req: Request, @Res() res) {
-    return this.botService.sendMessageToChannel(req, res);
+    return this.botService.sendMessageToChannel(req, res, this.client);
   }
   @Post("/sendImageCheckInToUser")
   async sendImageCheckInToUser(@Req() req: Request, @Res() res) {

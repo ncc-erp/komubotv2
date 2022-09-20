@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { subDays } from "date-fns";
 import { Repository } from "typeorm";
+import { TABLE } from "../constants/table";
 import { Holiday } from "../models/holiday.entity";
 
 @Injectable()
@@ -204,4 +205,81 @@ export class UntilService {
       return string.slice(0, string.length - 9);
     }
   }
+  sendMessageKomuToUser = async (
+    client,
+    msg,
+    username,
+    botPing = false,
+    isSendQuiz = false,
+    userData,
+    msgData
+  ) => {
+    try {
+      console.log(client, "asddsa");
+      const userdb = await userData
+        .createQueryBuilder("users")
+        .where(
+          '"email" = :email AND "deactive" IS NOT True OR "username" = :username AND "deactive" IS NOT True',
+          { email: username, username: username }
+        )
+        .select("users.*")
+        .execute()
+        .catch(console.error);
+      console.log(userdb, "hellocc");
+
+      if (!userdb) {
+        return null;
+      }
+      console.log(userdb[0].userId, "hello");
+      const user = await client.users.fetch(userdb.userId).catch(console.error);
+      if (msg == null) {
+        return user;
+      }
+      if (!user) {
+        // notify to machleo channel
+        const message = `<@${process.env.KOMUBOTREST_ADMIN_USER_ID}> ơi, đồng chí ${username} không đúng format rồi!!!`;
+        await client.channels.cache
+          .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
+          .send(message)
+          .catch(console.error);
+        return null;
+      }
+      const sent = await user.send(msg);
+      await msgData.insert(sent);
+
+      // botPing : work when bot send quiz wfh user
+      // isSendQuiz : work when bot send quiz
+      if (botPing && isSendQuiz) {
+        userdb.last_bot_message_id = sent.id;
+        userdb.botPing = true;
+      }
+      if (!botPing && isSendQuiz) {
+        userdb.last_bot_message_id = sent.id;
+      }
+
+      await userdb.save();
+      return user;
+    } catch (error) {
+      console.log("error", error);
+      const userDb = await userData
+        .createQueryBuilder(TABLE.USER)
+        .where(
+          '"email" = :email AND "deactive" IS NOT True OR "username" = :username AND "deactive" IS NOT True',
+          { email: username, username: username }
+        )
+        .execute()
+        .catch(console.error);
+      const message = `KOMU không gửi được tin nhắn cho <@${userDb.userId}>(${userDb.email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
+      await client.channels.cache
+        .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
+        .send(message)
+        .catch(console.error);
+      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb.id}(${userDb.email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
+      await client.channels.cache
+        .get(process.env.KOMUBOTREST_ITADMIN_CHANNEL_ID)
+        .send(messageItAdmin)
+        .catch(console.error);
+      return null;
+    }
+  };
 }

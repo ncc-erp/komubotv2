@@ -15,7 +15,7 @@ export class Msg {
 
   @Column({ type: "boolean" })
   deleted: boolean;
-  
+
   @Column({ type: "date" })
   createdTimestamp: Date;
 
@@ -40,25 +40,25 @@ export class Msg {
   @Column({ type: "text" })
   nonce: string;
 
-  @Column({})
+  @Column({ type: "text", array: true })
   embeds: string[];
 
-  @Column({})
+  @Column({ type: "text", array: true })
   components: string[];
 
-  @Column({})
+  @Column({ type: "text", array: true })
   attachments: string[];
 
-  @Column({})
+  @Column({ type: "text", array: true })
   stickers: string[];
 
   @Column({ type: "date" })
   editedTimestamp: Date;
 
-  @Column({})
+  @Column({ type: "text", array: true })
   reactions: string[];
 
-  @Column({})
+  @Column({ type: "text", array: true })
   mentions: string[];
 
   @Column({ type: "text" })

@@ -45,6 +45,7 @@ import { NotifiService } from "./commands/notification/noti.service";
 import NotificationCommand from "./commands/notification/noti.controller";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
+import { Msg } from "./models/msg.entity";
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ToggleActiveService } from "./commands/toggleActive/toggleActive.servic
       VoiceChannels,
       WorkFromHome,
       Remind,
+      Msg,
     ]),
     forwardRef(() => CheckListModule),
     CompanyModule,

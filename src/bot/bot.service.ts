@@ -1,14 +1,21 @@
 import { Body, HttpCode, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Not, Raw, Repository } from "typeorm";
+import { Msg } from "./models/msg.entity";
 import { User } from "./models/user.entity";
+import { UntilService } from "./untils/until.service";
 
 @Injectable()
 export class BotService {
   constructor(
     @InjectRepository(User)
-    public userData: Repository<User>
+    private userData: Repository<User>,
+    @InjectRepository(Msg)
+    private msgData: Repository<Msg>,
+    private utilService: UntilService
   ) {}
+
+  // sendMessageToChannel(){}
 
   getAll() {
     return this.userData.find();
@@ -47,7 +54,48 @@ export class BotService {
     res.status(200).send({ username: req.body.username, userid: userdb.id });
   }
   sendMessageToUser(req, res) {}
-  sendMessageToChannel(req, res) {}
+
+  async sendMessageToChannel(req, res, client) {
+    if (
+      !req.get("X-Secret-Key") ||
+      req.get("X-Secret-Key") !== process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY
+    ) {
+      res.status(403).send({ message: "Missing secret key!" });
+      return;
+    }
+
+    if (!req.body.username) {
+      res.status(400).send({ message: "username can not be empty!" });
+      return;
+    }
+
+    if (!req.body.message) {
+      res.status(400).send({ message: "Message can not be empty!" });
+      return;
+    }
+    const username = req.body.username;
+    const message = req.body.message;
+
+    try {
+      const user = await this.utilService.sendMessageKomuToUser(
+        client,
+        message,
+        username,
+        false,
+        false,
+        this.userData,
+        this.msgData
+      );
+      if (!user) {
+        res.status(400).send({ message: "Error!" });
+        return;
+      }
+      res.status(200).send({ message: "Successfully!" });
+    } catch (error) {
+      console.log("error", error);
+      res.status(400).send({ message: error });
+    }
+  }
   sendImageCheckInToUser(req, res) {}
   sendImageLabelToUser(req, res) {}
   sendMessageToMachLeo(req, res) {}
