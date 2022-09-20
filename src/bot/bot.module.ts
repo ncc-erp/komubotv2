@@ -40,6 +40,8 @@ import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminde
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { HttpModule } from "@nestjs/axios";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
+import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 
 @Module({
   imports: [
@@ -81,6 +83,7 @@ import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.comman
     ReportTracker,
     // TestCommand,
     MeetingCommand,
+    TimeSheetCommand,
     MeetingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
