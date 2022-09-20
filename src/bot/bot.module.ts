@@ -29,8 +29,10 @@ import { UntilService } from "./untils/until.service";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
 import { MeetingService } from "./commands/meeting/meeting.service";
 import { Remind } from "./models/reminder.entity";
-import { MeetingSchedulerService } from "./scheduler/meetingScheduler/meetingScheduler.service";
-import { ReminderSchedulerService } from "./scheduler/reminderScheduler/reminder.service";
+import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
+import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
+import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
+import {HttpModule} from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { ReminderSchedulerService } from "./scheduler/reminderScheduler/reminder
     forwardRef(() => CheckListModule),
     CompanyModule,
     NestjsScheduleModule.forRoot(),
+    HttpModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -65,6 +68,7 @@ import { ReminderSchedulerService } from "./scheduler/reminderScheduler/reminder
     UntilService,
     MeetingSchedulerService,
     ReminderSchedulerService,
+    SendMessageSchedulerService,
     MeetingService,
   ],
   controllers: [BotController],

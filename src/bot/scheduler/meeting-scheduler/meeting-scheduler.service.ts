@@ -41,6 +41,9 @@ export class MeetingSchedulerService {
     this.addCronJob("tagMeeting", CronExpression.EVERY_MINUTE, () =>
       this.tagMeeting(this.client)
     );
+    this.addCronJob("updateReminderMeeting", CronExpression.EVERY_MINUTE, () =>
+      this.updateReminderMeeting()
+    );
   }
 
   async tagMeeting(client: any) {
@@ -403,5 +406,48 @@ export class MeetingSchedulerService {
       }
     });
     console.log("end meeting");
+  }
+
+  async updateReminderMeeting() {
+    if (await this.untilService.checkHoliday()) return;
+    const repeatMeet = await this.meetingReposistory.find({
+      where: {
+        reminder: true,
+      },
+    });
+
+    const dateTimeNow = new Date();
+    dateTimeNow.setHours(dateTimeNow.getHours() + 7);
+    const hourDateNow = dateTimeNow.getHours();
+    const minuteDateNow = dateTimeNow.getMinutes();
+
+    repeatMeet.map(async (item) => {
+      let checkFiveMinute;
+      let hourTimestamp;
+      const dateScheduler = new Date(+item.createdTimestamp);
+
+      const minuteDb = dateScheduler.getMinutes();
+      if (minuteDb >= 0 && minuteDb <= 4) {
+        checkFiveMinute = minuteDb + 60 - minuteDateNow;
+        const hourDb = dateScheduler;
+        const setHourTimestamp = hourDb.setHours(hourDb.getHours() - 1);
+        hourTimestamp = new Date(setHourTimestamp).getHours();
+      } else {
+        checkFiveMinute = minuteDateNow - minuteDb;
+        hourTimestamp = dateScheduler.getHours();
+      }
+      if (hourDateNow === hourTimestamp && checkFiveMinute > 5)
+        if (item.repeat === "once") {
+          await this.meetingReposistory.update(
+            { id: item.id },
+            { cancel: true }
+          );
+        } else {
+          await this.meetingReposistory.update(
+            { id: item.id },
+            { reminder: false }
+          );
+        }
+    });
   }
 }

@@ -1,0 +1,152 @@
+import { Injectable, Logger } from "@nestjs/common";
+import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
+import { Client } from "discord.js";
+import { UntilService } from "src/bot/untils/until.service";
+import { InjectDiscordClient } from "@discord-nestjs/core";
+import { CronJob } from "cron";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/bot/models/user.entity";
+import { Repository } from "typeorm";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+import { config } from "src/bot/constants/config";
+
+@Injectable()
+export class SendMessageSchedulerService {
+  constructor(
+    private untilService: UntilService,
+    // @InjectRepository(Meeting)
+    // private meetingReposistory: Repository<Meeting>,
+    private readonly http: HttpService,
+    @InjectRepository(User)
+    private userReposistory: Repository<User>,
+    private schedulerRegistry: SchedulerRegistry,
+    @InjectDiscordClient()
+    private client: Client
+  ) {}
+
+  private readonly logger = new Logger(SendMessageSchedulerService.name);
+
+  addCronJob(name: string, time: string, callback: () => void): void {
+    const job = new CronJob(time, () => {
+      this.logger.warn(`time (${time}) for job ${name} to run!`);
+      callback();
+    });
+
+    this.schedulerRegistry.addCronJob(name, job);
+    job.start();
+
+    this.logger.warn(`job ${name} added for each minute at ${time} seconds!`);
+  }
+
+  // Start cron job
+  startCronJobs(): void {
+    // this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
+    //   this.sendSubmitTimesheet(this.client)
+    // );
+  }
+
+  async sendMessagePMs(client) {
+    if (await this.untilService.checkHoliday()) return;
+    const userDiscord = await client.channels.fetch("921787088830103593");
+    userDiscord
+      .send(
+        `Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report tuần này đi.`
+      )
+      .catch(console.error);
+  }
+
+  async sendMessTurnOffPc(client) {
+    if (await this.untilService.checkHoliday()) return;
+    const staffRoleId = "921328149927690251";
+    const channel = await client.channels.fetch("921239541388554240");
+    const roles = await channel.guild.roles.fetch(staffRoleId);
+    roles.members.map((member) => {
+      try {
+        member
+          .send("Nhớ tắt máy trước khi ra về nếu không dùng nữa nhé!!!")
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  }
+
+  async sendSubmitTimesheet(client) {
+    let getListUserLogTimesheet;
+    try {
+      getListUserLogTimesheet = await firstValueFrom(
+        this.http
+          .get(config.submitTimesheet.api_url_getListUserLogTimesheet)
+          .pipe((res) => res)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (!getListUserLogTimesheet) {
+      return;
+    }
+    getListUserLogTimesheet.data.result.map(async (item) => {
+      const list = this.untilService.getUserNameByEmail(item.emailAddress);
+      const checkUser = await this.userReposistory
+        .createQueryBuilder("user")
+        .where(`"email" = :email`, {
+          email: list,
+        })
+        .andWhere(`"deactive" IS NOT TRUE`)
+        // .andWhere(`"roles_discord" IS NOT TRUE`)
+        // roles_discord: { $ne: [], $exists: true },
+        .select("user.*")
+        .execute();
+
+      checkUser.map(async (user) => {
+        const userDiscord = await client.users
+          .fetch(user.userId)
+          .catch(console.error);
+        userDiscord
+          .send(
+            `Nhớ submit timesheet cuối tuần tránh bị phạt bạn nhé!!! Nếu bạn có tham gia opentalk bạn hãy log timesheet vào project company activities nhé.`
+          )
+          .catch(console.error);
+      });
+    });
+  }
+
+  // async remindCheckout(client) {
+  //   if (await this.untilService.checkHoliday()) return;
+  //   try {
+  //     const listsUser = await await firstValueFrom(
+  //       this.http
+  //         .get(`${process.env.CHECKIN_API}/v1/employees/report-checkin`, {
+  //           headers: {
+  //             "X-Secret-Key": `${process.env.CHECKIN_API_KEY_SECRET}`,
+  //           },
+  //         })
+  //         .pipe((res) => res)
+  //     );
+  //     const userListNotCheckIn = listsUser.data.filter(
+  //       (user) => user.checkout === null
+  //     );
+  //     const { userOffFullday } = await getUserOffWork();
+
+  //     userListNotCheckIn.map(async (user) => {
+  //       const checkUser = await userData.findOne({
+  //         $or: [{ email: user.komuUserName }, { username: user.komuUserName }],
+  //         email: { $nin: [...userOffFullday] },
+  //         deactive: { $ne: true },
+  //       });
+  //       if (checkUser && checkUser !== null) {
+  //         const userDiscord = await client.users.fetch(checkUser.id);
+  //         userDiscord
+  //           .send(`Đừng quên checkout trước khi ra về nhé!!!`)
+  //           .catch(console.error);
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+}

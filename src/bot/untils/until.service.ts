@@ -190,4 +190,10 @@ export class UntilService {
 
     return `${d} ${t}`;
   }
+
+  getUserNameByEmail(string) {
+    if (string.includes("@ncc.asia")) {
+      return string.slice(0, string.length - 9);
+    }
+  }
 }
