@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.WTH)
-export class Wth {
+export class WorkFromHome {
   @PrimaryGeneratedColumn()
   id: number;
 
