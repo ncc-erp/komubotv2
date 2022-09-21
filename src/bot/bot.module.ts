@@ -44,7 +44,14 @@ import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
+<<<<<<< HEAD
 import { CheckListModule } from "./utils/checklist/checklist.module";
+=======
+import { NotifiService } from "./commands/notification/noti.service";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
+import NotificationCommand from "./commands/notification/noti.command";
+>>>>>>> a36cf0734194484f32e975b6e52c69ad3e718731
 
 @Module({
   imports: [
