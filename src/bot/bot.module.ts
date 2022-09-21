@@ -20,32 +20,33 @@ import { WFHCommand } from "./commands/wfh/wfh.command";
 // import { TestCommand } from "./commands/test";
 // import LeaveCommand from "./commands/leave.command";
 // import OrderCommand from "./commands/order.command";
+import { HttpModule } from "@nestjs/axios";
+import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
+import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
+import { HeyboyService } from "./commands/heyboy/heyboy.service";
+import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
+import { Msg } from "./models/msg.entity";
 import { Order } from "./models/order.entity";
 import { Remind } from "./models/remind.entity";
 import { User } from "./models/user.entity";
 import { VoiceChannels } from "./models/voiceChannel.entity";
 import { WorkFromHome } from "./models/wfh.entity";
-import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
-import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
-import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
 import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
 import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
-import { HttpModule } from "@nestjs/axios";
-import { OrderCommand } from "./commands/order/order.command";
-import { OrderService } from "./commands/order/order.service";
+import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
+import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { ReportTracker } from "./utils/report-tracker";
+import { UtilsService } from "./utils/utils.service";
+import NotificationCommand from "./commands/ncc8/ncc8.command";
 import { NotifiService } from "./commands/notification/noti.service";
-import NotificationCommand from "./commands/notification/noti.controller";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
-import { UtilsService } from "./utils/utils.service";
-import { ReportTracker } from "./utils/report-tracker";
-import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
       Meeting,
       VoiceChannels,
       WorkFromHome,
+      Msg,
       Remind,
     ]),
     forwardRef(() => CheckListModule),
@@ -75,8 +77,6 @@ import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
     BotGateway,
     DailyCommand,
     MeetingCommand,
-    OrderCommand,
-    OrderService,
     holidayCommand,
     // LeaveCommand,
     WFHCommand,

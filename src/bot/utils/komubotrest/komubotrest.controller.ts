@@ -8,8 +8,9 @@ import {
 } from "discord.js";
 
 import { KomubotrestService } from "./komubotrest.service";
-import { sendErrorToDevTest } from "../komu.util";
+
 import { deleteMessage } from "../deleteMessage.utils";
+import { sendErrorToDevTest } from "../komubotrest.utils";
 
 
 @Controller()
@@ -325,7 +326,7 @@ export class KomubotrestController {
     const userdb = await this.komubotrestService.findUserData(
       req.body.username
     );
-    let userid = "";
+    let userid : number;
     req.body.message = ` không trả lời tin nhắn WFH lúc ${req.body.createdate} !\n`;
 
     if (!userdb) {

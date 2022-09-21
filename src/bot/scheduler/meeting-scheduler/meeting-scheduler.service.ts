@@ -61,7 +61,7 @@ export class MeetingSchedulerService {
       .andWhere(`"cancel" IS NOT TRUE`)
       .select("meeting.*")
       .execute();
-    console.log("repeatMeet", repeatMeet);
+   
 
     const voiceChannel = getAllVoice.map((item) => item.id);
 
