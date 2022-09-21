@@ -12,7 +12,7 @@ import { Repository } from "typeorm";
   name: "ncc8",
   description: "Ncc8",
 })
-export default class NotificationCommand implements CommandLineClass {
+export default class Ncc8Command implements CommandLineClass {
   constructor(
     @InjectRepository(Uploadfile)
     private uploadFileData: Repository<Uploadfile>,
