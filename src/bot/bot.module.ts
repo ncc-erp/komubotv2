@@ -53,6 +53,8 @@ import { OrderCommand } from "./commands/order/order.command";
 import { OrderService } from "./commands/order/order.service";
 import { Opentalk } from "./models/opentalk.entity";
 import { UtilsModule } from "./utils/utils.module";
+import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
+import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 
 @Module({
   imports: [
@@ -72,6 +74,7 @@ import { UtilsModule } from "./utils/utils.module";
       WorkFromHome,
       Msg,
       Remind,
+      Opentalk,
       Uploadfile,
       Opentalk,
     ]),
@@ -100,6 +103,8 @@ import { UtilsModule } from "./utils/utils.module";
     ReportTracker,
     // TestCommand,
     TimeSheetCommand,
+    OpenTalkCommand,
+    OpenTalkService,
     MeetingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
