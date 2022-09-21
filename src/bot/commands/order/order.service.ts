@@ -25,6 +25,7 @@ export class OrderService {
       .select("orders.*")
       .execute();
   }
+
   async upDateUserCancel(item) {
     return await this.orderReposistory
       .createQueryBuilder("orders")
@@ -33,6 +34,7 @@ export class OrderService {
       .where("id = :id", { id: item.id })
       .execute();
   }
+
   async getListUserOrderPending(channelId, author, username) {
     return await this.orderReposistory
       .createQueryBuilder("orders")
@@ -47,6 +49,7 @@ export class OrderService {
       .select("orders.*")
       .execute();
   }
+
   async getListUserFinish(channelId, yesterdayDate, tomorrowDate) {
     const arrayUser = await this.orderReposistory
       .createQueryBuilder("orders")
@@ -95,6 +98,7 @@ export class OrderService {
       .select("orders.*")
       .execute();
   }
+  
   async order(channelId, author, username, list) {
     return await this.orderReposistory.insert({
       channelId: channelId,
