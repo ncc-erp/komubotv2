@@ -1,5 +1,5 @@
 import { DiscordModule } from "@discord-nestjs/core";
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
@@ -42,16 +42,9 @@ import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminde
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
-<<<<<<< HEAD
-import { CheckListModule } from "./utils/checklist/checklist.module";
-=======
-import { NotifiService } from "./commands/notification/noti.service";
-import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
-import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
-import NotificationCommand from "./commands/notification/noti.command";
->>>>>>> a36cf0734194484f32e975b6e52c69ad3e718731
 
 @Module({
   imports: [
