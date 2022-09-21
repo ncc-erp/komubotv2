@@ -4,7 +4,6 @@ import { sendErrorToDevTest } from 'src/bot/utils/komubotrest.utils';
 
 import { CheckListService } from "./checklist.service";
 
-
 let categorys = ['tester', 'loren', 'inter', 'dev', 'hr'];
 let subcategorys = [];
 let arr = [];
