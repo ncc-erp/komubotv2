@@ -7,7 +7,7 @@ import { UtilsService } from "src/bot/utils/utils.service";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Remind } from "src/bot/models/reminder.entity";
+import { Remind } from "src/bot/models/remind.entity";
 
 @Injectable()
 export class ReminderSchedulerService {
