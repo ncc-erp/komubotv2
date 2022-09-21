@@ -5,9 +5,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
-import { CheckListModule } from "./commands/Checklist/checklist.module";
-import { CompantripCommand } from "./commands/Companytrip/companytrip.command";
-import { CompanyModule } from "./commands/Companytrip/companytrip.module";
+import { CheckListModule } from "./commands/checklist/checklist.module";
+import { CompantripCommand } from "./commands/companytrip/companytrip.command";
+import { CompanyModule } from "./commands/companytrip/companytrip.module";
 
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
@@ -37,8 +37,8 @@ import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-s
 import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { HttpModule } from "@nestjs/axios";
-import { OrderCommand } from "./commands/Order/order.command";
-import { OrderService } from "./commands/Order/order.service";
+import { OrderCommand } from "./commands/order/order.command";
+import { OrderService } from "./commands/order/order.service";
 import { NotifiService } from "./commands/notification/noti.service";
 import NotificationCommand from "./commands/notification/noti.controller";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";

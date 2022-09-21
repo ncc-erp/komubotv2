@@ -20,6 +20,7 @@ export class CheckListService {
       .getMany();
     return checklists;
   }
+  
   async findCheckList(optionSubcategoryId: number) {
     return await this.subcategorysReposistory
       .createQueryBuilder(TABLE.SUBCATEGORYS)
