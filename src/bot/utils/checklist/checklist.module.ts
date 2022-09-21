@@ -1,8 +1,7 @@
-import {Global, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CheckList } from 'src/bot/models/checklist.entity';
 import { Subcategorys } from 'src/bot/models/subcategoryData.entity';
-import { ChecklistCommand } from '../checklist.command'
 import { CheckListController } from "./checklist.controller";
 import { CheckListService } from "./checklist.service";
 
@@ -17,8 +16,5 @@ import { CheckListService } from "./checklist.service";
     providers : [
         CheckListService, CheckListController
     ],
-    // controllers : [
-    //     CheckListController,
-    // ]
 })
 export class CheckListModule{}

@@ -1,6 +1,6 @@
-import { Message , Client, EmbedBuilder} from "discord.js";
+import { Client, EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { CompanytripService } from "./companytrip.service";
 
 @CommandLine({
@@ -8,7 +8,7 @@ import { CompanytripService } from "./companytrip.service";
     description: 'NCC company trip',
 })
 export class CompantripCommand implements CommandLineClass {
-  constructor( private companytripService : CompanytripService ) {}
+  constructor( private companytripService : CompanytripService ,  private komubotrestController : KomubotrestController,) {}
     private client : Client;
     private currentYear : string = '2022';
     transArgs(userArgs){
@@ -36,7 +36,7 @@ export class CompantripCommand implements CommandLineClass {
                   ephemeral: true,
                 })
                 .catch((err) => {
-                  sendErrorToDevTest(this.client, authorId, err);
+                  this.komubotrestController.sendErrorToDevTest(this.client, authorId, err);
                 });
             }
     
@@ -57,7 +57,7 @@ export class CompantripCommand implements CommandLineClass {
                 .setColor(0xed4245)
                 .setDescription(`${messMention}`);
               await message.reply({ embeds: [EmbedMention] }).catch((err) => {
-                sendErrorToDevTest(this.client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(this.client, authorId, err);
               });
             });
           } else {
@@ -72,7 +72,7 @@ export class CompantripCommand implements CommandLineClass {
                   ephemeral: true,
                 })
                 .catch((err) => {
-                  sendErrorToDevTest(this.client, authorId, err);
+                  this.komubotrestController.sendErrorToDevTest(this.client, authorId, err);
                 });
             }
     
@@ -93,7 +93,7 @@ export class CompantripCommand implements CommandLineClass {
                 .setColor(0xed4245)
                 .setDescription(`${mess}`);
               await message.reply({ embeds: [Embed] }).catch((err) => {
-                sendErrorToDevTest(this.client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(this.client, authorId, err);
               });
             });
           }

@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { ReportTracker } from "src/bot/utils/report-tracker";
 
 const messHelp =
@@ -16,7 +16,7 @@ const messHelp =
   description: "WFH",
 })
 export class WFHCommand implements CommandLineClass {
-  constructor(private readonly reqortTracker: ReportTracker) {}
+  constructor(private readonly reqortTracker: ReportTracker,  private komubotrestController : KomubotrestController,) {}
   async execute(message: Message, args, client, authorId) {
     try {
       if (args[0] === "daily") {
@@ -44,7 +44,7 @@ export class WFHCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           for (let i = 0; i <= Math.ceil(data.length / 50); i += 1) {
@@ -64,7 +64,7 @@ export class WFHCommand implements CommandLineClass {
                 //   ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           }
         }
@@ -103,7 +103,7 @@ export class WFHCommand implements CommandLineClass {
                 //   ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           } else {
             for (let i = 0; i <= Math.ceil(data.length / 50); i += 1) {
@@ -123,7 +123,7 @@ export class WFHCommand implements CommandLineClass {
                   // ephemeral: true,
                 })
                 .catch((err) => {
-                  sendErrorToDevTest(client, authorId, err);
+                  this.komubotrestController.sendErrorToDevTest(client, authorId, err);
                 });
             }
           }
@@ -135,7 +135,7 @@ export class WFHCommand implements CommandLineClass {
             // ephemeral: true
           })
           .catch((err) => {
-            sendErrorToDevTest(client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
       }
       if (!args[0]) {
@@ -160,7 +160,7 @@ export class WFHCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           for (let i = 0; i <= Math.ceil(data.length / 50); i += 1) {
@@ -180,7 +180,7 @@ export class WFHCommand implements CommandLineClass {
                 //   ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           }
         }

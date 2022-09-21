@@ -4,7 +4,7 @@ import { Message, EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { AudioPlayer } from "src/bot/utils/audioPlayer.utils";
-import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
 
@@ -17,7 +17,7 @@ export default class NotificationCommand implements CommandLineClass {
     @InjectRepository(Uploadfile)
     private uploadFileData: Repository<Uploadfile>,
     private utils: UtilsService,
-    private audioPlayer: AudioPlayer
+    private audioPlayer: AudioPlayer,  private komubotrestController : KomubotrestController,
   ) {}
 
   async execute(message: Message, args, client) {
@@ -34,7 +34,7 @@ export default class NotificationCommand implements CommandLineClass {
         } else if (Array.isArray(dataMp3) && dataMp3.length === 0) {
           let mess = "```" + "Không có NCC nào" + "```";
           return message.reply(mess).catch((err) => {
-            sendErrorToDevTest(client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
         } else {
           for (let i = 0; i <= Math.ceil(dataMp3.length / 50); i += 1) {
@@ -49,7 +49,7 @@ export default class NotificationCommand implements CommandLineClass {
               .setColor("Red")
               .setDescription(`${mess}`);
             await message.reply({ embeds: [Embed] }).catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
           }
         }
@@ -58,14 +58,14 @@ export default class NotificationCommand implements CommandLineClass {
           return message
             .reply("```" + "*ncc8 play episode" + "```")
             .catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
         }
         if (!this.utils.checkNumber(args[1])) {
           return message
             .reply("```" + "episode must be number" + "```")
             .catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
         }
         await this.audioPlayer.audioPlayer(client, message, args[1]);
@@ -73,7 +73,7 @@ export default class NotificationCommand implements CommandLineClass {
         return message
           .reply("```" + "*ncc8 play episode" + "```")
           .catch((err) => {
-            sendErrorToDevTest(client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
       }
     } catch (err) {
