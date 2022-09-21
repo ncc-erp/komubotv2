@@ -7,6 +7,7 @@ import { OrderService } from "./order.service";
   name: "order",
   description: "order",
 })
+
 export class OrderCommand implements CommandLineClass {
   constructor(
     private orderService: OrderService,
