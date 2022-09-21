@@ -1,5 +1,7 @@
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder, Client } from "discord.js";
+import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
+import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { DataSource, Repository } from "typeorm";
@@ -20,7 +22,11 @@ const messHelpDaily =
   description: "report",
 })
 export class ReportCommand implements CommandLineClass {
-  constructor(private reportService: ReportOrderService) {}
+  constructor(
+    private reportOrderService: ReportOrderService,
+    private reportHolidayService: ReportHolidayService,
+    private reportOpentalkService: ReportOpenTalkService
+  ) {}
 
   async execute(message: Message, args, client: Client) {
     try {
@@ -61,15 +67,15 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "womenday") {
         // await reportWomenDay(message);
       } else if (args[0] === "order") {
-        await this.reportService.reportOrder(message);
+        await this.reportOrderService.reportOrder(message);
       } else if (args[0] === "opentalk") {
-        // await reportOpentalk(message);
+        await this.reportOpentalkService.reportOpentalk(message);
       } else if (args[0] === "komuweekly") {
         // await handleKomuWeeklyReport(message, args, client, guildDB);
       } else if (args[0] === "tracker") {
         // await reportTracker(message, args, client);
       } else if (args[0] === "holiday") {
-        // await reportHoliday(message, args, client);
+        await this.reportHolidayService.reportHoliday(message, args, client);
       } else if (args[0] === "ts") {
         // await reportCheckout(message, args, client);
       } else if (args[0] === "help") {

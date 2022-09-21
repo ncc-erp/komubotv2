@@ -13,6 +13,6 @@ export class Opentalk {
   @Column({ type: "text" })
   username: string;
 
-  @Column({ type: "date" })
-  date: Date;
+  @Column({ type: "decimal" })
+  createdTimestamp: number;
 }
