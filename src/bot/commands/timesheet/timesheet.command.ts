@@ -1,8 +1,15 @@
-import { debug } from "console";
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
-import { checkHelpMessage, getDebug, getProjectOfUser, logTimeSheetForTask, parseTimesheetMessage, validateTimesheetFormat } from "src/bot/utils/timesheet.until";
+import {
+  parseTimesheetMessage,
+  debug,
+  checkHelpMessage,
+  getProjectOfUser,
+  validateTimesheetFormat,
+  getDebug,
+  logTimeSheetForTask,
+} from "src/bot/utils/timesheet.until";
 
 const messHelp = `
 Please log timesheet follow this template:
