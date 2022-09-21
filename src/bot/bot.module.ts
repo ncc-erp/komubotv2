@@ -49,11 +49,10 @@ import { ToggleActiveService } from "./commands/toggleActive/toggleActive.servic
 import NotificationCommand from "./commands/notification/noti.command";
 import { MulterModule } from "@nestjs/platform-express";
 import { Uploadfile } from "./models/uploadFile.entity";
-import { ReportOrderModule } from "./utils/reportOrder/reportOrder.module";
 import { OrderCommand } from "./commands/order/order.command";
 import { OrderService } from "./commands/order/order.service";
-import { ReportCommand } from "./commands/report/report.command";
-import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
+import { Opentalk } from "./models/opentalk.entity";
+import { UtilsModule } from "./utils/utils.module";
 
 @Module({
   imports: [
@@ -74,12 +73,13 @@ import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
       Msg,
       Remind,
       Uploadfile,
+      Opentalk,
     ]),
     forwardRef(() => CheckListModule),
     CompanyModule,
     NestjsScheduleModule.forRoot(),
     HttpModule,
-    ReportOrderModule,
+    UtilsModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -110,8 +110,6 @@ import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
     NotificationCommand,
     OrderCommand,
     OrderService,
-    ReportCommand,
-    ReportOrderService,
   ],
   controllers: [BotController],
 })

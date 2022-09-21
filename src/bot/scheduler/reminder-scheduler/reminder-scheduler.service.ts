@@ -38,7 +38,7 @@ export class ReminderSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("sendMessageReminder", "30 08 * * 0-6", () =>
+    this.addCronJob("sendMessageReminder", "00 30 08 * * 0-6", () =>
       this.pingReminder(this.client)
     );
   }

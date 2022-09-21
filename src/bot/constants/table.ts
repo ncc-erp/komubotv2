@@ -23,7 +23,6 @@ export const TABLE = {
   QUESTION: "komu_question",
   PENATLY: "komu_penatly",
   ORDER: "komu_order",
-  OPEN_TALK: "komu_opentalk",
   MSG: "komu_msg",
   MENTIONED: "komu_metioned",
   MEETING: "komu_meeting",
