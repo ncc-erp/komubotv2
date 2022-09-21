@@ -10,11 +10,7 @@ export class Order {
   @Column({ type: "text" })
   userId: string;
 
-<<<<<<< HEAD
-  @Column({ type: "text" })
-=======
   @Column({ type: "text", nullable: true })
->>>>>>> task/entity
   channelId: string;
 
   @Column({ type: "text" })
@@ -28,8 +24,4 @@ export class Order {
 
   @Column({ type: "decimal" })
   createdTimestamp: number;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> task/entity

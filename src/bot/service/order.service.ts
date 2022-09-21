@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { EmbedBuilder } from "discord.js";
 import { TABLE } from "../constants/table";
-import { UntilService } from "../untils/until.service";
+import { UtilsService } from "../utils/utils.service";
 
 @Injectable()
 export class OrderService {
-  constructor(private untilService: UntilService) {}
+  constructor(private utilsService: UtilsService) {}
   async orderCommand(message, args, orderData, Order) {
     try {
       let channelId = message.channelId;
@@ -66,12 +66,12 @@ export class OrderService {
             .andWhere(
               `${
                 TABLE.ORDER
-              }.createdTimestamp > ${this.untilService.getYesterdayDate()}`
+              }.createdTimestamp > ${this.utilsService.getYesterdayDate()}`
             )
             .andWhere(
               `${
                 TABLE.ORDER
-              }.createdTimestamp < ${this.untilService.getTomorrowDate()}`
+              }.createdTimestamp < ${this.utilsService.getTomorrowDate()}`
             )
             .execute();
           let mess;

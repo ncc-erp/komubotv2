@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "discord.js";
 import { TABLE } from "src/bot/constants/table";
-import { Leave } from "src/bot/models/leave.enity";
+import { Leave } from "../../models/leave.entity";
 import { Repository } from "typeorm";
 
 interface ILeave{

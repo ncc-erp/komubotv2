@@ -1,12 +1,12 @@
-import { DiscordModule } from '@discord-nestjs/core';
-import * as Joi from '@hapi/joi';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { GatewayIntentBits } from 'discord.js';
+import { DiscordModule } from "@discord-nestjs/core";
+import * as Joi from "@hapi/joi";
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { GatewayIntentBits } from "discord.js";
 
-import { BotModule } from './bot/bot.module';
-import { CheckListModule } from './bot/commands/Checklist/checklist.module';
+import { BotModule } from "./bot/bot.module";
+import { CheckListModule } from "./bot/commands/checklist/checklist.module";
 
 @Module({
   imports: [
@@ -25,12 +25,12 @@ import { CheckListModule } from './bot/commands/Checklist/checklist.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('POSTGRES_HOST'),
-        port: configService.get('POSTGRES_PORT'),
-        username: configService.get('POSTGRES_USER'),
-        password: configService.get('POSTGRES_PASSWORD'),
-        database: configService.get('POSTGRES_DB'),
+        type: "postgres",
+        host: configService.get("POSTGRES_HOST"),
+        port: configService.get("POSTGRES_PORT"),
+        username: configService.get("POSTGRES_USER"),
+        password: configService.get("POSTGRES_PASSWORD"),
+        database: configService.get("POSTGRES_DB"),
         // entities: [__dirname + '/../**/*.entity.ts'],
         autoLoadEntities: true,
         synchronize: true,
@@ -39,7 +39,7 @@ import { CheckListModule } from './bot/commands/Checklist/checklist.module';
     DiscordModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
+        token: configService.get("TOKEN"),
         discordClientOptions: {
           intents: [
             GatewayIntentBits.Guilds,
@@ -49,7 +49,7 @@ import { CheckListModule } from './bot/commands/Checklist/checklist.module';
         },
         registerCommandOptions: [
           {
-            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            forGuild: configService.get("GUILD_ID_WITH_COMMANDS"),
             removeCommandsBefore: true,
           },
         ],

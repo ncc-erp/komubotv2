@@ -54,6 +54,6 @@ export class BotController {
 
   @Get("GetAll")
   async findAll() {
-    return this.botService.findAll();
+    return this.botService.getAll();
   }
 }

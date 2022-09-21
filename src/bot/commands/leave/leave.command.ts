@@ -4,10 +4,10 @@ import { getTomorrowDate, getYesterdayDate } from "../../utils/date.utils";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 
-import { Leave } from "../../models/leave.enity";
+import { Leave } from "../../models/leave.entity";
 import { TABLE } from "../../constants/table";
-import { sendErrorToDevTest } from "../../untils/komu.until";
 import { LeaveService } from "./leave.service";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 
 @CommandLine({
   name: "leave",
@@ -38,6 +38,7 @@ export default class LeaveCommand implements CommandLineClass {
       }
       const reason = args.slice(1, args.length).join(" ");
       await this.leaveService.saveLeave(message, {minute: minute, reason: reason})
+      
 
       return message.reply("`✅` Leave saved").catch((err) => {
         sendErrorToDevTest(Client, authorId, err);
