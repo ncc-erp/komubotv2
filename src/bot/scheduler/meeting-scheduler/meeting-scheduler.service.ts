@@ -48,7 +48,7 @@ export class MeetingSchedulerService {
 
   async tagMeeting(client: any) {
     if (await this.untilService.checkHoliday()) return;
-    console.log("start meeting");
+
     let guild = client.guilds.fetch("1019615919204483072");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
@@ -61,7 +61,7 @@ export class MeetingSchedulerService {
       .andWhere(`"cancel" IS NOT TRUE`)
       .select("meeting.*")
       .execute();
-    console.log("repeatMeet", repeatMeet);
+   
 
     const voiceChannel = getAllVoice.map((item) => item.id);
 

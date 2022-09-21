@@ -5,9 +5,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
-import { CheckListModule } from "./commands/Checklist/checklist.module";
-import { CompantripCommand } from "./commands/Companytrip/companytrip.command";
-import { CompanyModule } from "./commands/Companytrip/companytrip.module";
+import { CheckListModule } from "./commands/checklist/checklist.module";
+import { CompantripCommand } from "./commands/companytrip/companytrip.command";
+import { CompanyModule } from "./commands/companytrip/companytrip.module";
 
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
@@ -20,26 +20,30 @@ import { WFHCommand } from "./commands/wfh/wfh.command";
 // import { TestCommand } from "./commands/test";
 // import LeaveCommand from "./commands/leave.command";
 // import OrderCommand from "./commands/order.command";
+import { HttpModule } from "@nestjs/axios";
+import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
+import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
+import { HeyboyService } from "./commands/heyboy/heyboy.service";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
+import { Msg } from "./models/msg.entity";
 import { Order } from "./models/order.entity";
 import { Remind } from "./models/remind.entity";
 import { User } from "./models/user.entity";
 import { VoiceChannels } from "./models/voiceChannel.entity";
 import { WorkFromHome } from "./models/wfh.entity";
+import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
+import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
+import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { ReportTracker } from "./untils/report-tracker";
 import { UntilService } from "./untils/until.service";
-import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
-import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
-import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
-import { HttpModule } from "@nestjs/axios";
-import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
 
 @Module({
   imports: [
@@ -54,6 +58,7 @@ import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.comman
       Meeting,
       VoiceChannels,
       WorkFromHome,
+      Msg,
       Remind,
     ]),
     forwardRef(() => CheckListModule),
@@ -69,6 +74,9 @@ import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.comman
     BotGateway,
     DailyCommand,
     MeetingCommand,
+    HeyboyCommand,
+    HeyboyService,
+    // ToggleActiveCommand,
     // OrderCommand,
     holidayCommand,
     // LeaveCommand,
@@ -85,8 +93,9 @@ import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.comman
     ReminderSchedulerService,
     SendMessageSchedulerService,
     MeetingService,
-    ToggleActiveCommand,
-    ToggleActiveService,
+    // ToggleActiveService
+    KomubotrestController,
+    KomubotrestService
   ],
   controllers: [BotController],
 })
