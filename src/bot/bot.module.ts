@@ -43,10 +43,10 @@ import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
-import NotificationCommand from "./commands/ncc8/ncc8.command";
 import { NotifiService } from "./commands/notification/noti.service";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
+import NotificationCommand from "./commands/notification/noti.command";
 
 @Module({
   imports: [
