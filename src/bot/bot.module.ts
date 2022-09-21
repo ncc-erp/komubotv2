@@ -49,6 +49,11 @@ import { ToggleActiveService } from "./commands/toggleActive/toggleActive.servic
 import NotificationCommand from "./commands/notification/noti.command";
 import { MulterModule } from "@nestjs/platform-express";
 import { Uploadfile } from "./models/uploadFile.entity";
+import { ReportOrderModule } from "./utils/reportOrder/reportOrder.module";
+import { OrderCommand } from "./commands/order/order.command";
+import { OrderService } from "./commands/order/order.service";
+import { ReportCommand } from "./commands/report/report.command";
+import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
 
 @Module({
   imports: [
@@ -74,6 +79,7 @@ import { Uploadfile } from "./models/uploadFile.entity";
     CompanyModule,
     NestjsScheduleModule.forRoot(),
     HttpModule,
+    ReportOrderModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -93,7 +99,6 @@ import { Uploadfile } from "./models/uploadFile.entity";
     UtilsService,
     ReportTracker,
     // TestCommand,
-    MeetingCommand,
     TimeSheetCommand,
     MeetingSchedulerService,
     ReminderSchedulerService,
@@ -103,6 +108,10 @@ import { Uploadfile } from "./models/uploadFile.entity";
     ToggleActiveService,
     NotifiService,
     NotificationCommand,
+    OrderCommand,
+    OrderService,
+    ReportCommand,
+    ReportOrderService,
   ],
   controllers: [BotController],
 })
