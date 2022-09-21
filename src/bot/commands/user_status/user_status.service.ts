@@ -18,18 +18,4 @@ export class UserStatusService {
       .orWhere(`${TABLE.USER}.username = :username`, { username: email })
       .execute();
   }
-
-  // async getUserStatus(email) {
-  //   return await this.userRepository
-  //     .createQueryBuilder("user")
-  //     .where(`"user.email" = :email`, { email: email })
-  //     .orWhere(`"user.username" = :username`, { username: email })
-  //     // .select(`user.*`)
-  //     .getOne();
-  // }
-  // async getUserStatus(email) {
-  //   return await this.userRepository.findOne({
-  //     where: [{ email: email }, { username: email }],
-  //   });
-  // }
 }

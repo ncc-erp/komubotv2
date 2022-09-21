@@ -1,10 +1,30 @@
-import { Controller, Get, Post, Req, Res } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
 import { BotService } from "./bot.service";
 import { Request, Response } from "express";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { fileFilter, fileName } from "./utils/helper";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Uploadfile } from "./models/uploadFile.entity";
 
 @Controller("bot")
 export class BotController {
-  constructor(private botService: BotService) {}
+  constructor(
+    private botService: BotService,
+    @InjectRepository(Uploadfile)
+    private readonly uploadFileRepository: Repository<Uploadfile>
+  ) {}
   @Post("/getUserIdByUsername")
   async getUserIdByUsername(@Req() req: Request, @Res() res: Response) {
     return this.botService.getUserIdByUsername(req, res);
@@ -50,6 +70,41 @@ export class BotController {
   @Post("getUserCancel")
   async getUserCancel(@Req() req: Request, @Res() res: Response) {
     return this.botService.getUserCancel("", res);
+  }
+
+  @Post("/uploadFile")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads",
+        filename: fileName,
+      }),
+      limits: {
+        fileSize: 1024 * 1024 * 100,
+      },
+      fileFilter: fileFilter,
+    })
+  )
+  async uploadAvatar(@Req() req: Request, @Res() res: Response) {
+    const file = req.file;
+    if (!file) {
+      throw new HttpException("Please upload a file", HttpStatus.NOT_FOUND);
+    }
+    if (!req.body.episode) {
+      throw new HttpException(
+        "Episode can not be empty!",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    const episode = req.body.episode;
+    await this.uploadFileRepository.insert({
+      filePath: file.path,
+      fileName: `${file.filename}`,
+      createTimestamp: Date.now(),
+      episode,
+    });
+    res.send(file);
   }
 
   @Get("GetAll")

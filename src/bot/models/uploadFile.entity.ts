@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
-import { TABLE } from '../constants/table';
+import { TABLE } from "../constants/table";
 
 @Entity(TABLE.UPLOADFILE)
 export class Uploadfile {
@@ -13,8 +13,8 @@ export class Uploadfile {
   @Column({ type: "text" })
   fileName: string;
 
-  @Column({ type: "date"})
-  createdTimestamp: Date;
+  @Column({ type: "decimal", nullable: true })
+  createTimestamp: number;
 
   @Column({ type: "decimal" })
   episode: number;

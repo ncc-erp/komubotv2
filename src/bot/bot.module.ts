@@ -47,10 +47,15 @@ import { NotifiService } from "./commands/notification/noti.service";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import NotificationCommand from "./commands/notification/noti.command";
+import { MulterModule } from "@nestjs/platform-express";
+import { Uploadfile } from "./models/uploadFile.entity";
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
+    MulterModule.register({
+      dest: "./files",
+    }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
       Daily,
@@ -63,6 +68,7 @@ import NotificationCommand from "./commands/notification/noti.command";
       WorkFromHome,
       Msg,
       Remind,
+      Uploadfile,
     ]),
     forwardRef(() => CheckListModule),
     CompanyModule,
