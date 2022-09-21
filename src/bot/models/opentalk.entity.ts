@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
-@Entity(TABLE.OPENTALK)
+@Entity(TABLE.OPEN_TALK)
 export class Opentalk {
   @PrimaryGeneratedColumn()
   id: number;
