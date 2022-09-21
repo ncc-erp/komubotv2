@@ -47,6 +47,10 @@ import NotificationCommand from "./commands/ncc8/ncc8.command";
 import { NotifiService } from "./commands/notification/noti.service";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
+import { Uploadfile } from "./models/uploadFile.entity";
+import { AudioPlayer } from "./utils/audioPlayer.utils";
+import LeaveCommand from "./commands/leave/leave.command";
+import { LeaveService } from "./commands/leave/leave.service";
 
 @Module({
   imports: [
@@ -63,6 +67,7 @@ import { ToggleActiveService } from "./commands/toggleActive/toggleActive.servic
       WorkFromHome,
       Msg,
       Remind,
+      Uploadfile
     ]),
     forwardRef(() => CheckListModule),
     CompanyModule,
@@ -78,7 +83,6 @@ import { ToggleActiveService } from "./commands/toggleActive/toggleActive.servic
     DailyCommand,
     MeetingCommand,
     holidayCommand,
-    // LeaveCommand,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
@@ -86,13 +90,15 @@ import { ToggleActiveService } from "./commands/toggleActive/toggleActive.servic
     BotService,
     UtilsService,
     ReportTracker,
-    // TestCommand,
+    AudioPlayer,
     MeetingCommand,
     TimeSheetCommand,
     MeetingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
     MeetingService,
+    LeaveCommand,
+    LeaveService,
     ToggleActiveCommand,
     ToggleActiveService,
     NotifiService,

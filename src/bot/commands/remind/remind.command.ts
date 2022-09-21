@@ -4,6 +4,7 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Remind } from "src/bot/models/remind.entity";
 import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 import { Repository } from "typeorm";
+import { RemindService } from "./remind.service";
 
 const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
 
@@ -12,10 +13,7 @@ const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
   description: "Remind",
 })
 export class RemindCommand implements CommandLineClass {
-  constructor(
-    @InjectRepository(Remind)
-    private readonly remindRepository: Repository<Remind>
-  ) {}
+  constructor(private readonly remindService: RemindService ) {}
   async execute(message: Message, args, client) {
     try {
       let authorId = message.author.id;
@@ -23,10 +21,10 @@ export class RemindCommand implements CommandLineClass {
         return message.channel.send(messHelp);
       }
 
-      const checkMention = message.mentions.members.first();
+      // const checkMention = message.mentions.members.first();
 
-      const author = message.author.id;
-      const channel = message.channelId;
+      // const author = message.author.id;
+      // const channel = message.channelId;
       const datetime = args.slice(1, 3).join(" ");
       const messageRemind = args.slice(3, args.length).join(" ");
       const checkDate = args.slice(1, 2).join(" ");
@@ -50,21 +48,11 @@ export class RemindCommand implements CommandLineClass {
       const dateObject = new Date(fomat);
       const whenTime = dateObject.getTime();
 
-      await this.remindRepository
-        .insert({
-          channelId: channel,
-          mentionUserId: checkMention.user.id,
-          authorId: author,
-          content: messageRemind,
-          cancel: false,
-          createdTimestamp: whenTime,
-        })
 
-        .catch((err) => console.log(err));
-      message
-        .reply({
+      await this.remindService.saveDaily(message, args);
+      return message.reply({
           content: "`✅` remind saved.",
-          //    ephemeral: true
+            //  ephemeral: true
         })
         .catch((err) => {
           sendErrorToDevTest(client, authorId, err);
@@ -74,3 +62,4 @@ export class RemindCommand implements CommandLineClass {
     }
   }
 }
+
