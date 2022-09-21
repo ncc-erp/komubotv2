@@ -45,6 +45,7 @@ import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.comman
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { UtilsService } from "./utils/utils.service";
 import { ReportTracker } from "./utils/report-tracker";
+import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { ReportTracker } from "./utils/report-tracker";
     ReportTracker,
     // TestCommand,
     MeetingCommand,
+    TimeSheetCommand,
     MeetingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
