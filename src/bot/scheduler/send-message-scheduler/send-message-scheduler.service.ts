@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { Client } from "discord.js";
-import { UntilService } from "src/bot/untils/until.service";
+import { UtilsService } from "src/bot/utils/utils.service";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { CronJob } from "cron";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -14,7 +14,7 @@ import { config } from "src/bot/constants/config";
 @Injectable()
 export class SendMessageSchedulerService {
   constructor(
-    private untilService: UntilService,
+    private utilsService: UtilsService,
     // @InjectRepository(Meeting)
     // private meetingReposistory: Repository<Meeting>,
     private readonly http: HttpService,
@@ -47,7 +47,7 @@ export class SendMessageSchedulerService {
   }
 
   async sendMessagePMs(client) {
-    if (await this.untilService.checkHoliday()) return;
+    if (await this.utilsService.checkHoliday()) return;
     const userDiscord = await client.channels.fetch("921787088830103593");
     userDiscord
       .send(
@@ -57,7 +57,7 @@ export class SendMessageSchedulerService {
   }
 
   async sendMessTurnOffPc(client) {
-    if (await this.untilService.checkHoliday()) return;
+    if (await this.utilsService.checkHoliday()) return;
     const staffRoleId = "921328149927690251";
     const channel = await client.channels.fetch("921239541388554240");
     const roles = await channel.guild.roles.fetch(staffRoleId);
@@ -90,7 +90,7 @@ export class SendMessageSchedulerService {
       return;
     }
     getListUserLogTimesheet.data.result.map(async (item) => {
-      const list = this.untilService.getUserNameByEmail(item.emailAddress);
+      const list = this.utilsService.getUserNameByEmail(item.emailAddress);
       const checkUser = await this.userReposistory
         .createQueryBuilder("user")
         .where(`"email" = :email`, {

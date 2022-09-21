@@ -1,14 +1,8 @@
-import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client, EmbedBuilder, User } from "discord.js";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { Penalty } from "../../models/penatly.entity";
 import { PenaltyService } from "./penalty.service";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { TABLE } from "src/bot/constants/table";
-import { filter } from "rxjs";
-import { ArgRange } from "@discord-nestjs/core";
-const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 
 const transAmmount = (ammout) => {
   ammout = ammout.toLowerCase();

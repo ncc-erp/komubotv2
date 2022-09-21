@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client } from "discord.js";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { Holiday } from "../../models/holiday.entity";

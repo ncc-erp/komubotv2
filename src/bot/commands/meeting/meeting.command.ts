@@ -1,13 +1,13 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { MeetingService } from "./meeting.service";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { UntilService } from "src/bot/untils/until.service";
+import { UtilsService } from "src/bot/utils/utils.service";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { Repository } from "typeorm";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 
 const messHelp =
   "```" +
@@ -34,7 +34,7 @@ const messHelp =
 export class MeetingCommand implements CommandLineClass {
   constructor(
     private meetingService: MeetingService,
-    private readonly untilService: UntilService,
+    private readonly utilsService: UtilsService,
     @InjectRepository(Meeting)
     private readonly meetingRepository: Repository<Meeting>
   ) {}
@@ -81,7 +81,7 @@ export class MeetingCommand implements CommandLineClass {
               list
                 .slice(i * 50, (i + 1) * 50)
                 .map((item) => {
-                  const dateTime = this.untilService.formatDate(
+                  const dateTime = this.utilsService.formatDate(
                     new Date(Number(item.createdTimestamp))
                   );
                   if (item.repeatTime) {

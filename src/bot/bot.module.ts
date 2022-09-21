@@ -32,8 +32,6 @@ import { VoiceChannels } from "./models/voiceChannel.entity";
 import { WorkFromHome } from "./models/wfh.entity";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
-import { ReportTracker } from "./untils/report-tracker";
-import { UntilService } from "./untils/until.service";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
 import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
 import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
@@ -45,6 +43,8 @@ import { NotifiService } from "./commands/notification/noti.service";
 import NotificationCommand from "./commands/notification/noti.controller";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
 import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
+import { UtilsService } from "./utils/utils.service";
+import { ReportTracker } from "./utils/report-tracker";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 
 @Module({
@@ -84,7 +84,7 @@ import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
     UserStatusCommand,
     UserStatusService,
     BotService,
-    UntilService,
+    UtilsService,
     ReportTracker,
     // TestCommand,
     MeetingCommand,

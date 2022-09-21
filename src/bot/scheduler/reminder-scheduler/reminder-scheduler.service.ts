@@ -3,7 +3,7 @@ import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Client } from "discord.js";
 import { CronJob } from "cron";
-import { UntilService } from "src/bot/untils/until.service";
+import { UtilsService } from "src/bot/utils/utils.service";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -12,7 +12,7 @@ import { Remind } from "src/bot/models/reminder.entity";
 @Injectable()
 export class ReminderSchedulerService {
   constructor(
-    private untilService: UntilService,
+    private utilsService: UtilsService,
     @InjectRepository(Meeting)
     private meetingReposistory: Repository<Meeting>,
     @InjectRepository(Remind)
@@ -72,14 +72,14 @@ export class ReminderSchedulerService {
   }
 
   async pingReminder(client) {
-    if (await this.untilService.checkHoliday()) return;
+    if (await this.utilsService.checkHoliday()) return;
     const remindLists = await this.remindReposistory
       .createQueryBuilder("remind")
       .where("createdTimestamp >= :gtecreatedTimestamp", {
-        gtecreatedTimestamp: this.untilService.getYesterdayDate(),
+        gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
       })
       .andWhere("createdTimestamp >= :ltecreatedTimestamp", {
-        ltecreatedTimestamp: this.untilService.getTomorrowDate(),
+        ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
       .select("remind.*")
       .execute();
@@ -108,12 +108,12 @@ export class ReminderSchedulerService {
         const today = new Date();
         currentDate.setDate(today.getDate());
         currentDate.setMonth(today.getMonth());
-        const dateTime = this.untilService.formatDateTimeReminder(
+        const dateTime = this.utilsService.formatDateTimeReminder(
           new Date(Number(item.createdTimestamp))
         );
         switch (item.repeat) {
           case "once":
-            if (this.untilService.isSameDate(dateCreatedTimestamp)) {
+            if (this.utilsService.isSameDate(dateCreatedTimestamp)) {
               await this.sendMessageReminder(
                 client,
                 item.channelId,
@@ -124,7 +124,7 @@ export class ReminderSchedulerService {
             }
             return;
           case "daily":
-            if (this.untilService.isSameDay()) return;
+            if (this.utilsService.isSameDay()) return;
             await this.sendMessageReminder(
               client,
               item.channelId,
@@ -135,8 +135,8 @@ export class ReminderSchedulerService {
             return;
           case "weekly":
             if (
-              this.untilService.isDiffDay(dateScheduler, 7) &&
-              this.untilService.isTimeDay(dateScheduler)
+              this.utilsService.isDiffDay(dateScheduler, 7) &&
+              this.utilsService.isTimeDay(dateScheduler)
             ) {
               await this.sendMessageReminder(
                 client,
@@ -149,8 +149,8 @@ export class ReminderSchedulerService {
             return;
           case "repeat":
             if (
-              this.untilService.isDiffDay(dateScheduler, item.repeatTime) &&
-              this.untilService.isTimeDay(dateScheduler)
+              this.utilsService.isDiffDay(dateScheduler, item.repeatTime) &&
+              this.utilsService.isTimeDay(dateScheduler)
             ) {
               await this.sendMessageReminder(
                 client,
@@ -176,7 +176,7 @@ export class ReminderSchedulerService {
 
   async sendMesageRemind(client) {
     try {
-      if (await this.untilService.checkHoliday()) return;
+      if (await this.utilsService.checkHoliday()) return;
       const data = await this.remindReposistory.find({
         where: { cancel: false },
       });

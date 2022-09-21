@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Uploadfile } from "../models/uploadFile.entity";
-import { UntilService } from "../untils/until.service";
+import { UtilsService } from "./utils.service";
 import { createReadStream } from "fs";
 import { join } from "path";
 
@@ -30,7 +30,7 @@ export class AudioPlayer {
   constructor(
     @InjectRepository(Uploadfile)
     private uploadFileData: Repository<Uploadfile>,
-    private utils: UntilService
+    private utils: UtilsService
   ) {}
 
   async audioPlayer(client, message, episode) {

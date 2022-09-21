@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { ReportTracker } from "src/bot/untils/report-tracker";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { ReportTracker } from "src/bot/utils/report-tracker";
 
 const messHelp =
   "```" +

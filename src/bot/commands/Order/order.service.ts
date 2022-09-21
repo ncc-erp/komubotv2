@@ -1,10 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EmbedBuilder } from "discord.js";
 import { Repository } from "typeorm";
-import { TABLE } from "../../constants/table";
 import { Order } from "../../models/order.entity";
-import { UntilService } from "../../untils/until.service";
 
 @Injectable()
 export class OrderService {
