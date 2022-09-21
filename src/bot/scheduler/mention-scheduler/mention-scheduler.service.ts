@@ -2,19 +2,18 @@ import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { Client } from "discord.js";
-import { UntilService } from "src/bot/untils/until.service";
+import { UtilsService } from "src/bot/utils/utils.service";
 import { CronJob } from "cron";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Mentioned } from "src/bot/models/mentioned.entity";
 import moment from "moment";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
-import { getWFHWarninghMessage } from "src/bot/untils/komu.until";
 
 @Injectable()
 export class MentionSchedulerService {
   constructor(
-    private untilService: UntilService,
+    private utilsService: UtilsService,
     @InjectRepository(Mentioned)
     private mentionReposistory: Repository<Mentioned>,
     @InjectRepository(WorkFromHome)
@@ -46,8 +45,8 @@ export class MentionSchedulerService {
   }
 
   async checkMention(client) {
-    if (await this.untilService.checkHoliday()) return;
-    if (this.untilService.checkTime(new Date())) return;
+    if (await this.utilsService.checkHoliday()) return;
+    if (this.utilsService.checkTime(new Date())) return;
     const now = Date.now();
     try {
       let mentionedUsers = await this.mentionReposistory.find({
@@ -110,19 +109,19 @@ export class MentionSchedulerService {
             status: "ACTIVE",
             type: "mention",
           });
-          const message = getWFHWarninghMessage(
-            content,
-            user.mentionUserId,
-            "data.id.toString()"
-          );
-          const channel = await client.channels.fetch(
-            process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
-          );
-          await channel.send(message).catch(console.error);
-          await this.mentionReposistory.update(
-            { id: user.id },
-            { confirm: true, punish: true }
-          );
+          // const message = getWFHWarninghMessage(
+          //   content,
+          //   user.mentionUserId,
+          //   "data.id.toString()"
+          // );
+          // const channel = await client.channels.fetch(
+          //   process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
+          // );
+          // await channel.send(message).catch(console.error);
+          // await this.mentionReposistory.update(
+          //   { id: user.id },
+          //   { confirm: true, punish: true }
+          // );
         })
       );
     } catch (error) {

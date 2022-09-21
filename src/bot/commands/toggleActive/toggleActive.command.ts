@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder } from "discord.js";
 import { User } from "src/bot/models/user.entity";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 import { Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { ToggleActiveService } from "./toggleActive.service";

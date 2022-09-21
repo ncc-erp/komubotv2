@@ -2,17 +2,17 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { Client } from "discord.js";
-import { UntilService } from "src/bot/untils/until.service";
 import { CronJob } from "cron";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { TimeVoiceAlone } from "src/bot/models/timeVoiceAlone.entity";
 import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
+import { UtilsService } from "src/bot/utils/utils.service";
 
 @Injectable()
 export class VoiceChannelSchedulerService {
   constructor(
-    private untilService: UntilService,
+    private utilsService: UtilsService,
     @InjectRepository(TimeVoiceAlone)
     private timeVoiceAloneReposistory: Repository<TimeVoiceAlone>,
     @InjectRepository(VoiceChannels)
@@ -47,7 +47,7 @@ export class VoiceChannelSchedulerService {
   }
 
   async kickMemberVoiceChannel(client) {
-    if (await this.untilService.checkHoliday()) return;
+    if (await this.utilsService.checkHoliday()) return;
     let guild = client.guilds.fetch("921239248991055882");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
@@ -119,10 +119,10 @@ export class VoiceChannelSchedulerService {
           status: "start",
         })
         .andWhere("createdTimestamp >= :gtecreatedTimestamp", {
-          gtecreatedTimestamp: this.untilService.getYesterdayDate(),
+          gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
         })
         .andWhere("createdTimestamp >= :ltecreatedTimestamp", {
-          ltecreatedTimestamp: this.untilService.getTomorrowDate(),
+          ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
         })
         .select("voiceChannel.*")
         .execute();

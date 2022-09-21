@@ -1,8 +1,8 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
 import axios from "axios";
 import { UserStatusService } from "./user_status.service";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 
 @CommandLine({
   name: "userstatus",

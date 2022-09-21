@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { Holiday } from "../models/holiday.entity";
 
 @Injectable()
-export class UntilService {
+export class UtilsService {
   constructor(
     @InjectRepository(Holiday)
     private holidayReposistory: Repository<Holiday>

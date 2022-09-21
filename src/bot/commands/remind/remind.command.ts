@@ -2,7 +2,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Remind } from "src/bot/models/remind.entity";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 import { Repository } from "typeorm";
 
 const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
