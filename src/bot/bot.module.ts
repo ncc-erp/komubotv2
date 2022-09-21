@@ -24,6 +24,7 @@ import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
 import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
 import { HeyboyService } from "./commands/heyboy/heyboy.service";
+import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
@@ -40,10 +41,12 @@ import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminde
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
-import { ReportTracker } from "./untils/report-tracker";
-import { UntilService } from "./untils/until.service";
-import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
-import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
+import { ReportTracker } from "./utils/report-tracker";
+import { UtilsService } from "./utils/utils.service";
+import NotificationCommand from "./commands/ncc8/ncc8.command";
+import { NotifiService } from "./commands/notification/noti.service";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 
 @Module({
   imports: [
@@ -74,10 +77,6 @@ import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
     BotGateway,
     DailyCommand,
     MeetingCommand,
-    HeyboyCommand,
-    HeyboyService,
-    // ToggleActiveCommand,
-    // OrderCommand,
     holidayCommand,
     // LeaveCommand,
     WFHCommand,
@@ -85,17 +84,19 @@ import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
     UserStatusCommand,
     UserStatusService,
     BotService,
-    UntilService,
+    UtilsService,
     ReportTracker,
     // TestCommand,
     MeetingCommand,
+    TimeSheetCommand,
     MeetingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
     MeetingService,
-    // ToggleActiveService
-    KomubotrestController,
-    KomubotrestService
+    ToggleActiveCommand,
+    ToggleActiveService,
+    NotifiService,
+    NotificationCommand,
   ],
   controllers: [BotController],
 })

@@ -1,7 +1,7 @@
 import { Message , Client} from "discord.js";
 
 import { CommandLine, CommandLineClass } from "../base/command.base";
-import { CheckListController } from "./Checklist/checklist.controller";
+import { CheckListController } from "./checklist/checklist.controller";
 
 @CommandLine({
   name: "checklist",

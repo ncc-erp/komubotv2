@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Not, Repository } from "typeorm";
 import { Meeting } from "../../models/meeting.entity";
 import { VoiceChannels } from "../../models/voiceChannel.entity";
-import { UntilService } from "../../untils/until.service";
+import { UtilsService } from "../../utils/utils.service";
 import { CronJob } from "cron";
 import { SchedulerRegistry, CronExpression } from "@nestjs/schedule";
 import { Client } from "discord.js";
@@ -12,7 +12,7 @@ import { InjectDiscordClient } from "@discord-nestjs/core";
 @Injectable()
 export class MeetingSchedulerService {
   constructor(
-    private untilService: UntilService,
+    private utilsService: UtilsService,
     @InjectRepository(Meeting)
     private meetingReposistory: Repository<Meeting>,
     @InjectRepository(VoiceChannels)
@@ -47,8 +47,8 @@ export class MeetingSchedulerService {
   }
 
   async tagMeeting(client: any) {
-    if (await this.untilService.checkHoliday()) return;
-
+    if (await this.utilsService.checkHoliday()) return;
+    console.log("start meeting");
     let guild = client.guilds.fetch("1019615919204483072");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
@@ -100,8 +100,8 @@ export class MeetingSchedulerService {
           ).toLocaleDateString("en-US");
           if (
             countVoice === voiceChannel.length &&
-            this.untilService.isSameMinute(minuteDb, dateScheduler) &&
-            this.untilService.isSameDate(dateCreatedTimestamp)
+            this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+            this.utilsService.isSameDate(dateCreatedTimestamp)
           ) {
             const fetchChannelFull = await client.channels.fetch(
               item.channelId
@@ -120,8 +120,8 @@ export class MeetingSchedulerService {
             switch (item.repeat) {
               case "once":
                 if (
-                  this.untilService.isSameDate(dateCreatedTimestamp) &&
-                  this.untilService.isSameMinute(minuteDb, dateScheduler)
+                  this.utilsService.isSameDate(dateCreatedTimestamp) &&
+                  this.utilsService.isSameMinute(minuteDb, dateScheduler)
                 ) {
                   const onceFetchChannel = await client.channels.fetch(
                     item.channelId
@@ -173,8 +173,8 @@ export class MeetingSchedulerService {
                 }
                 return;
               case "daily":
-                if (this.untilService.isSameDay()) return;
-                if (this.untilService.isSameMinute(minuteDb, dateScheduler)) {
+                if (this.utilsService.isSameDay()) return;
+                if (this.utilsService.isSameMinute(minuteDb, dateScheduler)) {
                   const dailyFetchChannel = await client.channels.fetch(
                     item.channelId
                   );
@@ -226,7 +226,7 @@ export class MeetingSchedulerService {
                   );
 
                   while (
-                    await this.untilService.checkHolidayMeeting(currentDate)
+                    await this.utilsService.checkHolidayMeeting(currentDate)
                   ) {
                     newCreatedTimestamp = currentDate.setDate(
                       currentDate.getDate() + 1
@@ -261,9 +261,9 @@ export class MeetingSchedulerService {
                 return;
               case "weekly":
                 if (
-                  this.untilService.isSameMinute(minuteDb, dateScheduler) &&
-                  this.untilService.isDiffDay(dateScheduler, 7) &&
-                  this.untilService.isTimeDay(dateScheduler)
+                  this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+                  this.utilsService.isDiffDay(dateScheduler, 7) &&
+                  this.utilsService.isTimeDay(dateScheduler)
                 ) {
                   const weeklyFetchChannel = await client.channels.fetch(
                     item.channelId
@@ -310,7 +310,7 @@ export class MeetingSchedulerService {
                     currentDate.getDate() + 7
                   );
                   while (
-                    await this.untilService.checkHolidayMeeting(currentDate)
+                    await this.utilsService.checkHolidayMeeting(currentDate)
                   ) {
                     newCreatedTimestampWeekly = currentDate.setDate(
                       currentDate.getDate() + 7
@@ -330,9 +330,9 @@ export class MeetingSchedulerService {
                 return;
               case "repeat":
                 if (
-                  this.untilService.isSameMinute(minuteDb, dateScheduler) &&
-                  this.untilService.isDiffDay(dateScheduler, item.repeatTime) &&
-                  this.untilService.isTimeDay(dateScheduler)
+                  this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+                  this.utilsService.isDiffDay(dateScheduler, item.repeatTime) &&
+                  this.utilsService.isTimeDay(dateScheduler)
                 ) {
                   const repeatFetchChannel = await client.channels.fetch(
                     item.channelId
@@ -380,7 +380,7 @@ export class MeetingSchedulerService {
                   );
 
                   while (
-                    await this.untilService.checkHolidayMeeting(currentDate)
+                    await this.utilsService.checkHolidayMeeting(currentDate)
                   ) {
                     newCreatedTimestampRepeat = currentDate.setDate(
                       currentDate.getDate() + item.repeatTime
@@ -409,7 +409,7 @@ export class MeetingSchedulerService {
   }
 
   async updateReminderMeeting() {
-    if (await this.untilService.checkHoliday()) return;
+    if (await this.utilsService.checkHoliday()) return;
     const repeatMeet = await this.meetingReposistory.find({
       where: {
         reminder: true,

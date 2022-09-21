@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { Client, Message, EmbedBuilder  } from "discord.js";
-import { sendErrorToDevTest } from 'src/bot/untils/komu.until';
+import { sendErrorToDevTest } from 'src/bot/utils/komubotrest.utils';
 
 import { CheckListService } from "./checklist.service";
-
 
 let categorys = ['tester', 'loren', 'inter', 'dev', 'hr'];
 let subcategorys = [];

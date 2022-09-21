@@ -3,9 +3,9 @@ import axios from "axios";
 import { Message, EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { UntilService } from "src/bot/untils/until.service";
 import { AudioPlayer } from "src/bot/utils/audioPlayer.utils";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
 
 @CommandLine({
@@ -16,7 +16,7 @@ export default class NotificationCommand implements CommandLineClass {
   constructor(
     @InjectRepository(Uploadfile)
     private uploadFileData: Repository<Uploadfile>,
-    private utils: UntilService,
+    private utils: UtilsService,
     private audioPlayer: AudioPlayer
   ) {}
 

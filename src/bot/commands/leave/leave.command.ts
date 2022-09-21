@@ -6,8 +6,8 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 
 import { Leave } from "../../models/leave.enity";
 import { TABLE } from "../../constants/table";
-import { sendErrorToDevTest } from "../../untils/komu.until";
 import { LeaveService } from "./leave.service";
+import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 
 @CommandLine({
   name: "leave",

@@ -1,20 +1,17 @@
-import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder } from "discord.js";
-import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
-import { TABLE } from "../../constants/table";
-import { Order } from "../../models/order.entity";
-import { UntilService } from "../../untils/until.service";
+import { UtilsService } from "../../utils/utils.service";
 import { OrderService } from "./order.service";
 
 @CommandLine({
   name: "order",
   description: "order",
 })
+
 export class OrderCommand implements CommandLineClass {
   constructor(
     private orderService: OrderService,
-    private untilService: UntilService
+    private utilsService: UtilsService
   ) {}
 
   async execute(message: Message, args) {
@@ -38,9 +35,9 @@ export class OrderCommand implements CommandLineClass {
           await this.orderService.upDateUserCancel(item);
         });
 
-        // message.reply({
-        //   content: "Bạn đã hủy đơn đặt hàng!!!",
-        // });
+        message.reply({
+          content: "Bạn đã hủy đơn đặt hàng!!!",
+        });
       } else if (args[0] === "finish") {
         const userCancel = await orderData.getListUserOrderPending(
           channelId,
@@ -50,8 +47,8 @@ export class OrderCommand implements CommandLineClass {
         if (userCancel && userCancel.length > 0) {
           const listOrder = await orderData.getListUserFinish(
             channelId,
-            this.untilService.getYesterdayDate(),
-            this.untilService.getTomorrowDate()
+            this.utilsService.getYesterdayDate(),
+            this.utilsService.getTomorrowDate()
           );
 
           let mess;

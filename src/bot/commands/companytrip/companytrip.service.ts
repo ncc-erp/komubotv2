@@ -28,6 +28,7 @@ export class CompanytripService {
         .andWhere(`${TABLE.COMPANYTRIP}.year = :year`, {year : currentYear})
         .getMany();
      }
+     
      async findUser(author, currentYear){
         return await this.companyRepository
         .createQueryBuilder(TABLE.COMPANYTRIP)
