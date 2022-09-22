@@ -115,7 +115,10 @@ export class PollEmbedUntil {
           text += `\`+ ${item}\`\n\n`;
         });
       }
+      console.log(poll, "fff");
+
       poll.delete();
+
       msg.channel
         .send({
           embeds: [
@@ -127,7 +130,8 @@ export class PollEmbedUntil {
   };
 
   embedBuilder = (title, author) => {
-    return new EmbedBuilder().setTitle(`Poll - ${title}`);
-    //   .setFooter(`Poll created by ${author}` as any);
+    return new EmbedBuilder()
+      .setTitle(`Poll - ${title}`)
+      .setFooter({ text: `Poll created by ${author}` });
   };
 }
