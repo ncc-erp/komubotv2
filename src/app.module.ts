@@ -6,7 +6,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { GatewayIntentBits } from "discord.js";
 
 import { BotModule } from "./bot/bot.module";
-import { CheckListModule } from "./bot/commands/checklist/checklist.module";
+// import { CheckListModule } from "./bot/commands/checklist/checklist.module";
+// import { CheckListModule } from "./bot/commands/Checklist/checklist.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 @Module({
   imports: [
@@ -58,6 +61,9 @@ import { CheckListModule } from "./bot/commands/checklist/checklist.module";
       inject: [ConfigService],
     }),
     BotModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "upload", "ncc8"),
+    }),
   ],
 })
 export class AppModule {}

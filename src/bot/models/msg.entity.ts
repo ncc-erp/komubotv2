@@ -16,8 +16,8 @@ export class Msg {
   @Column({ nullable: true, type: "boolean" })
   deleted: boolean;
 
-  @Column({ nullable: true, type: "date" })
-  createdTimestamp: Date;
+  @Column({ type: "decimal", nullable: true })
+  createdTimestamp: number;
 
   @Column({ type: "text" })
   type: string;
@@ -37,13 +37,13 @@ export class Msg {
   @Column({ type: "boolean" })
   tts: boolean;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   nonce: string;
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column({ type: "text", array: true, nullable: true })
   embeds: string[];
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column({ type: "text", array: true, nullable: true })
   components: string[];
 
   @Column({ nullable: true, type: "text", array: true })
@@ -52,8 +52,8 @@ export class Msg {
   @Column({ nullable: true, type: "text", array: true })
   stickers: string[];
 
-  @Column({ nullable: true, type: "date" })
-  editedTimestamp: Date;
+  @Column({ type: "decimal", nullable: true })
+  editedTimestamp: number;
 
   @Column({ nullable: true, type: "text", array: true })
   reactions: string[];

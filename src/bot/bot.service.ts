@@ -38,13 +38,14 @@ export class BotService {
         '"email" = :email AND "deactive" IS NOT True OR "username" = :username AND "deactive" IS NOT True',
         { email: req.body.username, username: req.body.username }
       )
+      .select("users.*")
       .execute();
 
     if (!userdb) {
       res.status(400).send({ message: "User not found!" });
       return;
     }
-    res.status(200).send({ username: req.body.username, userid: userdb.id });
+    res.status(200).send({ username: req.body.username, userid: userdb[0].id });
   }
   sendMessageToUser(req, res) {}
   sendMessageToChannel(req, res) {}
@@ -55,4 +56,5 @@ export class BotService {
   sendMessageToThongBaoPM(req, res) {}
   sendMessageToFinance(req, res) {}
   deleteMessage(req, res) {}
+  uploadFile(req, res) {}
 }

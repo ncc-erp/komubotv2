@@ -11,7 +11,7 @@ const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
   name: "holiday",
   description: "Holiday",
 })
-export default class holidayCommand implements CommandLineClass {
+export default class HolidayCommand implements CommandLineClass {
   constructor(private holidayService: HolidayService) {}
   async execute(message: Message, args, client) {
     try {

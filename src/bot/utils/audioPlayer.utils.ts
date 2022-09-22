@@ -9,6 +9,7 @@ import { Uploadfile } from "../models/uploadFile.entity";
 import { UtilsService } from "./utils.service";
 import { createReadStream } from "fs";
 import { join } from "path";
+import { Injectable } from "@nestjs/common";
 
 function setTime(date, hours, minute, second, msValue) {
   return date.setHours(hours, minute, second, msValue);
@@ -26,6 +27,7 @@ function checkTimeSchulderNCC8() {
   }
   return result;
 }
+@Injectable()
 export class AudioPlayer {
   constructor(
     @InjectRepository(Uploadfile)
@@ -34,10 +36,13 @@ export class AudioPlayer {
   ) {}
 
   async audioPlayer(client, message, episode) {
+    console.log("sdfgfsdgsdgsd");
+
     try {
-      const channel = await client.channels.fetch("921323636491710504");
+      const channel = await client.channels.fetch("995889802996088905");
       const player = createAudioPlayer();
 
+      console.log(player, "dsfbsdfsdbf");
       joinVoiceChannel({
         channelId: channel.id,
         guildId: channel.guild.id,
@@ -64,22 +69,20 @@ export class AudioPlayer {
         }
       }
 
-      const fileNameMp3 = dataMp3.map((item) => {
-        return item.fileName;
+      const fileNameMp3 = dataMp3.map(async (item) => {
+        return await item.fileName;
       });
-
       const resource = await createAudioResource(
         createReadStream(join("uploads", `${fileNameMp3[0]}`)),
         {
           inlineVolume: true,
         }
       );
-
       player.play(resource);
 
       if (episode && message) {
         message.channel
-          .send(`@here go to <#921323636491710504>`)
+          .send(`@here go to <#995889802996088905>`)
           .catch(console.error);
       }
     } catch (err) {

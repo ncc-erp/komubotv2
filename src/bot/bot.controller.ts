@@ -9,14 +9,16 @@ import {
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
-import { BotService } from "./bot.service";
-import { Request, Response } from "express";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
 import { fileFilter, fileName } from "./utils/helper";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Uploadfile } from "./models/uploadFile.entity";
+import { FileInterceptor } from "@nestjs/platform-express";
+
+import { BotService } from "./bot.service";
+import { Request, Response } from "express";
+import { diskStorage } from "multer";
+import { HelperFile } from "./shared/helper";
 
 @Controller("bot")
 export class BotController {

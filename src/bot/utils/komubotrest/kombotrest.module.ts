@@ -6,11 +6,10 @@ import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestController } from "./komubotrest.controller";
 import { KomubotrestService } from "./komubotrest.service";
 
-
 @Module({
-    imports : [TypeOrmModule.forFeature([User, Msg,  WorkFromHome])],
-    exports : [KomubotrestService, KomubotrestController],
-    providers : [KomubotrestService, KomubotrestController], 
-    controllers : []
+  imports: [TypeOrmModule.forFeature([User, Msg, WorkFromHome])],
+  exports: [KomubotrestService, KomubotrestController],
+  providers: [KomubotrestService, KomubotrestController],
+  controllers: [],
 })
-export class KomubotrestModule{}
+export class KomubotrestModule {}
