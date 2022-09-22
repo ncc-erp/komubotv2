@@ -3,11 +3,15 @@ import { forwardRef, Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ReportCommand } from "../commands/report/report.command";
+import { Daily } from "../models/daily.entity";
 import { Holiday } from "../models/holiday.entity";
 import { Opentalk } from "../models/opentalk.entity";
 import { Order } from "../models/order.entity";
+import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
 import { KomubotrestController } from "./komubotrest/komubotrest.controller";
+import { ReportDailyModule } from "./reportDaily/report-daily.module";
+import { ReportDailyService } from "./reportDaily/report-daily.service";
 import { ReportHolidayModule } from "./reportHoliday/reportHoliday.module";
 import { ReportHolidayService } from "./reportHoliday/reportHoliday.service";
 import { ReportOpenTalkModule } from "./reportOpentalk/reportOpentalk.module";
@@ -21,11 +25,20 @@ import { UtilsService } from "./utils.service";
   imports: [
     DiscordModule.forFeature(),
     DiscoveryModule,
-    TypeOrmModule.forFeature([Holiday, Opentalk, Order, Holiday, WorkFromHome]),
+    TypeOrmModule.forFeature([
+      Holiday,
+      Opentalk,
+      Order,
+      Holiday,
+      WorkFromHome,
+      Daily,
+      User,
+    ]),
     ReportOrderModule,
     ReportHolidayModule,
     ReportOpenTalkModule,
     ReportWFHModule,
+    ReportDailyModule,
     UtilsModule,
   ],
   providers: [
@@ -33,6 +46,7 @@ import { UtilsService } from "./utils.service";
     ReportHolidayService,
     ReportOpenTalkService,
     ReportOrderService,
+    ReportDailyService,
     UtilsService,
     KomubotrestController,
   ],
