@@ -311,4 +311,58 @@ export class UtilsService {
       return null;
     }
   };
+
+  withoutTime(dateTime) {
+    const date = new Date(dateTime);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
+  getTimeWeek() {
+    let curr = new Date();
+    // current date of week
+    const currentWeekDay = curr.getDay();
+    const lessDays = currentWeekDay == 0 ? 6 : currentWeekDay - 1;
+    const firstweek = new Date(
+      new Date(curr).setDate(curr.getDate() - lessDays)
+    );
+    const lastweek = new Date(
+      new Date(firstweek).setDate(firstweek.getDate() + 7)
+    );
+
+    return {
+      firstday: {
+        timestamp: new Date(this.withoutTime(firstweek)).getTime(),
+      },
+      lastday: {
+        timestamp: new Date(this.withoutTime(lastweek)).getTime(),
+      },
+    };
+  }
+
+  withoutTimeWFH(dateTime) {
+    const date = new Date(dateTime);
+    const curDate = new Date();
+    const timezone = curDate.getTimezoneOffset() / -60;
+    date.setHours(0 + timezone, 0, 0, 0);
+    return date;
+  }
+
+  getTimeToDay(date) {
+    let today;
+    let tomorrows;
+    if (date) {
+      today = new Date(date);
+      tomorrows = new Date(date);
+    } else {
+      today = new Date();
+      tomorrows = new Date();
+    }
+    const tomorrowsDate = tomorrows.setDate(tomorrows.getDate() + 1);
+
+    return {
+      firstDay: new Date(this.withoutTimeWFH(today)),
+      lastDay: new Date(this.withoutTimeWFH(tomorrowsDate)),
+    };
+  }
 }

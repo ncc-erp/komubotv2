@@ -7,9 +7,8 @@ import { KomubotrestController } from "./komubotrest.controller";
 import { KomubotrestService } from "./komubotrest.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Msg, WorkFromHome])],
-  exports: [KomubotrestService, KomubotrestController],
-  providers: [KomubotrestService, KomubotrestController],
-  controllers: [],
+    imports : [TypeOrmModule.forFeature([User, Msg,  WorkFromHome])],
+    exports : [KomubotrestService, KomubotrestController],
+    providers : [KomubotrestService, KomubotrestController], 
 })
 export class KomubotrestModule {}

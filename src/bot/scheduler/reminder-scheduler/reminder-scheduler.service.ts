@@ -1,13 +1,15 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { InjectDiscordClient } from "@discord-nestjs/core";
-import { Client } from "discord.js";
+import { AttachmentBuilder, Client, EmbedBuilder } from "discord.js";
 import { CronJob } from "cron";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Remind } from "src/bot/models/remind.entity";
+import { getKomuWeeklyReport } from "src/bot/utils/odin-report";
+import fs from "fs";
 
 @Injectable()
 export class ReminderSchedulerService {
@@ -38,8 +40,14 @@ export class ReminderSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("sendMessageReminder", "30 08 * * 0-6", () =>
+    this.addCronJob("pingReminder", CronExpression.EVERY_10_SECONDS, () =>
       this.pingReminder(this.client)
+    );
+    this.addCronJob("sendMesageRemind", CronExpression.EVERY_MINUTE, () =>
+      this.sendMesageRemind(this.client)
+    );
+    this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
+      this.sendOdinReport(this.client)
     );
   }
 
@@ -75,10 +83,10 @@ export class ReminderSchedulerService {
     if (await this.utilsService.checkHoliday()) return;
     const remindLists = await this.remindReposistory
       .createQueryBuilder("remind")
-      .where("createdTimestamp >= :gtecreatedTimestamp", {
+      .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
       })
-      .andWhere("createdTimestamp >= :ltecreatedTimestamp", {
+      .andWhere(`"createdTimestamp" >= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
       .select("remind.*")
@@ -226,6 +234,43 @@ export class ReminderSchedulerService {
           );
         }
       });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async sendOdinReport(client) {
+    try {
+      const fetchChannel = await client.channels.fetch("925707563629150238");
+      try {
+        const date = new Date();
+
+        if (isNaN(date.getTime())) {
+          throw Error("invalid date provided");
+        }
+
+        const report = await getKomuWeeklyReport({
+          reportName: "komu-weekly",
+          url: process.env.ODIN_URL,
+          username: process.env.ODIN_USERNAME,
+          password: process.env.ODIN_PASSWORD,
+          screenUrl: process.env.ODIN_KOMU_REPORT_WEEKLY_URL,
+          date,
+        });
+
+        if (!report || !report.filePath || !fs.existsSync(report.filePath)) {
+          throw new Error("requested report is not found");
+        }
+
+        const attachment = new AttachmentBuilder(report.filePath);
+        const embed = new EmbedBuilder().setTitle("Komu report weekly");
+        await fetchChannel
+          .send({ files: [attachment], embed: embed })
+          .catch(console.error);
+      } catch (error) {
+        console.error(error);
+        fetchChannel.send(`Sorry, ${error.message}`);
+      }
     } catch (error) {
       console.log(error);
     }

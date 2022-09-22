@@ -9,12 +9,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.listen(5001);
 
-  const meetingSchedulerService = app.get(MeetingSchedulerService);
-  const reminderSchedulerService = app.get(ReminderSchedulerService);
-  const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
-  await meetingSchedulerService.startCronJobs();
-  await sendMessageSchedulerService.startCronJobs();
-  await reminderSchedulerService.startCronJobs();
+  // const meetingSchedulerService = app.get(MeetingSchedulerService);
+  // const reminderSchedulerService = app.get(ReminderSchedulerService);
+  // const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
+  // await meetingSchedulerService.startCronJobs();
+  // await sendMessageSchedulerService.startCronJobs();
+  // await reminderSchedulerService.startCronJobs();
 }
 
 bootstrap();

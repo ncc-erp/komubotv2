@@ -1,14 +1,24 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 import { TABLE } from "../constants/table";
+import { User } from "./user.entity";
 
 @Entity(TABLE.WTH)
 export class WorkFromHome {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text" })
-  userid: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "user" })
+  userid: User;
 
   @Column({ type: "text" })
   messageid: string;

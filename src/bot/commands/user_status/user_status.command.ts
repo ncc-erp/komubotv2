@@ -2,14 +2,16 @@ import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import axios from "axios";
 import { UserStatusService } from "./user_status.service";
-import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 
 @CommandLine({
   name: "userstatus",
   description: "users tatus",
 })
 export class UserStatusCommand implements CommandLineClass {
-  constructor(private readonly userStatusService: UserStatusService) {}
+  constructor(private readonly userStatusService: UserStatusService,
+    private komubotrestController : KomubotrestController,
+    ) {}
   async execute(message: Message, args, client) {
     try {
       let authorId = message.author.id;
@@ -31,7 +33,7 @@ export class UserStatusCommand implements CommandLineClass {
       const user = await this.userStatusService.getUserStatus(email);
       if (!user)
         return message.reply(`Wrong Email!`).catch((err) => {
-          sendErrorToDevTest(client, authorId, err);
+          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
         });
       const getUserStatus = await axios.get(
         `${process.env.TIMESHEET_API}Public/GetWorkingStatusByUser?emailAddress=${email}@ncc.asia`
@@ -47,7 +49,7 @@ export class UserStatusCommand implements CommandLineClass {
       }
 
       return message.reply(mess).catch((err) => {
-        sendErrorToDevTest(client, authorId, err);
+        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
       });
     } catch (e) {
       console.log(e);
