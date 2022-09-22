@@ -10,6 +10,7 @@ import { Repository } from "typeorm";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { config } from "src/bot/constants/config";
+import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 
 @Injectable()
 export class SendMessageSchedulerService {
@@ -22,7 +23,7 @@ export class SendMessageSchedulerService {
     private userReposistory: Repository<User>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
-    private client: Client
+    private client: Client,
   ) {}
 
   private readonly logger = new Logger(SendMessageSchedulerService.name);
@@ -44,6 +45,9 @@ export class SendMessageSchedulerService {
     // this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
     //   this.sendSubmitTimesheet(this.client)
     // );
+    this.addCronJob("remindCheckout", CronExpression.EVERY_MINUTE, () =>
+      this.remindCheckout(this.client)
+    );
   }
 
   async sendMessagePMs(client) {
@@ -115,38 +119,49 @@ export class SendMessageSchedulerService {
     });
   }
 
-  // async remindCheckout(client) {
-  //   if (await this.untilService.checkHoliday()) return;
-  //   try {
-  //     const listsUser = await await firstValueFrom(
-  //       this.http
-  //         .get(`${process.env.CHECKIN_API}/v1/employees/report-checkin`, {
-  //           headers: {
-  //             "X-Secret-Key": `${process.env.CHECKIN_API_KEY_SECRET}`,
-  //           },
-  //         })
-  //         .pipe((res) => res)
-  //     );
-  //     const userListNotCheckIn = listsUser.data.filter(
-  //       (user) => user.checkout === null
-  //     );
-  //     const { userOffFullday } = await getUserOffWork();
+  async remindCheckout(client) {
+    if (await this.utilsService.checkHoliday()) return;
+    try {
+      const listsUser = await firstValueFrom(
+        this.http
+          .get(`${process.env.CHECKIN_API}/v1/employees/report-checkin`, {
+            headers: {
+              "X-Secret-Key": `${process.env.CHECKIN_API_KEY_SECRET}`,
+            },
+          })
+          .pipe((res) => res)
+      );
+      const userListNotCheckIn = listsUser.data.filter(
+        (user) => user.checkout === null
+      );
+      const { userOffFullday } = await getUserOffWork(null);
+      console.log(userOffFullday, "userOffFullday");
 
-  //     userListNotCheckIn.map(async (user) => {
-  //       const checkUser = await userData.findOne({
-  //         $or: [{ email: user.komuUserName }, { username: user.komuUserName }],
-  //         email: { $nin: [...userOffFullday] },
-  //         deactive: { $ne: true },
-  //       });
-  //       if (checkUser && checkUser !== null) {
-  //         const userDiscord = await client.users.fetch(checkUser.id);
-  //         userDiscord
-  //           .send(`Đừng quên checkout trước khi ra về nhé!!!`)
-  //           .catch(console.error);
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+      userListNotCheckIn.map(async (user) => {
+        const checkUser = await this.userReposistory
+          .createQueryBuilder("users")
+          .where("email = :email", {
+            email: user.komuUserName,
+          })
+          .orWhere("email = :email", {
+            email: user.komuUserName,
+          })
+          .andWhere('"email" IN (:...userOffFullday)', {
+            userOffFullday: userOffFullday,
+          })
+          .andWhere(`"deactive" IS NOT TRUE`)
+          .select("users.*")
+          .execute();
+
+        if (checkUser && checkUser !== null) {
+          const userDiscord = await client.users.fetch(checkUser.id);
+          userDiscord
+            .send(`Đừng quên checkout trước khi ra về nhé!!!`)
+            .catch(console.error);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

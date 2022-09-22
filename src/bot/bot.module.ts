@@ -15,9 +15,6 @@ import { RemindCommand } from "./commands/remind/remind.command";
 import { UserStatusCommand } from "./commands/user_status/user_status.command";
 import { UserStatusService } from "./commands/user_status/user_status.service";
 import { WFHCommand } from "./commands/wfh/wfh.command";
-// import { TestCommand } from "./commands/test";
-// import LeaveCommand from "./commands/leave.command";
-// import OrderCommand from "./commands/order.command";
 import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
 import { NotifiService } from "./commands/notification/noti.service";
@@ -47,30 +44,30 @@ import { MulterModule } from "@nestjs/platform-express";
 import { UtilsModule } from "./utils/utils.module";
 import { GemrankCommand } from "./commands/gemrank.command";
 import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
-import { OrderService } from "./commands/order/order.service";
-import NotificationCommand from "./commands/notification/noti.command";
-import { CompanytripService } from "./commands/companytrip/companytrip.service";
-import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
-import { CompanyTrip } from "./models/companyTrip.entity";
 import LeaveCommand from "./commands/leave/leave.command";
-import { PingCommand } from "./commands/ping/ping";
 import { LeaveService } from "./commands/leave/leave.service";
-import { CheckList } from "./models/checklistdata.entity";
-import { Subcategorys } from "./models/subcategoryData.entity";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-import { ReportWFHService } from "./utils/reportWFH/report-wfh.service";
-import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
-import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
-import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
-import { CheckListController } from "./utils/checklist/checklist.controller";
-import { CheckListService } from "./utils/checklist/checklist.service";
-import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { PollCommand } from "./commands/poll/poll.command";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
+import { ConfigService } from "@nestjs/config";
+import { ClientConfigService } from "./config/client-config.service";
 import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
+import { PingCommand } from "./commands/ping/ping";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
+import NotificationCommand from "./commands/notification/noti.command";
 import { OrderCommand } from "./commands/order/order.command";
+import { CheckListController } from "./utils/checklist/checklist.controller";
+import { AudioPlayer } from "@discordjs/voice";
+import { CheckListService } from "./utils/checklist/checklist.service";
+import { OrderService } from "./commands/order/order.service";
+import { MoveChannelService } from "./commands/move_channel/move_channel.service";
+import { CheckList } from "./models/checklistdata.entity";
+import { Subcategorys } from "./models/subcategoryData.entity";
+import { Channel } from "./models/channel.entity";
 
 @Module({
   imports: [
@@ -95,6 +92,7 @@ import { OrderCommand } from "./commands/order/order.command";
       CompanyTrip,
       CheckList,
       Subcategorys,
+      Channel,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -109,11 +107,12 @@ import { OrderCommand } from "./commands/order/order.command";
     CompantripCommand,
     CompanytripService,
     BotGateway,
+    LeaveCommand,
+    LeaveService,
     DailyCommand,
     MeetingCommand,
     holidayCommand,
     GemrankCommand,
-
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
@@ -143,6 +142,9 @@ import { OrderCommand } from "./commands/order/order.command";
     AudioPlayer,
     CheckListService,
     PollEmbedUntil,
+    ConfigService,
+    ClientConfigService,
+    MoveChannelService,
   ],
   controllers: [BotController],
 })
