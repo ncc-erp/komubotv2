@@ -45,6 +45,14 @@ import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
+import { MulterModule } from "@nestjs/platform-express";
+import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
+import { OpenTalkService } from "./commands/open-talk/open-talk.service";
+import { OrderCommand } from "./commands/order/order.command";
+import { Opentalk } from "./models/opentalk.entity";
+import { Uploadfile } from "./models/uploadFile.entity";
+import { OrderService } from "./service/order.service";
+import { UtilsModule } from "./utils/utils.module";
 
 
 @Module({
