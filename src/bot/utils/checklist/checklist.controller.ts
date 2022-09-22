@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Injectable } from '@nestjs/common';
 import { Client, Message, EmbedBuilder  } from "discord.js";
 import { KomubotrestController } from '../komubotrest/komubotrest.controller';
 
@@ -11,7 +11,7 @@ for (let i = 1; i <= categorys.length; i++) {
   arr.push(`${i}`);
 }
 
-@Controller()
+@Injectable()
 export class CheckListController{
     constructor(
         private checklistService : CheckListService,

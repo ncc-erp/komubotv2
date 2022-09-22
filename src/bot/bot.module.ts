@@ -21,7 +21,6 @@ import { WFHCommand } from "./commands/wfh/wfh.command";
 // import OrderCommand from "./commands/order.command";
 import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import NotificationCommand from "./commands/ncc8/ncc8.command";
 import { NotifiService } from "./commands/notification/noti.service";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
@@ -46,15 +45,14 @@ import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
 import { MulterModule } from "@nestjs/platform-express";
+
 import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
-import { OpenTalkService } from "./commands/open-talk/open-talk.service";
-import { OrderCommand } from "./commands/order/order.command";
-import { Opentalk } from "./models/opentalk.entity";
-import { Uploadfile } from "./models/uploadFile.entity";
+
 import { OrderService } from "./service/order.service";
 import { UtilsModule } from "./utils/utils.module";
 import { GemrankCommand } from "./commands/gemrank.command";
 import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
+
 
 
 @Module({
@@ -78,6 +76,7 @@ import { MoveChannelCommand } from "./commands/move_channel/move_channel.command
       Opentalk,
       Uploadfile,
       Opentalk,
+      CompanyTrip
     ]),
     CheckListModule, 
     NestjsScheduleModule.forRoot(),
@@ -89,21 +88,24 @@ import { MoveChannelCommand } from "./commands/move_channel/move_channel.command
     PlaylistSlashCommand,
     ChecklistCommand,
     CompantripCommand,
+    CompanytripService,
     BotGateway,
     DailyCommand,
     MeetingCommand,
     holidayCommand,
     GemrankCommand,
+
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
+    PingCommand,
     UserStatusService,
     BotService,
+    KomubotrestController,
     UtilsService,
     ReportTracker,
     MoveChannelCommand,
     TimeSheetCommand,
-    OpenTalkCommand,
     OpenTalkService,
     MeetingSchedulerService,
     ReminderSchedulerService,
