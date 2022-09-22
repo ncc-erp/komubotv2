@@ -7,6 +7,7 @@ import { Holiday } from "../models/holiday.entity";
 import { Opentalk } from "../models/opentalk.entity";
 import { Order } from "../models/order.entity";
 import { WorkFromHome } from "../models/wfh.entity";
+import { KomubotrestController } from "./komubotrest/komubotrest.controller";
 import { ReportHolidayModule } from "./reportHoliday/reportHoliday.module";
 import { ReportHolidayService } from "./reportHoliday/reportHoliday.service";
 import { ReportOpenTalkModule } from "./reportOpentalk/reportOpentalk.module";
@@ -33,6 +34,7 @@ import { UtilsService } from "./utils.service";
     ReportOpenTalkService,
     ReportOrderService,
     UtilsService,
+    KomubotrestController,
   ],
 })
 export class UtilsModule {}
