@@ -4,7 +4,6 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Remind } from "src/bot/models/remind.entity";
 import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { Repository } from "typeorm";
-import { RemindService } from "./remind.service";
 
 const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
 
@@ -13,11 +12,11 @@ const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
   description: "Remind",
 })
 export class RemindCommand implements CommandLineClass {
-  remindService: any;
-  komubotrestController: any;
   constructor(
     @InjectRepository(Remind)
-    private readonly remindRepository: Repository<Remind>
+    private readonly remindRepository: Repository<Remind>, 
+    private komubotrestController : KomubotrestController,
+    
   ) {}
   async execute(message: Message, args, client) {
     try {
@@ -26,10 +25,10 @@ export class RemindCommand implements CommandLineClass {
         return message.channel.send(messHelp);
       }
 
-      // const checkMention = message.mentions.members.first();
+      const checkMention = message.mentions.members.first();
 
-      // const author = message.author.id;
-      // const channel = message.channelId;
+      const author = message.author.id;
+      const channel = message.channelId;
       const datetime = args.slice(1, 3).join(" ");
       const messageRemind = args.slice(3, args.length).join(" ");
       const checkDate = args.slice(1, 2).join(" ");
@@ -53,11 +52,21 @@ export class RemindCommand implements CommandLineClass {
       const dateObject = new Date(fomat);
       const whenTime = dateObject.getTime();
 
+      await this.remindRepository
+        .insert({
+          channelId: channel,
+          mentionUserId: checkMention.user.id,
+          authorId: author,
+          content: messageRemind,
+          cancel: false,
+          createdTimestamp: whenTime,
+        })
 
-      await this.remindService.saveDaily(message, args);
-      return message.reply({
+        .catch((err) => console.log(err));
+      message
+        .reply({
           content: "`✅` remind saved.",
-            //  ephemeral: true
+          //    ephemeral: true
         })
         .catch((err) => {
           this.komubotrestController.sendErrorToDevTest(client, authorId, err);
@@ -67,4 +76,3 @@ export class RemindCommand implements CommandLineClass {
     }
   }
 }
-

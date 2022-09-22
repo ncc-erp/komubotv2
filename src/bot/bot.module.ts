@@ -55,6 +55,10 @@ import { OrderService } from "./commands/order/order.service";
 import NotificationCommand from "./commands/notification/noti.command";
 import { CompanytripService } from "./commands/companytrip/companytrip.service";
 import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import LeaveCommand from "./commands/leave/leave.command";
+import { PingCommand } from "./commands/ping/ping";
+import { LeaveService } from "./commands/leave/leave.service";
 
 
 @Module({
@@ -78,6 +82,7 @@ import { KomubotrestController } from "./utils/komubotrest/komubotrest.controlle
       Opentalk,
       Uploadfile,
       Opentalk,
+      CompanyTrip
     ]),
     CheckListModule, 
     NestjsScheduleModule.forRoot(),
@@ -94,10 +99,12 @@ import { KomubotrestController } from "./utils/komubotrest/komubotrest.controlle
     DailyCommand,
     MeetingCommand,
     holidayCommand,
-    // LeaveCommand,
+    LeaveCommand,
+    LeaveService,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
+    PingCommand,
     UserStatusService,
     BotService,
     KomubotrestController,
