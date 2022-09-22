@@ -55,6 +55,9 @@ import { OrderService } from "./service/order.service";
 import { UtilsModule } from "./utils/utils.module";
 import { GemrankCommand } from "./commands/gemrank.command";
 import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
+import { AddEmojiCommand } from "./commands/addemoji.command";
+import { HasvotedCommand } from "./commands/hasvoted.command";
+import { ServerInfoCommand } from "./commands/serverinfo.command";
 
 
 @Module({
@@ -93,7 +96,9 @@ import { MoveChannelCommand } from "./commands/move_channel/move_channel.command
     DailyCommand,
     MeetingCommand,
     holidayCommand,
-    GemrankCommand,
+    
+    AddEmojiCommand,
+    HasvotedCommand,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
@@ -101,7 +106,7 @@ import { MoveChannelCommand } from "./commands/move_channel/move_channel.command
     BotService,
     UtilsService,
     ReportTracker,
-    MoveChannelCommand,
+    ServerInfoCommand,
     TimeSheetCommand,
     OpenTalkCommand,
     OpenTalkService,
