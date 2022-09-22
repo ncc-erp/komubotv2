@@ -45,20 +45,14 @@ import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
 import { MulterModule } from "@nestjs/platform-express";
-import { OpenTalkService } from "./commands/open-talk/open-talk.service";
-import { OrderCommand } from "./commands/order/order.command";
-import { Opentalk } from "./models/opentalk.entity";
-import { Uploadfile } from "./models/uploadFile.entity";
 
+import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
+
+import { OrderService } from "./service/order.service";
 import { UtilsModule } from "./utils/utils.module";
-import { OrderService } from "./commands/order/order.service";
-import NotificationCommand from "./commands/notification/noti.command";
-import { CompanytripService } from "./commands/companytrip/companytrip.service";
-import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
-import { CompanyTrip } from "./models/companyTrip.entity";
-import LeaveCommand from "./commands/leave/leave.command";
-import { PingCommand } from "./commands/ping/ping";
-import { LeaveService } from "./commands/leave/leave.service";
+import { GemrankCommand } from "./commands/gemrank.command";
+import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
+
 
 
 @Module({
@@ -99,8 +93,8 @@ import { LeaveService } from "./commands/leave/leave.service";
     DailyCommand,
     MeetingCommand,
     holidayCommand,
-    LeaveCommand,
-    LeaveService,
+    GemrankCommand,
+
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
@@ -110,7 +104,7 @@ import { LeaveService } from "./commands/leave/leave.service";
     KomubotrestController,
     UtilsService,
     ReportTracker,
-    // TestCommand,
+    MoveChannelCommand,
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
