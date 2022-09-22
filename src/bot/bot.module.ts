@@ -7,7 +7,6 @@ import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
 
-
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
@@ -42,18 +41,36 @@ import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { CheckListModule } from "./utils/checklist/checklist.module";
-import { ReportTracker } from "./utils/report-tracker";
+import { ReportTracker } from "./utils/report-tracker.untils";
 import { UtilsService } from "./utils/utils.service";
 import { MulterModule } from "@nestjs/platform-express";
-
-import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
-
-import { OrderService } from "./service/order.service";
 import { UtilsModule } from "./utils/utils.module";
 import { GemrankCommand } from "./commands/gemrank.command";
 import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
-
-
+import { OrderService } from "./commands/order/order.service";
+import NotificationCommand from "./commands/notification/noti.command";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import LeaveCommand from "./commands/leave/leave.command";
+import { PingCommand } from "./commands/ping/ping";
+import { LeaveService } from "./commands/leave/leave.service";
+import { CheckList } from "./models/checklistdata.entity";
+import { Subcategorys } from "./models/subcategoryData.entity";
+import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
+import { ReportWFHService } from "./utils/reportWFH/report-wfh.service";
+import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
+import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
+import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
+import { CheckListController } from "./utils/checklist/checklist.controller";
+import { CheckListService } from "./utils/checklist/checklist.service";
+import { AudioPlayer } from "./utils/audioPlayer.utils";
+import { PollCommand } from "./commands/poll/poll.command";
+import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
+import { Opentalk } from "./models/opentalk.entity";
+import { Uploadfile } from "./models/uploadFile.entity";
+import { OpenTalkService } from "./commands/open-talk/open-talk.service";
+import { OrderCommand } from "./commands/order/order.command";
 
 @Module({
   imports: [
@@ -73,15 +90,17 @@ import { MoveChannelCommand } from "./commands/move_channel/move_channel.command
       WorkFromHome,
       Msg,
       Remind,
-      Opentalk,
       Uploadfile,
       Opentalk,
-      CompanyTrip
+      CompanyTrip,
+      CheckList,
+      Subcategorys,
     ]),
-    CheckListModule, 
+    CheckListModule,
     NestjsScheduleModule.forRoot(),
     HttpModule,
     UtilsModule,
+    ReportWFHModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -116,7 +135,14 @@ import { MoveChannelCommand } from "./commands/move_channel/move_channel.command
     NotifiService,
     NotificationCommand,
     OrderCommand,
+    PollCommand,
     OrderService,
+    CheckListController,
+    KomubotrestController,
+    CompanytripService,
+    AudioPlayer,
+    CheckListService,
+    PollEmbedUntil,
   ],
   controllers: [BotController],
 })
