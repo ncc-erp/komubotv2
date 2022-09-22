@@ -5,10 +5,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
+// import { CheckListModule } from "./commands/checklist/checklist.module";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
 
 import { DailyCommand } from "./commands/daily.command";
-import holidayCommand from "./commands/holiday.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
 import { RemindCommand } from "./commands/remind/remind.command";
@@ -17,17 +17,13 @@ import { UserStatusService } from "./commands/user_status/user_status.service";
 import { WFHCommand } from "./commands/wfh/wfh.command";
 import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import { NotifiService } from "./commands/notification/noti.service";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
-import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
-import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
 import { Msg } from "./models/msg.entity";
-import { Order } from "./models/order.entity";
 import { Remind } from "./models/remind.entity";
 import { User } from "./models/user.entity";
 import { VoiceChannels } from "./models/voiceChannel.entity";
@@ -37,9 +33,10 @@ import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminde
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { NotifiService } from "./commands/notification/noti.service";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { CheckListModule } from "./utils/checklist/checklist.module";
-import { ReportTracker } from "./utils/report-tracker.untils";
-import { UtilsService } from "./utils/utils.service";
 import { MulterModule } from "@nestjs/platform-express";
 import { UtilsModule } from "./utils/utils.module";
 import { GemrankCommand } from "./commands/gemrank.command";
@@ -53,6 +50,16 @@ import { ConfigService } from "@nestjs/config";
 import { ClientConfigService } from "./config/client-config.service";
 import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
+import { ReportOrderModule } from "./utils/reportOrder/reportOrder.module";
+import { ReportCommand } from "./commands/report/report.command";
+import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
+import { UtilsService } from "./utils/utils.service";
+// import { ReportOrder } from "./utils/reportOrder.utils";
+import HolidayCommand from "./commands/holiday/holiday.command";
+import { Order } from "./models/order.entity";
+import { HolidayService } from "./commands/holiday/holiday.service";
+import Ncc8Command from "./commands/ncc8/ncc8.command";
+// import { CheckListController } from "./commands/Checklist/checklist.controller";
 import { CompanyTrip } from "./models/companyTrip.entity";
 import { CompanytripService } from "./commands/companytrip/companytrip.service";
 import { PingCommand } from "./commands/ping/ping";
@@ -60,14 +67,15 @@ import { KomubotrestController } from "./utils/komubotrest/komubotrest.controlle
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import NotificationCommand from "./commands/notification/noti.command";
 import { OrderCommand } from "./commands/order/order.command";
-import { CheckListController } from "./utils/checklist/checklist.controller";
-import { AudioPlayer } from "@discordjs/voice";
-import { CheckListService } from "./utils/checklist/checklist.service";
 import { OrderService } from "./commands/order/order.service";
 import { MoveChannelService } from "./commands/move_channel/move_channel.service";
 import { CheckList } from "./models/checklistdata.entity";
 import { Subcategorys } from "./models/subcategoryData.entity";
 import { Channel } from "./models/channel.entity";
+import { ReportTracker } from "./utils/report-tracker.untils";
+import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
+import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
+import { AudioPlayer } from "./utils/audioPlayer.utils";
 
 @Module({
   imports: [
@@ -94,6 +102,7 @@ import { Channel } from "./models/channel.entity";
       Subcategorys,
       Channel,
     ]),
+    // forwardRef(() => CheckListModule),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
     HttpModule,
@@ -111,7 +120,8 @@ import { Channel } from "./models/channel.entity";
     LeaveService,
     DailyCommand,
     MeetingCommand,
-    holidayCommand,
+    HolidayCommand,
+    // LeaveCommand,
     GemrankCommand,
     WFHCommand,
     RemindCommand,
@@ -136,15 +146,19 @@ import { Channel } from "./models/channel.entity";
     OrderCommand,
     PollCommand,
     OrderService,
-    CheckListController,
+    ReportCommand,
+    ReportOrderService,
+    HolidayService,
+    Ncc8Command,
     KomubotrestController,
     CompanytripService,
-    AudioPlayer,
-    CheckListService,
     PollEmbedUntil,
     ConfigService,
     ClientConfigService,
     MoveChannelService,
+    ReportHolidayService,
+    ReportOpenTalkService,
+    AudioPlayer
   ],
   controllers: [BotController],
 })

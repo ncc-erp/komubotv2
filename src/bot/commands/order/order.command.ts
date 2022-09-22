@@ -7,7 +7,6 @@ import { OrderService } from "./order.service";
   name: "order",
   description: "order",
 })
-
 export class OrderCommand implements CommandLineClass {
   constructor(
     private orderService: OrderService,
@@ -92,8 +91,8 @@ export class OrderCommand implements CommandLineClass {
           content: "`✅` Bạn đã đặt đơn!!!",
         });
       }
-    } catch (err) {
-      console.log(err);
+    } catch (er) {
+      console.log(er);
     }
   }
 }
