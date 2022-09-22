@@ -7,7 +7,6 @@ import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
 
-
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
@@ -45,7 +44,22 @@ import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
-
+import { MulterModule } from "@nestjs/platform-express";
+import { UtilsModule } from "./utils/utils.module";
+import { Opentalk } from "./models/opentalk.entity";
+import { Uploadfile } from "./models/uploadFile.entity";
+import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
+import { OpenTalkService } from "./commands/open-talk/open-talk.service";
+import { OrderCommand } from "./commands/order/order.command";
+import { CheckListController } from "./utils/checklist/checklist.controller";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
+import { AudioPlayer } from "./utils/audioPlayer.utils";
+import { OrderService } from "./commands/order/order.service";
+import { CheckListService } from "./utils/checklist/checklist.service";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import { CheckList } from "./models/checklist.entity";
+import { Subcategorys } from "./models/subcategoryData.entity";
 
 @Module({
   imports: [
@@ -67,9 +81,11 @@ import { UtilsService } from "./utils/utils.service";
       Remind,
       Opentalk,
       Uploadfile,
-      Opentalk,
+      CompanyTrip,
+      CheckList,
+      Subcategorys
     ]),
-    CheckListModule, 
+    CheckListModule,
     NestjsScheduleModule.forRoot(),
     HttpModule,
     UtilsModule,
@@ -105,6 +121,11 @@ import { UtilsService } from "./utils/utils.service";
     NotificationCommand,
     OrderCommand,
     OrderService,
+    CheckListController,
+    KomubotrestController,
+    CompanytripService,
+    AudioPlayer,
+    CheckListService,
   ],
   controllers: [BotController],
 })

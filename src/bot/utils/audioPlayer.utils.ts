@@ -9,6 +9,7 @@ import { Uploadfile } from "../models/uploadFile.entity";
 import { UtilsService } from "./utils.service";
 import { createReadStream } from "fs";
 import { join } from "path";
+import { Injectable } from "@nestjs/common";
 
 function setTime(date, hours, minute, second, msValue) {
   return date.setHours(hours, minute, second, msValue);
@@ -26,6 +27,7 @@ function checkTimeSchulderNCC8() {
   }
   return result;
 }
+@Injectable()
 export class AudioPlayer {
   constructor(
     @InjectRepository(Uploadfile)
