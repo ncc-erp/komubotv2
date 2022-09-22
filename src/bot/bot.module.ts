@@ -7,6 +7,7 @@ import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
 
+
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
@@ -20,7 +21,6 @@ import { WFHCommand } from "./commands/wfh/wfh.command";
 // import OrderCommand from "./commands/order.command";
 import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import NotificationCommand from "./commands/ncc8/ncc8.command";
 import { NotifiService } from "./commands/notification/noti.service";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
@@ -45,21 +45,21 @@ import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
 import { MulterModule } from "@nestjs/platform-express";
-import { UtilsModule } from "./utils/utils.module";
-import { Opentalk } from "./models/opentalk.entity";
-import { Uploadfile } from "./models/uploadFile.entity";
-import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import { OrderCommand } from "./commands/order/order.command";
-import { CheckListController } from "./utils/checklist/checklist.controller";
-import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
-import { CompanytripService } from "./commands/companytrip/companytrip.service";
-import { AudioPlayer } from "./utils/audioPlayer.utils";
+import { Opentalk } from "./models/opentalk.entity";
+import { Uploadfile } from "./models/uploadFile.entity";
+
+import { UtilsModule } from "./utils/utils.module";
 import { OrderService } from "./commands/order/order.service";
-import { CheckListService } from "./utils/checklist/checklist.service";
+import NotificationCommand from "./commands/notification/noti.command";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { CompanyTrip } from "./models/companyTrip.entity";
-import { CheckList } from "./models/checklist.entity";
-import { Subcategorys } from "./models/subcategoryData.entity";
+import LeaveCommand from "./commands/leave/leave.command";
+import { PingCommand } from "./commands/ping/ping";
+import { LeaveService } from "./commands/leave/leave.service";
+
 
 @Module({
   imports: [
@@ -81,11 +81,10 @@ import { Subcategorys } from "./models/subcategoryData.entity";
       Remind,
       Opentalk,
       Uploadfile,
-      CompanyTrip,
-      CheckList,
-      Subcategorys
+      Opentalk,
+      CompanyTrip
     ]),
-    CheckListModule,
+    CheckListModule, 
     NestjsScheduleModule.forRoot(),
     HttpModule,
     UtilsModule,
@@ -95,21 +94,24 @@ import { Subcategorys } from "./models/subcategoryData.entity";
     PlaylistSlashCommand,
     ChecklistCommand,
     CompantripCommand,
+    CompanytripService,
     BotGateway,
     DailyCommand,
     MeetingCommand,
     holidayCommand,
-    // LeaveCommand,
+    LeaveCommand,
+    LeaveService,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
+    PingCommand,
     UserStatusService,
     BotService,
+    KomubotrestController,
     UtilsService,
     ReportTracker,
     // TestCommand,
     TimeSheetCommand,
-    OpenTalkCommand,
     OpenTalkService,
     MeetingSchedulerService,
     ReminderSchedulerService,
@@ -121,11 +123,6 @@ import { Subcategorys } from "./models/subcategoryData.entity";
     NotificationCommand,
     OrderCommand,
     OrderService,
-    CheckListController,
-    KomubotrestController,
-    CompanytripService,
-    AudioPlayer,
-    CheckListService,
   ],
   controllers: [BotController],
 })
