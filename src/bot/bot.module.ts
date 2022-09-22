@@ -67,13 +67,15 @@ import { KomubotrestController } from "./utils/komubotrest/komubotrest.controlle
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import NotificationCommand from "./commands/notification/noti.command";
 import { OrderCommand } from "./commands/order/order.command";
-import { AudioPlayer } from "@discordjs/voice";
 import { OrderService } from "./commands/order/order.service";
 import { MoveChannelService } from "./commands/move_channel/move_channel.service";
 import { CheckList } from "./models/checklistdata.entity";
 import { Subcategorys } from "./models/subcategoryData.entity";
 import { Channel } from "./models/channel.entity";
 import { ReportTracker } from "./utils/report-tracker.untils";
+import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
+import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
+import { AudioPlayer } from "./utils/audioPlayer.utils";
 
 @Module({
   imports: [
@@ -148,14 +150,15 @@ import { ReportTracker } from "./utils/report-tracker.untils";
     ReportOrderService,
     HolidayService,
     Ncc8Command,
-    AudioPlayer,
     KomubotrestController,
     CompanytripService,
-    AudioPlayer,
     PollEmbedUntil,
     ConfigService,
     ClientConfigService,
     MoveChannelService,
+    ReportHolidayService,
+    ReportOpenTalkService,
+    AudioPlayer
   ],
   controllers: [BotController],
 })

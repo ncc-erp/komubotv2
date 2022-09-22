@@ -41,10 +41,10 @@ export class MoveChannelCommand implements CommandLineClass {
 
           const messData = await this.movelChannelService.fineOneMsg(messageId)
 
-          if (Date.now() - messData.createdTimestamp.getTime() >= TIME) {
-            channel.setParent(CATEGORY_ACHIEVED_CHANNEL_ID);
-            this.movelChannelService.updateOneChannel(channelId, CATEGORY_ACHIEVED_CHANNEL_ID)
-          }
+          // if (Date.now() - messData.createdTimestamp.getTime() >= TIME) {
+          //   channel.setParent(CATEGORY_ACHIEVED_CHANNEL_ID);
+          //   this.movelChannelService.updateOneChannel(channelId, CATEGORY_ACHIEVED_CHANNEL_ID)
+          // }
         } catch (error) {
           continue;
         }
