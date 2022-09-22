@@ -4,8 +4,9 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.CHANNEL)
 export class Channel {
-  @PrimaryGeneratedColumn()
-  id: number;
+  
+  @PrimaryColumn({type : "text"})
+  id: string;
 
   @Column({ type: "text" })
   name: string;
@@ -26,7 +27,7 @@ export class Channel {
   rateLimitPerUser: number;
 
   @Column({ type: "text" })
-  nsparentIdfw: string;
+  parentId: string;
     static find: any;
   static updateOne: any;
 }
