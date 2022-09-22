@@ -13,10 +13,10 @@ export class Msg {
   @Column({ type: "text" })
   guildId: string;
 
-  @Column({ type: "boolean" })
+  @Column({ nullable: true, type: "boolean" })
   deleted: boolean;
-  
-  @Column({ type: "date" })
+
+  @Column({ nullable: true, type: "date" })
   createdTimestamp: Date;
 
   @Column({ type: "text" })
@@ -40,45 +40,45 @@ export class Msg {
   @Column({ type: "text" })
   nonce: string;
 
-  @Column({type: "text", array : true})
+  @Column({ nullable: true, type: "text", array: true })
   embeds: string[];
 
-  @Column({type: "text", array : true})
+  @Column({ nullable: true, type: "text", array: true })
   components: string[];
 
-  @Column({type: "text", array : true})
+  @Column({ nullable: true, type: "text", array: true })
   attachments: string[];
 
-  @Column({type: "text", array : true})
+  @Column({ nullable: true, type: "text", array: true })
   stickers: string[];
 
-  @Column({ type: "date" })
+  @Column({ nullable: true, type: "date" })
   editedTimestamp: Date;
 
-  @Column({type : "text", array : true })
+  @Column({ nullable: true, type: "text", array: true })
   reactions: string[];
 
-  @Column({type : "text", array : true })
+  @Column({ nullable: true, type: "text", array: true })
   mentions: string[];
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   webhookId: string;
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   groupActivityApplication: string;
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   applicationId: string;
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   activity: string;
 
-  @Column({ type: "decimal" })
+  @Column({ nullable: true, type: "decimal" })
   flags: number;
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   reference: string;
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   interaction: string;
 }

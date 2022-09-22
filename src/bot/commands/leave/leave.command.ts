@@ -7,7 +7,7 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { Leave } from "../../models/leave.entity";
 import { TABLE } from "../../constants/table";
 import { LeaveService } from "./leave.service";
-import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 
 @CommandLine({
   name: "leave",
@@ -15,7 +15,7 @@ import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
 })
 export default class LeaveCommand implements CommandLineClass {
   constructor(
-    private readonly leaveService: LeaveService
+    private readonly leaveService: LeaveService,  private komubotrestController : KomubotrestController,
   ) {}
 
   async execute(message: Message, args, Client) {
@@ -25,7 +25,7 @@ export default class LeaveCommand implements CommandLineClass {
         return message
           .reply("```" + "*leave minute reason  " + "```")
           .catch((err) => {
-            sendErrorToDevTest(Client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(Client, authorId, err);
           });
       }
       const minute =
@@ -33,7 +33,7 @@ export default class LeaveCommand implements CommandLineClass {
 
       if (!minute) {
         return message.reply("Minute must be a number").catch((err) => {
-          sendErrorToDevTest(Client, authorId, err);
+          this.komubotrestController.sendErrorToDevTest(Client, authorId, err);
         });
       }
       const reason = args.slice(1, args.length).join(" ");
@@ -41,7 +41,7 @@ export default class LeaveCommand implements CommandLineClass {
       
 
       return message.reply("`✅` Leave saved").catch((err) => {
-        sendErrorToDevTest(Client, authorId, err);
+        this.komubotrestController.sendErrorToDevTest(Client, authorId, err);
       });
     } catch (err) {
       console.log(err);

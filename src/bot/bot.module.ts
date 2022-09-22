@@ -1,13 +1,12 @@
 import { DiscordModule } from "@discord-nestjs/core";
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
-import { CheckListModule } from "./commands/checklist/checklist.module";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
-import { CompanyModule } from "./commands/companytrip/companytrip.module";
+
 
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
@@ -22,9 +21,10 @@ import { WFHCommand } from "./commands/wfh/wfh.command";
 // import OrderCommand from "./commands/order.command";
 import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
-import { HeyboyService } from "./commands/heyboy/heyboy.service";
+import { NotifiService } from "./commands/notification/noti.service";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
@@ -41,20 +41,28 @@ import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminde
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
-import NotificationCommand from "./commands/ncc8/ncc8.command";
-import { NotifiService } from "./commands/notification/noti.service";
-import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
-import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
+import { MulterModule } from "@nestjs/platform-express";
+import { OpenTalkService } from "./commands/open-talk/open-talk.service";
+import { OrderCommand } from "./commands/order/order.command";
+import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
-import { AudioPlayer } from "./utils/audioPlayer.utils";
-import LeaveCommand from "./commands/leave/leave.command";
-import { LeaveService } from "./commands/leave/leave.service";
+
+import { UtilsModule } from "./utils/utils.module";
+import { OrderService } from "./commands/order/order.service";
+import NotificationCommand from "./commands/notification/noti.command";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+
 
 @Module({
   imports: [
     DiscordModule.forFeature(),
+    MulterModule.register({
+      dest: "./files",
+    }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
       Daily,
@@ -67,42 +75,47 @@ import { LeaveService } from "./commands/leave/leave.service";
       WorkFromHome,
       Msg,
       Remind,
-      Uploadfile
+      Opentalk,
+      Uploadfile,
+      Opentalk,
     ]),
-    forwardRef(() => CheckListModule),
-    CompanyModule,
+    CheckListModule, 
     NestjsScheduleModule.forRoot(),
     HttpModule,
+    UtilsModule,
   ],
   providers: [
     PlaySlashCommand,
     PlaylistSlashCommand,
     ChecklistCommand,
     CompantripCommand,
+    CompanytripService,
     BotGateway,
     DailyCommand,
     MeetingCommand,
     holidayCommand,
+    // LeaveCommand,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
     UserStatusService,
     BotService,
+    KomubotrestController,
     UtilsService,
     ReportTracker,
-    AudioPlayer,
-    MeetingCommand,
+    // TestCommand,
     TimeSheetCommand,
+    OpenTalkService,
     MeetingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
     MeetingService,
-    LeaveCommand,
-    LeaveService,
     ToggleActiveCommand,
     ToggleActiveService,
     NotifiService,
     NotificationCommand,
+    OrderCommand,
+    OrderService,
   ],
   controllers: [BotController],
 })

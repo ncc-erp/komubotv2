@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
-@Entity(TABLE.OPENTALK)
+@Entity(TABLE.OPEN_TALK)
 export class Opentalk {
   @PrimaryGeneratedColumn()
   id: number;
@@ -13,6 +13,6 @@ export class Opentalk {
   @Column({ type: "text" })
   username: string;
 
-  @Column({ type: "date" })
-  date: Date;
+  @Column({ type: "decimal" })
+  createdTimestamp: number;
 }

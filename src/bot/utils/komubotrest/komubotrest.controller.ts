@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Injectable } from "@nestjs/common";
 import { createError } from "http-errors";
 import {
   Client,
@@ -10,10 +10,10 @@ import {
 import { KomubotrestService } from "./komubotrest.service";
 
 import { deleteMessage } from "../deleteMessage.utils";
-import { sendErrorToDevTest } from "../komubotrest.utils";
 
 
-@Controller()
+
+@Injectable()
 export class KomubotrestController {
   constructor(private komubotrestService: KomubotrestService) {}
   private data;
@@ -404,7 +404,7 @@ export class KomubotrestController {
     let authorId = message.author.id;
     console.log(_embed)
      await message.reply({ embeds: [_embed] }).catch((err) => {
-      sendErrorToDevTest(client, authorId, err);
+      this.sendErrorToDevTest(client, authorId, err);
     });
     
   };

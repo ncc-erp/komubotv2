@@ -1,8 +1,9 @@
 export const TABLE = {
   DAILY: "komu_daily",
-  OPENTALK: "komu_opentalk",
+  OPEN_TALK: "komu_opentalk",
   WTH: "komu_wfh",
   BIRTHDAY: "komu_birthdays",
+  PING: "komu_ping",
   BWL: "komu_bwl",
   WIKI: "komu_wiki",
   WOMENDAY: "komu_women_day",
@@ -23,7 +24,6 @@ export const TABLE = {
   QUESTION: "komu_question",
   PENATLY: "komu_penatly",
   ORDER: "komu_order",
-  OPEN_TALK: "komu_opentalk",
   MSG: "komu_msg",
   MENTIONED: "komu_metioned",
   MEETING: "komu_meeting",

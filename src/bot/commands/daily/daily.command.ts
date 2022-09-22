@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { DailyService } from "./daily.service";
 
 const messHelp =
@@ -58,7 +58,7 @@ const dailyHelp =
   description: "daily work",
 })
 export class DailyCommand implements CommandLineClass {
-  constructor(private readonly dailyService: DailyService) {}
+  constructor(private readonly dailyService: DailyService,  private komubotrestController : KomubotrestController,) {}
 
   async execute(message: Message, args, client) {
     const authorId = message.author.id;
@@ -83,7 +83,7 @@ export class DailyCommand implements CommandLineClass {
             ephemeral: true,
           } as any)
           .catch((err) => {
-            sendErrorToDevTest(client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
       } else {
         await this.dailyService.saveDaily(message, args);
