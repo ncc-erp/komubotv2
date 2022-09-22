@@ -48,7 +48,6 @@ export class MeetingSchedulerService {
 
   async tagMeeting(client: any) {
     if (await this.utilsService.checkHoliday()) return;
-    console.log("start meeting");
     let guild = client.guilds.fetch("1019615919204483072");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
@@ -77,7 +76,6 @@ export class MeetingSchedulerService {
     findVoice.map((item) => {
       voiceNow.push(item.id);
     });
-    console.log("find voice start");
 
     voiceChannel.map(async (voice, index) => {
       const userDiscord = await client.channels.fetch(voice);
@@ -405,7 +403,6 @@ export class MeetingSchedulerService {
         });
       }
     });
-    console.log("end meeting");
   }
 
   async updateReminderMeeting() {

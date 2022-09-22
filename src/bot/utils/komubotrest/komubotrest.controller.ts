@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Injectable } from "@nestjs/common";
 import { createError } from "http-errors";
 import {
   Client,
@@ -13,7 +13,7 @@ import { deleteMessage } from "../deleteMessage.utils";
 
 
 
-@Controller()
+@Injectable()
 export class KomubotrestController {
   constructor(private komubotrestService: KomubotrestService) {}
   private data;

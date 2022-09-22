@@ -21,7 +21,6 @@ import { WFHCommand } from "./commands/wfh/wfh.command";
 // import OrderCommand from "./commands/order.command";
 import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import NotificationCommand from "./commands/ncc8/ncc8.command";
 import { NotifiService } from "./commands/notification/noti.service";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
@@ -46,18 +45,27 @@ import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
 import { MulterModule } from "@nestjs/platform-express";
+
 import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
-import { OpenTalkService } from "./commands/open-talk/open-talk.service";
-import { OrderCommand } from "./commands/order/order.command";
-import { Opentalk } from "./models/opentalk.entity";
-import { Uploadfile } from "./models/uploadFile.entity";
-import { OrderService } from "./service/order.service";
+
+
 import { UtilsModule } from "./utils/utils.module";
 import { GemrankCommand } from "./commands/gemrank.command";
 import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
 import { AddEmojiCommand } from "./commands/addemoji.command";
 import { HasvotedCommand } from "./commands/hasvoted.command";
 import { ServerInfoCommand } from "./commands/serverinfo.command";
+import { CompanytripService } from "./commands/companytrip/companytrip.service";
+import NotificationCommand from "./commands/notification/noti.command";
+import { OpenTalkService } from "./commands/open-talk/open-talk.service";
+import { OrderCommand } from "./commands/order/order.command";
+import { PingCommand } from "./commands/ping/ping";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import { Opentalk } from "./models/opentalk.entity";
+import { Uploadfile } from "./models/uploadFile.entity";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+import { OrderService } from "./commands/order/order.service";
+
 
 
 @Module({
@@ -81,6 +89,7 @@ import { ServerInfoCommand } from "./commands/serverinfo.command";
       Opentalk,
       Uploadfile,
       Opentalk,
+      CompanyTrip
     ]),
     CheckListModule, 
     NestjsScheduleModule.forRoot(),
@@ -92,6 +101,7 @@ import { ServerInfoCommand } from "./commands/serverinfo.command";
     PlaylistSlashCommand,
     ChecklistCommand,
     CompantripCommand,
+    CompanytripService,
     BotGateway,
     DailyCommand,
     MeetingCommand,
@@ -99,16 +109,19 @@ import { ServerInfoCommand } from "./commands/serverinfo.command";
     
     AddEmojiCommand,
     HasvotedCommand,
+    GemrankCommand,
+
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
+    PingCommand,
     UserStatusService,
     BotService,
+    KomubotrestController,
     UtilsService,
     ReportTracker,
     ServerInfoCommand,
     TimeSheetCommand,
-    OpenTalkCommand,
     OpenTalkService,
     MeetingSchedulerService,
     ReminderSchedulerService,

@@ -3,6 +3,7 @@ export const TABLE = {
   OPEN_TALK: "komu_opentalk",
   WTH: "komu_wfh",
   BIRTHDAY: "komu_birthdays",
+  PING: "komu_ping",
   BWL: "komu_bwl",
   WIKI: "komu_wiki",
   WOMENDAY: "komu_women_day",
