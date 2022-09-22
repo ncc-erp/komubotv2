@@ -46,9 +46,13 @@ import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
 
+
 @Module({
   imports: [
     DiscordModule.forFeature(),
+    MulterModule.register({
+      dest: "./files",
+    }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
       Daily,
@@ -61,10 +65,14 @@ import { UtilsService } from "./utils/utils.service";
       WorkFromHome,
       Msg,
       Remind,
+      Opentalk,
+      Uploadfile,
+      Opentalk,
     ]),
     CheckListModule, 
     NestjsScheduleModule.forRoot(),
     HttpModule,
+    UtilsModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -84,8 +92,9 @@ import { UtilsService } from "./utils/utils.service";
     UtilsService,
     ReportTracker,
     // TestCommand,
-    MeetingCommand,
     TimeSheetCommand,
+    OpenTalkCommand,
+    OpenTalkService,
     MeetingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
@@ -94,6 +103,8 @@ import { UtilsService } from "./utils/utils.service";
     ToggleActiveService,
     NotifiService,
     NotificationCommand,
+    OrderCommand,
+    OrderService,
   ],
   controllers: [BotController],
 })

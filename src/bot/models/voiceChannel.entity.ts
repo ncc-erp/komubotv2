@@ -7,10 +7,10 @@ export class VoiceChannels {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   originalName: string;
 
-  @Column({ type: "text" })
+  @Column({ nullable: true, type: "text" })
   newRoomName: string;
 
   @Column({ nullable: true, type: "decimal" })
