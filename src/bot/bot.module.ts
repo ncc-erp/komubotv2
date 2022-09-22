@@ -1,13 +1,12 @@
 import { DiscordModule } from "@discord-nestjs/core";
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { ChecklistCommand } from "./commands/checklist.command";
-import { CheckListModule } from "./commands/checklist/checklist.module";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
-import { CompanyModule } from "./commands/companytrip/companytrip.module";
+
 
 import { DailyCommand } from "./commands/daily.command";
 import holidayCommand from "./commands/holiday.command";
@@ -22,9 +21,11 @@ import { WFHCommand } from "./commands/wfh/wfh.command";
 // import OrderCommand from "./commands/order.command";
 import { HttpModule } from "@nestjs/axios";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
-import { HeyboyService } from "./commands/heyboy/heyboy.service";
+import NotificationCommand from "./commands/ncc8/ncc8.command";
+import { NotifiService } from "./commands/notification/noti.service";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
 import { Holiday } from "./models/holiday.entity";
@@ -41,20 +42,10 @@ import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminde
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
+import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker";
 import { UtilsService } from "./utils/utils.service";
-import { NotifiService } from "./commands/notification/noti.service";
-import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
-import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
-import NotificationCommand from "./commands/notification/noti.command";
-import { MulterModule } from "@nestjs/platform-express";
-import { Uploadfile } from "./models/uploadFile.entity";
-import { OrderCommand } from "./commands/order/order.command";
-import { OrderService } from "./commands/order/order.service";
-import { Opentalk } from "./models/opentalk.entity";
-import { UtilsModule } from "./utils/utils.module";
-import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
-import { OpenTalkService } from "./commands/open-talk/open-talk.service";
+
 
 @Module({
   imports: [
@@ -78,8 +69,7 @@ import { OpenTalkService } from "./commands/open-talk/open-talk.service";
       Uploadfile,
       Opentalk,
     ]),
-    forwardRef(() => CheckListModule),
-    CompanyModule,
+    CheckListModule, 
     NestjsScheduleModule.forRoot(),
     HttpModule,
     UtilsModule,

@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder } from "discord.js";
 import { User } from "src/bot/models/user.entity";
-import { sendErrorToDevTest } from "src/bot/utils/komubotrest.utils";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { ToggleActiveService } from "./toggleActive.service";
@@ -14,7 +14,8 @@ export class ToggleActiveCommand implements CommandLineClass {
   constructor(
     @InjectRepository(User)
     private userData: Repository<User>,
-    private toggleActiveService: ToggleActiveService
+    private toggleActiveService: ToggleActiveService, 
+    private komubotrestController : KomubotrestController,
   ) {}
   messHelp =
     "```" +
@@ -43,7 +44,7 @@ export class ToggleActiveCommand implements CommandLineClass {
             content: `${this.messHelp}`,
           })
           .catch((err) => {
-            sendErrorToDevTest(client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
       if (!correctUrers.deactive) {
         message
@@ -51,7 +52,7 @@ export class ToggleActiveCommand implements CommandLineClass {
             content: "Disable account successfully",
           })
           .catch((err) => {
-            sendErrorToDevTest(client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
 
         await this.toggleActiveService.deactiveAcc(correctUrers.id);
@@ -62,7 +63,7 @@ export class ToggleActiveCommand implements CommandLineClass {
             content: "Enable account successfully",
           })
           .catch((err) => {
-            sendErrorToDevTest(client, authorId, err);
+            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
       }
     } catch (error) {
