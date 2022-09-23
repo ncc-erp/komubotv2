@@ -86,8 +86,15 @@ import { WomenDay } from "./models/womenDay.entity";
 import { ReportCheckoutService } from "./utils/reportCheckout/reportCheckout.service";
 import { ReportCheckoutModule } from "./utils/reportCheckout/reportCheckout.module";
 import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.service";
-import { BirthdayService } from "./utils/birthday/birthdayservice";
+import { ReportScoreModule } from "./utils/reportScore/report-score.module";
+import { ReportScoreService } from "./utils/reportScore/report-score.service";
+import { Tx8Command } from "./commands/tx8/tx8.command";
+import { TX8 } from "./models/tx8.entity";
+import { LinksCommand } from "./utilities/links.command";
+import { AvatarCommand } from "./utilities/avatar.command";
+import { UserInfoCommand } from "./utilities/userInfo.command";
 import { BirthDay } from "./models/birthday.entity";
+import { BirthdayService } from "./utils/birthday/birthdayservice";
 
 @Module({
   imports: [
@@ -114,6 +121,7 @@ import { BirthDay } from "./models/birthday.entity";
       Subcategorys,
       Channel,
       Daily,
+      TX8,
       WomenDay,
       BirthDay,
     ]),
@@ -126,15 +134,20 @@ import { BirthDay } from "./models/birthday.entity";
     ReportMentionModule,
     ReportWomenDayModule,
     ReportCheckoutModule,
+    ReportScoreModule,
   ],
   providers: [
     PlaySlashCommand,
     PlaylistSlashCommand,
     ChecklistCommand,
     CompantripCommand,
+    Tx8Command,
     CompanytripService,
     BotGateway,
     LeaveCommand,
+    LinksCommand,
+    AvatarCommand,
+    UserInfoCommand,
     LeaveService,
     DailyCommand,
     MeetingCommand,
@@ -165,6 +178,7 @@ import { BirthDay } from "./models/birthday.entity";
     ReportCommand,
     ReportOrderService,
     ReportDailyService,
+    ReportScoreService,
     HolidayService,
     Ncc8Command,
     KomubotrestController,
