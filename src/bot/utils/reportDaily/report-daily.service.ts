@@ -1,3 +1,4 @@
+import { getUserOffWork } from "../getUserOffWork";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EmbedBuilder } from "discord.js";
@@ -7,7 +8,7 @@ import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
 import { getDateDay, getUserNameByEmail } from "../getusernotdaily.utils";
 import { UtilsService } from "../utils.service";
-
+import axios from "axios";
 @Injectable()
 export class ReportDailyService {
   constructor(
@@ -86,7 +87,8 @@ export class ReportDailyService {
       try {
         const url = date
           ? `${client.config.wfh.api_url}?date=${date.toDateString()}`
-          : client.config.wfh.api_url;
+          : `${process.env.TIMESHEET_API}Public/GetUserWorkFromHome`;
+
         wfhGetApi = await axios.get(url, {
           headers: {
             securitycode: process.env.WFH_API_KEY_SECRET,
@@ -113,65 +115,45 @@ export class ReportDailyService {
       }
 
       const { userOffFullday } = await getUserOffWork(date);
-      //   const userNotWFH = await userData
-      // .find({
-      //   email: { $nin: [...wfhUserEmail, ...userOffFullday] },
-      //   deactive: { $ne: true },
-      //   $or: [
-      //     { roles_discord: { $all: ['INTERN'] } },
-      //     { roles_discord: { $all: ['STAFF'] } },
-      //   ],
-      // })
-      // .select('id email -_id');
+      const userOff = [...wfhUserEmail, ...userOffFullday];
       const userNotWFH = await this.userRepository
         .createQueryBuilder(TABLE.USER)
-        .where(`${TABLE.USER}.email NOT IN (:${wfhUserEmail})`)
-        .andWhere(`${TABLE.USER}.email NOT IN (:${userOffFullday})`)
+        .where(`"email" NOT IN (:...userOff)`, {
+          userOff: userOff,
+        })
         .andWhere(`${TABLE.USER}.deactive = :deactive`, { deactive: true })
-        .orWhere(`"roles_discord" @> :admin OR "roles_discord" @> :hr`, {
+        .andWhere(`"roles_discord" @> :staff OR "roles_discord" @> :intern`, {
           staff: ["STAFF"],
           intern: ["INTERN"],
         })
         .select(`${TABLE.USER}.*`)
-        .getMany();
-      const userEmail = userNotWFH.map((item) => item.email);
+        .execute();
 
-      //   const dailyMorning = await dailyData.find({
-      //     createdAt: {
-      //       $lte: getDateDay(date).morning.lastime,
-      //       $gte: getDateDay(date).morning.fisttime,
-      //     },
-      //   });
+      const userEmail = userNotWFH.map((item) => item.email);
 
       const dailyMorning = await this.dailyReposistory
         .createQueryBuilder(TABLE.DAILY)
         .where(`${TABLE.DAILY}.createdAt < ${getDateDay(date).morning.lastime}`)
         .andWhere(
-          `${TABLE.WFH}.createdAt > ${getDateDay(date).morning.fisttime}`
+          `${TABLE.DAILY}.createdAt > ${getDateDay(date).morning.fisttime}`
         )
         .execute();
 
-      //   const dailyAfternoon = await dailyData.find({
-      //     createdAt: {
-      //       $lte: getDateDay(date).afternoon.lastime,
-      //       $gte: getDateDay(date).afternoon.fisttime,
-      //     },
-      //   });
       const dailyAfternoon = await this.dailyReposistory
         .createQueryBuilder(TABLE.DAILY)
         .where(
           `${TABLE.DAILY}.createdAt < ${getDateDay(date).afternoon.lastime}`
         )
         .andWhere(
-          `${TABLE.WFH}.createdAt > ${getDateDay(date).afternoon.fisttime}`
+          `${TABLE.DAILY}.createdAt > ${getDateDay(date).afternoon.fisttime}`
         )
         .execute();
 
-      const dailyFullday: any = this.dailyReposistory
+      const dailyFullday = await this.dailyReposistory
         .createQueryBuilder(TABLE.DAILY)
         .where(`${TABLE.DAILY}.createdAt < ${getDateDay(date).fullday.lastime}`)
         .andWhere(
-          `${TABLE.WFH}.createdAt > ${getDateDay(date).fullday.fisttime}`
+          `${TABLE.DAILY}.createdAt > ${getDateDay(date).fullday.fisttime}`
         )
         .execute();
 

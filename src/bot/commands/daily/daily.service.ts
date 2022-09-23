@@ -22,7 +22,7 @@ export class DailyService {
             ? message.member.displayName
             : message.author.username,
         daily: args.join(" "),
-        createdAt: new Date(),
+        createdAt: Date.now(),
         channelid: message.channel.id,
       })
       .execute();

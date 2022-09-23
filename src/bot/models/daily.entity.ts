@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
-import { TABLE } from '../constants/table';
+import { TABLE } from "../constants/table";
 
 @Entity(TABLE.DAILY)
 export class Daily {
@@ -16,8 +16,8 @@ export class Daily {
   @Column()
   daily: string;
 
-  @Column({ type: 'date' })
-  createdAt: Date;
+  @Column({ type: "decimal", nullable: true })
+  createdAt: number;
 
   @Column()
   channelid: string;
