@@ -44,6 +44,7 @@
     "discord.js": "14.1.1",
     "ffmpeg-static": "^5.1.0",
     "fs": "^0.0.1-security",
+    "is-url": "^1.2.4",
     "moment": "^2.29.4",
     "parse-duration": "^1.0.2",
     "path": "^0.12.7",

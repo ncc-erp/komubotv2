@@ -76,9 +76,9 @@ import { ReportTracker } from "./utils/report-tracker.untils";
 import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
 import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
+import { ReportDailyModule } from "./utils/reportDaily/report-daily.module";
 import holidayCommand from "./commands/holiday.command";
-
-
+import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
 
 @Module({
   imports: [
@@ -104,6 +104,7 @@ import holidayCommand from "./commands/holiday.command";
       CheckList,
       Subcategorys,
       Channel,
+      Daily,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -123,7 +124,7 @@ import holidayCommand from "./commands/holiday.command";
     LeaveService,
     DailyCommand,
     MeetingCommand,
-    holidayCommand, 
+    holidayCommand,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
@@ -149,6 +150,7 @@ import holidayCommand from "./commands/holiday.command";
     OrderService,
     ReportCommand,
     ReportOrderService,
+    ReportDailyService,
     HolidayService,
     Ncc8Command,
     KomubotrestController,
@@ -159,7 +161,7 @@ import holidayCommand from "./commands/holiday.command";
     MoveChannelService,
     ReportHolidayService,
     ReportOpenTalkService,
-    AudioPlayer
+    AudioPlayer,
   ],
   controllers: [BotController],
 })

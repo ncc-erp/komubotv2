@@ -1,5 +1,4 @@
 import { Message, Client, parseEmoji, EmbedBuilder } from "discord.js";
-import { isUrl } from "is-url";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 
 @CommandLine({
@@ -50,43 +49,43 @@ export class ServerInfoCommand implements CommandLineClass {
             **ID :** ${message.guild.id}
             **${lang.d}:** ${message.guild.channels.cache.size}
             **${lang.e}**: ${
-                    message.guild.banner
-                    ? `[${here}](${message.guild.bannerURL({ size: 1024 })})`
-                    : "Aucune"
-                }
+        message.guild.banner
+          ? `[${here}](${message.guild.bannerURL({ size: 1024 })})`
+          : "Aucune"
+      }
             **Boosts** : ${message.guild.premiumSubscriptionCount} , \`${
-                    message.guild.premiumTier
-                } \`
+        message.guild.premiumTier
+      } \`
             **Owner** : \`${
-                    message.guild.members.cache.get(own.id)
-                    ? message.guild.members.cache.get(own.id).user.tag
-                    : "Utilisateur Inconnu"
-                }\` (<@!${own.id}>)
+              message.guild.members.cache.get(own.id)
+                ? message.guild.members.cache.get(own.id).user.tag
+                : "Utilisateur Inconnu"
+            }\` (<@!${own.id}>)
             `,
     });
     embed.addFields({
       name: lang.f,
       value: `
                 **Roles**: ${
-                        message.guild.roles.cache.size > 15
-                        ? `${message.guild.roles.cache
-                            .map((x) => `<@&${x.id}>`)
-                            .slice(0, 15)} ${lang.rest.replace(
-                            "{rest}",
-                            message.guild.roles.cache.size - 15
-                            )} `
-                        : message.guild.roles.cache.map((x) => `<@&${x.id}>`)
-                    }
+                  message.guild.roles.cache.size > 15
+                    ? `${message.guild.roles.cache
+                        .map((x) => `<@&${x.id}>`)
+                        .slice(0, 15)} ${lang.rest.replace(
+                        "{rest}",
+                        message.guild.roles.cache.size - 15
+                      )} `
+                    : message.guild.roles.cache.map((x) => `<@&${x.id}>`)
+                }
                 **Emojis**: ${
-                        message.guild.emojis.cache.size > 15
-                        ? `${message.guild.emojis.cache
-                            .map((x) => `${x}`)
-                            .slice(0, 15)} ${lang.rest.replace(
-                            "{rest}",
-                            message.guild.emojis.cache.size - 15
-                            )} `
-                        : message.guild.emojis.cache.map((x) => `${x}`)
-                    }
+                  message.guild.emojis.cache.size > 15
+                    ? `${message.guild.emojis.cache
+                        .map((x) => `${x}`)
+                        .slice(0, 15)} ${lang.rest.replace(
+                        "{rest}",
+                        message.guild.emojis.cache.size - 15
+                      )} `
+                    : message.guild.emojis.cache.map((x) => `${x}`)
+                }
                 `,
     });
     embed.setThumbnail(

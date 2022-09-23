@@ -46,6 +46,7 @@ export class PollEmbedUntil {
       emojiInfo[emoji] = { option: option, votes: 0, username: [] };
       text += `${emoji} : \`${option}\`\n\n`;
     }
+
     const usedEmojis = Object.keys(emojiInfo);
     usedEmojis.push(forceEndPollEmoji);
 
@@ -62,6 +63,7 @@ export class PollEmbedUntil {
       (reaction, user) => usedEmojis.includes(reaction.emoji.name) && !user.bot,
       timeout === 0 ? {} : { time: timeout * 3600 * 1000 }
     );
+
     const voterInfo = new Map();
     reactionCollector.on("collect", (reaction, user) => {
       if (usedEmojis.includes(reaction.emoji.name)) {
@@ -115,10 +117,7 @@ export class PollEmbedUntil {
           text += `\`+ ${item}\`\n\n`;
         });
       }
-      console.log(poll, "fff");
-
       poll.delete();
-
       msg.channel
         .send({
           embeds: [

@@ -74,7 +74,7 @@ export class ReportWFHService {
           .setTitle(
             "Những người bị phạt vì không trả lời wfh trong ngày hôm nay"
           )
-          .setColor("RED" as any)
+          .setColor("Red")
           .setDescription(`${mess}`);
         return message.reply({ embeds: [Embed] }).catch((err) => {
           this.utilsService.sendErrorToDevTest(client, authorId, err);
@@ -142,7 +142,7 @@ export class ReportWFHService {
           .join("\n");
         const Embed = new EmbedBuilder()
           .setTitle("Những người được approved trong ngày hôm nay")
-          .setColor("RED" as any)
+          .setColor("Red")
           .setDescription(`${mess}`);
         return message.reply({ embeds: [Embed] }).catch((err) => {
           this.utilsService.sendErrorToDevTest(client, authorId, err);

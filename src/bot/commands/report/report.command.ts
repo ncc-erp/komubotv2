@@ -1,5 +1,6 @@
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder, Client } from "discord.js";
+import { ReportDailyService } from "src/bot/utils/reportDaily/report-daily.service";
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
@@ -27,29 +28,42 @@ export class ReportCommand implements CommandLineClass {
     private reportOrderService: ReportOrderService,
     private reportHolidayService: ReportHolidayService,
     private reportOpentalkService: ReportOpenTalkService,
-    private reportWFHService: ReportWFHService
+    private reportWFHService: ReportWFHService,
+    private reportDailyService: ReportDailyService
   ) {}
 
   async execute(message: Message, args, client: Client, guildDB) {
     try {
       if (args[0] === "daily") {
-        // if (args[1]) {
-        //   const day = args[1].slice(0, 2);
-        //   const month = args[1].slice(3, 5);
-        //   const year = args[1].slice(6);
-        //   const fomat = `${month}/${day}/${year}`;
-        //   const dateTime = new Date(fomat);
-        //   if (
-        //     !/^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([1][26]|[2468][048]|[3579][26])00))))$/.test(
-        //       args[1]
-        //     )
-        //   ) {
-        //     return message.channel.send(messHelpDaily);
-        //   }
-        //   await reportDaily(dateTime, message, args, client, guildDB);
-        // } else {
-        //   await reportDaily(null, message, args, client, guildDB);
-        // }
+        if (args[1]) {
+          const day = args[1].slice(0, 2);
+          const month = args[1].slice(3, 5);
+          const year = args[1].slice(6);
+          const fomat = `${month}/${day}/${year}`;
+          const dateTime = new Date(fomat);
+          if (
+            !/^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([1][26]|[2468][048]|[3579][26])00))))$/.test(
+              args[1]
+            )
+          ) {
+            return message.channel.send(messHelpDaily);
+          }
+          await this.reportDailyService.reportDaily(
+            dateTime,
+            message,
+            args,
+            client,
+            guildDB
+          );
+        } else {
+          await this.reportDailyService.reportDaily(
+            null,
+            message,
+            args,
+            client,
+            guildDB
+          );
+        }
       } else if (args[0] === "weekly") {
         // for (const day of getTimeWeekMondayToFriday(new Date().getDay())) {
         //   await reportDaily(day, message, args, client, guildDB);
