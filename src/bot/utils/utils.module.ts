@@ -5,11 +5,13 @@ import { ConfigService } from "@nestjs/config";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ReportCommand } from "../commands/report/report.command";
+import { Tx8Command } from "../commands/tx8/tx8.command";
 import { ClientConfigService } from "../config/client-config.service";
 import { Daily } from "../models/daily.entity";
 import { Holiday } from "../models/holiday.entity";
 import { Opentalk } from "../models/opentalk.entity";
 import { Order } from "../models/order.entity";
+import { TX8 } from "../models/tx8.entity";
 import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
 import { WomenDay } from "../models/womenDay.entity";
@@ -23,6 +25,8 @@ import { ReportOpenTalkModule } from "./reportOpentalk/reportOpentalk.module";
 import { ReportOpenTalkService } from "./reportOpentalk/reportOpentalk.service";
 import { ReportOrderModule } from "./reportOrder/reportOrder.module";
 import { ReportOrderService } from "./reportOrder/reportOrder.service";
+import { ReportScoreModule } from "./reportScore/report-score.module";
+import { ReportScoreService } from "./reportScore/report-score.service";
 import { ReportWFHModule } from "./reportWFH/report-wfh.module";
 import { ReportWomenDayModule } from "./reportWomenDay/reportWomenDay.module";
 import { ReportWomenDayService } from "./reportWomenDay/reportWomenDay.service";
@@ -41,22 +45,26 @@ import { UtilsService } from "./utils.service";
       Daily,
       User,
       WomenDay,
+      TX8,
     ]),
     ReportOrderModule,
     ReportHolidayModule,
     ReportOpenTalkModule,
     ReportWFHModule,
     ReportDailyModule,
+    ReportScoreModule,
     UtilsModule,
     ReportWomenDayModule,
     HttpModule,
   ],
   providers: [
     ReportCommand,
+    Tx8Command,
     ReportHolidayService,
     ReportOpenTalkService,
     ReportOrderService,
     ReportDailyService,
+    ReportScoreService,
     UtilsService,
     KomubotrestController,
     ReportWomenDayService,

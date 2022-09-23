@@ -1,11 +1,15 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
-
-import { checkHelpMessage, debug, getDebug, getProjectOfUser, logTimeSheetForTask, parseTimesheetMessage, validateTimesheetFormat } from "src/bot/utils/timesheet.until";
-
-
+import {
+  checkHelpMessage,
+  debug,
+  getDebug,
+  getProjectOfUser,
+  logTimeSheetForTask,
+  parseTimesheetMessage,
+  validateTimesheetFormat,
+} from "src/bot/utils/timesheet.until";
+import { UtilsService } from "src/bot/utils/utils.service";
 
 const messHelp = `
 Please log timesheet follow this template:
@@ -22,7 +26,7 @@ Please log timesheet follow this template:
   description: "Log timesheet",
 })
 export class TimeSheetCommand implements CommandLineClass {
-  constructor( private komubotrestController : KomubotrestController){}
+  constructor(private utilsService: UtilsService) {}
   async execute(message: Message, args, client) {
     const authorId = message.author.id;
     const username = message.author.username;
@@ -47,7 +51,7 @@ export class TimeSheetCommand implements CommandLineClass {
             // ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.utilsService.sendErrorToDevTest(client, authorId, err);
           });
       } catch (error) {
         console.log(error);
@@ -57,7 +61,7 @@ export class TimeSheetCommand implements CommandLineClass {
             // ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.utilsService.sendErrorToDevTest(client, authorId, err);
           });
       }
     }
@@ -69,7 +73,7 @@ export class TimeSheetCommand implements CommandLineClass {
           // ephemeral: true,
         })
         .catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.utilsService.sendErrorToDevTest(client, authorId, err);
         });
     }
 

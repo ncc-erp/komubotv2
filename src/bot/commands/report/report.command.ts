@@ -5,6 +5,7 @@ import { ReportDailyService } from "src/bot/utils/reportDaily/report-daily.servi
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
+import { ReportScoreService } from "src/bot/utils/reportScore/report-score.service";
 import { ReportWFHService } from "src/bot/utils/reportWFH/report-wfh.service";
 import { ReportWomenDayService } from "src/bot/utils/reportWomenDay/reportWomenDay.service";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
@@ -31,6 +32,7 @@ export class ReportCommand implements CommandLineClass {
     private reportDailyService: ReportDailyService,
     private reportWomenDayService: ReportWomenDayService,
     private reportCheckoutService: ReportCheckoutService,
+    private reportScoreService: ReportScoreService
   ) {}
 
   async execute(message: Message, args, client: Client, guildDB) {
@@ -80,7 +82,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "msgcount") {
         // await reportMessageCount(message, args, client, guildDB);
       } else if (args[0] === "quiz") {
-        // await reportScore(message, args, client, guildDB);
+        await this.reportScoreService.reportScore(message);
       } else if (args[0] === "womenday") {
         await this.reportWomenDayService.reportWomenDay(message);
       } else if (args[0] === "order") {
