@@ -55,9 +55,9 @@ export class ToggleActiveCommand implements CommandLineClass {
             this.komubotrestController.sendErrorToDevTest(client, authorId, err);
           });
 
-        await this.toggleActiveService.deactiveAcc(correctUrers.id);
+        await this.toggleActiveService.deactiveAcc(correctUrers.userId);
       } else {
-        await this.toggleActiveService.ActiveAcc(correctUrers.id);
+        await this.toggleActiveService.ActiveAcc(correctUrers.userId);
         message
           .reply({
             content: "Enable account successfully",

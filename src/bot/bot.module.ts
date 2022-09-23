@@ -79,6 +79,7 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { ReportDailyModule } from "./utils/reportDaily/report-daily.module";
 import holidayCommand from "./commands/holiday.command";
 import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
+import { ReportMentionModule } from "./utils/reportMention/reportMention.module";
 
 @Module({
   imports: [
@@ -112,6 +113,7 @@ import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
     HttpModule,
     UtilsModule,
     ReportWFHModule,
+    ReportMentionModule
   ],
   providers: [
     PlaySlashCommand,

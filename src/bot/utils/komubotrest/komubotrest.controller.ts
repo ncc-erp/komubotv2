@@ -12,8 +12,6 @@ import { KomubotrestService } from "./komubotrest.service";
 import { deleteMessage } from "../deleteMessage.utils";
 
 @Controller()
-
-
 @Injectable()
 export class KomubotrestController {
   constructor(private komubotrestService: KomubotrestService) {}
@@ -40,7 +38,9 @@ export class KomubotrestController {
       return;
     }
 
-    res.status(200).send({ username: req.body.username, userid: userdb.id });
+    res
+      .status(200)
+      .send({ username: req.body.username, userid: userdb.userId });
   };
   //todo :
   sendMessageKomuToUser = async (
@@ -61,7 +61,7 @@ export class KomubotrestController {
       if (!userdb) {
         return null;
       }
-      const user = await client.users.fetch(userdb.id).catch(console.error);
+      const user = await client.users.fetch(userdb.userId).catch(console.error);
       if (msg == null) {
         return user;
       }
@@ -94,12 +94,12 @@ export class KomubotrestController {
     } catch (error) {
       console.log("error", error);
       const userDb = await await this.komubotrestService.findUserData(username);
-      const message = `KOMU không gửi được tin nhắn cho <@${userDb.id}>(${userDb.email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
+      const message = `KOMU không gửi được tin nhắn cho <@${userDb.userId}>(${userDb.email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
       await client.channels.cache
         .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
         .send(message)
         .catch(console.error);
-      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb.id}(${userDb.email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
+      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb.userId}(${userDb.email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
       await client.channels.cache
         .get(process.env.KOMUBOTREST_ITADMIN_CHANNEL_ID)
         .send(messageItAdmin)
@@ -335,7 +335,7 @@ export class KomubotrestController {
       req.body.message += `<@${process.env.KOMUBOTREST_ADMIN_USER_ID}> ơi, đồng chí ${req.body.username} không đúng format rồi!!!`;
       userid = req.body.username;
     } else {
-      req.body.machleo_userid = userdb.id;
+      req.body.machleo_userid = userdb.userId;
       // userid = userdb.id;
     }
 
@@ -456,9 +456,7 @@ export class KomubotrestController {
         await this.sendMessageToChannelById(client, channelId, {
           embeds: [embed(title, description, image)],
         });
-        const { id, ...user } = await this.komubotrestService.findUserOne(
-          userId
-        );
+        const { ...user } = await this.komubotrestService.findUserOne(userId);
         await this.sendMessageKomuToUser(
           client,
           { embeds: [embed(title, description, image)] },
@@ -486,9 +484,7 @@ export class KomubotrestController {
         res.send({ message: "Send message to all user successfully!" });
       } else if (isSendUser) {
         const userId = req.body.userId;
-        const { id, ...user } = await this.komubotrestService.findUserOne(
-          userId
-        );
+        const { ...user } = await this.komubotrestService.findUserOne(userId);
         // const user = await userData
         //   .findOne({ id: userId })
         //   .select('-_id username');
