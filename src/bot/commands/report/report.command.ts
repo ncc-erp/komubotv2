@@ -1,14 +1,13 @@
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder, Client } from "discord.js";
+import { ReportCheckoutService } from "src/bot/utils/reportCheckout/reportCheckout.service";
 import { ReportDailyService } from "src/bot/utils/reportDaily/report-daily.service";
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
 import { ReportWFHService } from "src/bot/utils/reportWFH/report-wfh.service";
-import { UtilsService } from "src/bot/utils/utils.service";
-import { DataSource, Repository } from "typeorm";
+import { ReportWomenDayService } from "src/bot/utils/reportWomenDay/reportWomenDay.service";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
-import { TABLE } from "../../constants/table";
 
 const messHelpDaily =
   "```" +
@@ -29,7 +28,9 @@ export class ReportCommand implements CommandLineClass {
     private reportHolidayService: ReportHolidayService,
     private reportOpentalkService: ReportOpenTalkService,
     private reportWFHService: ReportWFHService,
-    private reportDailyService: ReportDailyService
+    private reportDailyService: ReportDailyService,
+    private reportWomenDayService: ReportWomenDayService,
+    private reportCheckoutService: ReportCheckoutService,
   ) {}
 
   async execute(message: Message, args, client: Client, guildDB) {
@@ -81,7 +82,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "quiz") {
         // await reportScore(message, args, client, guildDB);
       } else if (args[0] === "womenday") {
-        // await reportWomenDay(message);
+        await this.reportWomenDayService.reportWomenDay(message);
       } else if (args[0] === "order") {
         await this.reportOrderService.reportOrder(message);
       } else if (args[0] === "opentalk") {
@@ -93,7 +94,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "holiday") {
         await this.reportHolidayService.reportHoliday(message, args, client);
       } else if (args[0] === "ts") {
-        // await reportCheckout(message, args, client);
+        await this.reportCheckoutService.reportCheckout(message, args, client);
       } else if (args[0] === "help") {
         return message
           .reply(

@@ -47,7 +47,6 @@ import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
 import { PollCommand } from "./commands/poll/poll.command";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ConfigService } from "@nestjs/config";
-import { ClientConfigService } from "./config/client-config.service";
 import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
 import { ReportOrderModule } from "./utils/reportOrder/reportOrder.module";
@@ -79,6 +78,13 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { ReportDailyModule } from "./utils/reportDaily/report-daily.module";
 import holidayCommand from "./commands/holiday.command";
 import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
+import { ClientConfigService } from "./config/client-config.service";
+import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
+import { ReportWomenDayModule } from "./utils/reportWomenDay/reportWomenDay.module";
+import { WomenDay } from "./models/womenDay.entity";
+import { ReportCheckoutService } from "./utils/reportCheckout/reportCheckout.service";
+import { ReportCheckoutModule } from "./utils/reportCheckout/reportCheckout.module";
+import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.service";
 
 @Module({
   imports: [
@@ -105,6 +111,8 @@ import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
       Subcategorys,
       Channel,
       Daily,
+      WomenDay,
+
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -112,6 +120,8 @@ import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
     HttpModule,
     UtilsModule,
     ReportWFHModule,
+    ReportWomenDayModule,
+    ReportCheckoutModule,
   ],
   providers: [
     PlaySlashCommand,
@@ -162,6 +172,9 @@ import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
     ReportHolidayService,
     ReportOpenTalkService,
     AudioPlayer,
+    ReportWomenDayService,
+    ReportCheckoutService,
+    UserNotDailyService,
   ],
   controllers: [BotController],
 })

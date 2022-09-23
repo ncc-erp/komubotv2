@@ -1,4 +1,4 @@
-import isURL from "is-url";
+import * as isURL from "is-url";
 import { Message, Client, parseEmoji } from "discord.js";
 import { CommandLine, CommandLineClass } from "../base/command.base";
 @CommandLine({

@@ -231,86 +231,6 @@ export class UtilsService {
 
     return result;
   }
-  sendMessageKomuToUser = async (
-    client,
-    msg,
-    username,
-    botPing = false,
-    isSendQuiz = false,
-    userData,
-    msgData
-  ) => {
-    try {
-      const userdb = await userData
-        .createQueryBuilder("users")
-        .where(
-          '"email" = :email AND "deactive" IS NOT True OR "username" = :username AND "deactive" IS NOT True',
-          { email: username, username: username }
-        )
-        .select("users.*")
-        .execute()
-        .catch(console.error);
-
-      if (!userdb) {
-        return null;
-      }
-      console.log(userdb[0].userId, "ádffsda");
-      const user = await client.users
-        .fetch(userdb[0].userId)
-        .catch(console.error);
-      if (msg == null) {
-        return user;
-      }
-      if (!user) {
-        // notify to machleo channel
-        const message = `<@${process.env.KOMUBOTREST_ADMIN_USER_ID}> ơi, đồng chí ${username} không đúng format rồi!!!`;
-        await client.channels.cache
-          .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
-          .send(message)
-          .catch(console.error);
-        return null;
-      }
-      const sent = await user.send(msg);
-      console.log(sent);
-
-      await msgData.insert(sent);
-
-      // botPing : work when bot send quiz wfh user
-      // isSendQuiz : work when bot send quiz
-      if (botPing && isSendQuiz) {
-        userdb.last_bot_message_id = sent.id;
-        userdb.botPing = true;
-      }
-      if (!botPing && isSendQuiz) {
-        userdb.last_bot_message_id = sent.id;
-      }
-
-      await userdb.save();
-      return user;
-    } catch (error) {
-      console.log("error", error);
-      const userDb = await userData
-        .createQueryBuilder("users")
-        .where(
-          '"email" = :email AND "deactive" IS NOT True OR "username" = :username AND "deactive" IS NOT True',
-          { email: username, username: username }
-        )
-        .select("users.*")
-        .execute()
-        .catch(console.error);
-      const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
-      await client.channels.cache
-        .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
-        .send(message)
-        .catch(console.error);
-      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb[0].id}(${userDb[0].email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
-      await client.channels.cache
-        .get(process.env.KOMUBOTREST_ITADMIN_CHANNEL_ID)
-        .send(messageItAdmin)
-        .catch(console.error);
-      return null;
-    }
-  };
 
   withoutTime(dateTime) {
     const date = new Date(dateTime);
@@ -364,5 +284,49 @@ export class UtilsService {
       firstDay: new Date(this.withoutTimeWFH(today)),
       lastDay: new Date(this.withoutTimeWFH(tomorrowsDate)),
     };
+  }
+
+  getDateDay(time) {
+    let date;
+
+    if (!time) {
+      date = new Date();
+    } else {
+      date = new Date(time);
+    }
+    const timezone = date.getTimezoneOffset() / -60;
+    return {
+      morning: {
+        fisttime: new Date(this.setTime(date, 0 + timezone, 0, 0, 0)).getTime(),
+        lastime: new Date(this.setTime(date, 2 + timezone, 31, 0, 0)).getTime(),
+      },
+      afternoon: {
+        fisttime: new Date(this.setTime(date, 5 + timezone, 0, 0, 0)).getTime(),
+        lastime: new Date(this.setTime(date, 7 + timezone, 1, 0, 0)).getTime(),
+      },
+      fullday: {
+        fisttime: new Date(this.setTime(date, 0 + timezone, 0, 0, 0)).getTime(),
+        lastime: new Date(this.setTime(date, 10 + timezone, 0, 0, 0)).getTime(),
+      },
+    };
+  }
+
+  withoutLastTime(dateTime) {
+    const date = new Date(dateTime);
+    date.setHours(23, 59, 59, 999);
+    return date;
+  }
+
+  getyesterdaydate() {
+    const today = new Date();
+    const yesterday = new Date(this.withoutLastTime(today));
+    yesterday.setDate(yesterday.getDate() - 1);
+    return (
+      yesterday.getFullYear() +
+      "-" +
+      (yesterday.getMonth() + 1) +
+      "-" +
+      yesterday.getDate()
+    );
   }
 }
