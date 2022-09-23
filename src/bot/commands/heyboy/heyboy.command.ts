@@ -90,26 +90,29 @@ export class HeyboyCommand implements CommandLineClass {
     // if (message.author.id !== ID_USER_PRIVATE) {
     //   return message.reply("Missing permissions");
     // }
-    await this.komubotrestController.sendMessageToNhaCuaChung(client,
-     this.EmbedWomenDay
-    , message);
-    await this.komubotrestController.sendMessageToNhaCuaChung(client, 
-    this.Embed
-    , message);
-    console.log('running')
+    await this.komubotrestController.sendMessageToNhaCuaChung(client, {
+      embeds: [this.EmbedWomenDay],
+    });
+    await this.komubotrestController.sendMessageToNhaCuaChung(client, {
+      embeds: [this.Embed],
+    });
+    console.log("running");
     const response = await axios.get(
       "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
     );
-    console.log('where are u')
-    if (!response.data || !response.data.result) {console.log("respon data error") ;return;}
-      console.log("hello bro")
+    console.log("where are u");
+    if (!response.data || !response.data.result) {
+      console.log("respon data error");
+      return;
+    }
+    console.log("hello bro");
     const emailsWoman = response.data.result
       .filter((user) => user.sex === 0)
       .map((item) => this.getUserNameByEmail(item.emailAddress));
 
     //! Các câu lệnh find không trả về kết quả do db đang trống
     const userWoman = await this.heyboyService.findWomanUser(emailsWoman);
-    console.log('userWoman : ', userWoman);
+    console.log("userWoman : ", userWoman);
     await Promise.all(
       userWoman.map((user) =>
         this.komubotrestController.sendMessageKomuToUser(
