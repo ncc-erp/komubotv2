@@ -76,6 +76,9 @@ import { ReportTracker } from "./utils/report-tracker.untils";
 import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
 import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
+import holidayCommand from "./commands/holiday.command";
+
+
 
 @Module({
   imports: [
@@ -120,9 +123,7 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
     LeaveService,
     DailyCommand,
     MeetingCommand,
-    HolidayCommand,
-    // LeaveCommand,
-    GemrankCommand,
+    holidayCommand, 
     WFHCommand,
     RemindCommand,
     UserStatusCommand,

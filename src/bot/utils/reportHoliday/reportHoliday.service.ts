@@ -4,6 +4,7 @@ import { EmbedBuilder } from "discord.js";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Repository } from "typeorm";
 
+
 import { KomubotrestController } from "../komubotrest/komubotrest.controller";
 
 
@@ -14,7 +15,7 @@ export class ReportHolidayService {
     @InjectRepository(Holiday)
 
     private holidayReposistory: Repository<Holiday>, 
-    private komubotrestController : KomubotrestController
+    private komubotrestController : KomubotrestController,
 
   ) {}
 
