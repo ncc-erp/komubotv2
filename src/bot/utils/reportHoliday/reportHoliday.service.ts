@@ -3,8 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { EmbedBuilder } from "discord.js";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Repository } from "typeorm";
-
 import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+
+
 
 
 
@@ -12,6 +13,7 @@ import { KomubotrestController } from "../komubotrest/komubotrest.controller";
 export class ReportHolidayService {
   constructor(
     @InjectRepository(Holiday)
+
 
     private holidayReposistory: Repository<Holiday>, 
     private komubotrestController : KomubotrestController
@@ -31,7 +33,9 @@ export class ReportHolidayService {
       mess = "```" + "Không có lịch nghỉ lễ nào" + "```";
       return message.reply(mess).catch((err) => {
 
+
         this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+
 
       });
     } else {

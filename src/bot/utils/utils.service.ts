@@ -259,4 +259,30 @@ export class UtilsService {
       },
     };
   }
+
+  withoutTimeWFH(dateTime) {
+    const date = new Date(dateTime);
+    const curDate = new Date();
+    const timezone = curDate.getTimezoneOffset() / -60;
+    date.setHours(0 + timezone, 0, 0, 0);
+    return date;
+  }
+
+  getTimeToDay(date) {
+    let today;
+    let tomorrows;
+    if (date) {
+      today = new Date(date);
+      tomorrows = new Date(date);
+    } else {
+      today = new Date();
+      tomorrows = new Date();
+    }
+    const tomorrowsDate = tomorrows.setDate(tomorrows.getDate() + 1);
+
+    return {
+      firstDay: new Date(this.withoutTimeWFH(today)),
+      lastDay: new Date(this.withoutTimeWFH(tomorrowsDate)),
+    };
+  }
 }

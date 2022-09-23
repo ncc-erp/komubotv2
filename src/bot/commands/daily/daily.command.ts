@@ -58,14 +58,16 @@ const dailyHelp =
   description: "daily work",
 })
 export class DailyCommand implements CommandLineClass {
-  constructor(private readonly dailyService: DailyService,  private komubotrestController : KomubotrestController,) {}
+  constructor(private readonly dailyService: DailyService,  private komubotrestController : KomubotrestController,
+    
+    ) {}
 
   async execute(message: Message, args, client) {
+   
     const authorId = message.author.id;
     if (args[0] === "help") {
       return this.help(message, args, client);
     }
-
     try {
       const daily = args.join(" ");
       if (!daily || daily == undefined) {

@@ -3,17 +3,17 @@ import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Holiday } from "src/bot/models/holiday.entity";
-import { Order } from "src/bot/models/order.entity";
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { UtilsService } from "../utils.service";
-import { ReportHolidayService } from "./reportHoliday.service";
+import { ReportWFHService } from "./report-wfh.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, Holiday]),
+    TypeOrmModule.forFeature([WorkFromHome, Holiday]),
     DiscordModule.forFeature(),
     DiscoveryModule,
   ],
-  providers: [ReportHolidayService, UtilsService, KomubotrestController],
+  providers: [ReportWFHService, UtilsService],
+  exports: [ReportWFHService, UtilsService],
 })
-export class ReportHolidayModule {}
+export class ReportWFHModule {}

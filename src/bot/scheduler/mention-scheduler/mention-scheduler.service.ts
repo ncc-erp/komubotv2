@@ -102,7 +102,7 @@ export class MentionSchedulerService {
             mentionChannel.name
           }!\n`;
           const data = await this.wfhReposistory.insert({
-            userid: user.mentionUserId,
+            // userid: user.mentionUserId,
             wfhMsg: content,
             complain: false,
             pmconfirm: false,
