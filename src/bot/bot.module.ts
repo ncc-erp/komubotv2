@@ -78,6 +78,7 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { ReportDailyModule } from "./utils/reportDaily/report-daily.module";
 import holidayCommand from "./commands/holiday.command";
 import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
+import { ReportMentionModule } from "./utils/reportMention/reportMention.module";
 import { ClientConfigService } from "./config/client-config.service";
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { ReportWomenDayModule } from "./utils/reportWomenDay/reportWomenDay.module";
@@ -120,6 +121,7 @@ import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.ser
     HttpModule,
     UtilsModule,
     ReportWFHModule,
+    ReportMentionModule,
     ReportWomenDayModule,
     ReportCheckoutModule,
   ],
