@@ -44,6 +44,9 @@ export class VoiceChannelSchedulerService {
     this.addCronJob("renameVoiceChannel", CronExpression.EVERY_MINUTE, () =>
       this.renameVoiceChannel(this.client)
     );
+    this.addCronJob("turnOffBot", "00 15 14 * * 5", () =>
+      this.turnOffBot(this.client)
+    );
   }
 
   async kickMemberVoiceChannel(client) {
@@ -82,7 +85,7 @@ export class VoiceChannelSchedulerService {
       }
     });
 
-    const newList = voiceChannel.map(async (voice, index) => {
+    voiceChannel.map(async (voice, index) => {
       const userDiscord = await client.channels.fetch(voice);
       if (userDiscord.members.size === 0 || userDiscord.members.size > 1) {
         await this.timeVoiceAloneReposistory.update(
@@ -138,5 +141,13 @@ export class VoiceChannelSchedulerService {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async turnOffBot(client) {
+    const fetchVoiceNcc8 = await client.channels.fetch("921323636491710504");
+    const target = await fetchVoiceNcc8.guild.members.fetch(
+      "922003239887581205"
+    );
+    target.voice.disconnect().catch(console.error);
   }
 }

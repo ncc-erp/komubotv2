@@ -19,6 +19,6 @@ export class Leave {
   @Column({ type: "decimal" })
   minute: number;
 
-  @Column({ type: "date" })
+  @Column({ type: "date", nullable : true })
   createdAt: Date;
 }

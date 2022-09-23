@@ -22,7 +22,7 @@ export class OpenTalkService {
           getTimeWeek().firstday.timestamp
         }`
       )
-      .orWhere(
+      .andWhere(
         `${TABLE.OPEN_TALK}.createdTimestamp <= ${
           getTimeWeek().lastday.timestamp
         }`

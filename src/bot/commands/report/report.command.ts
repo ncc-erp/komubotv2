@@ -3,6 +3,7 @@ import { Message, EmbedBuilder, Client } from "discord.js";
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
+import { ReportWFHService } from "src/bot/utils/reportWFH/report-wfh.service";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
@@ -25,10 +26,11 @@ export class ReportCommand implements CommandLineClass {
   constructor(
     private reportOrderService: ReportOrderService,
     private reportHolidayService: ReportHolidayService,
-    private reportOpentalkService: ReportOpenTalkService
+    private reportOpentalkService: ReportOpenTalkService,
+    private reportWFHService: ReportWFHService
   ) {}
 
-  async execute(message: Message, args, client: Client) {
+  async execute(message: Message, args, client: Client, guildDB) {
     try {
       if (args[0] === "daily") {
         // if (args[1]) {
@@ -57,9 +59,9 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "checkcamera") {
         // await reportCheckCamera(message, args, client, guildDB);
       } else if (args[0] === "wfh" && args[1] === "complain") {
-        // await reportCompalinWfh(message, args, client, guildDB);
+        await this.reportWFHService.reportCompalinWfh(message, args, client);
       } else if (args[0] === "wfh") {
-        // await reportWfh(message, args, client, guildDB);
+        await this.reportWFHService.reportWfh(message, args, client);
       } else if (args[0] === "msgcount") {
         // await reportMessageCount(message, args, client, guildDB);
       } else if (args[0] === "quiz") {

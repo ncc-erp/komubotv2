@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Injectable } from "@nestjs/common";
 import { createError } from "http-errors";
 import {
   Client,
@@ -11,9 +11,10 @@ import { KomubotrestService } from "./komubotrest.service";
 
 import { deleteMessage } from "../deleteMessage.utils";
 
-
-
 @Controller()
+
+
+@Injectable()
 export class KomubotrestController {
   constructor(private komubotrestService: KomubotrestService) {}
   private data;
@@ -50,12 +51,12 @@ export class KomubotrestController {
     isSendQuiz = false
   ) => {
     try {
-      console.log('vao day chua thi noi mot cau');
+      console.log("vao day chua thi noi mot cau");
       console.log(client);
-      console.log('-------------------------')
+      console.log("-------------------------");
       console.log(msg);
-      console.log("--------------------------")
-      console.log(username)
+      console.log("--------------------------");
+      console.log(username);
       const userdb = await this.komubotrestService.findUserData(username);
       if (!userdb) {
         return null;
@@ -326,7 +327,7 @@ export class KomubotrestController {
     const userdb = await this.komubotrestService.findUserData(
       req.body.username
     );
-    let userid : number;
+    let userid: number;
     req.body.message = ` không trả lời tin nhắn WFH lúc ${req.body.createdate} !\n`;
 
     if (!userdb) {
@@ -335,7 +336,7 @@ export class KomubotrestController {
       userid = req.body.username;
     } else {
       req.body.machleo_userid = userdb.id;
-      userid = userdb.id;
+      // userid = userdb.id;
     }
 
     req.body.message = `<@${userid}>` + req.body.message;
@@ -400,13 +401,12 @@ export class KomubotrestController {
       console.log(error);
     }
   };
-  sendMessageToNhaCuaChung =  async(client, _embed, message) => {
+  sendMessageToNhaCuaChung = async (client, _embed, message) => {
     let authorId = message.author.id;
-    console.log(_embed)
-     await message.reply({ embeds: [_embed] }).catch((err) => {
-      this.sendErrorToDevTest(client, authorId, err);
+    console.log(_embed);
+    await message.reply({ embeds: [_embed] }).catch((err) => {
+      // sendErrorToDevTest(client, authorId, err);
     });
-    
   };
   sendEmbedMessage = async (client, req, res) => {
     try {
@@ -569,7 +569,7 @@ export class KomubotrestController {
       this.sendEmbedMessage(client, req, res);
     });
     app.post("/deleteMessage", (req, res) => {
-      deleteMessage(client, req, res);
+      // deleteMessage(client, req, res);
     });
     app.post("/uploadFile", mp3.single("File"), async (req, res, next) => {
       const file = req.file;
