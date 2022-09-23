@@ -2,13 +2,10 @@ import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 
 import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
-<<<<<<< HEAD
-import { checkHelpMessage, debug, getDebug, getProjectOfUser, logTimeSheetForTask, parseTimesheetMessage, validateTimesheetFormat } from "src/bot/utils/timesheet.until";
-=======
 
 import { checkHelpMessage, debug, getDebug, getProjectOfUser, logTimeSheetForTask, parseTimesheetMessage, validateTimesheetFormat } from "src/bot/utils/timesheet.until";
 
->>>>>>> aa7d5472947821a4948e0f7fc1f6985e983db45b
+
 
 const messHelp = `
 Please log timesheet follow this template:

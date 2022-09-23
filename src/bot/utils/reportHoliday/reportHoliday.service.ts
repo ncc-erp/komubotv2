@@ -3,14 +3,20 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { EmbedBuilder } from "discord.js";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Repository } from "typeorm";
-import { KomubotrestController } from '../komubotrest/komubotrest.controller';
+
+
+import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+
+
 
 @Injectable()
 export class ReportHolidayService {
   constructor(
     @InjectRepository(Holiday)
+
     private holidayReposistory: Repository<Holiday>, 
     private komubotrestController : KomubotrestController,
+
   ) {}
 
   async reportHoliday(message, args, client) {
@@ -25,7 +31,9 @@ export class ReportHolidayService {
     } else if (Array.isArray(holiday) && holiday.length === 0) {
       mess = "```" + "Không có lịch nghỉ lễ nào" + "```";
       return message.reply(mess).catch((err) => {
+
         this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+
       });
     } else {
       for (let i = 0; i <= Math.ceil(holiday.length / 50); i += 1) {
@@ -40,7 +48,9 @@ export class ReportHolidayService {
           .setColor("Red")
           .setDescription(`${mess}`);
         await message.reply({ embeds: [Embed] }).catch((err) => {
+
           this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+
         });
       }
     }
