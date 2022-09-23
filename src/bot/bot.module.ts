@@ -78,6 +78,7 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { ReportDailyModule } from "./utils/reportDaily/report-daily.module";
 import holidayCommand from "./commands/holiday.command";
 import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
+import { ReportMentionModule } from "./utils/reportMention/reportMention.module";
 import { ClientConfigService } from "./config/client-config.service";
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { ReportWomenDayModule } from "./utils/reportWomenDay/reportWomenDay.module";
@@ -92,6 +93,8 @@ import { TX8 } from "./models/tx8.entity";
 import { LinksCommand } from "./utilities/links.command";
 import { AvatarCommand } from "./utilities/avatar.command";
 import { UserInfoCommand } from "./utilities/userInfo.command";
+import { BirthDay } from "./models/birthday.entity";
+import { BirthdayService } from "./utils/birthday/birthdayservice";
 
 @Module({
   imports: [
@@ -120,6 +123,7 @@ import { UserInfoCommand } from "./utilities/userInfo.command";
       Daily,
       TX8,
       WomenDay,
+      BirthDay,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -127,6 +131,7 @@ import { UserInfoCommand } from "./utilities/userInfo.command";
     HttpModule,
     UtilsModule,
     ReportWFHModule,
+    ReportMentionModule,
     ReportWomenDayModule,
     ReportCheckoutModule,
     ReportScoreModule,
@@ -188,6 +193,7 @@ import { UserInfoCommand } from "./utilities/userInfo.command";
     ReportWomenDayService,
     ReportCheckoutService,
     UserNotDailyService,
+    BirthdayService,
   ],
   controllers: [BotController],
 })

@@ -329,4 +329,22 @@ export class UtilsService {
       yesterday.getDate()
     );
   }
+  withoutTimeMention(dateTime) {
+    const date = new Date(dateTime);
+    const curDate = new Date();
+    const timezone = curDate.getTimezoneOffset() / -60;
+    date.setHours(0 + timezone, 0, 0, 0);
+    return date;
+  }
+
+  getTimeToDayMention() {
+    const today = new Date();
+    const tomorrows = new Date();
+    const tomorrowsDate = tomorrows.setDate(tomorrows.getDate() + 1);
+
+    return {
+      firstDay: new Date(this.withoutTimeMention(today)),
+      lastDay: new Date(this.withoutTimeMention(tomorrowsDate)),
+    };
+  }
 }

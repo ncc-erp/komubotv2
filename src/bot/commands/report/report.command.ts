@@ -3,6 +3,7 @@ import { Message, EmbedBuilder, Client } from "discord.js";
 import { ReportCheckoutService } from "src/bot/utils/reportCheckout/reportCheckout.service";
 import { ReportDailyService } from "src/bot/utils/reportDaily/report-daily.service";
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
+import { ReportMentionService } from "src/bot/utils/reportMention/reportMention.service";
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
 import { ReportScoreService } from "src/bot/utils/reportScore/report-score.service";
@@ -30,6 +31,7 @@ export class ReportCommand implements CommandLineClass {
     private reportOpentalkService: ReportOpenTalkService,
     private reportWFHService: ReportWFHService,
     private reportDailyService: ReportDailyService,
+    private ReportMentionService: ReportMentionService,
     private reportWomenDayService: ReportWomenDayService,
     private reportCheckoutService: ReportCheckoutService,
     private reportScoreService: ReportScoreService
@@ -72,7 +74,7 @@ export class ReportCommand implements CommandLineClass {
         //   await reportDaily(day, message, args, client, guildDB);
         // }
       } else if (args[0] === "mention") {
-        // await reportMention(message, args, client, guildDB);
+        await this.ReportMentionService.reportMention(message, args);
       } else if (args[0] === "checkcamera") {
         // await reportCheckCamera(message, args, client, guildDB);
       } else if (args[0] === "wfh" && args[1] === "complain") {

@@ -11,19 +11,21 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { config } from "src/bot/constants/config";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
+import { BirthdayService } from "src/bot/utils/birthday/birthdayservice";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 
 @Injectable()
 export class SendMessageSchedulerService {
   constructor(
     private utilsService: UtilsService,
-    // @InjectRepository(Meeting)
-    // private meetingReposistory: Repository<Meeting>,
     private readonly http: HttpService,
     @InjectRepository(User)
     private userReposistory: Repository<User>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
+    private birthdayService: BirthdayService,
+    private komubotrestController: KomubotrestController
   ) {}
 
   private readonly logger = new Logger(SendMessageSchedulerService.name);
@@ -47,6 +49,9 @@ export class SendMessageSchedulerService {
     // );
     this.addCronJob("remindCheckout", CronExpression.EVERY_MINUTE, () =>
       this.remindCheckout(this.client)
+    );
+    this.addCronJob("happyBirthday", "00 00 09 * * 0-6", () =>
+      this.happyBirthday(this.client)
     );
   }
 
@@ -160,6 +165,23 @@ export class SendMessageSchedulerService {
             .catch(console.error);
         }
       });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async happyBirthday(client) {
+    const result = await this.birthdayService.birthdayUser(client);
+
+    try {
+      await Promise.all(
+        await result.map((item) =>
+          this.komubotrestController.sendMessageToNhaCuaChung(
+            client,
+            `${item.wish} <@${item.user.id}> +1 trà sữa full topping nhé b iu`
+          )
+        )
+      );
     } catch (error) {
       console.log(error);
     }
