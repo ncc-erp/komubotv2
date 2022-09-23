@@ -9,6 +9,8 @@ import { Repository } from "typeorm";
 import { Mentioned } from "src/bot/models/mentioned.entity";
 import moment from "moment";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 
 @Injectable()
 export class MentionSchedulerService {
@@ -20,7 +22,8 @@ export class MentionSchedulerService {
     private wfhReposistory: Repository<WorkFromHome>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
-    private client: Client
+    private client: Client,
+    private komubotrestController: KomubotrestController
   ) {}
 
   private readonly logger = new Logger(MentionSchedulerService.name);
@@ -39,9 +42,9 @@ export class MentionSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("checkMention", CronExpression.EVERY_MINUTE, () =>
-    //   this.checkMention(this.client)
-    // );
+    this.addCronJob("checkMention", CronExpression.EVERY_MINUTE, () =>
+      this.checkMention(this.client)
+    );
   }
 
   async checkMention(client) {
@@ -109,19 +112,19 @@ export class MentionSchedulerService {
             status: "ACTIVE",
             type: "mention",
           });
-          // const message = getWFHWarninghMessage(
-          //   content,
-          //   user.mentionUserId,
-          //   "data.id.toString()"
-          // );
-          // const channel = await client.channels.fetch(
-          //   process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
-          // );
-          // await channel.send(message).catch(console.error);
-          // await this.mentionReposistory.update(
-          //   { id: user.id },
-          //   { confirm: true, punish: true }
-          // );
+          const message = this.komubotrestController.getWFHWarninghMessage(
+            content,
+            user.mentionUserId,
+            "data.id.toString()"
+          );
+          const channel = await client.channels.fetch(
+            process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
+          );
+          await channel.send(message).catch(console.error);
+          await this.mentionReposistory.update(
+            { id: user.id },
+            { confirm: true, punish: true }
+          );
         })
       );
     } catch (error) {

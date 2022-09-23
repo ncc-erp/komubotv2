@@ -8,8 +8,8 @@ import { GatewayIntentBits } from "discord.js";
 import { BotModule } from "./bot/bot.module";
 // import { CheckListModule } from "./bot/commands/checklist/checklist.module";
 // import { CheckListModule } from "./bot/commands/Checklist/checklist.module";
-import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { ServeStaticModule } from "@nestjs/serve-static";
 
 @Module({
   imports: [
