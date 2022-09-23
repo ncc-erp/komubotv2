@@ -85,6 +85,8 @@ import { WomenDay } from "./models/womenDay.entity";
 import { ReportCheckoutService } from "./utils/reportCheckout/reportCheckout.service";
 import { ReportCheckoutModule } from "./utils/reportCheckout/reportCheckout.module";
 import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.service";
+import { BirthdayService } from "./utils/birthday/birthdayservice";
+import { BirthDay } from "./models/birthday.entity";
 
 @Module({
   imports: [
@@ -112,7 +114,7 @@ import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.ser
       Channel,
       Daily,
       WomenDay,
-
+      BirthDay,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -175,6 +177,7 @@ import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.ser
     ReportWomenDayService,
     ReportCheckoutService,
     UserNotDailyService,
+    BirthdayService,
   ],
   controllers: [BotController],
 })

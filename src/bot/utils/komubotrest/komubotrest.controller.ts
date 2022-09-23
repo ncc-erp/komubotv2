@@ -12,8 +12,6 @@ import { KomubotrestService } from "./komubotrest.service";
 import { deleteMessage } from "../deleteMessage.utils";
 
 @Controller()
-
-
 @Injectable()
 export class KomubotrestController {
   constructor(private komubotrestService: KomubotrestService) {}
@@ -401,12 +399,12 @@ export class KomubotrestController {
       console.log(error);
     }
   };
-  sendMessageToNhaCuaChung = async (client, _embed, message) => {
-    let authorId = message.author.id;
-    console.log(_embed);
-    await message.reply({ embeds: [_embed] }).catch((err) => {
-      // sendErrorToDevTest(client, authorId, err);
-    });
+  sendMessageToNhaCuaChung = async (client, msg) => {
+    await client.channels.cache
+      .get(process.env.KOMUBOTREST_NHACUACHUNG_CHANNEL_ID)
+      .send(msg)
+      .catch(console.error);
+    return null;
   };
   sendEmbedMessage = async (client, req, res) => {
     try {
