@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client } from "discord.js";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { Holiday } from "../../models/holiday.entity";
@@ -10,9 +10,10 @@ const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
 @CommandLine({
   name: "holiday",
   description: "Holiday",
+  
 })
 export default class holidayCommand implements CommandLineClass {
-  constructor(private holidayService: HolidayService) {}
+  constructor(private holidayService: HolidayService,  private komubotrestController : KomubotrestController,) {}
   async execute(message: Message, args, client) {
     try {
       const holidayData = this.holidayService;
@@ -34,7 +35,7 @@ export default class holidayCommand implements CommandLineClass {
         .addHoliday(dateTime, messageHoliday)
         .catch((err) => console.log(err));
       message.reply({ content: "`✅` holiday saved." }).catch((err) => {
-        sendErrorToDevTest(client, authorId, err);
+        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
       });
     } catch (err) {
       console.log(err);

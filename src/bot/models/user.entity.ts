@@ -1,9 +1,16 @@
+<<<<<<< HEAD
 import { Column, Entity, PrimaryColumn,  } from "typeorm";
+=======
+import { text } from "stream/consumers";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+>>>>>>> develop
 
 import { TABLE } from "../constants/table";
+import { WorkFromHome } from "./wfh.entity";
 
 @Entity(TABLE.USER)
 export class User {
+<<<<<<< HEAD
 <<<<<<< HEAD
   @PrimaryGeneratedColumn({})
   id: number
@@ -12,10 +19,16 @@ export class User {
 =======
   @PrimaryColumn()
 >>>>>>> develop
+=======
+  @PrimaryColumn({ type: "text" })
+>>>>>>> develop
   userId: string;
 
   @Column({ type: "text", nullable: true })
   username: string;
+
+  @OneToMany(() => WorkFromHome, (state) => state.userid)
+  wfh: WorkFromHome;
 
   @Column({ type: "text", nullable: true })
   discriminator: string;
@@ -66,11 +79,16 @@ export class User {
   scores_quiz: number;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   @Column({ type: "text", array: true })
 =======
   @Column({type : 'text', array : true})
 >>>>>>> develop
   roles: string;
+=======
+  @Column({ type: "text", array: true, nullable: true })
+  roles: string[];
+>>>>>>> develop
 
   @Column({ nullable: true })
   pending_wfh: boolean;
@@ -78,6 +96,7 @@ export class User {
   @Column({ type: "text", nullable: true })
   last_bot_message_id: string;
 
+<<<<<<< HEAD
   @Column({type:"boolean"})
   deactive: boolean;
 
@@ -87,6 +106,13 @@ export class User {
   @Column({type : 'text', array : true})
 >>>>>>> develop
   roles_discord: string;
+=======
+  @Column({ nullable: true })
+  deactive: boolean;
+
+  @Column({ type: "text", array: true, nullable: true })
+  roles_discord: string[];
+>>>>>>> develop
 
   @Column({ default: false })
   botPing: boolean;

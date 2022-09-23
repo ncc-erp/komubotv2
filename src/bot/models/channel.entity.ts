@@ -1,30 +1,32 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.CHANNEL)
 export class Channel {
-  @Column({ nullable: true })
+  @PrimaryGeneratedColumn()
   id: string;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   type: string;
 
-  @Column()
+  @Column({ type: "boolean" })
   nsfw: boolean;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   rawPosition: number;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   lastMessageId: string;
 
-  @Column()
+  @Column({ type: "decimal", nullable: true })
   rateLimitPerUser: number;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   parentId: string;
+  static find: any;
+  static updateOne: any;
 }

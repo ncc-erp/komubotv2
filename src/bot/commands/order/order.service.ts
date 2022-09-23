@@ -1,0 +1,153 @@
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Order } from "../../models/order.entity";
+
+@Injectable()
+export class OrderService {
+  constructor(
+    @InjectRepository(Order)
+    private orderReposistory: Repository<Order>
+  ) { }
+  async getUserCancelOrder(channelId, author, username) {
+    return await this.orderReposistory
+      .createQueryBuilder('orders')
+      .where(`"channelId" = :channelId`, {
+        channelId: channelId,
+      })
+      .andWhere(`"isCancel" IS NOT True`, { isCancel: false })
+      .andWhere(`"userId" = :userId`, {
+        userId: author,
+      })
+      .andWhere(`"username" = :username`, {
+        username: username,
+      })
+      .select("orders.*")
+      .execute();
+  }
+
+  async upDateUserCancel(item) {
+    return await this.orderReposistory
+      .createQueryBuilder('orders')
+      .update(Order)
+      .set({ isCancel: true })
+      .where("id = :id", { id: item.id })
+      .execute();
+  }
+
+  async getListUserOrderPending(channelId, author, username) {
+    return await this.orderReposistory
+      .createQueryBuilder("orders")
+      .where(`"channelId" = :channelId`, {
+        channelId: channelId,
+      })
+      .andWhere(`"isCancel" IS NOT TRUE`)
+      .andWhere(`"userId" = :userId`, { userId: author })
+      .andWhere(`"username" = :username`, {
+        username: username,
+      })
+      .select("orders.*")
+      .execute();
+  }
+
+  async getListUserFinish(channelId, yesterdayDate, tomorrowDate) {
+    const arrayUser = await this.orderReposistory
+      .createQueryBuilder("orders")
+      .select("username")
+<<<<<<< HEAD:src/bot/commands/Order/order.service.ts
+      .addSelect('MAX("createdTimestamp")','timeStamp')
+=======
+      .addSelect('MAX("createdTimestamp")', "timeStamp")
+>>>>>>> develop:src/bot/commands/order/order.service.ts
+      .where(`"channelId" = :channelId`, {
+        channelId: channelId,
+      })
+      .andWhere(`"isCancel" IS NOT TRUE`)
+      .andWhere(`"createdTimestamp" > ${yesterdayDate}`)
+      .andWhere(`"createdTimestamp" < ${tomorrowDate}`)
+      .groupBy("username")
+<<<<<<< HEAD:src/bot/commands/Order/order.service.ts
+      .execute()
+      
+    return await this.orderReposistory.createQueryBuilder('orders')
+    .where('"createdTimestamp" IN (:...time_stamps)', {
+      time_stamps : arrayUser.map(item => item.timeStamp)
+    })
+    .select("orders.*")
+    .execute();
+    
+      // return await this.orderReposistory
+      // .createQueryBuilder("orders")
+      // .distinctOn(['username'])
+      // .orderBy('"username"', 'DESC')
+      // .where(`"channelId" = :channelId`, {
+      //   channelId: channelId,
+      // })
+      // .andWhere(`"isCancel" IS NOT TRUE`)
+      // .andWhere(`"createdTimestamp" > ${yesterdayDate}`)
+      // .andWhere(`"createdTimestamp" < ${tomorrowDate}`)
+      // .select("orders.*")
+      // .execute();
+=======
+      .execute();
+
+    return await this.orderReposistory
+      .createQueryBuilder("orders")
+      .where('"createdTimestamp" IN (:...time_stamps)', {
+        time_stamps: arrayUser.map((item) => item.timeStamp),
+      })
+      .select("orders.*")
+      .execute();
+
+    // return await this.orderReposistory
+    // .createQueryBuilder("orders")
+    // .distinctOn(['username'])
+    // .orderBy('"username"', 'DESC')
+    // .where(`"channelId" = :channelId`, {
+    //   channelId: channelId,
+    // })
+    // .andWhere(`"isCancel" IS NOT TRUE`)
+    // .andWhere(`"createdTimestamp" > ${yesterdayDate}`)
+    // .andWhere(`"createdTimestamp" < ${tomorrowDate}`)
+    // .select("orders.*")
+    // .execute();
+>>>>>>> develop:src/bot/commands/order/order.service.ts
+  }
+
+  async updateFinishOrder(channelId) {
+    return await this.orderReposistory
+      .createQueryBuilder("orders")
+      .where(`"channelId" = :channelId`, {
+        channelId: channelId,
+      })
+      .andWhere(`"isCancel" IS NOT True`, {
+        isCancel: false,
+      })
+      .select("orders.*")
+      .execute();
+  }
+<<<<<<< HEAD:src/bot/commands/Order/order.service.ts
+  async order(channelId, author, username, list,) {
+    return await this.orderReposistory
+      .insert({
+        channelId: channelId,
+        userId: author,
+        username: username,
+        menu: list,
+        createdTimestamp: Date.now(),
+        isCancel: false,
+      })
+=======
+  
+  async order(channelId, author, username, list) {
+    return await this.orderReposistory.insert({
+      channelId: channelId,
+      userId: author,
+      username: username,
+      menu: list,
+      createdTimestamp: Date.now(),
+      isCancel: false,
+    });
+>>>>>>> develop:src/bot/commands/order/order.service.ts
+  }
+}

@@ -1,14 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 import { TABLE } from "../constants/table";
+import { User } from "./user.entity";
 
-@Entity(TABLE.WFH)
+@Entity(TABLE.WTH)
 export class WorkFromHome {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text" })
-  userid: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "user" })
+  userid: User;
 
   @Column({ type: "text" })
   messageid: string;
@@ -19,14 +29,18 @@ export class WorkFromHome {
   @Column({ type: "date" })
   createdAt: Date;
 
-  @Column()
+  @Column({ type: "boolean" })
   complain: boolean;
-  @Column()
+
+  @Column({ type: "boolean" })
   pmconfirm: boolean;
+
   @Column({ type: "text" })
   status: string;
+
   @Column({ type: "text" })
   data: string;
+
   @Column({ type: "text" })
   type: string;
 }

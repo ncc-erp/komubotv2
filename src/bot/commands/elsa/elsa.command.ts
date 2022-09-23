@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { RequestOrder } from "src/bot/untils/requestorder.until";
+import { RequestOrder } from "src/bot/utils/requestorder.utils";
 import { ElsaService } from "./elsa.service";
 
 @CommandLine({
@@ -36,6 +36,8 @@ export class ElsaCommand implements CommandLineClass {
     try {
       if (args[0] === "weekly") {
         const daily = args.join(" ");
+        console.log("args : ", args);
+        console.log("daily : ", daily);
         if (!daily || daily == undefined) {
           return message
             .reply({
@@ -46,9 +48,16 @@ export class ElsaCommand implements CommandLineClass {
         }
         this.getTimeWeekMondayToSunday(new Date().getDay()).map(
           async (item) => {
-            await this.elsaService.createElsaDailyData(message.author.id, message.member != null || message.member != undefined
-              ? message.member.displayName
-              : message.author.username, daily,item,false,message.channel.id);
+            await this.elsaService.createElsaDailyData(
+              message.author.id,
+              message.member != null || message.member != undefined
+                ? message.member.displayName
+                : message.author.username,
+              daily,
+              item,
+              false,
+              message.channel.id
+            );
           }
         );
         message.reply({
@@ -88,10 +97,11 @@ export class ElsaCommand implements CommandLineClass {
         //     attachment: false,
         //     createdAt: { $gte: this.timeDiscord.getYesterdayDate(), $lte: this.timeDiscord.getTomorrowDate() },
         //   });
-        const report = await this.elsaService.findReport(false, {
-          $gte: this.timeDiscord.getYesterdayDate(),
-          $lte: this.timeDiscord.getTomorrowDate(),
-        });
+        const report = await this.elsaService.findReport(
+          false,
+          this.timeDiscord.getYesterdayDate(),
+          this.timeDiscord.getTomorrowDate()
+        );
         let mess;
         if (!report) {
           return;

@@ -1,13 +1,13 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { MeetingService } from "./meeting.service";
-import { sendErrorToDevTest } from "src/bot/untils/komu.until";
-import { UntilService } from "src/bot/untils/until.service";
+import { UtilsService } from "src/bot/utils/utils.service";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { Repository } from "typeorm";
+import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 
 const messHelp =
   "```" +
@@ -34,9 +34,10 @@ const messHelp =
 export class MeetingCommand implements CommandLineClass {
   constructor(
     private meetingService: MeetingService,
-    private readonly untilService: UntilService,
+    private readonly utilsService: UtilsService,
     @InjectRepository(Meeting)
-    private readonly meetingRepository: Repository<Meeting>
+    private readonly meetingRepository: Repository<Meeting>, 
+    private komubotrestController : KomubotrestController,
   ) {}
 
   async execute(message: Message, args, client) {
@@ -56,7 +57,7 @@ export class MeetingCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           list = list.filter((item) => {
@@ -69,7 +70,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           }
           for (let i = 0; i <= Math.ceil(list.length / 50); i += 1) {
@@ -81,7 +82,7 @@ export class MeetingCommand implements CommandLineClass {
               list
                 .slice(i * 50, (i + 1) * 50)
                 .map((item) => {
-                  const dateTime = this.untilService.formatDate(
+                  const dateTime = this.utilsService.formatDate(
                     new Date(Number(item.createdTimestamp))
                   );
                   if (item.repeatTime) {
@@ -98,7 +99,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           }
         }
@@ -115,7 +116,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           } else {
             // 921239248991055882
@@ -156,7 +157,7 @@ export class MeetingCommand implements CommandLineClass {
                         // ephemeral: true,
                       })
                       .catch((err) => {
-                        sendErrorToDevTest(client, authorId, err);
+                        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
                       });
                   }
                 } else {
@@ -170,7 +171,7 @@ export class MeetingCommand implements CommandLineClass {
                         // ephemeral: true,
                       })
                       .catch((err) => {
-                        sendErrorToDevTest(client, authorId, err);
+                        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
                       });
                   } else
                     await message
@@ -179,7 +180,7 @@ export class MeetingCommand implements CommandLineClass {
                         // ephemeral: true,
                       })
                       .catch((err) => {
-                        sendErrorToDevTest(client, authorId, err);
+                        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
                       });
                 }
               }
@@ -199,7 +200,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           } else {
             return message
@@ -208,7 +209,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           }
         } else if (args[0] === "meet") {
@@ -218,7 +219,7 @@ export class MeetingCommand implements CommandLineClass {
               // ephemeral: true
             })
             .catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
           puppeteer.use(StealthPlugin());
           (async () => {
@@ -301,7 +302,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
 
             await page.evaluate(async () => {
@@ -335,7 +336,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           }
           if (!/(2[0-3]|[01][0-9]):[0-5][0-9]/.exec(checkTime)) {
@@ -345,7 +346,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
           }
 
@@ -358,7 +359,7 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                sendErrorToDevTest(client, authorId, err);
+                this.komubotrestController.sendErrorToDevTest(client, authorId, err);
               });
 
           const day = datetime.slice(0, 2);
@@ -367,8 +368,8 @@ export class MeetingCommand implements CommandLineClass {
 
           const fomat = `${month}/${day}/${year}`;
           const dateObject = new Date(fomat);
-          var timestamp = dateObject.getTime();
-          const response = await this.meetingRepository.insert({
+          const timestamp = dateObject.getTime();
+          await this.meetingRepository.insert({
             channelId: channel_id,
             task: task,
             createdTimestamp: timestamp,
@@ -382,7 +383,7 @@ export class MeetingCommand implements CommandLineClass {
               // ephemeral: true
             })
             .catch((err) => {
-              sendErrorToDevTest(client, authorId, err);
+              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
             });
         }
       }

@@ -1,13 +1,15 @@
-import { DiscordModule } from '@discord-nestjs/core';
-import * as Joi from '@hapi/joi';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { GatewayIntentBits } from 'discord.js';
-import { BotModule } from './bot/bot.module';
+import { DiscordModule } from "@discord-nestjs/core";
+import * as Joi from "@hapi/joi";
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { GatewayIntentBits } from "discord.js";
 
-
-
+import { BotModule } from "./bot/bot.module";
+// import { CheckListModule } from "./bot/commands/checklist/checklist.module";
+// import { CheckListModule } from "./bot/commands/Checklist/checklist.module";
+import { join } from "path";
+import { ServeStaticModule } from "@nestjs/serve-static";
 
 @Module({
   imports: [
@@ -26,12 +28,12 @@ import { BotModule } from './bot/bot.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('POSTGRES_HOST'),
-        port: configService.get('POSTGRES_PORT'),
-        username: configService.get('POSTGRES_USER'),
-        password: configService.get('POSTGRES_PASSWORD'),
-        database: configService.get('POSTGRES_DB'),
+        type: "postgres",
+        host: configService.get("POSTGRES_HOST"),
+        port: configService.get("POSTGRES_PORT"),
+        username: configService.get("POSTGRES_USER"),
+        password: configService.get("POSTGRES_PASSWORD"),
+        database: configService.get("POSTGRES_DB"),
         // entities: [__dirname + '/../**/*.entity.ts'],
         autoLoadEntities: true,
         synchronize: true,
@@ -40,7 +42,7 @@ import { BotModule } from './bot/bot.module';
     DiscordModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
+        token: configService.get("TOKEN"),
         discordClientOptions: {
           intents: [
             GatewayIntentBits.Guilds,
@@ -50,7 +52,7 @@ import { BotModule } from './bot/bot.module';
         },
         registerCommandOptions: [
           {
-            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            forGuild: configService.get("GUILD_ID_WITH_COMMANDS"),
             removeCommandsBefore: true,
           },
         ],
@@ -59,6 +61,9 @@ import { BotModule } from './bot/bot.module';
       inject: [ConfigService],
     }),
     BotModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "upload", "ncc8"),
+    }),
   ],
 })
 export class AppModule {}

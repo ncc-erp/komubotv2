@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "discord.js";
-import {  Repository } from "typeorm";
+import { Repository } from "typeorm";
 
 import { CommandLine, CommandLineClass } from "../base/command.base";
 import { Daily } from "../models/daily.entity";
@@ -43,7 +43,7 @@ export class DailyCommand implements CommandLineClass {
             ? message.member.displayName
             : message.author.username,
         daily: daily,
-        createdAt: new Date(),
+        createdAt: Date.now(),
         channelid: message.channel.id,
       });
       // if (!checkTimeSheet()) {

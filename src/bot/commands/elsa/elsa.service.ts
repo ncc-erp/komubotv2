@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { TABLE } from "src/bot/constants/table";
 
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { ElsaDaily } from "src/bot/models/elsaDaily.entity";
 
@@ -59,15 +59,16 @@ export class ElsaService {
       ])
       .execute();
   }
-  async findReport(_attachment, _createdAt) {
+  async findReport(_attachment, _yesterday, _tomorrow,) {
     return await this.elsaRepository
       .createQueryBuilder(TABLE.ELSADAILY)
       .where(`${TABLE.ELSADAILY}.attachment = :attachment`, {
         attachment: _attachment,
       })
-      .andWhere(`${TABLE.ELSADAILY}.createdAt = :createdAt`, {
-        createdAt: _createdAt,
-      })
+      .andWhere(new Brackets((qb)=>{
+        qb.where(`${TABLE.ELSADAILY}.createdAt >= :yesterday`, {yesterday : _yesterday})
+        .andWhere(`${TABLE.ELSADAILY}.createdAt < :tomorrow`, {tomorrow : _tomorrow})
+      }))
       .getMany();
   }
   async updateOneDaily(_userid, _createdAt, _attachment) {
