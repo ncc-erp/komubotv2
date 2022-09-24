@@ -1,19 +1,22 @@
 import { text } from "stream/consumers";
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 import { WorkFromHome } from "./wfh.entity";
 
 @Entity(TABLE.USER)
 export class User {
-  @PrimaryColumn({ type: "text" })
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: "text", nullable: true })
   userId: string;
 
   @Column({ type: "text", nullable: true })
   username: string;
 
-  @OneToMany(() => WorkFromHome, (state) => state.userid)
-  wfh: WorkFromHome;
+  // @OneToMany(() => WorkFromHome, (state) => state.userid)
+  // wfh: WorkFromHome;
 
   @Column({ type: "text", nullable: true })
   discriminator: string;

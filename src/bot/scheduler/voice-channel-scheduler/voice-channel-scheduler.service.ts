@@ -8,6 +8,7 @@ import { Repository } from "typeorm";
 import { TimeVoiceAlone } from "src/bot/models/timeVoiceAlone.entity";
 import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
 import { UtilsService } from "src/bot/utils/utils.service";
+import { JoinCall } from "src/bot/models/joinCall.entity";
 
 @Injectable()
 export class VoiceChannelSchedulerService {
@@ -15,6 +16,8 @@ export class VoiceChannelSchedulerService {
     private utilsService: UtilsService,
     @InjectRepository(TimeVoiceAlone)
     private timeVoiceAloneReposistory: Repository<TimeVoiceAlone>,
+    @InjectRepository(JoinCall)
+    private joinCallReposistory: Repository<JoinCall>,
     @InjectRepository(VoiceChannels)
     private voiceChannelReposistory: Repository<VoiceChannels>,
     private schedulerRegistry: SchedulerRegistry,
@@ -46,6 +49,9 @@ export class VoiceChannelSchedulerService {
     );
     this.addCronJob("turnOffBot", "00 15 14 * * 5", () =>
       this.turnOffBot(this.client)
+    );
+    this.addCronJob("checkJoinCall", "00 9-11,13-17 * * * 1-5", () =>
+      this.checkJoinCall(this.client)
     );
   }
 
@@ -149,5 +155,24 @@ export class VoiceChannelSchedulerService {
       "922003239887581205"
     );
     target.voice.disconnect().catch(console.error);
+  }
+
+  async checkJoinCall(client) {
+    if (await this.utilsService.checkHoliday()) return;
+    console.log(["Schulder run"]);
+    const now = new Date();
+    const HOURS = 2;
+    const beforeHours = new Date(now.getTime() - 1000 * 60 * 60 * HOURS);
+
+    await this.joinCallReposistory
+      .createQueryBuilder()
+      .update(JoinCall)
+      .set({ status: "finish", end_time: Date.now() })
+      .where('"status" = :status', { status: "joining" })
+      .andWhere(`"start_time" >= :gtestart_time`, {
+        gtestart_time: beforeHours,
+      })
+      .execute()
+      .catch(console.error);
   }
 }
