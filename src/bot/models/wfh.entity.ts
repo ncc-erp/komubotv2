@@ -16,9 +16,9 @@ export class WorkFromHome {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: "user" })
-  userid: User;
+  // @ManyToOne(() => User)
+  // @JoinColumn({ name: "user" })
+  // userid: User;
 
   @Column({ type: "text" })
   messageid: string;

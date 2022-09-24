@@ -1,10 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.JOIN_CALL)
 export class JoinCall {
+  @PrimaryColumn()
+  id: number;
+
   @Column({ nullable: false })
   channelId: string;
+
+  @Column({ nullable: false })
+  userId: string;
 
   @Column({ nullable: false })
   title: string;

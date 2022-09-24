@@ -11,7 +11,7 @@ export class UserNotDailyService {
   constructor(
     private readonly utilsService: UtilsService,
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     @InjectRepository(Daily)
     private dailyReposistory: Repository<Daily>,
     private clientConfigService: ClientConfigService
@@ -53,7 +53,7 @@ export class UserNotDailyService {
 
       const { userOffFullday } = await getUserOffWork(date);
       const userOff = [...wfhUserEmail, ...userOffFullday];
-      const userNotWFH = await this.userReposistory
+      const userNotWFH = await this.userRepository
         .createQueryBuilder()
         .where("roles_discord = :roles_discord", {
           roles_discord: ["INTERN"],
@@ -156,7 +156,7 @@ export class UserNotDailyService {
       try {
         userNotDaily = await Promise.all(
           notDaily.map((user) =>
-            this.userReposistory
+            this.userRepository
               .createQueryBuilder()
               .where("email = :email", {
                 email: user.email,

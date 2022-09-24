@@ -95,6 +95,12 @@ import { AvatarCommand } from "./utilities/avatar.command";
 import { UserInfoCommand } from "./utilities/userInfo.command";
 import { BirthDay } from "./models/birthday.entity";
 import { BirthdayService } from "./utils/birthday/birthdayservice";
+import { UpdateCommand } from "./commands/update/update.command";
+import { UserQuiz } from "./models/userQuiz";
+import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-scheduler.service";
+import { Dating } from "./models/dating.entity";
+import { JoinCall } from "./models/joinCall.entity";
+import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
 
 @Module({
   imports: [
@@ -124,6 +130,9 @@ import { BirthdayService } from "./utils/birthday/birthdayservice";
       TX8,
       WomenDay,
       BirthDay,
+      UserQuiz,
+      Dating,
+      JoinCall,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -165,6 +174,7 @@ import { BirthdayService } from "./utils/birthday/birthdayservice";
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
+    DatingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
     MeetingService,
@@ -194,6 +204,8 @@ import { BirthdayService } from "./utils/birthday/birthdayservice";
     ReportCheckoutService,
     UserNotDailyService,
     BirthdayService,
+    UpdateCommand,
+    MvChannelCommand,
   ],
   controllers: [BotController],
 })

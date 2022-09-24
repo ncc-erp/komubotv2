@@ -5,6 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Daily } from "src/bot/models/daily.entity";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { User } from "src/bot/models/user.entity";
+import { KomubotrestController } from "../komubotrest/komubotrest.controller";
 import { UtilsService } from "../utils.service";
 import { ReportDailyService } from "./report-daily.service";
 
@@ -14,6 +15,6 @@ import { ReportDailyService } from "./report-daily.service";
     DiscordModule.forFeature(),
     DiscoveryModule,
   ],
-  providers: [ReportDailyService, UtilsService],
+  providers: [ReportDailyService, UtilsService, KomubotrestController],
 })
 export class ReportDailyModule {}
