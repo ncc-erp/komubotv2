@@ -12,6 +12,7 @@ import { Daily } from "../models/daily.entity";
 import { Holiday } from "../models/holiday.entity";
 import { Opentalk } from "../models/opentalk.entity";
 import { Order } from "../models/order.entity";
+import { TrackerSpentTime } from "../models/trackerSpentTime.entity";
 import { TX8 } from "../models/tx8.entity";
 import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
@@ -32,6 +33,7 @@ import { ReportOrderModule } from "./reportOrder/reportOrder.module";
 import { ReportOrderService } from "./reportOrder/reportOrder.service";
 import { ReportScoreModule } from "./reportScore/report-score.module";
 import { ReportScoreService } from "./reportScore/report-score.service";
+import { ReportTrackerService } from "./reportTracker/reportTracker.service";
 import { ReportWFHModule } from "./reportWFH/report-wfh.module";
 import { ReportWomenDayModule } from "./reportWomenDay/reportWomenDay.module";
 import { ReportWomenDayService } from "./reportWomenDay/reportWomenDay.service";
@@ -52,6 +54,7 @@ import { UtilsService } from "./utils.service";
       WomenDay,
       TX8,
       CheckCamera,
+      TrackerSpentTime,
     ]),
     ReportOrderModule,
     ReportHolidayModule,
@@ -81,6 +84,7 @@ import { UtilsService } from "./utils.service";
     ConfigService,
     ReportCheckCameraService,
     OdinReportService,
+    ReportTrackerService,
   ],
 })
 export class UtilsModule {}
