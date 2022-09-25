@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
+import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import util from "util";
-import { CommandLine, CommandLineClass } from "../base/command.base";
 
 @CommandLine({
   name: "eval",

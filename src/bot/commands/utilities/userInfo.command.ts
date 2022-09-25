@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import moment from "moment";
-import { CommandLine, CommandLineClass } from "../base/command.base";
+import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 
 @CommandLine({
   name: "userinfo",

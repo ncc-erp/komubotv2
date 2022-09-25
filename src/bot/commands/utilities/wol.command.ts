@@ -1,4 +1,4 @@
-import { CommandLine, CommandLineClass } from "../base/command.base";
+import { CommandLine, CommandLineClass } from "../../base/command.base";
 import wol from "wake_on_lan";
 import find from "local-devices";
 import broadcastAddress from "broadcast-address";

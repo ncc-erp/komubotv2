@@ -1,6 +1,6 @@
 import * as isURL from "is-url";
 import { Message, Client, parseEmoji } from "discord.js";
-import { CommandLine, CommandLineClass } from "../base/command.base";
+import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 @CommandLine({
   name: "addemoji",
   description: "Ajoute un emoji au serveur",

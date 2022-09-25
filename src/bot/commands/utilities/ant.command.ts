@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
-import { CommandLine, CommandLineClass } from "../base/command.base";
-import { fetchAntFeed } from "../utils/ant";
+import { fetchAntFeed } from "src/bot/utils/ant";
+import { CommandLine, CommandLineClass } from "../../base/command.base";
 
 const buildFeedMessage = (message, feed) => {
   const content = `
