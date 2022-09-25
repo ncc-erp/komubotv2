@@ -101,6 +101,9 @@ import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-sche
 import { Dating } from "./models/dating.entity";
 import { JoinCall } from "./models/joinCall.entity";
 import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
+import { Sync_role } from "./commands/sync_roles/sync_role.command";
+import { Sync_roleDiscord } from "./commands/sync_rolediscord/sync_rolediscord";
+import { UpdateRole } from "./utils/roles.utils";
 
 @Module({
   imports: [
@@ -206,6 +209,9 @@ import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
     BirthdayService,
     UpdateCommand,
     MvChannelCommand,
+    Sync_role,
+    Sync_roleDiscord,
+    UpdateRole
   ],
   controllers: [BotController],
 })
