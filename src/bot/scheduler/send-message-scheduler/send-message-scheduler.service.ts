@@ -27,7 +27,7 @@ export class SendMessageSchedulerService {
     private client: Client,
     private birthdayService: BirthdayService,
     private komubotrestController: KomubotrestController,
-    private odinReportService: OdinReportService,
+    private odinReportService: OdinReportService
   ) {}
 
   private readonly logger = new Logger(SendMessageSchedulerService.name);
@@ -57,6 +57,9 @@ export class SendMessageSchedulerService {
     );
     this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
       this.sendOdinReport(this.client)
+    );
+    this.addCronJob("topTracker", "00 45 08 * * 1-5", () =>
+      this.topTracker(this.client)
     );
   }
 
@@ -227,5 +230,28 @@ export class SendMessageSchedulerService {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async topTracker(client) {
+    if (await this.utilsService.checkHoliday()) return;
+    const userTracker = [
+      "856211913456877608",
+      "922416220056199198",
+      "921689631110602792",
+      "922297847876034562",
+      "922306295346921552",
+      "921601073939116073",
+      "921261168088190997",
+      "921312679354834984",
+      "665925240404181002",
+    ];
+    await Promise.all(
+      userTracker.map(async (user) => {
+        const userDiscord = await client.users.fetch(user);
+        userDiscord
+          .send(`Nhớ bật top tracker <@${user}> nhé!!!`)
+          .catch(console.error);
+      })
+    );
   }
 }

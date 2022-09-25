@@ -9,6 +9,7 @@ import { ReportMentionService } from "src/bot/utils/reportMention/reportMention.
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
 import { ReportScoreService } from "src/bot/utils/reportScore/report-score.service";
+import { ReportTrackerService } from "src/bot/utils/reportTracker/reportTracker.service";
 import { ReportWFHService } from "src/bot/utils/reportWFH/report-wfh.service";
 import { ReportWomenDayService } from "src/bot/utils/reportWomenDay/reportWomenDay.service";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
@@ -38,7 +39,9 @@ export class ReportCommand implements CommandLineClass {
     private reportCheckoutService: ReportCheckoutService,
     private reportScoreService: ReportScoreService,
     private reportCheckCameraService: ReportCheckCameraService,
-    private odinReportService: OdinReportService
+    private odinReportService: OdinReportService,
+    private reportTrackerService: ReportTrackerService,
+    
   ) {}
 
   getTimeWeekMondayToFriday(dayNow) {
@@ -131,7 +134,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "komuweekly") {
         await this.odinReportService.handleKomuWeeklyReport(message, args);
       } else if (args[0] === "tracker") {
-        // await reportTracker(message, args, client);
+        await this.reportTrackerService.reportTracker(message, args, client);
       } else if (args[0] === "holiday") {
         await this.reportHolidayService.reportHoliday(message, args, client);
       } else if (args[0] === "ts") {

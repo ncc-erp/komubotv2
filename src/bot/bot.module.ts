@@ -106,6 +106,12 @@ import { ReportCheckCameraService } from "./utils/reportCheckCamera/reportCheckC
 import { CheckCamera } from "./models/checkCamera.entity";
 import { Client } from "discord.js";
 import { OdinReportService } from "./utils/odinReport/odinReport.service";
+import { KickbotCommand } from "./commands/kickbot/kickbot.command";
+import { AntCommand } from "./commands/ant.command copy";
+import { WolCommand } from "./commands/wol.command copy 2";
+import { ReportTrackerService } from "./utils/reportTracker/reportTracker.service";
+import { TrackerSpentTime } from "./models/trackerSpentTime.entity";
+import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/updateRole-scheduler.service";
 
 @Module({
   imports: [
@@ -139,6 +145,7 @@ import { OdinReportService } from "./utils/odinReport/odinReport.service";
       Dating,
       JoinCall,
       CheckCamera,
+      TrackerSpentTime,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -217,6 +224,11 @@ import { OdinReportService } from "./utils/odinReport/odinReport.service";
     DailyService,
     ReportCheckCameraService,
     OdinReportService,
+    KickbotCommand,
+    AntCommand,
+    WolCommand,
+    ReportTrackerService,
+    UpdateRoleSchedulerService,
   ],
   controllers: [BotController],
 })

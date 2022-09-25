@@ -1,18 +1,21 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.TRACKER_SPENT_TIME)
 export class TrackerSpentTime {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: "text", nullable: false })
   email: string;
 
-  @Column({ type: "double", nullable: true })
+  @Column({ nullable: true })
   spent_time: number;
 
-  @Column({ type: "decimal", nullable: true })
-  date: number;
+  @Column({ type: "text", nullable: true })
+  date: string;
 
-  @Column({ type: "double", nullable: false })
+  @Column({ nullable: false })
   call_time: number;
 
   @Column({ type: "boolean", nullable: false })
