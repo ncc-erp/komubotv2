@@ -7,7 +7,7 @@ import {
 } from "@discord-nestjs/core";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ChannelType, Client, Message, MessageType } from "discord.js";
+import { ChannelType, Client, Message, MessageType , Interaction } from "discord.js";
 import * as fs from "fs";
 import { DataSource, Repository } from "typeorm";
 import * as util from "util";
@@ -85,5 +85,11 @@ export class BotGateway {
         }
       });
     }
+  }
+
+  @On("Interaction")
+  @UseGuards(MessageFromUserGuard)
+  @UsePipes(MessageToUpperPipe)
+  async onInteraction(interaction: Interaction): Promise<void> {
   }
 }
