@@ -96,6 +96,9 @@ import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-sche
 import { Dating } from "./models/dating.entity";
 import { JoinCall } from "./models/joinCall.entity";
 import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
+import { Sync_role } from "./commands/sync_roles/sync_role.command";
+import { Sync_roleDiscord } from "./commands/sync_rolediscord/sync_rolediscord";
+import { UpdateRole } from "./utils/roles.utils";
 import { DailyCommand } from "./commands/daily/daily.command";
 import holidayCommand from "./commands/holiday/holiday.command";
 import { DailyService } from "./commands/daily/daily.service";
@@ -208,6 +211,9 @@ import { OdinReportService } from "./utils/odinReport/odinReport.service";
     BirthdayService,
     UpdateCommand,
     MvChannelCommand,
+    Sync_role,
+    Sync_roleDiscord,
+    UpdateRole,
     DailyService,
     ReportCheckCameraService,
     OdinReportService,

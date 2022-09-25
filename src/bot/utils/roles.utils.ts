@@ -3,8 +3,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ClientConfigService } from "../config/client-config.service";
 import { User } from "../models/user.entity";
+
+
 @Injectable()
-export class updateRole {
+export class UpdateRole {
   constructor(
     @InjectRepository(User)
     private userData: Repository<User>,
@@ -57,7 +59,7 @@ export class updateRole {
       await this.userData
         .createQueryBuilder()
         .update(User)
-        .set({ roles: rolesRemoveDuplicate as [] })
+        .set({ roles: rolesRemoveDuplicate as string[] })
         .where('"email = :email"', { email: email })
         .andWhere('"deactive" IS NOT True')
         .execute();
