@@ -1,51 +1,52 @@
 import { Column, Entity } from "typeorm";
 import { TABLE } from "../constants/table";
 
+const welcome = {
+  status: false,
+  message: null,
+  channel: null,
+  image: false,
+};
+const goodbye = {
+  status: false,
+  message: null,
+  channel: null,
+  image: false,
+};
+const autoping = {
+  status: false,
+  message: null,
+  channel: null,
+  image: false,
+};
+
+const anti_maj = {
+  status: false,
+  message: null,
+  channel: null,
+  image: false,
+};
+const anti_spam = {
+  status: false,
+  message: null,
+  channel: null,
+  image: false,
+};
+
+const anti_mentions = {
+  status: false,
+  message: null,
+  channel: null,
+  image: false,
+};
+
+const anti_dc = {
+  status: false,
+  message: null,
+  channel: null,
+  image: false,
+};
 @Entity(TABLE.GUILDDATA)
-class welcome {
-  readonly status: false;
-  readonly message: null;
-  readonly channel: null;
-  readonly image: false;
-}
-class goodbye {
-  readonly status: false;
-  readonly message: null;
-  readonly channel: null;
-  readonly image: false;
-}
-class autoping {
-  readonly status: false;
-  readonly message: null;
-  readonly channel: null;
-  readonly image: false;
-}
-
-class anti_maj {
-  readonly status: false;
-  readonly message: null;
-  readonly channel: null;
-  readonly image: false;
-}
-class anti_spam {
-  readonly status: false;
-  readonly message: null;
-  readonly channel: null;
-  readonly image: false;
-}
-class anti_mentions {
-  readonly status: false;
-  readonly message: null;
-  readonly channel: null;
-  readonly image: false;
-}
-class anti_dc {
-  status: false;
-  message: null;
-  channel: null;
-  image: false;
-}
-
 export class channel {
   @Column({ nullable: false })
   serverID: string;
@@ -130,7 +131,7 @@ export class channel {
   @Column({ default: false })
   autoplay: string;
 
-  @Column({ default: null,nullable: true })
+  @Column({ default: null, nullable: true })
   song: string;
 
   @Column({ default: null, nullable: true })
