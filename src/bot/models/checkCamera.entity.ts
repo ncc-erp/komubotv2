@@ -4,6 +4,9 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.CHECK_CAMERA)
 export class CheckCamera {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column()
   userId: string;
 

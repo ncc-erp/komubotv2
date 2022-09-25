@@ -12,7 +12,6 @@ import * as fs from "fs";
 import { DataSource, Repository } from "typeorm";
 import * as util from "util";
 import { DiscoveryService } from "@nestjs/core";
-import { DailyCommand } from "../commands/daily.command";
 import { MessageFromUserGuard } from "../guards/message-from-user.guard";
 import { Daily } from "../models/daily.entity";
 import { MessageToUpperPipe } from "../pipes/message-to-upper.pipe";
