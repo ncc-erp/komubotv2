@@ -107,11 +107,13 @@ import { CheckCamera } from "./models/checkCamera.entity";
 import { Client } from "discord.js";
 import { OdinReportService } from "./utils/odinReport/odinReport.service";
 import { KickbotCommand } from "./commands/kickbot/kickbot.command";
-import { AntCommand } from "./commands/ant.command copy";
+import { AntCommand } from "./commands/ant.command";
 import { WolCommand } from "./commands/wol.command copy 2";
 import { ReportTrackerService } from "./utils/reportTracker/reportTracker.service";
 import { TrackerSpentTime } from "./models/trackerSpentTime.entity";
 import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/updateRole-scheduler.service";
+import { ReloadCommand } from "./commands/reload.command";
+import { EvalCommand } from "./commands/eval.command";
 
 @Module({
   imports: [
@@ -229,6 +231,8 @@ import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/upd
     WolCommand,
     ReportTrackerService,
     UpdateRoleSchedulerService,
+    ReloadCommand,
+    EvalCommand,
   ],
   controllers: [BotController],
 })
