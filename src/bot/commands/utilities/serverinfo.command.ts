@@ -1,5 +1,5 @@
 import { Message, Client, parseEmoji, EmbedBuilder } from "discord.js";
-import { CommandLine, CommandLineClass } from "../base/command.base";
+import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 
 @CommandLine({
   name: "serverinfo",

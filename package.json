@@ -46,6 +46,7 @@
     "discord.js": "14.1.1",
     "ffmpeg-static": "^5.1.0",
     "fs": "^0.0.1-security",
+    "hex-color-regex": "^1.1.0",
     "is-url": "^1.2.4",
     "local-devices": "^4.0.0",
     "moment": "^2.29.4",
@@ -62,6 +63,7 @@
     "rss-parser": "^3.12.0",
     "rxjs": "7.5.6",
     "save": "^2.5.0",
+    "tiktok-scraper": "^1.4.36",
     "typeorm": "^0.3.9",
     "util": "^0.12.4",
     "wake_on_lan": "^1.0.0"

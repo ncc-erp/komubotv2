@@ -1,4 +1,4 @@
-import { CommandLine, CommandLineClass } from "../base/command.base";
+import { CommandLine, CommandLineClass } from "../../base/command.base";
 
 @CommandLine({
   name: "avatar",

@@ -85,9 +85,7 @@ import { ReportScoreModule } from "./utils/reportScore/report-score.module";
 import { ReportScoreService } from "./utils/reportScore/report-score.service";
 import { Tx8Command } from "./commands/tx8/tx8.command";
 import { TX8 } from "./models/tx8.entity";
-import { LinksCommand } from "./utilities/links.command";
-import { AvatarCommand } from "./utilities/avatar.command";
-import { UserInfoCommand } from "./utilities/userInfo.command";
+import { AvatarCommand } from "./commands/utilities/avatar.command";
 import { BirthDay } from "./models/birthday.entity";
 import { BirthdayService } from "./utils/birthday/birthdayservice";
 import { UpdateCommand } from "./commands/update/update.command";
@@ -107,13 +105,18 @@ import { CheckCamera } from "./models/checkCamera.entity";
 import { Client } from "discord.js";
 import { OdinReportService } from "./utils/odinReport/odinReport.service";
 import { KickbotCommand } from "./commands/kickbot/kickbot.command";
-import { AntCommand } from "./commands/ant.command";
-import { WolCommand } from "./commands/wol.command copy 2";
+import { AntCommand } from "./commands/utilities/ant.command";
+import { WolCommand } from "./commands/utilities/wol.command";
 import { ReportTrackerService } from "./utils/reportTracker/reportTracker.service";
 import { TrackerSpentTime } from "./models/trackerSpentTime.entity";
 import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/updateRole-scheduler.service";
-import { ReloadCommand } from "./commands/reload.command";
-import { EvalCommand } from "./commands/eval.command";
+import { ReloadCommand } from "./commands/owner/reload.command";
+import { EvalCommand } from "./commands/owner/eval.command";
+import { LinksCommand } from "./commands/utilities/links.command";
+import { UserInfoCommand } from "./commands/utilities/userInfo.command";
+import { BotInfo } from "./commands/utilities/botinfo.command";
+import { HelpCommand } from "./commands/utilities/help.command";
+import { TiktokCommand } from "./commands/utilities/tiktok.command";
 
 @Module({
   imports: [
@@ -233,6 +236,10 @@ import { EvalCommand } from "./commands/eval.command";
     UpdateRoleSchedulerService,
     ReloadCommand,
     EvalCommand,
+    BotInfo,
+    HelpCommand,
+    TiktokCommand,
+    PingCommand,
   ],
   controllers: [BotController],
 })
