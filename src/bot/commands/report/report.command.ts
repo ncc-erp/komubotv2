@@ -1,5 +1,7 @@
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder, Client } from "discord.js";
+import { OdinReportService } from "src/bot/utils/odinReport/odinReport.service";
+import { ReportCheckCameraService } from "src/bot/utils/reportCheckCamera/reportCheckCamera.service";
 import { ReportCheckoutService } from "src/bot/utils/reportCheckout/reportCheckout.service";
 import { ReportDailyService } from "src/bot/utils/reportDaily/report-daily.service";
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
@@ -34,8 +36,33 @@ export class ReportCommand implements CommandLineClass {
     private ReportMentionService: ReportMentionService,
     private reportWomenDayService: ReportWomenDayService,
     private reportCheckoutService: ReportCheckoutService,
-    private reportScoreService: ReportScoreService
+    private reportScoreService: ReportScoreService,
+    private reportCheckCameraService: ReportCheckCameraService,
+    private odinReportService: OdinReportService
   ) {}
+
+  getTimeWeekMondayToFriday(dayNow) {
+    const curr = new Date();
+    // current date of week
+    const currentWeekDay = curr.getDay();
+    const lessDays = currentWeekDay == 0 ? 6 : currentWeekDay - 1;
+    const firstweek = new Date(
+      new Date(curr).setDate(curr.getDate() - lessDays)
+    );
+    let arrayDay;
+    if (dayNow === 0 || dayNow === 6 || dayNow === 5) {
+      arrayDay = [2, 3, 4, 5, 6];
+    } else {
+      arrayDay = Array.from({ length: dayNow }, (v, i) => i + 2);
+    }
+    function getDayofWeek(rank) {
+      // rank 2 -> 6 (Monday -> Friday)
+      return new Date(
+        new Date(firstweek).setDate(firstweek.getDate() + rank - 2)
+      );
+    }
+    return arrayDay.map((item) => getDayofWeek(item));
+  }
 
   async execute(message: Message, args, client: Client, guildDB) {
     try {
@@ -70,13 +97,23 @@ export class ReportCommand implements CommandLineClass {
           );
         }
       } else if (args[0] === "weekly") {
-        // for (const day of getTimeWeekMondayToFriday(new Date().getDay())) {
-        //   await reportDaily(day, message, args, client, guildDB);
-        // }
+        for (const day of this.getTimeWeekMondayToFriday(new Date().getDay())) {
+          await this.reportDailyService.reportDaily(
+            day,
+            message,
+            args,
+            client,
+            guildDB
+          );
+        }
       } else if (args[0] === "mention") {
         await this.ReportMentionService.reportMention(message, args);
       } else if (args[0] === "checkcamera") {
-        // await reportCheckCamera(message, args, client, guildDB);
+        await this.reportCheckCameraService.reportCheckCamera(
+          message,
+          args,
+          client
+        );
       } else if (args[0] === "wfh" && args[1] === "complain") {
         await this.reportWFHService.reportCompalinWfh(message, args, client);
       } else if (args[0] === "wfh") {
@@ -92,7 +129,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "opentalk") {
         await this.reportOpentalkService.reportOpentalk(message);
       } else if (args[0] === "komuweekly") {
-        // await handleKomuWeeklyReport(message, args, client, guildDB);
+        await this.odinReportService.handleKomuWeeklyReport(message, args);
       } else if (args[0] === "tracker") {
         // await reportTracker(message, args, client);
       } else if (args[0] === "holiday") {
