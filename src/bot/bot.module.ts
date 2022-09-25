@@ -4,11 +4,8 @@ import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
-import { ChecklistCommand } from "./commands/checklist.command";
-// import { CheckListModule } from "./commands/checklist/checklist.module";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
 
-import { DailyCommand } from "./commands/daily.command";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
 import { RemindCommand } from "./commands/remind/remind.command";
@@ -75,8 +72,6 @@ import { ReportTracker } from "./utils/report-tracker.untils";
 import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
 import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
-import { ReportDailyModule } from "./utils/reportDaily/report-daily.module";
-import holidayCommand from "./commands/holiday.command";
 import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
 import { ReportMentionModule } from "./utils/reportMention/reportMention.module";
 import { ClientConfigService } from "./config/client-config.service";
@@ -101,6 +96,13 @@ import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-sche
 import { Dating } from "./models/dating.entity";
 import { JoinCall } from "./models/joinCall.entity";
 import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
+import { DailyCommand } from "./commands/daily/daily.command";
+import holidayCommand from "./commands/holiday/holiday.command";
+import { DailyService } from "./commands/daily/daily.service";
+import { ReportCheckCameraService } from "./utils/reportCheckCamera/reportCheckCamera.service";
+import { CheckCamera } from "./models/checkCamera.entity";
+import { Client } from "discord.js";
+import { OdinReportService } from "./utils/odinReport/odinReport.service";
 
 @Module({
   imports: [
@@ -133,6 +135,7 @@ import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
       UserQuiz,
       Dating,
       JoinCall,
+      CheckCamera,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -148,7 +151,6 @@ import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
   providers: [
     PlaySlashCommand,
     PlaylistSlashCommand,
-    ChecklistCommand,
     CompantripCommand,
     Tx8Command,
     CompanytripService,
@@ -206,6 +208,9 @@ import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
     BirthdayService,
     UpdateCommand,
     MvChannelCommand,
+    DailyService,
+    ReportCheckCameraService,
+    OdinReportService,
   ],
   controllers: [BotController],
 })

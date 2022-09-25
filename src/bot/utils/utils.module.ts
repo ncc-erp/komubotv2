@@ -7,6 +7,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ReportCommand } from "../commands/report/report.command";
 import { Tx8Command } from "../commands/tx8/tx8.command";
 import { ClientConfigService } from "../config/client-config.service";
+import { CheckCamera } from "../models/checkCamera.entity";
 import { Daily } from "../models/daily.entity";
 import { Holiday } from "../models/holiday.entity";
 import { Opentalk } from "../models/opentalk.entity";
@@ -16,6 +17,8 @@ import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
 import { WomenDay } from "../models/womenDay.entity";
 import { KomubotrestController } from "./komubotrest/komubotrest.controller";
+import { OdinReportService } from "./odinReport/odinReport.service";
+import { ReportCheckCameraService } from "./reportCheckCamera/reportCheckCamera.service";
 import { ReportCheckoutService } from "./reportCheckout/reportCheckout.service";
 import { ReportDailyModule } from "./reportDaily/report-daily.module";
 import { ReportDailyService } from "./reportDaily/report-daily.service";
@@ -48,6 +51,7 @@ import { UtilsService } from "./utils.service";
       User,
       WomenDay,
       TX8,
+      CheckCamera,
     ]),
     ReportOrderModule,
     ReportHolidayModule,
@@ -75,6 +79,8 @@ import { UtilsService } from "./utils.service";
     ReportCheckoutService,
     ClientConfigService,
     ConfigService,
+    ReportCheckCameraService,
+    OdinReportService,
   ],
 })
 export class UtilsModule {}

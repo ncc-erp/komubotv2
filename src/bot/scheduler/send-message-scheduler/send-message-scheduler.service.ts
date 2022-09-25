@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
-import { Client } from "discord.js";
+import { AttachmentBuilder, Client, EmbedBuilder } from "discord.js";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { CronJob } from "cron";
@@ -13,6 +13,7 @@ import { config } from "src/bot/constants/config";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 import { BirthdayService } from "src/bot/utils/birthday/birthdayservice";
 import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { OdinReportService } from "src/bot/utils/odinReport/odinReport.service";
 
 @Injectable()
 export class SendMessageSchedulerService {
@@ -25,7 +26,8 @@ export class SendMessageSchedulerService {
     @InjectDiscordClient()
     private client: Client,
     private birthdayService: BirthdayService,
-    private komubotrestController: KomubotrestController
+    private komubotrestController: KomubotrestController,
+    private odinReportService: OdinReportService,
   ) {}
 
   private readonly logger = new Logger(SendMessageSchedulerService.name);
@@ -52,6 +54,9 @@ export class SendMessageSchedulerService {
     );
     this.addCronJob("happyBirthday", "00 00 09 * * 0-6", () =>
       this.happyBirthday(this.client)
+    );
+    this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
+      this.sendOdinReport(this.client)
     );
   }
 
@@ -182,6 +187,43 @@ export class SendMessageSchedulerService {
           )
         )
       );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async sendOdinReport(client) {
+    try {
+      const fetchChannel = await client.channels.fetch("925707563629150238");
+      try {
+        const date = new Date();
+
+        if (isNaN(date.getTime())) {
+          throw Error("invalid date provided");
+        }
+
+        const report = await this.odinReportService.getKomuWeeklyReport({
+          reportName: "komu-weekly",
+          url: process.env.ODIN_URL,
+          username: process.env.ODIN_USERNAME,
+          password: process.env.ODIN_PASSWORD,
+          screenUrl: process.env.ODIN_KOMU_REPORT_WEEKLY_URL,
+          date,
+        });
+
+        if (!report || !report.filePath) {
+          throw new Error("requested report is not found");
+        }
+
+        const attachment = new AttachmentBuilder(report.filePath);
+        const embed = new EmbedBuilder().setTitle("Komu report weekly");
+        await fetchChannel
+          .send({ files: [attachment], embed: embed })
+          .catch(console.error);
+      } catch (error) {
+        console.error(error);
+        fetchChannel.send(`Sorry, ${error.message}`);
+      }
     } catch (error) {
       console.log(error);
     }
