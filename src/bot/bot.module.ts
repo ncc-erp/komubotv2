@@ -112,6 +112,10 @@ import { UserInfoCommand } from "./commands/utilities/userInfo.command";
 import { BotInfo } from "./commands/utilities/botinfo.command";
 import { HelpCommand } from "./commands/utilities/help.command";
 import { TiktokCommand } from "./commands/utilities/tiktok.command";
+import { ClCommand } from "./commands/cl/cl.command";
+import { DmMessageUntil } from "./utils/dmmessage/dmmessage.until";
+import { Conversation } from "./models/conversation.entity";
+import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
 import { Holiday } from "./models/holiday.entity";
 import HolidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
@@ -119,7 +123,6 @@ import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
 import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
 import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
 import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
-import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
 
 @Module({
   imports: [
@@ -154,6 +157,7 @@ import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
       JoinCall,
       CheckCamera,
       TrackerSpentTime,
+      Conversation,
       TimeVoiceAlone,
     ]),
     // forwardRef(() => CheckListModule),
@@ -176,6 +180,7 @@ import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
     BotGateway,
     LeaveCommand,
     LinksCommand,
+    ClCommand,
     AvatarCommand,
     UserInfoCommand,
     LeaveService,
@@ -243,6 +248,7 @@ import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
     HelpCommand,
     TiktokCommand,
     PingCommand,
+    DmMessageUntil,
     AddEmojiCommand,
     VoiceChannelSchedulerService,
     GemrankCommand,
