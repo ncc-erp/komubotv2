@@ -117,6 +117,9 @@ import { UserInfoCommand } from "./commands/utilities/userInfo.command";
 import { BotInfo } from "./commands/utilities/botinfo.command";
 import { HelpCommand } from "./commands/utilities/help.command";
 import { TiktokCommand } from "./commands/utilities/tiktok.command";
+import { ClCommand } from "./commands/cl/cl.command";
+import { DmMessageUntil } from "./utils/dmmessage/dmmessage.until";
+import { Conversation } from "./models/conversation.entity";
 
 @Module({
   imports: [
@@ -151,6 +154,7 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
       JoinCall,
       CheckCamera,
       TrackerSpentTime,
+      Conversation,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -172,6 +176,7 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
     BotGateway,
     LeaveCommand,
     LinksCommand,
+    ClCommand,
     AvatarCommand,
     UserInfoCommand,
     LeaveService,
@@ -240,6 +245,7 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
     HelpCommand,
     TiktokCommand,
     PingCommand,
+    DmMessageUntil,
   ],
   controllers: [BotController],
 })
