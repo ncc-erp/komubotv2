@@ -63,7 +63,7 @@ export class DatingSchedulerService {
     const listJoinCall = [];
 
     if (minute === 0) {
-      const response = await await firstValueFrom(
+      const response = await firstValueFrom(
         this.http
           .get(
             "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
@@ -287,7 +287,7 @@ export class DatingSchedulerService {
         .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
           gtecreatedTimestamp: timeStart,
         })
-        .andWhere(`"createdTimestamp" >= :ltecreatedTimestamp`, {
+        .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
           ltecreatedTimestamp: timeEnd,
         })
         .orderBy("loop", "ASC")

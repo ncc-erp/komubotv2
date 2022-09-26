@@ -10,8 +10,8 @@ export class HolidayService {
     private leaveReposistory: Repository<Holiday>
   ) {}
 
-  async addHoliday(dateTime,messageHoliday) {
-    this.leaveReposistory.insert({
+  async addHoliday(dateTime, messageHoliday) {
+    await this.leaveReposistory.insert({
       dateTime: dateTime,
       content: messageHoliday,
     });

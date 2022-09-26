@@ -41,10 +41,10 @@ export class VoiceChannelSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("kickMemberVoiceChannel", CronExpression.EVERY_MINUTE, () =>
-      this.kickMemberVoiceChannel(this.client)
-    );
-    this.addCronJob("renameVoiceChannel", CronExpression.EVERY_MINUTE, () =>
+    // this.addCronJob("kickMemberVoiceChannel", CronExpression.EVERY_MINUTE, () =>
+    //   this.kickMemberVoiceChannel(this.client)
+    // );
+    this.addCronJob("renameVoiceChannel", "00 00 23 * * 0-6", () =>
       this.renameVoiceChannel(this.client)
     );
     this.addCronJob("turnOffBot", "00 15 14 * * 5", () =>
@@ -124,20 +124,18 @@ export class VoiceChannelSchedulerService {
     try {
       const findVoice = await this.voiceChannelReposistory
         .createQueryBuilder("voiceChannel")
-        .where("status >= :status", {
-          status: "start",
-        })
-        .andWhere("createdTimestamp >= :gtecreatedTimestamp", {
+        .where('"status" = :status', { status: "start" })
+        .andWhere('"createdTimestamp" >= :gtecreatedTimestamp', {
           gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
         })
-        .andWhere("createdTimestamp >= :ltecreatedTimestamp", {
+        .andWhere('"createdTimestamp" <= :ltecreatedTimestamp', {
           ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
         })
-        .select("voiceChannel.*")
+        .select("*")
         .execute();
 
       findVoice.map(async (item) => {
-        const channelName = await client.channels.fetch(item.id);
+        const channelName = await client.channels.fetch(item.voiceChannelId);
         await channelName.setName(`${item.originalName}`);
         await this.voiceChannelReposistory.update(
           { id: item.id },

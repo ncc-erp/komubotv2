@@ -2,7 +2,7 @@ import axios from "axios";
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { NotifiService } from "./noti.service";
 
 @CommandLine({
@@ -12,7 +12,7 @@ import { NotifiService } from "./noti.service";
 export default class NotificationCommand implements CommandLineClass {
   constructor(
     private notifiService: NotifiService,
-    private komubotrestController: KomubotrestController,
+    private komubotrestService: KomubotrestService,
     private clientConfigService: ClientConfigService
   ) {}
 
@@ -27,7 +27,7 @@ export default class NotificationCommand implements CommandLineClass {
             content: "```please add your text```",
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -48,7 +48,7 @@ export default class NotificationCommand implements CommandLineClass {
           }
         );
         message.reply({ content: "`✅` Notification saved." }).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
         const fetchChannel = [
           "922135616962068520",
@@ -79,7 +79,7 @@ export default class NotificationCommand implements CommandLineClass {
               "```You do not have permission to execute this command!```",
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err

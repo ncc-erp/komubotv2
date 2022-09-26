@@ -5,6 +5,7 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
   name: "addemoji",
   description: "Ajoute un emoji au serveur",
 })
+
 export class AddEmojiCommand implements CommandLineClass {
   constructor() {}
   async execute(message, args, client, guildDB) {

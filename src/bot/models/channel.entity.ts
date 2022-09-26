@@ -1,11 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.CHANNEL)
 export class Channel {
-  @PrimaryGeneratedColumn()
-  id: string;
+  @PrimaryColumn()
+  channelId: string;
 
   @Column({ type: "text", nullable: true })
   name: string;

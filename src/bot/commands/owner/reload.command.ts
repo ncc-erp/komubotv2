@@ -1,12 +1,17 @@
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @CommandLine({
   name: "reload",
   description: "Reloads a command",
 })
 export class ReloadCommand implements CommandLineClass {
+  constructor(
+    private clientConfigService : ClientConfigService
+  ) {}
+
   execute(message, args, client) {
-    if (!client.config.owners.includes(message.author.id)) return;
+    // if (!this.clientConfigService.owners.includes(message.author.id)) return;
 
     const commandName = args[1].toLowerCase();
     const command =

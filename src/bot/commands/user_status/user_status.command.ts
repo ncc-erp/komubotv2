@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import axios from "axios";
 import { UserStatusService } from "./user_status.service";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 
 @CommandLine({
   name: "userstatus",
@@ -10,7 +10,7 @@ import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.con
 })
 export class UserStatusCommand implements CommandLineClass {
   constructor(private readonly userStatusService: UserStatusService,
-    private komubotrestController : KomubotrestController,
+    private komubotrestService : KomubotrestService,
     ) {}
   async execute(message: Message, args, client) {
     try {
@@ -33,7 +33,7 @@ export class UserStatusCommand implements CommandLineClass {
       const user = await this.userStatusService.getUserStatus(email);
       if (!user)
         return message.reply(`Wrong Email!`).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
       const getUserStatus = await axios.get(
         `${process.env.TIMESHEET_API}Public/GetWorkingStatusByUser?emailAddress=${email}@ncc.asia`
@@ -49,7 +49,7 @@ export class UserStatusCommand implements CommandLineClass {
       }
 
       return message.reply(mess).catch((err) => {
-        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
       });
     } catch (e) {
       console.log(e);

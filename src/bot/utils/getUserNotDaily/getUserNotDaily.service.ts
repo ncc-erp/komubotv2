@@ -1,9 +1,12 @@
+import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { firstValueFrom } from "rxjs";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { Daily } from "src/bot/models/daily.entity";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
+import { getUserOffWork } from "../getUserOffWork";
 import { UtilsService } from "../utils.service";
 
 @Injectable()
@@ -14,6 +17,7 @@ export class UserNotDailyService {
     private userRepository: Repository<User>,
     @InjectRepository(Daily)
     private dailyReposistory: Repository<Daily>,
+    private readonly http: HttpService,
     private clientConfigService: ClientConfigService
   ) {}
 
@@ -26,11 +30,15 @@ export class UserNotDailyService {
               this.clientConfigService.wfh.api_url
             }?date=${date.toDateString()}`
           : this.clientConfigService.wfh.api_url;
-        wfhGetApi = await axios.get(url, {
-          headers: {
-            securitycode: process.env.WFH_API_KEY_SECRET,
-          },
-        });
+        wfhGetApi = await firstValueFrom(
+          this.http
+            .get(url, {
+              headers: {
+                securitycode: process.env.WFH_API_KEY_SECRET,
+              },
+            })
+            .pipe((res) => res)
+        );
       } catch (error) {
         console.log(error);
       }
@@ -59,7 +67,7 @@ export class UserNotDailyService {
           roles_discord: ["INTERN"],
         })
         .orWhere("roles_discord = :roles_discord", {
-          roles_discord: ["INTERN"],
+          roles_discord: ["STAFF"],
         })
         .andWhere('"email" IN (:...userOff)', {
           userOff: userOff,
@@ -75,7 +83,7 @@ export class UserNotDailyService {
         .where(`"createdAt" >= :gtecreatedAt`, {
           gtecreatedAt: this.utilsService.getDateDay(date).morning.lastime,
         })
-        .andWhere(`"createdAt" >= :ltecreatedAt`, {
+        .andWhere(`"createdAt" <= :ltecreatedAt`, {
           ltecreatedAt: this.utilsService.getDateDay(date).morning.fisttime,
         })
         .select(".*")
@@ -86,7 +94,7 @@ export class UserNotDailyService {
         .where(`"createdAt" >= :gtecreatedAt`, {
           gtecreatedAt: this.utilsService.getDateDay(date).afternoon.lastime,
         })
-        .andWhere(`"createdAt" >= :ltecreatedAt`, {
+        .andWhere(`"createdAt" <= :ltecreatedAt`, {
           ltecreatedAt: this.utilsService.getDateDay(date).afternoon.fisttime,
         })
         .select("*")
@@ -97,7 +105,7 @@ export class UserNotDailyService {
         .where(`"createdAt" >= :gtecreatedAt`, {
           gtecreatedAt: this.utilsService.getDateDay(date).fullday.lastime,
         })
-        .andWhere(`"createdAt" >= :ltecreatedAt`, {
+        .andWhere(`"createdAt" <= :ltecreatedAt`, {
           ltecreatedAt: this.utilsService.getDateDay(date).fullday.fisttime,
         })
         .select(".*")
@@ -178,7 +186,13 @@ export class UserNotDailyService {
           userNotDaily[i] = notDaily[i];
         }
       }
-      return { notDaily, userNotDaily, notDailyMorning, notDailyFullday, notDailyAfternoon };
+      return {
+        notDaily,
+        userNotDaily,
+        notDailyMorning,
+        notDailyFullday,
+        notDailyAfternoon,
+      };
     } catch (error) {
       console.log(error);
     }

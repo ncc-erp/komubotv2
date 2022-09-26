@@ -1,7 +1,7 @@
 import axios from "axios";
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { KomubotrestController } from "../../utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { HeyboyService } from "./heyboy.service";
 
 @CommandLine({
@@ -10,8 +10,8 @@ import { HeyboyService } from "./heyboy.service";
 })
 export class HeyboyCommand implements CommandLineClass {
   constructor(
-    private komubotrestController: KomubotrestController,
-    private heyboyService: HeyboyService
+    private heyboyService: HeyboyService,
+    private komubotrestService: KomubotrestService
   ) {}
   getUserNameByEmail(string) {
     if (string.includes("@ncc.asia")) {
@@ -84,38 +84,33 @@ export class HeyboyCommand implements CommandLineClass {
       "https://media.discordapp.net/attachments/921593472039915551/950241681041670164/unknown.png"
     );
   async execute(message, args, client) {
-    console.log("chuc 8/3");
     if (args[0] !== "mung" || args[1] !== "ngay" || args[2] !== "8/3") return;
     const ID_USER_PRIVATE = "869774806965420062";
     // if (message.author.id !== ID_USER_PRIVATE) {
     //   return message.reply("Missing permissions");
     // }
-    await this.komubotrestController.sendMessageToNhaCuaChung(client, {
+    await this.komubotrestService.sendMessageToNhaCuaChung(client, {
       embeds: [this.EmbedWomenDay],
     });
-    await this.komubotrestController.sendMessageToNhaCuaChung(client, {
+    await this.komubotrestService.sendMessageToNhaCuaChung(client, {
       embeds: [this.Embed],
     });
-    console.log("running");
     const response = await axios.get(
       "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
     );
-    console.log("where are u");
     if (!response.data || !response.data.result) {
       console.log("respon data error");
       return;
     }
-    console.log("hello bro");
     const emailsWoman = response.data.result
       .filter((user) => user.sex === 0)
       .map((item) => this.getUserNameByEmail(item.emailAddress));
 
     //! Các câu lệnh find không trả về kết quả do db đang trống
     const userWoman = await this.heyboyService.findWomanUser(emailsWoman);
-    console.log("userWoman : ", userWoman);
     await Promise.all(
       userWoman.map((user) =>
-        this.komubotrestController.sendMessageKomuToUser(
+        this.komubotrestService.sendMessageKomuToUser(
           client,
           { embeds: [this.Embed] },
           user.email

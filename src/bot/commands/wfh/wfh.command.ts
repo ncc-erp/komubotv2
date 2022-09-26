@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { ReportTracker } from "src/bot/utils/report-tracker.untils";
 
 const messHelp =
@@ -18,7 +18,7 @@ const messHelp =
 export class WFHCommand implements CommandLineClass {
   constructor(
     private readonly reqortTracker: ReportTracker,
-    private komubotrestController: KomubotrestController
+    private komubotrestService: KomubotrestService
   ) {}
   async execute(message: Message, args, client, authorId) {
     try {
@@ -47,7 +47,7 @@ export class WFHCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err
@@ -71,7 +71,7 @@ export class WFHCommand implements CommandLineClass {
                 //   ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestController.sendErrorToDevTest(
+                this.komubotrestService.sendErrorToDevTest(
                   client,
                   authorId,
                   err
@@ -114,7 +114,7 @@ export class WFHCommand implements CommandLineClass {
                 //   ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestController.sendErrorToDevTest(
+                this.komubotrestService.sendErrorToDevTest(
                   client,
                   authorId,
                   err
@@ -138,7 +138,7 @@ export class WFHCommand implements CommandLineClass {
                   // ephemeral: true,
                 })
                 .catch((err) => {
-                  this.komubotrestController.sendErrorToDevTest(
+                  this.komubotrestService.sendErrorToDevTest(
                     client,
                     authorId,
                     err
@@ -154,7 +154,7 @@ export class WFHCommand implements CommandLineClass {
             // ephemeral: true
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -183,7 +183,7 @@ export class WFHCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err
@@ -207,7 +207,7 @@ export class WFHCommand implements CommandLineClass {
                 //   ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestController.sendErrorToDevTest(
+                this.komubotrestService.sendErrorToDevTest(
                   client,
                   authorId,
                   err

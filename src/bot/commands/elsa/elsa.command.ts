@@ -36,8 +36,6 @@ export class ElsaCommand implements CommandLineClass {
     try {
       if (args[0] === "weekly") {
         const daily = args.join(" ");
-        console.log("args : ", args);
-        console.log("daily : ", daily);
         if (!daily || daily == undefined) {
           return message
             .reply({

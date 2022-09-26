@@ -4,14 +4,14 @@ import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
 import { Injectable } from "@nestjs/common";
 import { EmbedBuilder } from "discord.js";
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
 @Injectable()
 export class ReportMentionService{
   constructor(
     @InjectRepository(WorkFromHome)
     private wfhReposistory: Repository<WorkFromHome>,
-    private komubotrestController: KomubotrestController,
+    private komubotrestService: KomubotrestService,
     private utilsService: UtilsService
   ) {}
 
@@ -42,7 +42,7 @@ export class ReportMentionService{
     } else if (Array.isArray(mentionFullday) && mentionFullday.length === 0) {
       mess = "```" + "Không có ai vi phạm trong ngày" + "```";
       return message.reply(mess).catch((err) => {
-        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
       });
     } else {
       for (let i = 0; i <= Math.ceil(mentionFullday.length / 50); i += 1) {
@@ -56,7 +56,7 @@ export class ReportMentionService{
           .setColor("Red")
           .setDescription(`${mess}`);
         await message.reply({ embeds: [Embed] }).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
       }
     }

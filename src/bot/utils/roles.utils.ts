@@ -1,15 +1,17 @@
+import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { firstValueFrom } from "rxjs";
 import { Repository } from "typeorm";
 import { ClientConfigService } from "../config/client-config.service";
 import { User } from "../models/user.entity";
-
 
 @Injectable()
 export class UpdateRole {
   constructor(
     @InjectRepository(User)
     private userData: Repository<User>,
+    private readonly http: HttpService,
     private clientConfigService: ClientConfigService
   ) {}
   async updateRoleProject(client) {
@@ -25,11 +27,15 @@ export class UpdateRole {
       );
       let response;
       try {
-        response = await axios.get(url, {
-          headers: {
-            "X-Secret-Key": process.env.WIKI_API_KEY_SECRET,
-          },
-        });
+        response = await firstValueFrom(
+          this.http
+            .get(url, {
+              headers: {
+                "X-Secret-Key": process.env.WIKI_API_KEY_SECRET,
+              },
+            })
+            .pipe((res) => res)
+        );
       } catch (error) {
         continue;
       }
@@ -38,7 +44,7 @@ export class UpdateRole {
           .createQueryBuilder()
           .update(User)
           .set({ roles: [] })
-          .where('"email = :email"', { email: email })
+          .where('"email" = :email', { email: email })
           .andWhere('"deactive" IS NOT True')
           .execute();
         continue;
@@ -60,7 +66,7 @@ export class UpdateRole {
         .createQueryBuilder()
         .update(User)
         .set({ roles: rolesRemoveDuplicate as string[] })
-        .where('"email = :email"', { email: email })
+        .where('"email" = :email', { email: email })
         .andWhere('"deactive" IS NOT True')
         .execute();
       continue;
@@ -72,9 +78,9 @@ export class UpdateRole {
       .where('"deactive" IS NOT True')
       .select("users.*")
       .execute();
-    const userids = user.map((item) => item.id);
+    const userids = user.map((item) => item.userId);
 
-    let guild = await client.guilds.fetch("921239248991055882");
+    let guild = await client.guilds.fetch("1019615919204483072");
 
     for (let userid of userids) {
       let member;
@@ -86,7 +92,13 @@ export class UpdateRole {
       const roles = member.roles.cache
         .filter((roles) => roles.id !== guild.id)
         .map((role) => role.name);
-      await this.userData.update({ userId: userid }, { roles_discord: roles });
+      await this.userData
+        .createQueryBuilder()
+        .update(User)
+        .set({ roles_discord: roles as string[] })
+        .where('"userId" = :userId', { userId: userid })
+        .andWhere('"deactive" IS NOT True')
+        .execute();
     }
   }
 }
