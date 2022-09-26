@@ -175,7 +175,6 @@ export const logTimeSheetFromDaily = async ({ content, emailAddress }) => {
   const data = parseDailyMessage(content);
   const projectCode = data.projectCode;
   const results = [];
-  console.log(data)
   for (const task of data.tasks) {
     try {
       const response = await logTimeSheetForTask({

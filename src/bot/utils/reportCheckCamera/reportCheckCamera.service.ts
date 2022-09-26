@@ -5,7 +5,7 @@ import { CheckCamera } from "src/bot/models/checkCamera.entity";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
 import { getUserOffWork } from "../getUserOffWork";
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
 import { UtilsService } from "../utils.service";
 
 @Injectable()
@@ -16,7 +16,7 @@ export class ReportCheckCameraService {
     @InjectRepository(CheckCamera)
     private checkCameraReposistory: Repository<CheckCamera>,
     private utilsService: UtilsService,
-    private komubotrestController: KomubotrestController
+    private komubotrestService: KomubotrestService
   ) {}
 
   async reportCheckCamera(message, args, client) {
@@ -71,7 +71,7 @@ export class ReportCheckCameraService {
     ) {
       mess = "```" + "Không có ai vi phạm trong ngày" + "```";
       return message.reply(mess).catch((err) => {
-        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
       });
     } else {
       for (let i = 0; i <= Math.ceil(checkCameraFullday.length / 50); i += 1) {
@@ -85,7 +85,7 @@ export class ReportCheckCameraService {
           .setColor("Red")
           .setDescription(`${mess}`);
         await message.reply({ embeds: [Embed] }).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
       }
     }

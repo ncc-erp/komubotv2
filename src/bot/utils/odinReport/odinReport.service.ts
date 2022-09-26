@@ -1,7 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { AttachmentBuilder, Client, EmbedBuilder } from "discord.js";
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
-import { UtilsService } from "../utils.service";
 import puppeteer from "puppeteer";
 import path from "path";
 import fs from "fs";

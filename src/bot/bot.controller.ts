@@ -32,40 +32,40 @@ export class BotController {
     return this.botService.getUserIdByUsername(req, res);
   }
   @Post("/sendMessageToUser")
-  async sendMessageToUser(@Req() req: Request, @Res() res) {
+  async sendMessageToUser(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendMessageToUser(req, res);
   }
   @Post("/sendMessageToChannel")
-  async sendMessageToChannel(@Req() req: Request, @Res() res) {
+  async sendMessageToChannel(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendMessageToChannel(req, res);
   }
   @Post("/sendImageCheckInToUser")
-  async sendImageCheckInToUser(@Req() req: Request, @Res() res) {
+  async sendImageCheckInToUser(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendImageCheckInToUser(req, res);
   }
   @Post("/sendImageLabelToUser")
-  async sendImageLabelToUser(@Req() req: Request, @Res() res) {
+  async sendImageLabelToUser(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendImageLabelToUser(req, res);
   }
   @Post("/sendMessageToMachLeo")
-  async sendMessageToMachLeo(@Req() req: Request, @Res() res) {
+  async sendMessageToMachLeo(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendMessageToMachLeo(req, res);
   }
 
   @Post("/sendMessageToThongBao")
-  async sendMessageToThongBao(@Req() req: Request, @Res() res) {
+  async sendMessageToThongBao(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendMessageToThongBao(req, res);
   }
   @Post("/sendMessageToThongBaoPM")
-  async sendMessageToThongBaoPM(@Req() req: Request, @Res() res) {
+  async sendMessageToThongBaoPM(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendMessageToThongBaoPM(req, res);
   }
   @Post("/sendMessageToFinance")
-  async sendMessageToFinance(@Req() req: Request, @Res() res) {
+  async sendMessageToFinance(@Req() req: Request, @Res() res: Response) {
     return this.botService.sendMessageToFinance(req, res);
   }
   @Post("/deleteMessage")
-  async deleteMessage(@Req() req: Request, @Res() res) {
+  async deleteMessage(@Req() req: Request, @Res() res: Response) {
     return this.botService.deleteMessage(req, res);
   }
 

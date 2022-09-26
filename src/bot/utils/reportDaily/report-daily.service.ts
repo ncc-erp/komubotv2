@@ -7,9 +7,8 @@ import { Daily } from "src/bot/models/daily.entity";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
 import { getDateDay, getUserNameByEmail } from "../getusernotdaily.utils";
-import { UtilsService } from "../utils.service";
 import axios from "axios";
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
 @Injectable()
 export class ReportDailyService {
   constructor(
@@ -17,8 +16,7 @@ export class ReportDailyService {
     private dailyReposistory: Repository<Daily>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private komubotrestController: KomubotrestController,
-    private utilsService: UtilsService
+    private komubotrestService: KomubotrestService,
   ) {}
 
   async findCountNotDaily(arr, email) {
@@ -45,7 +43,7 @@ export class ReportDailyService {
       } else if (Array.isArray(userNotDaily) && userNotDaily.length === 0) {
         mess = "```" + dateString + "Tất Cả Đều Đã Daily" + "```";
         return message.reply(mess).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
       } else {
         for (let i = 0; i <= Math.ceil(userNotDaily.length / 50); i += 1) {
@@ -74,7 +72,7 @@ export class ReportDailyService {
             .setColor("Red")
             .setDescription(`${mess}`);
           await message.reply({ embeds: [Embed] }).catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         }
       }

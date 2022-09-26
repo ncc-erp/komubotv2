@@ -12,8 +12,8 @@ import { firstValueFrom } from "rxjs";
 import { config } from "src/bot/constants/config";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 import { BirthdayService } from "src/bot/utils/birthday/birthdayservice";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { OdinReportService } from "src/bot/utils/odinReport/odinReport.service";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 
 @Injectable()
 export class SendMessageSchedulerService {
@@ -26,7 +26,7 @@ export class SendMessageSchedulerService {
     @InjectDiscordClient()
     private client: Client,
     private birthdayService: BirthdayService,
-    private komubotrestController: KomubotrestController,
+    private komubotrestService: KomubotrestService,
     private odinReportService: OdinReportService
   ) {}
 
@@ -189,7 +189,7 @@ export class SendMessageSchedulerService {
     try {
       await Promise.all(
         await result.map((item) =>
-          this.komubotrestController.sendMessageToNhaCuaChung(
+          this.komubotrestService.sendMessageToNhaCuaChung(
             client,
             `${item.wish} <@${item.user.id}> +1 trà sữa full topping nhé b iu`
           )

@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { logTimeSheetFromDaily } from "src/bot/utils/timesheet.until";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { DailyService } from "./daily.service";
@@ -115,7 +115,7 @@ export class DailyCommand implements CommandLineClass {
   constructor(
     private readonly dailyService: DailyService,
     private readonly utilsService: UtilsService,
-    private komubotrestController: KomubotrestController,
+    private komubotrestService: KomubotrestService,
     private readonly clientConfigService: ClientConfigService,
     private readonly http: HttpService
   ) {}
@@ -141,7 +141,7 @@ export class DailyCommand implements CommandLineClass {
             ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -156,7 +156,7 @@ export class DailyCommand implements CommandLineClass {
             ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -172,7 +172,7 @@ export class DailyCommand implements CommandLineClass {
             ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -187,7 +187,7 @@ export class DailyCommand implements CommandLineClass {
       //       ephemeral: true,
       //     })
       //     .catch((err) => {
-      //       this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+      //       this.komubotrestService.sendErrorToDevTest(client, authorId, err);
       //     });
       // }
 
@@ -236,7 +236,7 @@ export class DailyCommand implements CommandLineClass {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err
@@ -246,7 +246,7 @@ export class DailyCommand implements CommandLineClass {
           message
             .reply({ content: "✅ Daily saved.", ephemeral: true })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err
@@ -271,7 +271,7 @@ export class DailyCommand implements CommandLineClass {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err
@@ -281,7 +281,7 @@ export class DailyCommand implements CommandLineClass {
           message
             .reply({ content: "`✅` Daily saved.", ephemeral: true })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err

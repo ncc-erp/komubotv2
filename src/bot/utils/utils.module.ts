@@ -10,6 +10,7 @@ import { ClientConfigService } from "../config/client-config.service";
 import { CheckCamera } from "../models/checkCamera.entity";
 import { Daily } from "../models/daily.entity";
 import { Holiday } from "../models/holiday.entity";
+import { Msg } from "../models/msg.entity";
 import { Opentalk } from "../models/opentalk.entity";
 import { Order } from "../models/order.entity";
 import { TrackerSpentTime } from "../models/trackerSpentTime.entity";
@@ -17,7 +18,7 @@ import { TX8 } from "../models/tx8.entity";
 import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
 import { WomenDay } from "../models/womenDay.entity";
-import { KomubotrestController } from "./komubotrest/komubotrest.controller";
+import { KomubotrestService } from "./komubotrest/komubotrest.service";
 import { OdinReportService } from "./odinReport/odinReport.service";
 import { ReportCheckCameraService } from "./reportCheckCamera/reportCheckCamera.service";
 import { ReportCheckoutService } from "./reportCheckout/reportCheckout.service";
@@ -55,6 +56,7 @@ import { UtilsService } from "./utils.service";
       TX8,
       CheckCamera,
       TrackerSpentTime,
+      Msg,
     ]),
     ReportOrderModule,
     ReportHolidayModule,
@@ -77,7 +79,7 @@ import { UtilsService } from "./utils.service";
     ReportScoreService,
     ReportMentionService,
     UtilsService,
-    KomubotrestController,
+    KomubotrestService,
     ReportWomenDayService,
     ReportCheckoutService,
     ClientConfigService,

@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Channel } from "src/bot/models/channel.entity";
 import { User } from "src/bot/models/user.entity";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { Repository } from "typeorm";
 
 @CommandLine({
@@ -16,7 +16,7 @@ export class MvChannelCommand implements CommandLineClass {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Channel)
     private readonly channelRepository: Repository<Channel>,
-    private komubotrestController: KomubotrestController
+    private komubotrestService: KomubotrestService
   ) {}
 
   messHelp = `*mv <this|channel> <category>`;
@@ -44,7 +44,7 @@ export class MvChannelCommand implements CommandLineClass {
             ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -78,7 +78,7 @@ export class MvChannelCommand implements CommandLineClass {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err
@@ -88,7 +88,7 @@ export class MvChannelCommand implements CommandLineClass {
           return message
             .reply({ content: this.messHelp, ephemeral: true })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 client,
                 authorId,
                 err
@@ -99,7 +99,7 @@ export class MvChannelCommand implements CommandLineClass {
         return message
           .reply({ content: this.messHelp, ephemeral: true })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err

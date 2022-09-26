@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { CompanytripService } from "./companytrip.service";
 
 @CommandLine({
@@ -10,7 +10,7 @@ import { CompanytripService } from "./companytrip.service";
 export class CompantripCommand implements CommandLineClass {
   constructor(
     private companytripService: CompanytripService,
-    private komubotrestController: KomubotrestController
+    private komubotrestService: KomubotrestService
   ) {}
   private client: Client;
   private currentYear: string = "2022";
@@ -41,7 +41,7 @@ export class CompantripCommand implements CommandLineClass {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 this.client,
                 authorId,
                 err
@@ -69,7 +69,7 @@ export class CompantripCommand implements CommandLineClass {
             .setColor(0xed4245)
             .setDescription(`${messMention}`);
           await message.reply({ embeds: [EmbedMention] }).catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               this.client,
               authorId,
               err
@@ -91,7 +91,7 @@ export class CompantripCommand implements CommandLineClass {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(
+              this.komubotrestService.sendErrorToDevTest(
                 this.client,
                 authorId,
                 err
@@ -120,7 +120,7 @@ export class CompantripCommand implements CommandLineClass {
             .setColor(0xed4245)
             .setDescription(`${mess}`);
           await message.reply({ embeds: [Embed] }).catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               this.client,
               authorId,
               err

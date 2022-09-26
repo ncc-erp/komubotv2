@@ -5,14 +5,14 @@ import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
 import { EmbedBuilder } from "discord.js";
 import { Injectable } from "@nestjs/common";
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
 @Injectable()
 export class ReportWFHService {
   constructor(
     @InjectRepository(WorkFromHome)
     private wfhReposistory: Repository<WorkFromHome>,
-    private komubotrestController: KomubotrestController,
+    private komubotrestService: KomubotrestService,
     private utilsService: UtilsService,
   ) {}
 
@@ -63,7 +63,7 @@ export class ReportWFHService {
     } else if (Array.isArray(wfhFullday) && wfhFullday.length === 0) {
       mess = "```" + "Không có ai vi phạm trong ngày" + "```";
       return message.reply(mess).catch((err) => {
-        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
       });
     } else {
       for (let i = 0; i <= Math.ceil(wfhFullday.length / 50); i += 1) {
@@ -79,7 +79,7 @@ export class ReportWFHService {
           .setColor("Red")
           .setDescription(`${mess}`);
         return message.reply({ embeds: [Embed] }).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
       }
     }
@@ -133,7 +133,7 @@ export class ReportWFHService {
     } else if (Array.isArray(wfhFullday) && wfhFullday.length === 0) {
       mess = "```" + "Không có ai được approved trong ngày" + "```";
       return message.reply(mess).catch((err) => {
-        this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
       });
     } else {
       for (let i = 0; i <= Math.ceil(wfhFullday.length / 50); i += 1) {
@@ -147,7 +147,7 @@ export class ReportWFHService {
           .setColor("Red")
           .setDescription(`${mess}`);
         return message.reply({ embeds: [Embed] }).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
       }
     }

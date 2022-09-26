@@ -2,7 +2,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Remind } from "src/bot/models/remind.entity";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { Repository } from "typeorm";
 
 const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
@@ -15,7 +15,7 @@ export class RemindCommand implements CommandLineClass {
   constructor(
     @InjectRepository(Remind)
     private readonly remindRepository: Repository<Remind>, 
-    private komubotrestController : KomubotrestController,
+    private komubotrestService : KomubotrestService,
     
   ) {}
   async execute(message: Message, args, client) {
@@ -69,7 +69,7 @@ export class RemindCommand implements CommandLineClass {
           //    ephemeral: true
         })
         .catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
     } catch (err) {
       console.log(err);

@@ -6,8 +6,7 @@ import { Quiz } from "src/bot/models/quiz.entity";
 import { User } from "src/bot/models/user.entity";
 import { UserQuiz } from "src/bot/models/userQuiz";
 import { Repository } from "typeorm";
-
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
 @Injectable()
 export class QuizService {
@@ -18,7 +17,7 @@ export class QuizService {
     private userQuizReposistory: Repository<UserQuiz>,
     @InjectRepository(Quiz)
     private quizReposistory: Repository<Quiz>,
-    private komubotrestController: KomubotrestController
+    private komubotrestService: KomubotrestService
   ) {}
 
   async randomQuiz(userInput, context, type, roleSelect) {
