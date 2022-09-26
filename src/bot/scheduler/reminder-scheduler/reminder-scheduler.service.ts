@@ -12,6 +12,7 @@ import { getKomuWeeklyReport } from "src/bot/utils/odin-report";
 import fs from "fs";
 import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { UserNotDailyService } from "src/bot/utils/getUserNotDaily/getUserNotDaily.service";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 
 @Injectable()
 export class ReminderSchedulerService {
@@ -26,8 +27,8 @@ export class ReminderSchedulerService {
     private client: Client,
     private komubotrestController: KomubotrestController,
     private userNotDailyService: UserNotDailyService,
-
-    ) {}
+    private komubotrestService: KomubotrestService
+  ) {}
 
   private readonly logger = new Logger(ReminderSchedulerService.name);
 
@@ -289,20 +290,21 @@ export class ReminderSchedulerService {
 
   async remindDailyMorning(client) {
     if (await this.utilsService.checkHoliday()) return;
-    console.log('[Scheduler] Run');
+    console.log("[Scheduler] Run");
     try {
-      const { notDailyMorning, notDailyFullday } = await this.userNotDailyService.getUserNotDaily(
-        null,
-        null,
-        null,
-        client
-      );
+      const { notDailyMorning, notDailyFullday } =
+        await this.userNotDailyService.getUserNotDaily(
+          null,
+          null,
+          null,
+          client
+        );
       // send message komu to user
-  
+
       const userNotDaily = [...notDailyMorning, ...notDailyFullday];
       await Promise.all(
         userNotDaily.map((email) =>
-          this.komubotrestController.sendMessageKomuToUser(
+          this.komubotrestService.sendMessageKomuToUser(
             client,
             "Don't forget to daily, dude! Don't be mad at me, we are friends I mean we are best friends.",
             email
@@ -313,23 +315,24 @@ export class ReminderSchedulerService {
       console.log(error);
     }
   }
-  
+
   async remindDailyAfternoon(client) {
     if (await this.utilsService.checkHoliday()) return;
-    console.log('[Scheduler] Run');
+    console.log("[Scheduler] Run");
     try {
-      const { notDailyAfternoon, notDailyFullday } = await this.userNotDailyService.getUserNotDaily(
-        null,
-        null,
-        null,
-        client
-      );
+      const { notDailyAfternoon, notDailyFullday } =
+        await this.userNotDailyService.getUserNotDaily(
+          null,
+          null,
+          null,
+          client
+        );
       // send message komu to user
-  
+
       const userNotDaily = [...notDailyAfternoon, ...notDailyFullday];
       await Promise.all(
         userNotDaily.map((email) =>
-        this.komubotrestController.sendMessageKomuToUser(
+          this.komubotrestService.sendMessageKomuToUser(
             client,
             "Don't forget to daily, dude! Don't be mad at me, we are friends I mean we are best friends.",
             email

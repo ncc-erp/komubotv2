@@ -17,7 +17,6 @@ import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
 import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
-import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
 import { Msg } from "./models/msg.entity";
@@ -36,7 +35,7 @@ import { ToggleActiveService } from "./commands/toggleActive/toggleActive.servic
 import { CheckListModule } from "./utils/checklist/checklist.module";
 import { MulterModule } from "@nestjs/platform-express";
 import { UtilsModule } from "./utils/utils.module";
-import { GemrankCommand } from "./commands/gemrank.command";
+import { GemrankCommand } from "./commands/gemrank/gemrank.command";
 import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
 import LeaveCommand from "./commands/leave/leave.command";
 import { LeaveService } from "./commands/leave/leave.service";
@@ -51,9 +50,7 @@ import { ReportCommand } from "./commands/report/report.command";
 import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
 import { UtilsService } from "./utils/utils.service";
 // import { ReportOrder } from "./utils/reportOrder.utils";
-import HolidayCommand from "./commands/holiday/holiday.command";
 import { Order } from "./models/order.entity";
-import { HolidayService } from "./commands/holiday/holiday.service";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
 // import { CheckListController } from "./commands/Checklist/checklist.controller";
 import { CompanyTrip } from "./models/companyTrip.entity";
@@ -98,7 +95,6 @@ import { Sync_role } from "./commands/sync_roles/sync_role.command";
 import { Sync_roleDiscord } from "./commands/sync_rolediscord/sync_rolediscord";
 import { UpdateRole } from "./utils/roles.utils";
 import { DailyCommand } from "./commands/daily/daily.command";
-import holidayCommand from "./commands/holiday/holiday.command";
 import { DailyService } from "./commands/daily/daily.service";
 import { ReportCheckCameraService } from "./utils/reportCheckCamera/reportCheckCamera.service";
 import { CheckCamera } from "./models/checkCamera.entity";
@@ -117,6 +113,11 @@ import { UserInfoCommand } from "./commands/utilities/userInfo.command";
 import { BotInfo } from "./commands/utilities/botinfo.command";
 import { HelpCommand } from "./commands/utilities/help.command";
 import { TiktokCommand } from "./commands/utilities/tiktok.command";
+import { Holiday } from "./models/holiday.entity";
+import HolidayCommand from "./commands/holiday/holiday.command";
+import { HolidayService } from "./commands/holiday/holiday.service";
+import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
+import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
 
 @Module({
   imports: [
@@ -177,7 +178,6 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
     LeaveService,
     DailyCommand,
     MeetingCommand,
-    holidayCommand,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
@@ -206,6 +206,7 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
     ReportOrderService,
     ReportDailyService,
     ReportScoreService,
+    HolidayCommand,
     HolidayService,
     Ncc8Command,
     KomubotrestController,
@@ -240,6 +241,10 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
     HelpCommand,
     TiktokCommand,
     PingCommand,
+    GemrankCommand,
+    OpenTalkCommand,
+    KomubotrestService,
+    Uploadfile,
   ],
   controllers: [BotController],
 })
