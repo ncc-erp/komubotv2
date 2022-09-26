@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { TABLE } from "src/bot/constants/table";
 import { TX8 } from "src/bot/models/tx8.entity";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
 
@@ -13,7 +13,7 @@ import { Repository } from "typeorm";
 })
 export class Tx8Command implements CommandLineClass {
   constructor(
-    private komubotrestController: KomubotrestController,
+    private komubotrestService: KomubotrestService,
     private readonly utilsService: UtilsService,
     @InjectRepository(TX8)
     private readonly tx8Repository: Repository<TX8>
@@ -29,7 +29,7 @@ export class Tx8Command implements CommandLineClass {
             //   ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
 
@@ -48,7 +48,7 @@ export class Tx8Command implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           return;
         }
@@ -66,7 +66,7 @@ export class Tx8Command implements CommandLineClass {
             //   ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         return;
       }
@@ -82,7 +82,7 @@ export class Tx8Command implements CommandLineClass {
             //   ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         return;
       }
@@ -162,7 +162,7 @@ export class Tx8Command implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           return;
         }
@@ -188,7 +188,7 @@ export class Tx8Command implements CommandLineClass {
             //   ephemeral: false,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
     } catch (err) {
@@ -199,7 +199,7 @@ export class Tx8Command implements CommandLineClass {
           //   ephemeral: true
         })
         .catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
     }
   }

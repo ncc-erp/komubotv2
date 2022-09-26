@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message, EmbedBuilder } from "discord.js";
 import { User } from "src/bot/models/user.entity";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { ToggleActiveService } from "./toggleActive.service";
@@ -15,7 +15,7 @@ export class ToggleActiveCommand implements CommandLineClass {
     @InjectRepository(User)
     private userData: Repository<User>,
     private toggleActiveService: ToggleActiveService, 
-    private komubotrestController : KomubotrestController,
+    private komubotrestService : KomubotrestService,
   ) {}
   messHelp =
     "```" +
@@ -44,7 +44,7 @@ export class ToggleActiveCommand implements CommandLineClass {
             content: `${this.messHelp}`,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       if (!correctUrers.deactive) {
         message
@@ -52,7 +52,7 @@ export class ToggleActiveCommand implements CommandLineClass {
             content: "Disable account successfully",
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
 
         await this.toggleActiveService.deactiveAcc(correctUrers.userId);
@@ -63,7 +63,7 @@ export class ToggleActiveCommand implements CommandLineClass {
             content: "Enable account successfully",
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
     } catch (error) {

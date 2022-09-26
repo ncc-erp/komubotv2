@@ -25,7 +25,7 @@ export class MoveChannelCommand implements CommandLineClass {
       const channels = await this.movelChannelService.findChannels(
         CATEGORY_ACHIEVED_CHANNEL_ID
       );
-      let channelIds = channels.map((channel) => channel.id);
+      let channelIds = channels.map((channel) => channel.channelId);
 
       for (let channelId of channelIds) {
         try {

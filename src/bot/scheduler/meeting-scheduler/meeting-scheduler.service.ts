@@ -60,7 +60,6 @@ export class MeetingSchedulerService {
       .andWhere(`"cancel" IS NOT TRUE`)
       .select("meeting.*")
       .execute();
-   
 
     const voiceChannel = getAllVoice.map((item) => item.id);
 
@@ -74,7 +73,7 @@ export class MeetingSchedulerService {
       },
     });
     findVoice.map((item) => {
-      voiceNow.push(item.id);
+      voiceNow.push(item.voiceChannelId);
     });
 
     voiceChannel.map(async (voice, index) => {
@@ -151,7 +150,7 @@ export class MeetingSchedulerService {
                     const newRoomOnce = channelNameOnce.name;
                     await this.voiceChannelReposistory
                       .insert({
-                        id: channelNameOnce.id,
+                        voiceChannelId: channelNameOnce.id,
                         originalName: originalNameOnce,
                         newRoomName: newRoomOnce,
                         createdTimestamp: Date.now(),
@@ -204,7 +203,7 @@ export class MeetingSchedulerService {
                     const newRoomDaily = channelNameDaily.name;
                     await this.voiceChannelReposistory
                       .insert({
-                        id: channelNameDaily.id,
+                        voiceChannelId: channelNameDaily.id,
                         originalName: originalNameDaily,
                         newRoomName: newRoomDaily,
                         createdTimestamp: Date.now(),
@@ -293,7 +292,7 @@ export class MeetingSchedulerService {
                     const newRoomWeekly = channelNameWeekly.name;
                     await this.voiceChannelReposistory
                       .insert({
-                        id: channelNameWeekly.id,
+                        voiceChannelId: channelNameWeekly.id,
                         originalName: originalNameWeekly,
                         newRoomName: newRoomWeekly,
                         createdTimestamp: Date.now(),
@@ -362,7 +361,7 @@ export class MeetingSchedulerService {
                     const newRoomRepeat = channelNameRepeat.name;
                     await this.voiceChannelReposistory
                       .insert({
-                        id: channelNameRepeat.id,
+                        voiceChannelId: channelNameRepeat.id,
                         originalName: originalNameRepeat,
                         newRoomName: newRoomRepeat,
                         createdTimestamp: Date.now(),
@@ -414,7 +413,7 @@ export class MeetingSchedulerService {
     });
 
     const dateTimeNow = new Date();
-    dateTimeNow.setHours(dateTimeNow.getHours() + 7);
+    dateTimeNow.setHours(dateTimeNow.getHours());
     const hourDateNow = dateTimeNow.getHours();
     const minuteDateNow = dateTimeNow.getMinutes();
 

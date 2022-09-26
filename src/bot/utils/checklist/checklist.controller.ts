@@ -1,7 +1,6 @@
 import { Controller, Injectable } from '@nestjs/common';
 import { Client, Message, EmbedBuilder  } from "discord.js";
-import { KomubotrestController } from '../komubotrest/komubotrest.controller';
-
+import { KomubotrestService } from '../komubotrest/komubotrest.service';
 import { CheckListService } from "./checklist.service";
 
 let categorys = ['tester', 'loren', 'inter', 'dev', 'hr'];
@@ -15,7 +14,7 @@ for (let i = 1; i <= categorys.length; i++) {
 export class CheckListController{
     constructor(
         private checklistService : CheckListService,
-        private komubotrestController : KomubotrestController,
+        private komubotrestService : KomubotrestService,
     ){}
     async execute(message : Message, args, client) {
        let authorId = message.author.id;
@@ -34,7 +33,7 @@ export class CheckListController{
              .setColor(0xed4245)
              .setDescription(`${mess}`);
            await message.reply({ embeds: [Embed] }).catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
            });
          }
        } else if (args[0] && !args[1]) {
@@ -52,7 +51,7 @@ export class CheckListController{
          if (checklists.length === 0) {
            mess = '```' + 'There are no categories' + '```';
            return message.reply(mess).catch((err) => {
-             this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
            });
          } else {
            for (let i = 0; i < checklists.length; i++) {
@@ -75,7 +74,7 @@ export class CheckListController{
                .setColor(0xed4245)
                .setDescription(`${mess}`);
              await message.reply({ embeds: [Embed] }).catch((err) => {
-               this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
              });
            }
          }
@@ -86,7 +85,7 @@ export class CheckListController{
      
          if (categorys.length === 0 || subcategorys.length === 0) {
            return message.reply(`Please *checklist category`).catch((err) => {
-             this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
            });
          }
      
@@ -116,7 +115,7 @@ export class CheckListController{
            return message
              .reply(`You are entering the wrong subcategory`)
              .catch((err) => {
-               this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
              });
          }
      
@@ -124,7 +123,7 @@ export class CheckListController{
            return message
              .reply(`You are entering the wrong category`)
              .catch((err) => {
-               this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
              });
          }
      
@@ -134,7 +133,7 @@ export class CheckListController{
          if (subcategory.length === 0) {
            mess = '```' + 'There are no subcategories' + '```';
            return message.reply(mess).catch((err) => {
-             this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
            });
          } else {
            for (let i = 0; i <= Math.ceil(subcategory.length / 50); i += 1) {
@@ -151,7 +150,7 @@ export class CheckListController{
                .setColor(0xed4245)
                .setDescription(`${mess}`);
              await message.reply({ embeds: [Embed] }).catch((err) => {
-               this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
              });
            }
            subcategorys = [];

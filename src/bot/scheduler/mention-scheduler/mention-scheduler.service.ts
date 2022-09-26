@@ -10,7 +10,6 @@ import { Mentioned } from "src/bot/models/mentioned.entity";
 import moment from "moment";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 
 @Injectable()
 export class MentionSchedulerService {
@@ -23,7 +22,7 @@ export class MentionSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
-    private komubotrestController: KomubotrestController
+    private komubotrestService: KomubotrestService
   ) {}
 
   private readonly logger = new Logger(MentionSchedulerService.name);
@@ -112,7 +111,7 @@ export class MentionSchedulerService {
             status: "ACTIVE",
             type: "mention",
           });
-          const message = this.komubotrestController.getWFHWarninghMessage(
+          const message = this.komubotrestService.getWFHWarninghMessage(
             content,
             user.mentionUserId,
             "data.id.toString()"

@@ -5,6 +5,7 @@ import { CronJob } from "cron";
 import { UpdateRole } from "src/bot/utils/roles.utils";
 import { Client } from "discord.js";
 import { InjectDiscordClient } from "@discord-nestjs/core";
+import { HttpService } from "@nestjs/axios";
 
 @Injectable()
 export class UpdateRoleSchedulerService {
@@ -12,8 +13,8 @@ export class UpdateRoleSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     private updateRole: UpdateRole,
     @InjectDiscordClient()
-    private client: Client
-  ) {}
+    private client: Client,
+    ) {}
 
   private readonly logger = new Logger(UpdateRoleSchedulerService.name);
 

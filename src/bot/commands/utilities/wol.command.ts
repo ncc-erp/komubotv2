@@ -127,12 +127,12 @@ function handleWoL(message, args) {
     })
     .then((device) => {
       if (device.ip) {
-        return this.wakeDevice(device.mac, device.ip);
+        return wakeDevice(device.mac, device.ip, null);
       }
       return wakeDeviceOnAvailableNetworks(device.mac);
     })
     .then((res) => {
-      if (!res.macAddress && !res.length) {
+      if (!res) {
         throw new Error("no WoL packet sent!");
       }
       return message.reply("Done, WoL packet sent!");

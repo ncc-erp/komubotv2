@@ -17,7 +17,7 @@ ${feed.items
     .setColor("#0099ff")
     .setTitle(feed.title)
     .setURL(feed.link)
-    .addFields("Feed", feed.description, false)
+    // .addFields("Feed", feed.description, false)
     .setDescription(content)
     .setTimestamp()
     .setFooter({

@@ -1,19 +1,7 @@
 import { Controller, Injectable, Post, Req, Res } from "@nestjs/common";
-import { createError } from "http-errors";
-import {
-  Client,
-  ActionRowBuilder,
-  ButtonBuilder,
-  EmbedBuilder,
-} from "discord.js";
+import { Client } from "discord.js";
 import { KomubotrestService } from "./komubotrest.service";
-import { deleteMessage } from "../deleteMessage.utils";
 import { Request, Response } from "express";
-import bodyParserfrom from "body-parser";
-import multer from "multer";
-import cors from "cors";
-import { Uploadfile } from "src/bot/models/uploadFile.entity";
-
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -71,35 +59,4 @@ export class KomubotrestController {
   async deleteMessage(@Req() req: Request, @Res() res: Response) {
     return this.komubotrestService.deleteMessage(Client, req, res);
   }
-
-  sendErrorToDevTest = async (client, authorId, err) => {
-    const msg = `KOMU không gửi được tin nhắn cho <@${authorId}> message: ${err.message} httpStatus: ${err.httpStatus} code: ${err.code}.`;
-    await client.channels.cache
-      .get(process.env.KOMUBOTREST_DEVTEST_CHANNEL_ID)
-      .send(msg)
-      .catch(console.error);
-    return null;
-  };
-  sendMessageToNhaCuaChung = async (client, msg) => {
-    await client.channels.cache
-      .get(process.env.KOMUBOTREST_NHACUACHUNG_CHANNEL_ID)
-      .send(msg)
-      .catch(console.error);
-    return null;
-  };
-  getWFHWarninghMessage = (content, userId, wfhId) => {
-    const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId("komu_wfh_complain#" + userId + "#" + wfhId)
-        .setLabel("I'am in daily call")
-        .setEmoji("⏳")
-        .setStyle(4),
-      new ButtonBuilder()
-        .setCustomId("komu_wfh_accept#" + userId + "#" + wfhId)
-        .setLabel("Accept")
-        .setEmoji("✍")
-        .setStyle(1)
-    );
-    return { content, components: [row] };
-  };
 }

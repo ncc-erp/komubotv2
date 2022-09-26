@@ -4,7 +4,7 @@ import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Order } from "src/bot/models/order.entity";
-import { KomubotrestController } from "../komubotrest/komubotrest.controller";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
 import { UtilsService } from "../utils.service";
 import { BirthdayService } from "./birthdayservice";
 
@@ -14,6 +14,6 @@ import { BirthdayService } from "./birthdayservice";
     DiscordModule.forFeature(),
     DiscoveryModule,
   ],
-  providers: [BirthdayService, UtilsService, KomubotrestController],
+  providers: [BirthdayService, UtilsService, KomubotrestService],
 })
 export class BirthdayModule {}

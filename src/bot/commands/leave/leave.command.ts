@@ -1,13 +1,7 @@
-import { InjectRepository } from "@nestjs/typeorm";
 import { Message, Client, EmbedBuilder } from "discord.js";
-import { getTomorrowDate, getYesterdayDate } from "../../utils/date.utils";
-import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
-
-import { Leave } from "../../models/leave.entity";
-import { TABLE } from "../../constants/table";
 import { LeaveService } from "./leave.service";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 
 @CommandLine({
   name: "leave",
@@ -15,7 +9,8 @@ import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.con
 })
 export default class LeaveCommand implements CommandLineClass {
   constructor(
-    private readonly leaveService: LeaveService,  private komubotrestController : KomubotrestController,
+    private readonly leaveService: LeaveService,
+    private komubotrestService: KomubotrestService
   ) {}
 
   async execute(message: Message, args, Client) {
@@ -25,7 +20,7 @@ export default class LeaveCommand implements CommandLineClass {
         return message
           .reply("```" + "*leave minute reason  " + "```")
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(Client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(Client, authorId, err);
           });
       }
       const minute =
@@ -33,15 +28,17 @@ export default class LeaveCommand implements CommandLineClass {
 
       if (!minute) {
         return message.reply("Minute must be a number").catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(Client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(Client, authorId, err);
         });
       }
       const reason = args.slice(1, args.length).join(" ");
-      await this.leaveService.saveLeave(message, {minute: minute, reason: reason})
-      
+      await this.leaveService.saveLeave(message, {
+        minute: minute,
+        reason: reason,
+      });
 
       return message.reply("`✅` Leave saved").catch((err) => {
-        this.komubotrestController.sendErrorToDevTest(Client, authorId, err);
+        this.komubotrestService.sendErrorToDevTest(Client, authorId, err);
       });
     } catch (err) {
       console.log(err);

@@ -1,9 +1,9 @@
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { KomubotrestController } from "../../utils/komubotrest/komubotrest.controller";
 
 import axios from "axios";
 import { ClientConfigService } from "../../config/client-config.service";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 
 @CommandLine({
   name: "gem",
@@ -11,7 +11,7 @@ import { ClientConfigService } from "../../config/client-config.service";
 })
 export class GemrankCommand implements CommandLineClass {
   constructor(
-    private komuborestController: KomubotrestController,
+    private komuborestController: KomubotrestService,
     private clienConfigService: ClientConfigService
   ) {}
   private messHelp: string =

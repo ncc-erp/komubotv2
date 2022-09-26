@@ -10,7 +10,6 @@ import { Repository } from "typeorm";
 import { Remind } from "src/bot/models/remind.entity";
 import { getKomuWeeklyReport } from "src/bot/utils/odin-report";
 import fs from "fs";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
 import { UserNotDailyService } from "src/bot/utils/getUserNotDaily/getUserNotDaily.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 
@@ -25,9 +24,8 @@ export class ReminderSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
-    private komubotrestController: KomubotrestController,
-    private userNotDailyService: UserNotDailyService,
-    private komubotrestService: KomubotrestService
+    private komubotrestService: KomubotrestService,
+    private userNotDailyService: UserNotDailyService
   ) {}
 
   private readonly logger = new Logger(ReminderSchedulerService.name);
@@ -46,7 +44,7 @@ export class ReminderSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("pingReminder", CronExpression.EVERY_10_SECONDS, () =>
+    this.addCronJob("pingReminder", CronExpression.EVERY_MINUTE, () =>
       this.pingReminder(this.client)
     );
     this.addCronJob("sendMesageRemind", CronExpression.EVERY_MINUTE, () =>
@@ -98,7 +96,7 @@ export class ReminderSchedulerService {
       .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
       })
-      .andWhere(`"createdTimestamp" >= :ltecreatedTimestamp`, {
+      .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
       .select("remind.*")
@@ -202,7 +200,7 @@ export class ReminderSchedulerService {
       });
 
       const now = new Date();
-      now.setHours(now.getHours() + 7);
+      now.setHours(now.getHours());
       const hourDateNow = now.getHours();
       const dateNow = now.toLocaleDateString("en-US");
       const minuteDateNow = now.getMinutes();
@@ -253,7 +251,7 @@ export class ReminderSchedulerService {
 
   async sendOdinReport(client) {
     try {
-      const fetchChannel = await client.channels.fetch("925707563629150238");
+      const fetchChannel = await client.channels.fetch("1022413213062672445");
       try {
         const date = new Date();
 
@@ -293,12 +291,13 @@ export class ReminderSchedulerService {
     console.log("[Scheduler] Run");
     try {
       const { notDailyMorning, notDailyFullday } =
+       
         await this.userNotDailyService.getUserNotDaily(
-          null,
-          null,
-          null,
-          client
-        );
+            null,
+            null,
+            null,
+            client
+          );
       // send message komu to user
 
       const userNotDaily = [...notDailyMorning, ...notDailyFullday];
@@ -321,18 +320,19 @@ export class ReminderSchedulerService {
     console.log("[Scheduler] Run");
     try {
       const { notDailyAfternoon, notDailyFullday } =
+       
         await this.userNotDailyService.getUserNotDaily(
-          null,
-          null,
-          null,
-          client
-        );
+            null,
+            null,
+            null,
+            client
+          );
       // send message komu to user
 
       const userNotDaily = [...notDailyAfternoon, ...notDailyFullday];
       await Promise.all(
         userNotDaily.map((email) =>
-          this.komubotrestService.sendMessageKomuToUser(
+            this.komubotrestService.sendMessageKomuToUser(
             client,
             "Don't forget to daily, dude! Don't be mad at me, we are friends I mean we are best friends.",
             email

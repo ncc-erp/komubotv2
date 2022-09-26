@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { KomubotrestController } from "src/bot/utils/komubotrest/komubotrest.controller";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import {
   checkHelpMessage,
   debug,
@@ -29,7 +29,7 @@ Please log timesheet follow this template:
 export class TimeSheetCommand implements CommandLineClass {
   constructor(
     private utilsService: UtilsService,
-    private komubotrestController: KomubotrestController
+    private komubotrestService: KomubotrestService
   ) {}
   async execute(message: Message, args, client) {
     const authorId = message.author.id;
@@ -55,7 +55,7 @@ export class TimeSheetCommand implements CommandLineClass {
             // ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -69,7 +69,7 @@ export class TimeSheetCommand implements CommandLineClass {
             // ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestController.sendErrorToDevTest(
+            this.komubotrestService.sendErrorToDevTest(
               client,
               authorId,
               err
@@ -85,7 +85,7 @@ export class TimeSheetCommand implements CommandLineClass {
           // ephemeral: true,
         })
         .catch((err) => {
-          this.komubotrestController.sendErrorToDevTest(client, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
     }
 

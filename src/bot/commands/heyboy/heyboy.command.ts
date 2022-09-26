@@ -2,7 +2,6 @@ import axios from "axios";
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
-import { KomubotrestController } from "../../utils/komubotrest/komubotrest.controller";
 import { HeyboyService } from "./heyboy.service";
 
 @CommandLine({
@@ -11,7 +10,6 @@ import { HeyboyService } from "./heyboy.service";
 })
 export class HeyboyCommand implements CommandLineClass {
   constructor(
-    private komubotrestController: KomubotrestController,
     private heyboyService: HeyboyService,
     private komubotrestService: KomubotrestService
   ) {}
@@ -91,10 +89,10 @@ export class HeyboyCommand implements CommandLineClass {
     // if (message.author.id !== ID_USER_PRIVATE) {
     //   return message.reply("Missing permissions");
     // }
-    await this.komubotrestController.sendMessageToNhaCuaChung(client, {
+    await this.komubotrestService.sendMessageToNhaCuaChung(client, {
       embeds: [this.EmbedWomenDay],
     });
-    await this.komubotrestController.sendMessageToNhaCuaChung(client, {
+    await this.komubotrestService.sendMessageToNhaCuaChung(client, {
       embeds: [this.Embed],
     });
     const response = await axios.get(

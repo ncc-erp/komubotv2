@@ -56,7 +56,6 @@ import Ncc8Command from "./commands/ncc8/ncc8.command";
 import { CompanyTrip } from "./models/companyTrip.entity";
 import { CompanytripService } from "./commands/companytrip/companytrip.service";
 import { PingCommand } from "./commands/ping/ping";
-import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import NotificationCommand from "./commands/notification/noti.command";
 import { OrderCommand } from "./commands/order/order.command";
@@ -118,6 +117,9 @@ import HolidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
 import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
 import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
+import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
+import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
+import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
 
 @Module({
   imports: [
@@ -152,6 +154,7 @@ import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
       JoinCall,
       CheckCamera,
       TrackerSpentTime,
+      TimeVoiceAlone,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -184,7 +187,7 @@ import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
     PingCommand,
     UserStatusService,
     BotService,
-    KomubotrestController,
+    KomubotrestService,
     UtilsService,
     ReportTracker,
     MoveChannelCommand,
@@ -209,7 +212,6 @@ import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
     HolidayCommand,
     HolidayService,
     Ncc8Command,
-    KomubotrestController,
     CompanytripService,
     PollEmbedUntil,
     ConfigService,
@@ -241,6 +243,8 @@ import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
     HelpCommand,
     TiktokCommand,
     PingCommand,
+    AddEmojiCommand,
+    VoiceChannelSchedulerService,
     GemrankCommand,
     OpenTalkCommand,
     KomubotrestService,

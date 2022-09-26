@@ -23,6 +23,9 @@ export class UserQuiz {
   @Column({ nullable: true })
   answer: number;
 
-  @Column({ nullable: true, type: "decimal" })
+  @Column({ nullable: true, type: "decimal", default: Date.now() })
   createAt: number;
+
+  @Column({ nullable: true, type: "decimal" })
+  updateAt: number;
 }
