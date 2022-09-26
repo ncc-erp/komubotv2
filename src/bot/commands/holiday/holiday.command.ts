@@ -10,10 +10,12 @@ const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
 @CommandLine({
   name: "holiday",
   description: "Holiday",
-  
 })
-export default class holidayCommand implements CommandLineClass {
-  constructor(private holidayService: HolidayService,  private komubotrestController : KomubotrestController,) {}
+export default class HolidayCommand implements CommandLineClass {
+  constructor(
+    private holidayService: HolidayService,
+    private komubotrestController: KomubotrestController
+  ) {}
   async execute(message: Message, args, client) {
     try {
       const holidayData = this.holidayService;
@@ -29,6 +31,7 @@ export default class holidayCommand implements CommandLineClass {
           dateTime
         )
       ) {
+        return message.channel.send(messHelp);
       }
 
       await holidayData
