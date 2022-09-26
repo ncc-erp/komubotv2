@@ -13,8 +13,6 @@ export class GemrankCommand implements CommandLineClass {
     private messHelp : string = '```' + '*gem rank' + '\n' + '*gem rank username' + '```';
     async execute(message, args, client) {
         try {
-            console.log('rank tui la gi do')
-            console.log('delay vcl the dm')
           let authorId = message.author.id;
           if (args[0] === 'rank') {
             if (args[1]) {

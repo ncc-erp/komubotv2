@@ -6,6 +6,7 @@ import { MeetingSchedulerService } from "./bot/scheduler/meeting-scheduler/meeti
 import { ReminderSchedulerService } from "./bot/scheduler/reminder-scheduler/reminder-scheduler.service";
 import { SendMessageSchedulerService } from "./bot/scheduler/send-message-scheduler/send-message-scheduler.service";
 import { UpdateRoleSchedulerService } from "./bot/scheduler/updateRole-scheduler/updateRole-scheduler.service";
+import { VoiceChannelSchedulerService } from "./bot/scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,8 +20,10 @@ async function bootstrap() {
   // await sendMessageSchedulerService.startCronJobs();
   // const datingSchedulerService = app.get(DatingSchedulerService);
   // await datingSchedulerService.startCronJobs();
-  //  const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
+  // const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
   // await updateRoleSchedulerService.startCronJobs();
+  const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
+  await voiceChannelSchedulerService.startCronJobs();
 }
 
 bootstrap();

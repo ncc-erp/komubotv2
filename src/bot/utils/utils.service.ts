@@ -71,7 +71,7 @@ export class UtilsService {
 
   checkTimeMeeting() {
     const dateTimeNow = new Date();
-    dateTimeNow.setHours(dateTimeNow.getHours() + 7);
+    dateTimeNow.setHours(dateTimeNow.getHours());
     let day = dateTimeNow.getDay();
     const hourDateNow = dateTimeNow.getHours();
     const dateNow = dateTimeNow.toLocaleDateString("en-US");
@@ -237,9 +237,7 @@ export class UtilsService {
     const firstweek = new Date(
       new Date(curr).setDate(curr.getDate() - lessDays)
     );
-    const lastweek = new Date(
-      new Date(firstweek).setDate(firstweek.getDate() + 7)
-    );
+    const lastweek = new Date(new Date(firstweek).setDate(firstweek.getDate()));
 
     return {
       firstday: {

@@ -69,7 +69,7 @@ export class MvChannelCommand implements CommandLineClass {
           const channel = await client.channels.fetch(getChannel.id);
           channel.setParent(category.id, { lockPermissions: false });
           await this.channelRepository.update(
-            { id: args[0] },
+            { channelId: args[0] },
             { parentId: category.id }
           );
           await message

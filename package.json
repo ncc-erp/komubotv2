@@ -43,6 +43,7 @@
     "class-transformer": "0.5.1",
     "cron": "^2.1.0",
     "date-fns": "^2.29.3",
+    "dblapi.js": "^2.4.1",
     "discord.js": "14.1.1",
     "ffmpeg-static": "^5.1.0",
     "fs": "^0.0.1-security",

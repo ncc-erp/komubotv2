@@ -26,7 +26,7 @@ export class ReportCheckCameraService {
       .andWhere("createdTimestamp >= :gtecreatedTimestamp", {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
       })
-      .andWhere("createdTimestamp >= :ltecreatedTimestamp", {
+      .andWhere("createdTimestamp <= :ltecreatedTimestamp", {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
       .select(".*")

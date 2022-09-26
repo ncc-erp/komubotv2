@@ -23,6 +23,7 @@ async function downloadKomuWeeklyReport({
 
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    ignoreDefaultArgs: true,
   });
   try {
     const page = await browser.newPage();
@@ -53,7 +54,11 @@ export async function getKomuWeeklyReport(options) {
   if (!options.reportName) {
     throw new Error("report name is not provided");
   }
-  const reportNameDir = path.join(__dirname, "../assets/odin-reports");
+  const reportNameDir = path.join(
+    __dirname,
+    "../../..",
+    "src/assets/odin-reports"
+  );
   if (!fs.existsSync(reportNameDir)) {
     fs.mkdirSync(reportNameDir);
   }

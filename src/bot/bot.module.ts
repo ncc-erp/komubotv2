@@ -117,6 +117,9 @@ import { UserInfoCommand } from "./commands/utilities/userInfo.command";
 import { BotInfo } from "./commands/utilities/botinfo.command";
 import { HelpCommand } from "./commands/utilities/help.command";
 import { TiktokCommand } from "./commands/utilities/tiktok.command";
+import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
+import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
+import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
 
 @Module({
   imports: [
@@ -151,6 +154,7 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
       JoinCall,
       CheckCamera,
       TrackerSpentTime,
+      TimeVoiceAlone,
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -240,6 +244,8 @@ import { TiktokCommand } from "./commands/utilities/tiktok.command";
     HelpCommand,
     TiktokCommand,
     PingCommand,
+    AddEmojiCommand,
+    VoiceChannelSchedulerService,
   ],
   controllers: [BotController],
 })

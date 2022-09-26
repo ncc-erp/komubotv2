@@ -265,7 +265,7 @@ export class ReportTrackerService {
               .where('"email" = :email', {
                 email: item,
               })
-              .andWhere("spent_time >= :ltespent_time", {
+              .andWhere("spent_time <= :ltespent_time", {
                 ltespent_time: hours,
               })
               .andWhere(`"date" = :date`, {
@@ -404,7 +404,7 @@ export class ReportTrackerService {
             .where('"email" = :email', {
               email: email,
             })
-            .andWhere("spent_time >= :ltespent_time", {
+            .andWhere("spent_time <= :ltespent_time", {
               ltespent_time: hours,
             })
             .andWhere(`"date" = :date`, {
@@ -533,7 +533,7 @@ export class ReportTrackerService {
                 .where('"email" = :email', {
                   email: item,
                 })
-                .andWhere("spent_time >= :ltespent_time", {
+                .andWhere("spent_time <= :ltespent_time", {
                   ltespent_time: hours,
                 })
                 .andWhere(`"date" = :date`, {

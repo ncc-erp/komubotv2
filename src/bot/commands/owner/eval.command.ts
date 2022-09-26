@@ -1,5 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 import util from "util";
 
 @CommandLine({
@@ -7,8 +8,12 @@ import util from "util";
   description: "Evalue une variable",
 })
 export class EvalCommand implements CommandLineClass {
+  constructor(
+    private clientConfigService : ClientConfigService
+  ) {}
+
   async execute(message, args, client, guildDB) {
-    if (!client.config.owners.includes(message.author.id)) return;
+    if (!this.clientConfigService.owners.includes(message.author.id)) return;
 
     let code = args.join(" ");
     try {

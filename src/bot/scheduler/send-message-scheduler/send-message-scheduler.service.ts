@@ -46,9 +46,15 @@ export class SendMessageSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
-    //   this.sendSubmitTimesheet(this.client)
-    // );
+    this.addCronJob("sendMessagePMs", "00 00 15 * * 2", () =>
+      this.sendMessagePMs(this.client)
+    );
+    this.addCronJob("sendMessTurnOffPc", "00 30 17 * * 1-5", () =>
+      this.sendMessTurnOffPc(this.client)
+    );
+    this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
+      this.sendSubmitTimesheet(this.client)
+    );
     this.addCronJob("remindCheckout", CronExpression.EVERY_MINUTE, () =>
       this.remindCheckout(this.client)
     );
@@ -148,7 +154,6 @@ export class SendMessageSchedulerService {
         (user) => user.checkout === null
       );
       const { userOffFullday } = await getUserOffWork(null);
-      console.log(userOffFullday, "userOffFullday");
 
       userListNotCheckIn.map(async (user) => {
         const checkUser = await this.userReposistory
@@ -235,7 +240,7 @@ export class SendMessageSchedulerService {
   async topTracker(client) {
     if (await this.utilsService.checkHoliday()) return;
     const userTracker = [
-      "856211913456877608",
+      "922148445626716182",
       "922416220056199198",
       "921689631110602792",
       "922297847876034562",
