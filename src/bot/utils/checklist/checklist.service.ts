@@ -13,7 +13,7 @@ export class CheckListService {
     @InjectRepository(Subcategorys)
     private subcategorysReposistory: Repository<Subcategorys>
   ) {}
-  async findCategory(option: string) {
+  async findCategory(option) {
     let checklists = await this.checklistReposistory
       .createQueryBuilder(TABLE.CHECKLIST)
       .where(`${TABLE.CHECKLIST}.category = :category`, { category: option })

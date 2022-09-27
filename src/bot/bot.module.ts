@@ -39,12 +39,8 @@ import { CheckListModule } from "./utils/checklist/checklist.module";
 import { ReportTracker } from "./utils/report-tracker.untils";
 import { UtilsService } from "./utils/utils.service";
 
-
-
-
 import { CompanytripService } from "./commands/companytrip/companytrip.service";
 import NotificationCommand from "./commands/notification/noti.command";
-
 
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import { OrderCommand } from "./commands/order/order.command";
@@ -55,7 +51,6 @@ import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
 import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { UtilsModule } from "./utils/utils.module";
-
 
 import { AudioPlayer } from "@discordjs/voice";
 import { ConfigService } from "@nestjs/config";
@@ -71,7 +66,6 @@ import { CheckListController } from "./utils/checklist/checklist.controller";
 import { CheckListService } from "./utils/checklist/checklist.service";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-
 
 import { DailyService } from "./commands/daily/daily.service";
 import { ElsaCommand } from "./commands/elsa/elsa.command";
@@ -120,6 +114,7 @@ import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { GemrankCommand } from "./commands/gemrank/gemrank.command";
 import { WomanDayCommand } from "./commands/womanday/womanday.command";
+import { CheckListCommand } from "./commands/checklist/checklist.module";
 
 @Module({
   imports: [
@@ -173,8 +168,7 @@ import { WomanDayCommand } from "./commands/womanday/womanday.command";
     LeaveCommand,
     LeaveService,
     MeetingCommand,
-    
-
+    CheckListCommand,
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
