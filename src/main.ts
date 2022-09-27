@@ -22,8 +22,8 @@ async function bootstrap() {
   // await datingSchedulerService.startCronJobs();
   // const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
   // await updateRoleSchedulerService.startCronJobs();
-  const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
-  await voiceChannelSchedulerService.startCronJobs();
+  // const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
+  // await voiceChannelSchedulerService.startCronJobs();
 }
 
 bootstrap();

@@ -6,6 +6,7 @@ import { TABLE } from "../constants/table";
 export class CompanyTrip {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ nullable: false })
   year: string;
 
@@ -24,12 +25,12 @@ export class CompanyTrip {
   @Column({ nullable: false })
   office: string;
 
-  @Column()
+  @Column({ nullable: false })
   role: string;
 
-  @Column()
+  @Column({ nullable: false })
   kingOfRoom: string;
 
-  @Column()
+  @Column({ nullable: false })
   room: string;
 }

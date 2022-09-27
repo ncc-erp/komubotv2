@@ -27,6 +27,4 @@ export class Channel {
 
   @Column({ type: "text", nullable: true })
   parentId: string;
-  static find: any;
-  static updateOne: any;
 }

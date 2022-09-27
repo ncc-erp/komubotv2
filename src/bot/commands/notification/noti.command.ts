@@ -1,5 +1,7 @@
+import { HttpService } from "@nestjs/axios";
 import axios from "axios";
 import { Message } from "discord.js";
+import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
@@ -13,7 +15,8 @@ export default class NotificationCommand implements CommandLineClass {
   constructor(
     private notifiService: NotifiService,
     private komubotrestService: KomubotrestService,
-    private clientConfigService: ClientConfigService
+    private clientConfigService: ClientConfigService,
+    private readonly http: HttpService
   ) {}
 
   async execute(message: Message, args, client) {
@@ -27,25 +30,25 @@ export default class NotificationCommand implements CommandLineClass {
             content: "```please add your text```",
           })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
-      if (checkRole.length > 0 || authorId === "871713984670216273") {
-        await axios.post(
-          // client.config.noti.api_url_quickNews,
-          this.clientConfigService.noti.api_url_quickNews,
-          {
-            content: noti,
-          },
-          {
-            headers: {
-              securityCode: process.env.IMS_KEY_SECRET,
-            },
-          }
+      if (checkRole.length > 0 || authorId === "922148445626716182") {
+        await firstValueFrom(
+          this.http
+            .post(
+              // client.config.noti.api_url_quickNews,
+              this.clientConfigService.noti.api_url_quickNews,
+              {
+                content: noti,
+              },
+              {
+                headers: {
+                  securityCode: process.env.IMS_KEY_SECRET,
+                },
+              }
+            )
+            .pipe((res) => res)
         );
         message.reply({ content: "`✅` Notification saved." }).catch((err) => {
           this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -79,11 +82,7 @@ export default class NotificationCommand implements CommandLineClass {
               "```You do not have permission to execute this command!```",
           })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
     } catch (err) {

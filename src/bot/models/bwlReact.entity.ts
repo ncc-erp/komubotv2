@@ -4,21 +4,27 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.BWLREACTION)
 export class BwlReaction {
-  @Column()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ nullable: true })
   channelId: string;
 
-  @Column()
+  @Column({ nullable: true })
   messageId: string;
 
-  @Column()
+  @Column({ nullable: true })
   guildId: string;
 
-  @Column()
+  @Column({ nullable: true })
   authorId: string;
 
-  @Column()
+  @Column({ nullable: true })
   emoji: string;
 
-  @Column()
+  @Column({ nullable: true })
   count: number;
+
+  @Column({ type: "decimal" })
+  createTimestamp: number;
 }

@@ -61,7 +61,6 @@ import NotificationCommand from "./commands/notification/noti.command";
 import { OrderCommand } from "./commands/order/order.command";
 import { OrderService } from "./commands/order/order.service";
 import { MoveChannelService } from "./commands/move_channel/move_channel.service";
-import { CheckList } from "./models/checklistdata.entity";
 import { Subcategorys } from "./models/subcategoryData.entity";
 import { Channel } from "./models/channel.entity";
 import { ReportTracker } from "./utils/report-tracker.untils";
@@ -123,6 +122,9 @@ import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
 import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
 import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
 import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
+import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
+import { HeyboyService } from "./commands/heyboy/heyboy.service";
+import { CheckList } from "./models/checklist.entity";
 
 @Module({
   imports: [
@@ -255,6 +257,8 @@ import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-schedule
     OpenTalkCommand,
     KomubotrestService,
     Uploadfile,
+    HeyboyCommand,
+    HeyboyService,
   ],
   controllers: [BotController],
 })

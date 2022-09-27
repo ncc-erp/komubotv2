@@ -16,12 +16,12 @@ export class ElsaDaily {
   @Column({ nullable: false })
   daily: string;
 
-  @Column({ type: "date",default:false })
+  @Column({ default: false })
   attachment: boolean;
 
-  @Column({ type: 'date' })
-  createdAt: Date;
+  @Column({ type: "decimal" })
+  createdAt: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   channelid: string;
 }

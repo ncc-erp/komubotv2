@@ -1,23 +1,26 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.BWL)
 export class Bwl {
-  @Column()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ nullable: true })
   channelId: string;
 
-  @Column()
+  @Column({ nullable: true })
   messageId: string;
 
-  @Column()
+  @Column({ nullable: true })
   guildId: string;
 
-  @Column()
+  @Column({ nullable: true })
   authorId: string;
 
-  @Column({ type: "array" })
-  link: string;
+  @Column({ type: "text" })
+  link: string[];
 
-  @Column({ type: "date" })
+  @Column({ type: "decimal" })
   createTimestamp: number;
 }

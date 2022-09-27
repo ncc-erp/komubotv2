@@ -26,10 +26,10 @@ export class MvChannelCommand implements CommandLineClass {
       let authorId = message.author.id;
       const checkRole = await this.userRepository
         .createQueryBuilder()
-        .where("roles_discord = :roles_discord", {
+        .where(`"roles_discord" = :roles_discord`, {
           roles_discord: ["PM"],
         })
-        .andWhere("userId = :userId", {
+        .andWhere(`"userId" = :userId`, {
           userId: authorId,
         })
         .andWhere(`"deactive" IS NOT TRUE`)
@@ -44,11 +44,7 @@ export class MvChannelCommand implements CommandLineClass {
             ephemeral: true,
           })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
       if (args[0] && args[1]) {
@@ -78,32 +74,20 @@ export class MvChannelCommand implements CommandLineClass {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           return message
             .reply({ content: this.messHelp, ephemeral: true })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         }
       } else {
         return message
           .reply({ content: this.messHelp, ephemeral: true })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
     } catch (error) {

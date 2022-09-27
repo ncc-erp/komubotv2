@@ -23,10 +23,10 @@ export class ReportCheckCameraService {
     let authorId = message.author.id;
     const userCheckCamera = await this.checkCameraReposistory
       .createQueryBuilder()
-      .andWhere("createdTimestamp >= :gtecreatedTimestamp", {
+      .andWhere(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
       })
-      .andWhere("createdTimestamp <= :ltecreatedTimestamp", {
+      .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
       .select(".*")

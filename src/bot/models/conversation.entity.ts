@@ -11,13 +11,13 @@ export class Conversation {
   channelId: string;
 
   @Column({ nullable: false })
-  fullName: string;
+  authorId: string;
 
   @Column({ type: "text" })
-  userId: string;
+  generated_responses: string[];
 
   @Column({ type: "text" })
-  email: string;
+  past_user_inputs: string[];
 
   @Column({ type: "decimal" })
   createdTimestamp: number;

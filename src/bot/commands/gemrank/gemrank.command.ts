@@ -4,6 +4,8 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import axios from "axios";
 import { ClientConfigService } from "../../config/client-config.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
 
 @CommandLine({
   name: "gem",
@@ -12,6 +14,7 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 export class GemrankCommand implements CommandLineClass {
   constructor(
     private komuborestController: KomubotrestService,
+    private readonly http: HttpService,
     private clienConfigService: ClientConfigService
   ) {}
   private messHelp: string =
@@ -22,9 +25,14 @@ export class GemrankCommand implements CommandLineClass {
       if (args[0] === "rank") {
         if (args[1]) {
           let rankUsername;
+          const usernameGem = args.slice(1, args.length).join(" ");
           try {
-            rankUsername = await axios.get(
-              `${this.clienConfigService.gem.api_url_getMyRank}${args[1]}`
+            rankUsername = await firstValueFrom(
+              this.http
+                .get(
+                  `${this.clienConfigService.gem.api_url_getMyRank}${usernameGem}`
+                )
+                .pipe((res) => res)
             );
           } catch (error) {
             return message.reply({
@@ -43,12 +51,13 @@ export class GemrankCommand implements CommandLineClass {
             this.komuborestController.sendErrorToDevTest(client, authorId, err);
           });
         } else {
-          const postGemRank = await axios.post(
-            client.config.gem.api_url_getTopRank,
-            {
-              page: 0,
-              size: 15,
-            }
+          const postGemRank = await firstValueFrom(
+            this.http
+              .post(this.clienConfigService.gem.api_url_getTopRank, {
+                page: 0,
+                size: 15,
+              })
+              .pipe((res) => res)
           );
           const rankTop = postGemRank.data.content;
 
