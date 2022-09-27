@@ -36,15 +36,10 @@ export class ElsaCommand implements CommandLineClass {
   async execute(message : Message, args, client, guildDB) {
     try {
       if (args[0] === "weekly") {
-        const daily = args.join(" ");
-        console.log("args : ", args);
-        console.log("daily : ", daily);
-=======
-        // const daily = args.join(" ");
+       
         const daily = args.filter((value, index)=>index > 1).join(" ");
         console.log('daily : ', daily);
         
->>>>>>> Stashed changes
         if (!daily || daily == undefined) {
           return message
             .reply({
