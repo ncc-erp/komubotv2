@@ -84,7 +84,7 @@ export class WomanDayCommand implements CommandLineClass {
             for (let i = 0; i < 5; i++) {
               row.addComponents(
                 new ButtonBuilder()
-                  .setCustomId(`8/3_&userid=${user.id}&key=${i}`)
+                  .setCustomId(`8/3_&userid=${user.userId}&key=${i}`)
                   .setLabel('🎁')
                   .setStyle(1)
               );

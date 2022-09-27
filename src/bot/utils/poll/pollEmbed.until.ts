@@ -66,6 +66,7 @@ export class PollEmbedUntil {
 
     const voterInfo = new Map();
     reactionCollector.on("collect", (reaction, user) => {
+
       if (usedEmojis.includes(reaction.emoji.name)) {
         if (
           reaction.emoji.name === forceEndPollEmoji &&

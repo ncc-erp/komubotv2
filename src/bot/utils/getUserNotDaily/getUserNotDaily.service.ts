@@ -166,11 +166,11 @@ export class UserNotDailyService {
           notDaily.map((user) =>
             this.userRepository
               .createQueryBuilder()
-              .where("email = :email", {
+              .where(`"email" = :email`, {
                 email: user.email,
               })
-              .orWhere("email = :email", {
-                email: user.email,
+              .orWhere(`"username" = :username`, {
+                username: user.email,
               })
               .andWhere(`"deactive" IS NOT TRUE`)
               .select(".*")

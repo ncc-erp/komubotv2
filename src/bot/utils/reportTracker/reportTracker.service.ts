@@ -8,6 +8,9 @@ import { AWClient } from "aw-client";
 import { intervalToDuration } from "date-fns";
 import { TrackerSpentTime } from "src/bot/models/trackerSpentTime.entity";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @Injectable()
 export class ReportTrackerService {
@@ -17,6 +20,8 @@ export class ReportTrackerService {
     @InjectRepository(TrackerSpentTime)
     private trackerSpentTimeReposistory: Repository<TrackerSpentTime>,
     private utilsService: UtilsService,
+    private readonly http: HttpService,
+    private readonly clientConfigService: ClientConfigService,
     private komubotrestService: KomubotrestService
   ) {}
 
@@ -48,13 +53,17 @@ export class ReportTrackerService {
     let wfhGetApi;
     try {
       const url = date
-        ? `${client.config.wfh.api_url}?date=${date}`
-        : client.config.wfh.api_url;
-      wfhGetApi = await axios.get(url, {
-        headers: {
-          securitycode: process.env.WFH_API_KEY_SECRET,
-        },
-      });
+        ? `${this.clientConfigService.wfh.api_url}?date=${date}`
+        : this.clientConfigService.wfh.api_url;
+      wfhGetApi = await firstValueFrom(
+        this.http
+          .get(url, {
+            headers: {
+              securitycode: process.env.WFH_API_KEY_SECRET,
+            },
+          })
+          .pipe((res) => res)
+      );
     } catch (error) {
       console.log(error);
     }
@@ -150,7 +159,7 @@ export class ReportTrackerService {
         let email = args[2] || "";
         if (!email) {
           const user = await this.userReposistory.findOne({
-            where: { id: message.author.id },
+            where: { userId: message.author.id },
           });
           email = user.email;
         }
@@ -232,11 +241,7 @@ export class ReportTrackerService {
               .setColor("Red")
               .setDescription(this.messHelpDaily);
             return message.reply({ embeds: [Embed] }).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           }
         }
@@ -246,11 +251,7 @@ export class ReportTrackerService {
         if (!userWFH) {
           let messWFH = "```" + "Không có ai đăng kí WFH trong ngày" + "```";
           return message.reply(messWFH).catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         }
 
@@ -319,11 +320,7 @@ export class ReportTrackerService {
         } else if (Array.isArray(listUser) && listUser.length === 0) {
           mess = "```" + "Không có ai vi phạm trong ngày" + "```";
           return message.reply(mess).catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         } else {
           for (let i = 0; i <= Math.ceil(listUser.length / 50); i += 1) {
@@ -343,11 +340,7 @@ export class ReportTrackerService {
               .setColor("Red")
               .setDescription(`${mess}`);
             return message.reply({ embeds: [Embed] }).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           }
         }
@@ -371,7 +364,7 @@ export class ReportTrackerService {
         let email = args[2] || "";
         if (!email) {
           const user = await this.userReposistory.findOne({
-            where: { id: message.author.id },
+            where: { userId: message.author.id },
           });
           email = user.email;
         }
@@ -514,11 +507,7 @@ export class ReportTrackerService {
           if (!userWFH) {
             let messWFH = "```" + "Không có ai đăng kí WFH trong ngày" + "```";
             return message.reply(messWFH).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           }
 
@@ -587,11 +576,7 @@ export class ReportTrackerService {
           } else if (Array.isArray(listUser) && listUser.length === 0) {
             mess = "```" + `Không có ai vi phạm trong ngày ${fomat}` + "```";
             await message.reply(mess).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           } else {
             for (let i = 0; i <= Math.ceil(listUser.length / 50); i += 1) {
@@ -627,7 +612,7 @@ export class ReportTrackerService {
       let email = args[2] || "";
       if (!email) {
         const user = await this.userReposistory.findOne({
-          where: { id: message.author.id },
+          where: { userId: message.author.id },
         });
         email = user.email;
       }
@@ -715,11 +700,7 @@ export class ReportTrackerService {
               .setColor("Red")
               .setDescription(`${this.showTrackerTime(spent_time)}`);
             await message.reply({ embeds: [Embed] }).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           }
         } catch (error) {
@@ -728,11 +709,7 @@ export class ReportTrackerService {
             .setColor("Red")
             .setDescription(this.messHelpTime);
           return message.reply({ embeds: [Embed] }).catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         }
       }
@@ -746,11 +723,7 @@ export class ReportTrackerService {
         return message
           .reply({ content: this.messTrackerHelp, ephemeral: true })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
       const month = args[1].slice(0, 2);
@@ -776,7 +749,7 @@ export class ReportTrackerService {
         let email = args[2] || "";
         if (!email) {
           const user = await this.userReposistory.findOne({
-            where: { id: message.author.id },
+            where: { userId: message.author.id },
           });
           email = user.email;
         }
@@ -860,11 +833,7 @@ export class ReportTrackerService {
               .setColor("Red")
               .setDescription(this.messHelpDate);
             return message.reply({ embeds: [Embed] }).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           }
         }
@@ -874,11 +843,7 @@ export class ReportTrackerService {
         if (!userWFH) {
           let messWFH = "```" + "Không có ai đăng kí WFH trong ngày" + "```";
           return message.reply(messWFH).catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         }
 
@@ -943,11 +908,7 @@ export class ReportTrackerService {
         } else if (Array.isArray(listUser) && listUser.length === 0) {
           mess = "```" + `Không có ai vi phạm trong ngày ${args[1]}` + "```";
           return message.reply(mess).catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
         } else {
           for (let i = 0; i <= Math.ceil(listUser.length / 50); i += 1) {
@@ -967,11 +928,7 @@ export class ReportTrackerService {
               .setColor("Red")
               .setDescription(`${mess}`);
             return message.reply({ embeds: [Embed] }).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
           }
         }

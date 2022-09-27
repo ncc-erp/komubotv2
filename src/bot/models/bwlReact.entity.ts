@@ -7,22 +7,22 @@ export class BwlReaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   messageId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   guildId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   authorId: string;
 
   @Column({ nullable: true })
   emoji: string;
 
-  @Column({ nullable: true })
+  @Column()
   count: number;
 
   @Column({ type: "decimal" })

@@ -1,3 +1,4 @@
+import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 
 @CommandLine({
@@ -6,6 +7,10 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
     "Affiche l'avatar d'un utilisateur (ou le vôtre, si aucun utilisateur n'est mentionné).",
 })
 export class AvatarCommand implements CommandLineClass {
+  constructor(
+    private extendersService: ExtendersService
+  ) {}
+
   async execute(message, args, client, guildDB) {
     let member;
     if (args.length) {
@@ -21,14 +26,14 @@ export class AvatarCommand implements CommandLineClass {
           )
           .first();
       if (!member) {
-        const err = await message.translate("ERROR_USER", guildDB.lang);
-        return message.errorMessage(err);
+        const err = await this.extendersService.translateMessage("ERROR_USER", guildDB.lang);
+        return this.extendersService.errorMessageMessage(err, message);
       }
     } else {
       member = message.member;
     }
-    const a = await message.translate("AVATAR", guildDB.lang);
-    const b = await message.translate("AVATAR_DESC", guildDB.lang);
+    const a = await this.extendersService.translateMessage("AVATAR", guildDB.lang);
+    const b = await this.extendersService.translateMessage("AVATAR_DESC", guildDB.lang);
     message.channel.send({
       embeds: [
         {
@@ -40,7 +45,7 @@ export class AvatarCommand implements CommandLineClass {
             }),
             url: process.env.LINKS_INVITE,
           },
-          color: guildDB.color,
+          // color: guildDB.color,
           image: {
             url: member.user.displayAvatarURL({ dynamic: true, size: 512 }),
           },

@@ -37,6 +37,7 @@
     "@types/hapi__joi": "^17.1.8",
     "@types/multer": "^1.4.7",
     "@types/puppeteer": "^5.4.6",
+    "@vitalets/google-translate-api": "^8.0.0",
     "aw-client": "^0.3.3",
     "broadcast-address": "^1.0.2",
     "chrono-node": "^2.4.1",
