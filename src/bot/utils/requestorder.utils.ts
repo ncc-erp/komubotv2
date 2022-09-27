@@ -24,7 +24,7 @@ export class RequestOrder {
     const today = new Date();
     const yesterday = new Date(this.withoutFirstTime(today));
     yesterday.setDate(yesterday.getDate() + 1);
-    return yesterday;
+    return new Date(yesterday).valueOf();
   }
   setTime(date, hours, minute, second, msValue) {
     return date.setHours(hours, minute, second, msValue);

@@ -19,21 +19,30 @@ export class ElsaService {
     _attachment,
     _channelid
   ) {
+    console.log('elsa daily : ', 
+    _userid,
+    _email,
+    _daily,
+    _createdAt,
+    _attachment,
+    _channelid
+    );
+    
     return await this.elsaRepository
       .createQueryBuilder()
       .insert()
-      .into(TABLE.ELSADAILY)
+      .into(ElsaDaily)
       .values([
         {
           userid: _userid,
           email: _email,
           daily: _daily,
-          createdAt: _createdAt,
+          createdAt: Date.now(),
           attachment: _attachment,
           channelid: _channelid,
         },
-      ])
-      .returning("*");
+      ]).execute();
+      // .returning("*");
   }
   async addElsaDailyData(
     _userid,
@@ -46,13 +55,13 @@ export class ElsaService {
     return await this.elsaRepository
       .createQueryBuilder()
       .insert()
-      .into(TABLE.ELSADAILY)
+      .into(ElsaDaily)
       .values([
         {
           userid: _userid,
           email: _email,
           daily: _daily,
-          createAt: _createAt,
+          createdAt: Date.now(),
           attachment: _attachment,
           channelid: _channelid,
         },
@@ -71,13 +80,16 @@ export class ElsaService {
       }))
       .getMany();
   }
-  async updateOneDaily(_userid, _createdAt, _attachment) {
+  async updateOneDaily(_userid,  _yesterday, _tomorrow, _attachment) {
     return await this.elsaRepository
       .createQueryBuilder()
       .update(TABLE.ELSADAILY)
       .set({ attachment: _attachment })
       .where("userid = :userid", { userid: _userid })
-      .andWhere("createdAt =:createdAt", { createdAt: _createdAt })
+      .andWhere(new Brackets((qb)=>{
+        qb.where(`${TABLE.ELSADAILY}.createdAt >= :yesterday`, {yesterday : _yesterday})
+        .andWhere(`${TABLE.ELSADAILY}.createdAt < :tomorrow`, {tomorrow : _tomorrow})
+      }))
       .execute();
   }
 }

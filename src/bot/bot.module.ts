@@ -61,6 +61,7 @@ import NotificationCommand from "./commands/notification/noti.command";
 import { OrderCommand } from "./commands/order/order.command";
 import { OrderService } from "./commands/order/order.service";
 import { MoveChannelService } from "./commands/move_channel/move_channel.service";
+<<<<<<< Updated upstream
 import { Subcategorys } from "./models/subcategoryData.entity";
 import { Channel } from "./models/channel.entity";
 import { ReportTracker } from "./utils/report-tracker.untils";
@@ -70,6 +71,21 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
 import { ReportMentionModule } from "./utils/reportMention/reportMention.module";
 import { ClientConfigService } from "./config/client-config.service";
+=======
+import { PollCommand } from "./commands/poll/poll.command";
+import { ClientConfigService } from "./config/client-config.service";
+<<<<<<< Updated upstream
+import { CheckListController } from "./utils/checklist/checklist.controller";
+import { CheckListService } from "./utils/checklist/checklist.service";
+import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
+import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
+import { CheckList } from "./models/checklistdata.entity";
+import { Subcategorys } from "./models/subcategoryData.entity";
+import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
+
+
+=======
+>>>>>>> Stashed changes
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { ReportWomenDayModule } from "./utils/reportWomenDay/reportWomenDay.module";
 import { WomenDay } from "./models/womenDay.entity";
@@ -125,6 +141,16 @@ import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-schedule
 import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
 import { HeyboyService } from "./commands/heyboy/heyboy.service";
 import { CheckList } from "./models/checklist.entity";
+<<<<<<< Updated upstream
+=======
+import { ElsaCommand } from "./commands/elsa/elsa.command";
+import { ElsaService } from "./commands/elsa/elsa.service";
+import { RequestOrder } from "./utils/requestorder.utils";
+import { ElsaDaily } from "./models/elsaDaily.entity";
+import { WomanDayCommand } from "./commands/womanday/womand.command";
+import { WomanDayService } from "./commands/womanday/womanday.service";
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 @Module({
   imports: [
@@ -150,6 +176,11 @@ import { CheckList } from "./models/checklist.entity";
       CheckList,
       Subcategorys,
       Channel,
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
       Daily,
       TX8,
       WomenDay,
@@ -161,6 +192,11 @@ import { CheckList } from "./models/checklist.entity";
       TrackerSpentTime,
       Conversation,
       TimeVoiceAlone,
+<<<<<<< Updated upstream
+=======
+      ElsaDaily,
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -224,6 +260,11 @@ import { CheckList } from "./models/checklist.entity";
     ConfigService,
     ClientConfigService,
     MoveChannelService,
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
     ReportHolidayService,
     ReportOpenTalkService,
     AudioPlayer,
@@ -255,10 +296,22 @@ import { CheckList } from "./models/checklist.entity";
     VoiceChannelSchedulerService,
     GemrankCommand,
     OpenTalkCommand,
+<<<<<<< Updated upstream
+=======
+    ElsaCommand,
+    ElsaService,
+    WomanDayCommand,
+    WomanDayService,
+    RequestOrder,
+>>>>>>> Stashed changes
     KomubotrestService,
     Uploadfile,
     HeyboyCommand,
     HeyboyService,
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   ],
   controllers: [BotController],
 })

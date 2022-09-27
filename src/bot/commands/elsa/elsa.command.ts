@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { RequestOrder } from "src/bot/utils/requestorder.utils";
 import { ElsaService } from "./elsa.service";
@@ -30,17 +30,26 @@ export class ElsaCommand implements CommandLineClass {
         new Date(firstweek).setDate(firstweek.getDate() + rank - 2)
       );
     }
+    console.log('lengthArray day : ', arrayDay);
     return arrayDay.map((item) => getDayofWeek(item));
   }
-  async execute(message, args, client, guildDB) {
+  async execute(message : Message, args, client, guildDB) {
     try {
       if (args[0] === "weekly") {
         const daily = args.join(" ");
+        console.log("args : ", args);
+        console.log("daily : ", daily);
+=======
+        // const daily = args.join(" ");
+        const daily = args.filter((value, index)=>index > 1).join(" ");
+        console.log('daily : ', daily);
+        
+>>>>>>> Stashed changes
         if (!daily || daily == undefined) {
           return message
             .reply({
               content: "```please add your daily text```",
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch(console.error);
         }
@@ -60,15 +69,15 @@ export class ElsaCommand implements CommandLineClass {
         );
         message.reply({
           content: "`✅` Daily elsa weekly saved.",
-          ephemeral: true,
+          // ephemeral: true,
         });
       } else if (args[0] === "day") {
-        const daily = args.join(" ");
+        const daily = args.filter((value, index)=>index > 1).join(" ");
         if (!daily || daily == undefined) {
           return message
             .reply({
               content: "```please add your daily text```",
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch(console.error);
         }
@@ -88,13 +97,12 @@ export class ElsaCommand implements CommandLineClass {
         }
         message.reply({
           content: "`✅` Daily elsa day saved.",
-          ephemeral: true,
+          // ephemeral: true,
         });
       } else if (args[0] === "report") {
-        // let report = await elsaDailyData.find({
-        //     attachment: false,
-        //     createdAt: { $gte: this.timeDiscord.getYesterdayDate(), $lte: this.timeDiscord.getTomorrowDate() },
-        //   });
+        console.log('yesterday : ', this.timeDiscord.getYesterdayDate());
+        console.log('tommorow : ', this.timeDiscord.getTomorrowDate());
+        
         const report = await this.elsaService.findReport(
           false,
           this.timeDiscord.getYesterdayDate(),
@@ -125,42 +133,28 @@ export class ElsaCommand implements CommandLineClass {
 
         message.attachments.forEach((attachment) => {
           try {
+            console.log('push something in links')
             const imageLink = attachment.proxyURL;
             links.push(imageLink);
           } catch (error) {
             console.error(error);
           }
         });
+        console.log('link.length : ', links.length)
         if (links.length > 0) {
           try {
             await this.elsaService.updateOneDaily(
               message.author.id,
-              {
-                $gte: this.timeDiscord.getYesterdayDate(),
-                $lte: this.timeDiscord.getTomorrowDate(),
-              },
+              this.timeDiscord.getYesterdayDate(),
+              this.timeDiscord.getTomorrowDate(),
               true
             );
           } catch (error) {
             console.log(error);
           }
-          //   await elsaDailyData
-          //     .updateOne(
-          //       {
-          //         userid: message.author.id,
-          //         createdAt: {
-          //           $gte: this.timeDiscord.getYesterdayDate(),
-          //           $lte: this.timeDiscord.getTomorrowDate(),
-          //         },
-          //       },
-          //       {
-          //         attachment: true,
-          //       }
-          //     )
-          //     .catch(console.log);
           message.reply({
             content: " You have successfully submitted your assignment.",
-            ephemeral: true,
+            // ephemeral: true,
           });
         }
       } else if (args[0] === "help") {
