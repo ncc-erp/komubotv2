@@ -3,7 +3,7 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.JOIN_CALL)
 export class JoinCall {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ nullable: false })

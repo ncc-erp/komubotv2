@@ -7,9 +7,7 @@ import {
   EmbedBuilder,
 } from "discord.js";
 import { TABLE } from "src/bot/constants/table";
-import { CheckList } from "src/bot/models/checklistdata.entity";
 import { Msg } from "src/bot/models/msg.entity";
-import { Subcategorys } from "src/bot/models/subcategoryData.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Brackets, Repository } from "typeorm";

@@ -1,5 +1,7 @@
+import { HttpService } from "@nestjs/axios";
 import axios from "axios";
 import { EmbedBuilder } from "discord.js";
+import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { HeyboyService } from "./heyboy.service";
@@ -11,6 +13,7 @@ import { HeyboyService } from "./heyboy.service";
 export class HeyboyCommand implements CommandLineClass {
   constructor(
     private heyboyService: HeyboyService,
+    private readonly http: HttpService,
     private komubotrestService: KomubotrestService
   ) {}
   getUserNameByEmail(string) {
@@ -86,17 +89,21 @@ export class HeyboyCommand implements CommandLineClass {
   async execute(message, args, client) {
     if (args[0] !== "mung" || args[1] !== "ngay" || args[2] !== "8/3") return;
     const ID_USER_PRIVATE = "869774806965420062";
-    // if (message.author.id !== ID_USER_PRIVATE) {
-    //   return message.reply("Missing permissions");
-    // }
+    if (message.author.id !== ID_USER_PRIVATE) {
+      return message.reply("Missing permissions");
+    }
     await this.komubotrestService.sendMessageToNhaCuaChung(client, {
       embeds: [this.EmbedWomenDay],
     });
     await this.komubotrestService.sendMessageToNhaCuaChung(client, {
       embeds: [this.Embed],
     });
-    const response = await axios.get(
-      "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
+    const response = await firstValueFrom(
+      this.http
+        .get(
+          "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
+        )
+        .pipe((res) => res)
     );
     if (!response.data || !response.data.result) {
       console.log("respon data error");
@@ -106,7 +113,6 @@ export class HeyboyCommand implements CommandLineClass {
       .filter((user) => user.sex === 0)
       .map((item) => this.getUserNameByEmail(item.emailAddress));
 
-    //! Các câu lệnh find không trả về kết quả do db đang trống
     const userWoman = await this.heyboyService.findWomanUser(emailsWoman);
     await Promise.all(
       userWoman.map((user) =>

@@ -1,11 +1,11 @@
-import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 import { User } from "./user.entity";
 
 @Entity(TABLE.MSG)
 export class Msg {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: string;
 
   // @ManyToOne(() => User, (state) => state.msg)

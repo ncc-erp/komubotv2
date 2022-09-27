@@ -1,8 +1,11 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.SUGG)
 export class Sugg {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: "text", nullable: true })
   autorID: string;
 

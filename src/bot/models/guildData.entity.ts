@@ -86,6 +86,7 @@ export class channel {
 
   @Column({ default: false })
   vc: string;
+  
   @Column({ default: false })
   clearing: string;
 

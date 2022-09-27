@@ -1,8 +1,11 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.TICKER)
 export class Ticket {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: "text", nullable: false })
   title: string;
 

@@ -7,9 +7,9 @@ export class CheckList {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type : "text"})
+  @Column({ type: "text" })
   subcategory: string;
 
   @Column({ type: "text" })
-  category: string;
+  category: string[];
 }
