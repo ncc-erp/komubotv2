@@ -1,4 +1,4 @@
-import { DiscordModule } from "@discord-nestjs/core";
+import { Channel, DiscordModule } from "@discord-nestjs/core";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -6,20 +6,26 @@ import { BotController } from "./bot.controller";
 import { BotService } from "./bot.service";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
 
+import { HttpModule } from "@nestjs/axios";
+import { MulterModule } from "@nestjs/platform-express";
+import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
+import { NotifiService } from "./commands/notification/noti.service";
 import { RemindCommand } from "./commands/remind/remind.command";
+import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
+import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
+import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { UserStatusCommand } from "./commands/user_status/user_status.command";
 import { UserStatusService } from "./commands/user_status/user_status.service";
 import { WFHCommand } from "./commands/wfh/wfh.command";
-import { HttpModule } from "@nestjs/axios";
-import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
-import { TimeSheetCommand } from "./commands/timesheet/timesheet.command";
 import { BotGateway } from "./events/bot.gateway";
 import { Daily } from "./models/daily.entity";
+import { Holiday } from "./models/holiday.entity";
 import { Leave } from "./models/leave.entity";
 import { Meeting } from "./models/meeting.entity";
 import { Msg } from "./models/msg.entity";
+import { Order } from "./models/order.entity";
 import { Remind } from "./models/remind.entity";
 import { User } from "./models/user.entity";
 import { VoiceChannels } from "./models/voiceChannel.entity";
@@ -29,128 +35,91 @@ import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminde
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
-import { NotifiService } from "./commands/notification/noti.service";
-import { ToggleActiveCommand } from "./commands/toggleActive/toggleActive.command";
-import { ToggleActiveService } from "./commands/toggleActive/toggleActive.service";
 import { CheckListModule } from "./utils/checklist/checklist.module";
-import { MulterModule } from "@nestjs/platform-express";
-import { UtilsModule } from "./utils/utils.module";
-import { GemrankCommand } from "./commands/gemrank/gemrank.command";
-import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
-import LeaveCommand from "./commands/leave/leave.command";
-import { LeaveService } from "./commands/leave/leave.service";
-import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-import { PollCommand } from "./commands/poll/poll.command";
-import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
-import { ConfigService } from "@nestjs/config";
-import { Opentalk } from "./models/opentalk.entity";
-import { Uploadfile } from "./models/uploadFile.entity";
-import { ReportOrderModule } from "./utils/reportOrder/reportOrder.module";
-import { ReportCommand } from "./commands/report/report.command";
-import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
+import { ReportTracker } from "./utils/report-tracker.untils";
 import { UtilsService } from "./utils/utils.service";
-// import { ReportOrder } from "./utils/reportOrder.utils";
-import { Order } from "./models/order.entity";
-import Ncc8Command from "./commands/ncc8/ncc8.command";
-// import { CheckListController } from "./commands/Checklist/checklist.controller";
-import { CompanyTrip } from "./models/companyTrip.entity";
+
+
+
+
 import { CompanytripService } from "./commands/companytrip/companytrip.service";
-import { PingCommand } from "./commands/ping/ping";
-import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import NotificationCommand from "./commands/notification/noti.command";
+
+
+import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import { OrderCommand } from "./commands/order/order.command";
 import { OrderService } from "./commands/order/order.service";
+import { PingCommand } from "./commands/ping/ping";
+import { CompanyTrip } from "./models/companyTrip.entity";
+import { Opentalk } from "./models/opentalk.entity";
+import { Uploadfile } from "./models/uploadFile.entity";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+import { UtilsModule } from "./utils/utils.module";
+
+
+import { AudioPlayer } from "@discordjs/voice";
+import { ConfigService } from "@nestjs/config";
+import LeaveCommand from "./commands/leave/leave.command";
+import { LeaveService } from "./commands/leave/leave.service";
+import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
 import { MoveChannelService } from "./commands/move_channel/move_channel.service";
-<<<<<<< Updated upstream
-import { Subcategorys } from "./models/subcategoryData.entity";
-import { Channel } from "./models/channel.entity";
-import { ReportTracker } from "./utils/report-tracker.untils";
-import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
-import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
-import { AudioPlayer } from "./utils/audioPlayer.utils";
-import { ReportDailyService } from "./utils/reportDaily/report-daily.service";
-import { ReportMentionModule } from "./utils/reportMention/reportMention.module";
-import { ClientConfigService } from "./config/client-config.service";
-=======
 import { PollCommand } from "./commands/poll/poll.command";
 import { ClientConfigService } from "./config/client-config.service";
-<<<<<<< Updated upstream
+import { CheckList } from "./models/checklist.entity";
+import { Subcategorys } from "./models/subcategoryData.entity";
 import { CheckListController } from "./utils/checklist/checklist.controller";
 import { CheckListService } from "./utils/checklist/checklist.service";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-import { CheckList } from "./models/checklistdata.entity";
-import { Subcategorys } from "./models/subcategoryData.entity";
-import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
 
 
-=======
->>>>>>> Stashed changes
-import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
-import { ReportWomenDayModule } from "./utils/reportWomenDay/reportWomenDay.module";
-import { WomenDay } from "./models/womenDay.entity";
-import { ReportCheckoutService } from "./utils/reportCheckout/reportCheckout.service";
-import { ReportCheckoutModule } from "./utils/reportCheckout/reportCheckout.module";
-import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.service";
-import { ReportScoreModule } from "./utils/reportScore/report-score.module";
-import { ReportScoreService } from "./utils/reportScore/report-score.service";
-import { Tx8Command } from "./commands/tx8/tx8.command";
-import { TX8 } from "./models/tx8.entity";
-import { AvatarCommand } from "./commands/utilities/avatar.command";
-import { BirthDay } from "./models/birthday.entity";
-import { BirthdayService } from "./utils/birthday/birthdayservice";
-import { UpdateCommand } from "./commands/update/update.command";
-import { UserQuiz } from "./models/userQuiz";
-import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-scheduler.service";
-import { Dating } from "./models/dating.entity";
-import { JoinCall } from "./models/joinCall.entity";
-import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
-import { Sync_role } from "./commands/sync_roles/sync_role.command";
-import { Sync_roleDiscord } from "./commands/sync_rolediscord/sync_rolediscord";
-import { UpdateRole } from "./utils/roles.utils";
-import { DailyCommand } from "./commands/daily/daily.command";
 import { DailyService } from "./commands/daily/daily.service";
-import { ReportCheckCameraService } from "./utils/reportCheckCamera/reportCheckCamera.service";
-import { CheckCamera } from "./models/checkCamera.entity";
-import { Client } from "discord.js";
-import { OdinReportService } from "./utils/odinReport/odinReport.service";
+import { ElsaCommand } from "./commands/elsa/elsa.command";
+import { ElsaService } from "./commands/elsa/elsa.service";
+import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
+import { HeyboyService } from "./commands/heyboy/heyboy.service";
 import { KickbotCommand } from "./commands/kickbot/kickbot.command";
-import { AntCommand } from "./commands/utilities/ant.command";
-import { WolCommand } from "./commands/utilities/wol.command";
-import { ReportTrackerService } from "./utils/reportTracker/reportTracker.service";
-import { TrackerSpentTime } from "./models/trackerSpentTime.entity";
-import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/updateRole-scheduler.service";
-import { ReloadCommand } from "./commands/owner/reload.command";
+import { MvChannelCommand } from "./commands/mvChannel/mvChannel.command";
+import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
 import { EvalCommand } from "./commands/owner/eval.command";
-import { LinksCommand } from "./commands/utilities/links.command";
-import { UserInfoCommand } from "./commands/utilities/userInfo.command";
+import { ReloadCommand } from "./commands/owner/reload.command";
+import { Sync_roleDiscord } from "./commands/sync_rolediscord/sync_rolediscord";
+import { Sync_role } from "./commands/sync_roles/sync_role.command";
+import { UpdateCommand } from "./commands/update/update.command";
+import { AntCommand } from "./commands/utilities/ant.command";
 import { BotInfo } from "./commands/utilities/botinfo.command";
 import { HelpCommand } from "./commands/utilities/help.command";
 import { TiktokCommand } from "./commands/utilities/tiktok.command";
-import { ClCommand } from "./commands/cl/cl.command";
-import { DmMessageUntil } from "./utils/dmmessage/dmmessage.until";
-import { Conversation } from "./models/conversation.entity";
-import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
-import { Holiday } from "./models/holiday.entity";
-import HolidayCommand from "./commands/holiday/holiday.command";
-import { HolidayService } from "./commands/holiday/holiday.service";
-import { OpenTalkCommand } from "./commands/open-talk/open-talk.command";
-import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
-import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
-import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
-import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
-import { HeyboyService } from "./commands/heyboy/heyboy.service";
-import { CheckList } from "./models/checklist.entity";
-<<<<<<< Updated upstream
-=======
-import { ElsaCommand } from "./commands/elsa/elsa.command";
-import { ElsaService } from "./commands/elsa/elsa.service";
-import { RequestOrder } from "./utils/requestorder.utils";
-import { ElsaDaily } from "./models/elsaDaily.entity";
-import { WomanDayCommand } from "./commands/womanday/womand.command";
+import { WolCommand } from "./commands/utilities/wol.command";
 import { WomanDayService } from "./commands/womanday/womanday.service";
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+import { BirthDay } from "./models/birthday.entity";
+import { CheckCamera } from "./models/checkCamera.entity";
+import { Conversation } from "./models/conversation.entity";
+import { Dating } from "./models/dating.entity";
+import { ElsaDaily } from "./models/elsaDaily.entity";
+import { JoinCall } from "./models/joinCall.entity";
+import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
+import { TrackerSpentTime } from "./models/trackerSpentTime.entity";
+import { TX8 } from "./models/tx8.entity";
+import { UserQuiz } from "./models/userQuiz";
+import { WomenDay } from "./models/womenDay.entity";
+import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/updateRole-scheduler.service";
+import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
+import { BirthdayService } from "./utils/birthday/birthdayservice";
+import { DmMessageUntil } from "./utils/dmmessage/dmmessage.until";
+import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.service";
+import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
+import { OdinReportService } from "./utils/odinReport/odinReport.service";
+import { ReportCheckCameraService } from "./utils/reportCheckCamera/reportCheckCamera.service";
+import { ReportCheckoutService } from "./utils/reportCheckout/reportCheckout.service";
+import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
+import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
+import { ReportTrackerService } from "./utils/reportTracker/reportTracker.service";
+import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
+import { RequestOrder } from "./utils/requestorder.utils";
+import { UpdateRole } from "./utils/roles.utils";
+import { GemrankCommand } from "./commands/gemrank/gemrank.command";
+import { WomanDayCommand } from "./commands/womanday/womanday.command";
 
 @Module({
   imports: [
@@ -176,11 +145,6 @@ import { WomanDayService } from "./commands/womanday/womanday.service";
       CheckList,
       Subcategorys,
       Channel,
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
       Daily,
       TX8,
       WomenDay,
@@ -192,52 +156,38 @@ import { WomanDayService } from "./commands/womanday/womanday.service";
       TrackerSpentTime,
       Conversation,
       TimeVoiceAlone,
-<<<<<<< Updated upstream
-=======
       ElsaDaily,
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     ]),
-    // forwardRef(() => CheckListModule),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
     HttpModule,
     UtilsModule,
     ReportWFHModule,
-    ReportMentionModule,
-    ReportWomenDayModule,
-    ReportCheckoutModule,
-    ReportScoreModule,
   ],
   providers: [
     PlaySlashCommand,
     PlaylistSlashCommand,
     CompantripCommand,
-    Tx8Command,
     CompanytripService,
     BotGateway,
     LeaveCommand,
-    LinksCommand,
-    ClCommand,
-    AvatarCommand,
-    UserInfoCommand,
     LeaveService,
-    DailyCommand,
     MeetingCommand,
+    
+
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
     PingCommand,
     UserStatusService,
     BotService,
-    KomubotrestService,
+    KomubotrestController,
     UtilsService,
     ReportTracker,
     MoveChannelCommand,
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
-    DatingSchedulerService,
     ReminderSchedulerService,
     SendMessageSchedulerService,
     MeetingService,
@@ -248,23 +198,15 @@ import { WomanDayService } from "./commands/womanday/womanday.service";
     OrderCommand,
     PollCommand,
     OrderService,
-    ReportCommand,
-    ReportOrderService,
-    ReportDailyService,
-    ReportScoreService,
-    HolidayCommand,
-    HolidayService,
-    Ncc8Command,
+    CheckListController,
+    KomubotrestController,
     CompanytripService,
+    AudioPlayer,
+    CheckListService,
     PollEmbedUntil,
     ConfigService,
     ClientConfigService,
     MoveChannelService,
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
     ReportHolidayService,
     ReportOpenTalkService,
     AudioPlayer,
@@ -292,26 +234,18 @@ import { WomanDayService } from "./commands/womanday/womanday.service";
     TiktokCommand,
     PingCommand,
     DmMessageUntil,
-    AddEmojiCommand,
     VoiceChannelSchedulerService,
     GemrankCommand,
     OpenTalkCommand,
-<<<<<<< Updated upstream
-=======
     ElsaCommand,
     ElsaService,
     WomanDayCommand,
     WomanDayService,
     RequestOrder,
->>>>>>> Stashed changes
     KomubotrestService,
     Uploadfile,
     HeyboyCommand,
     HeyboyService,
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   ],
   controllers: [BotController],
 })
