@@ -5,7 +5,7 @@ import { User } from "./user.entity";
 
 @Entity(TABLE.MSG)
 export class Msg {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: string;
 
   // @ManyToOne(() => User, (state) => state.msg)

@@ -22,6 +22,8 @@ import { MessageToUpperPipe } from "../pipes/message-to-upper.pipe";
 import { DECORATOR_COMMAND_LINE } from "../base/command.constans";
 import { ClientConfigService } from "../config/client-config.service";
 import DBL from "dblapi.js";
+import { DmMessageUntil } from "../utils/dmmessage/dmmessage.until";
+import { ExtendersService } from "../utils/extenders/extenders.service";
 
 @Injectable()
 export class BotGateway {
@@ -31,8 +33,11 @@ export class BotGateway {
     @InjectDiscordClient()
     private dataSource: DataSource,
     private discoveryService: DiscoveryService,
-    private clientConfigService: ClientConfigService
+    private clientConfigService: ClientConfigService,
+    private extendersService: ExtendersService,
+    private dmMessageUntil: DmMessageUntil
   ) {}
+  ID_KOMU = "1015574796567851039";
 
   @Once("ready")
   onReady(client: Client) {
@@ -68,15 +73,44 @@ export class BotGateway {
   @UsePipes(MessageToUpperPipe)
   async onMessage(message: Message): Promise<void> {
     const { client } = message;
-    if (message.channel.type == ChannelType.DM) {
-      // dmmessage(e, t); -fix after-
+    if (
+      message.channel.type === ChannelType.DM &&
+      message.author.id != client.user.id
+    ) {
+      this.dmMessageUntil.dmmessage(message, client);
       return;
     }
     if (message.author.bot || !message.guild) return;
 
-    // mention bot -fix after-
+    const user_mention = message.author.id;
+    const user_mentioned = message.mentions.users.map((user) => user.id);
+    if (
+      Array.isArray(user_mentioned) &&
+      user_mentioned.length >= 1 &&
+      user_mentioned.includes(this.ID_KOMU)
+    ) {
+      const content = message.content;
+      let message_include_content;
+      if (content.trim().startsWith("<@!")) {
+        message_include_content = content.slice(22, content.length).trim();
+        const res = await this.dmMessageUntil.getMessageAI(
+          this.dmMessageUntil.API_URL,
+          user_mention,
+          message_include_content,
+          this.dmMessageUntil.API_TOKEN
+        );
+        if (res && res.data && res.data.length) {
+          res.data.map((item) => {
+            return message.reply(item.text).catch(console.log);
+          });
+        } else {
+          message.reply("Very busy, too much work today. I'm so tired. BRB.");
+          return;
+        }
+      }
+    }
 
-    let guildDB;
+    let guildDB = await this.extendersService.fetchDBGuild(null, message.guild);
     if (message.content.startsWith("*")) {
       if (message.content.endsWith("*") && !message.content.includes("prefix"))
         return;
@@ -117,10 +151,10 @@ export class BotGateway {
     }
   }
 
-  @On("Interaction")
+  @On("interactionCreate")
   @UseGuards(MessageFromUserGuard)
   @UsePipes(MessageToUpperPipe)
-  async onInteraction(interaction: Interaction): Promise<void> {}
+  async onInteractionCreate(interaction: Interaction): Promise<void> {}
 
   @On("guildCreate")
   @UseGuards(MessageFromUserGuard)
@@ -140,7 +174,6 @@ export class BotGateway {
         c.permissionsFor((guild as any).me).has("EMBED_LINKS" as any) &&
         c.type === ("text" as any)
     );
-    console.log(channel);
   }
 
   @On("guildDelete")
@@ -148,6 +181,7 @@ export class BotGateway {
   @UsePipes(MessageToUpperPipe)
   async onGuildDelete(guild: Guild): Promise<void> {
     console.log("[32m%s[0m", "OLD GUILD ", "[0m", `${guild.name}`);
+    //không có env
     // await guild
     //   .fetchOwner()
     //   .then((o) => {

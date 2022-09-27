@@ -27,7 +27,7 @@ export class PingCommand implements CommandLineClass {
               }**: \`${message.client.ws.ping}ms\`\n**${
                 guildDB.lang === "fr" ? "Ping de la bdd" : "Database ping"
               }**: \`8ms\``,
-              color: guildDB.color,
+              // color: guildDB.color,
               title: `${
                 guildDB.lang === "fr" ? "Latence du bot" : "Bot latency"
               }`,

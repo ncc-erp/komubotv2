@@ -1,5 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import TikTokScraper from "tiktok-scraper";
 
 @CommandLine({
@@ -7,12 +8,16 @@ import TikTokScraper from "tiktok-scraper";
   description: "Gives information on a tiktok profile",
 })
 export class TiktokCommand implements CommandLineClass {
+  constructor(
+    private extendersService: ExtendersService
+  ) {}
+
   async execute(message, args, client, guildDB) {
-    const lang = message.translate("TIKTOK", guildDB.lang);
+    const lang = this.extendersService.translateMessage("TIKTOK", guildDB.lang);
     try {
       const user = await TikTokScraper.getUserProfileInfo(args[0]);
       if (!user) {
-        return message.errorMessage(lang.error.replace("{text}", args[0]));
+        return this.extendersService.errorMessageMessage(lang.error.replace("{text}", args[0]), message);
       }
       const userbe = new EmbedBuilder().setColor("#b434eb");
       if (user.user.verified == true) {
@@ -64,7 +69,7 @@ export class TiktokCommand implements CommandLineClass {
         .catch(console.error);
     } catch (error) {
       console.log(error);
-      return message.errorMessage(lang.error.replace("{text}", args[0]));
+      return this.extendersService.errorMessageMessage(lang.error.replace("{text}", args[0]), message);
     }
   }
 }

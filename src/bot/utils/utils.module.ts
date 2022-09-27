@@ -18,6 +18,7 @@ import { TX8 } from "../models/tx8.entity";
 import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
 import { WomenDay } from "../models/womenDay.entity";
+import { UserNotDailyService } from "./getUserNotDaily/getUserNotDaily.service";
 import { KomubotrestService } from "./komubotrest/komubotrest.service";
 import { OdinReportService } from "./odinReport/odinReport.service";
 import { ReportCheckCameraService } from "./reportCheckCamera/reportCheckCamera.service";
@@ -87,6 +88,7 @@ import { UtilsService } from "./utils.service";
     ReportCheckCameraService,
     OdinReportService,
     ReportTrackerService,
+    UserNotDailyService,
   ],
 })
 export class UtilsModule {}

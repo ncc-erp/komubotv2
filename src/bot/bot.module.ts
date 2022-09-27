@@ -2,10 +2,7 @@ import { DiscordModule } from "@discord-nestjs/core";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { BotController } from "./bot.controller";
-import { BotService } from "./bot.service";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
-
 import { MeetingCommand } from "./commands/meeting/meeting.command";
 import { MeetingService } from "./commands/meeting/meeting.service";
 import { RemindCommand } from "./commands/remind/remind.command";
@@ -45,7 +42,6 @@ import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ConfigService } from "@nestjs/config";
 import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
-import { ReportOrderModule } from "./utils/reportOrder/reportOrder.module";
 import { ReportCommand } from "./commands/report/report.command";
 import { ReportOrderService } from "./utils/reportOrder/reportOrder.service";
 import { UtilsService } from "./utils/utils.service";
@@ -55,7 +51,6 @@ import Ncc8Command from "./commands/ncc8/ncc8.command";
 // import { CheckListController } from "./commands/Checklist/checklist.controller";
 import { CompanyTrip } from "./models/companyTrip.entity";
 import { CompanytripService } from "./commands/companytrip/companytrip.service";
-import { PingCommand } from "./commands/ping/ping";
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import NotificationCommand from "./commands/notification/noti.command";
 import { OrderCommand } from "./commands/order/order.command";
@@ -125,6 +120,12 @@ import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-schedule
 import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
 import { HeyboyService } from "./commands/heyboy/heyboy.service";
 import { CheckList } from "./models/checklist.entity";
+import { TestCommand } from "./commands/test/test.command";
+import { ExtendersService } from "./utils/extenders/extenders.service";
+import { GuildData } from "./models/guildData.entity";
+import { HasvotedCommand } from "./commands/utilities/hasvoted.command";
+import { PingCommand } from "./commands/utilities/ping.command";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 
 @Module({
   imports: [
@@ -161,6 +162,7 @@ import { CheckList } from "./models/checklist.entity";
       TrackerSpentTime,
       Conversation,
       TimeVoiceAlone,
+      GuildData
     ]),
     // forwardRef(() => CheckListModule),
     CheckListModule,
@@ -191,9 +193,7 @@ import { CheckList } from "./models/checklist.entity";
     WFHCommand,
     RemindCommand,
     UserStatusCommand,
-    PingCommand,
     UserStatusService,
-    BotService,
     KomubotrestService,
     UtilsService,
     ReportTracker,
@@ -249,7 +249,6 @@ import { CheckList } from "./models/checklist.entity";
     BotInfo,
     HelpCommand,
     TiktokCommand,
-    PingCommand,
     DmMessageUntil,
     AddEmojiCommand,
     VoiceChannelSchedulerService,
@@ -259,7 +258,11 @@ import { CheckList } from "./models/checklist.entity";
     Uploadfile,
     HeyboyCommand,
     HeyboyService,
+    TestCommand,
+    ExtendersService,
+    HasvotedCommand,
+    PingCommand,
   ],
-  controllers: [BotController],
+  controllers: [KomubotrestController],
 })
 export class BotModule {}
