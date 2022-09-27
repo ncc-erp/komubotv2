@@ -3,6 +3,8 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.KEEP)
 export class Keep {
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ nullable: true })
   userId: string;
 

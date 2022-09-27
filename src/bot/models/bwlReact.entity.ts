@@ -4,6 +4,8 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.BWLREACTION)
 export class BwlReaction {
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column()
   channelId: string;
 

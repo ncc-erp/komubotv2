@@ -127,11 +127,26 @@ export class KomubotrestService {
     isSendQuiz = false
   ) => {
     try {
-      const userdb = await this.findUserData(username);
+      console.log(username, msg);
+
+      const userdb = await this.userReposistory
+        .createQueryBuilder("users")
+        .where('"email" = :username and deactive IS NOT True ', {
+          username: username,
+        })
+        .where('"username" = :username and deactive IS NOT True ', {
+          username: username,
+        })
+        .select("users.*")
+        .execute()
+        .catch(console.error);
+      userdb.forEach((item) => console.log(item, "fdsfdsfssdfsdgjlsn"));
       if (!userdb) {
         return null;
       }
-      const user = await client.users.fetch(userdb.userId).catch(console.error);
+      const user = await client.users
+        .fetch(userdb[0].userId)
+        .catch(console.error);
       if (msg == null) {
         return user;
       }
@@ -145,10 +160,12 @@ export class KomubotrestService {
         return null;
       }
       const sent = await user.send(msg);
-
-      //   const newMessage = new msgData(sent);
-      //   await newMessage.save();
-      await this.insertNewMsg(sent);
+      console.log(sent, "fdsgfsdgsdgdsgsdgsdggsdggdsgsdgdsdggsgsđ");
+      await this.messageReposistory.insert({
+        author: sent.username,
+        channelId:'1021944210800263189',
+        deleted:false,
+      });
       // botPing : work when bot send quiz wfh user
       // isSendQuiz : work when bot send quiz
       if (botPing && isSendQuiz) {
@@ -163,13 +180,25 @@ export class KomubotrestService {
       return user;
     } catch (error) {
       console.log("error", error);
-      const userDb = await await this.findUserData(username);
-      const message = `KOMU không gửi được tin nhắn cho <@${userDb.userId}>(${userDb.email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
+      const userDb = await this.userReposistory
+        .createQueryBuilder("users")
+        .where('"email" = :username and deactive IS NOT True ', {
+          username: username,
+        })
+        .where('"username" = :username and deactive IS NOT True ', {
+          username: username,
+        })
+        .select("users.*")
+        .execute()
+        .catch(console.error);
+      userDb.forEach((item) => console.log(item, "fdsfdsfssdfsdgjlsn"));
+
+      const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
       await client.channels.cache
         .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
         .send(message)
         .catch(console.error);
-      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb.userId}(${userDb.email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
+      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}(${userDb[0].email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
       await client.channels.cache
         .get(process.env.KOMUBOTREST_ITADMIN_CHANNEL_ID)
         .send(messageItAdmin)
