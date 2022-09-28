@@ -8,6 +8,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "update",
   description: "update point quiz user",
+  cat: 'komu',
 })
 export class UpdateCommand implements CommandLineClass {
   constructor(

@@ -6,6 +6,7 @@ import util from "util";
 @CommandLine({
   name: "eval",
   description: "Evalue une variable",
+  cat: 'owner',
 })
 export class EvalCommand implements CommandLineClass {
   constructor(

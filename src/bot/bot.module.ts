@@ -120,6 +120,8 @@ import { ClCommand } from "./commands/cl/cl.command";
 import { DailyCommand } from "./commands/daily/daily.command";
 import { QuizService } from "./utils/quiz/quiz.service";
 import { Quiz } from "./models/quiz.entity";
+import { UserInfoCommand } from "./commands/utilities/userInfo.command";
+import { LinksCommand } from "./commands/utilities/links.command";
 
 @Module({
   imports: [
@@ -251,6 +253,8 @@ import { Quiz } from "./models/quiz.entity";
     CheckListCommand,
     DailyCommand,
     QuizService,
+    UserInfoCommand,
+    LinksCommand,
   ],
   controllers: [KomubotrestController],
 })

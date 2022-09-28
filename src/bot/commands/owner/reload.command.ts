@@ -4,6 +4,7 @@ import { ClientConfigService } from "src/bot/config/client-config.service";
 @CommandLine({
   name: "reload",
   description: "Reloads a command",
+  cat: 'owner',
 })
 export class ReloadCommand implements CommandLineClass {
   constructor(

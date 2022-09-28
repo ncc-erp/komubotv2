@@ -6,6 +6,7 @@ import { CompanytripService } from "./companytrip.service";
 @CommandLine({
   name: "roommate",
   description: "NCC company trip",
+  cat: 'komu',
 })
 export class CompantripCommand implements CommandLineClass {
   constructor(

@@ -5,11 +5,10 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
   name: "avatar",
   description:
     "Affiche l'avatar d'un utilisateur (ou le vôtre, si aucun utilisateur n'est mentionné).",
+  cat: "utilities",
 })
 export class AvatarCommand implements CommandLineClass {
-  constructor(
-    private extendersService: ExtendersService
-  ) {}
+  constructor(private extendersService: ExtendersService) {}
 
   async execute(message, args, client, guildDB) {
     let member;
@@ -26,14 +25,23 @@ export class AvatarCommand implements CommandLineClass {
           )
           .first();
       if (!member) {
-        const err = await this.extendersService.translateMessage("ERROR_USER", guildDB.lang);
+        const err = await this.extendersService.translateMessage(
+          "ERROR_USER",
+          guildDB.lang
+        );
         return this.extendersService.errorMessageMessage(err, message);
       }
     } else {
       member = message.member;
     }
-    const a = await this.extendersService.translateMessage("AVATAR", guildDB.lang);
-    const b = await this.extendersService.translateMessage("AVATAR_DESC", guildDB.lang);
+    const a = await this.extendersService.translateMessage(
+      "AVATAR",
+      guildDB.lang
+    );
+    const b = await this.extendersService.translateMessage(
+      "AVATAR_DESC",
+      guildDB.lang
+    );
     message.channel.send({
       embeds: [
         {

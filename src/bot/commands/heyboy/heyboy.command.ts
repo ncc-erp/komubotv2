@@ -9,6 +9,7 @@ import { HeyboyService } from "./heyboy.service";
 @CommandLine({
   name: "chuc",
   description: "create a poll",
+  cat: 'komu',
 })
 export class HeyboyCommand implements CommandLineClass {
   constructor(

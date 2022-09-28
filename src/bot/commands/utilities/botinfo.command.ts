@@ -5,13 +5,15 @@ import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 @CommandLine({
   name: "botinfo",
   description: "create a poll",
+  cat: "utilities",
 })
 export class BotInfo implements CommandLineClass {
-  constructor(
-    private extendersService: ExtendersService,
-    ) {}
+  constructor(private extendersService: ExtendersService) {}
   async execute(message, args, client, guildDB) {
-    const lang = await this.extendersService.translateMessage("STATS", guildDB.lang);
+    const lang = await this.extendersService.translateMessage(
+      "STATS",
+      guildDB.lang
+    );
     const guildsCounts = await message.client.shard.fetchClientValues(
       "guilds.cache.size"
     );

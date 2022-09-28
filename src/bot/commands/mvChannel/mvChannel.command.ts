@@ -9,6 +9,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "mv",
   description: "move channel",
+  cat: 'komu',
 })
 export class MvChannelCommand implements CommandLineClass {
   constructor(

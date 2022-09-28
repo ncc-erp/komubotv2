@@ -9,6 +9,7 @@ import { firstValueFrom } from "rxjs";
 @CommandLine({
   name: "userstatus",
   description: "users tatus",
+  cat: 'komu',
 })
 export class UserStatusCommand implements CommandLineClass {
   constructor(

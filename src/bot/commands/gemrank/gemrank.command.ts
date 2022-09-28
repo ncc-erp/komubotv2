@@ -10,6 +10,7 @@ import { firstValueFrom } from "rxjs";
 @CommandLine({
   name: "gem",
   description: "Gem rank",
+  cat: 'komu',
 })
 export class GemrankCommand implements CommandLineClass {
   constructor(

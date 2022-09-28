@@ -7,6 +7,7 @@ const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
 @CommandLine({
   name: "holiday",
   description: "Holiday",
+  cat: 'komu',
 })
 export default class HolidayCommand implements CommandLineClass {
   constructor(

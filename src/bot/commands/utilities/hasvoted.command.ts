@@ -4,6 +4,7 @@ import { ClientConfigService } from "src/bot/config/client-config.service";
 @CommandLine({
   name: "vote",
   description: "Shows if you voted the bot in the last 12h",
+  cat: "utilities",
 })
 export class HasvotedCommand implements CommandLineClass {
   constructor(private readonly clientConfigService: ClientConfigService) {}

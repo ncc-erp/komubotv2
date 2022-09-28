@@ -6,6 +6,7 @@ import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 @CommandLine({
   name: "test",
   description: "Gem rank",
+  cat: 'komu',
 })
 export class TestCommand implements CommandLineClass {
   constructor() {}

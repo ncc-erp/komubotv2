@@ -6,6 +6,7 @@ import { ElsaService } from "./elsa.service";
 @CommandLine({
   name: "elsa",
   description: "Elsa daily english group",
+  cat: 'komu',
 })
 export class ElsaCommand implements CommandLineClass {
   constructor(

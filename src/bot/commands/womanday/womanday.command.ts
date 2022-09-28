@@ -11,6 +11,7 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 @CommandLine({
   name: "happy",
   description: "create a poll",
+  cat: 'komu',
 })
 export class WomanDayCommand implements CommandLineClass {
     constructor(  private WomanDayService : WomanDayService, private komubotrestController: KomubotrestService) {

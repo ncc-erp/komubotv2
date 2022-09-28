@@ -3,6 +3,7 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 @CommandLine({
   name: "kick",
   description: "kickbot",
+  cat: 'komu',
 })
 export class KickbotCommand implements CommandLineClass {
   constructor() {}

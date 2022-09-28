@@ -3,7 +3,8 @@ import { CheckListController } from "src/bot/utils/checklist/checklist.controlle
 
 @CommandLine({
   name: "checklist",
-  description: "daily work",
+  description: "checklist",
+  cat: 'komu',
 })
 export class ChecklistCommand implements CommandLineClass {
   constructor(private checkListController: CheckListController) {}

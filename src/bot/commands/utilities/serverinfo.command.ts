@@ -5,6 +5,7 @@ import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 @CommandLine({
   name: "serverinfo",
   description: "Gives all the information available on the server",
+  cat: "utilities",
 })
 export class ServerInfoCommand implements CommandLineClass {
   constructor(

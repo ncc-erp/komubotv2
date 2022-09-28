@@ -9,6 +9,7 @@ import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 @CommandLine({
   name: "userinfo",
   description: "Gives all available informations about a user",
+  cat: "utilities",
 })
 export class UserInfoCommand implements CommandLineClass {
   constructor(

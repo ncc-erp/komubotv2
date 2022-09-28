@@ -5,6 +5,7 @@ import { PollEmbedUntil } from "src/bot/utils/poll/pollEmbed.until";
 @CommandLine({
   name: "poll",
   description: "create a poll",
+  cat: 'komu',
 })
 export class PollCommand implements CommandLineClass {
   constructor(private readonly pollEmbedUntil: PollEmbedUntil) {}

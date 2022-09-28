@@ -4,6 +4,7 @@ import { CheckListController } from "src/bot/utils/checklist/checklist.controlle
 @CommandLine({
   name: "cl",
   description: "checklist",
+  cat: 'komu',
 })
 export class ClCommand implements CommandLineClass {
   constructor(private checklistController: CheckListController) {}
