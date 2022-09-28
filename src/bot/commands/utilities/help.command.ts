@@ -155,7 +155,7 @@ export class HelpCommand implements CommandLineClass {
                   },
                 ],
                 footer: {
-                  text: client.footer,
+                  text: "KOMU",
                   icon_url: e.client.user.displayAvatarURL({
                     dynamic: !0,
                     size: 512,
@@ -199,7 +199,7 @@ export class HelpCommand implements CommandLineClass {
               },
             ],
             footer: {
-              text: client.footer,
+              text: "KOMU",
               icon_url: e.client.user.displayAvatarURL({
                 dynamic: !0,
                 size: 512,

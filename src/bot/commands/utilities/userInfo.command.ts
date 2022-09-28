@@ -15,7 +15,7 @@ export class UserInfoCommand implements CommandLineClass {
   constructor(
     private readonly http: HttpService,
     private readonly clientConfigService: ClientConfigService,
-    private extendersService: ExtendersService,
+    private extendersService: ExtendersService
   ) {}
 
   async execute(message, args, client, guildDB) {
@@ -34,7 +34,7 @@ export class UserInfoCommand implements CommandLineClass {
           .first();
       if (!member) {
         return this.extendersService.errorMessageMessage(
-          message.translate("ERROR_USER", guildDB.lang),
+          this.extendersService.translateMessage("ERROR_USER", guildDB.lang),
           message
         );
       }
@@ -44,9 +44,12 @@ export class UserInfoCommand implements CommandLineClass {
 
     const data = await firstValueFrom(
       this.http
-        .get(`${this.clientConfigService.wiki.api_url}${member.user.username}@ncc.asia`, {
-          headers: { "X-Secret-Key": process.env.WIKI_API_KEY_SECRET },
-        })
+        .get(
+          `${this.clientConfigService.wiki.api_url}${member.user.username}@ncc.asia`,
+          {
+            headers: { "X-Secret-Key": process.env.WIKI_API_KEY_SECRET },
+          }
+        )
         .pipe((res) => res)
     ).catch((err) => {
       console.log("Error ", err);
@@ -147,7 +150,7 @@ export class UserInfoCommand implements CommandLineClass {
             \n\n`,
       })
       .setFooter({
-        text: message.client.footer,
+        text: "KOMU",
         iconURL: message.client.user.displayAvatarURL({
           dynamic: true,
           size: 512,

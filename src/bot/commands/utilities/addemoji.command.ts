@@ -23,7 +23,7 @@ export class AddEmojiCommand implements CommandLineClass {
         .trim()
         .split(" ")[0];
     } else {
-      emote = `${args.find((arg) => isURL(arg))}`;
+      emote = "${args.find((arg) => isURL(arg))}";
       name = args.find((arg) => arg != emote);
       type = "url";
     }

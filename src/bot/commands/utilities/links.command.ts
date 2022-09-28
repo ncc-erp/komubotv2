@@ -98,7 +98,7 @@ export class LinksCommand implements CommandLineClass {
           }`
         )
         .setFooter({
-          text: message.client.footer,
+          text: "KOMU",
           iconURL: message.client.user.displayAvatarURL({
             dynamic: true,
             size: 512,
@@ -144,7 +144,7 @@ export class LinksCommand implements CommandLineClass {
           })
         )
         .setFooter({
-          text: message.client.footer,
+          text: "KOMU",
           iconURL: message.client.user.displayAvatarURL({
             dynamic: true,
             size: 512,
