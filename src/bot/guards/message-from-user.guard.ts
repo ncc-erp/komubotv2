@@ -3,6 +3,6 @@ import { Message } from "discord.js";
 
 export class MessageFromUserGuard implements DiscordGuard {
   canActive(event: "messageCreate", [message]: [Message]): boolean {
-    return !message.author.bot;
+    return !message.author?.bot;
   }
 }

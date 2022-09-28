@@ -30,8 +30,6 @@ import { WorkFromHome } from "./models/wfh.entity";
 import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
 import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
-import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
-import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { CheckListModule } from "./utils/checklist/checklist.module";
 import { UtilsService } from "./utils/utils.service";
 
@@ -124,6 +122,13 @@ import { LinksCommand } from "./commands/utilities/links.command";
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
 import { ServerInfoCommand } from "./commands/utilities/serverinfo.command";
 import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
+import { TicketSlashCommand } from "./slash-commands/ticket.slashcommand";
+import { MachleoSlashCommand } from "./slash-commands/machleo.slashcommand";
+import { KeepSlashCommand } from "./slash-commands/keep.slashcommand";
+import { Keep } from "./models/keep.entity";
+import { WikiSlashCommand } from "./slash-commands/wiki.slashcommand";
+import { Wiki } from "./models/wiki.entity";
+import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
 
 @Module({
   imports: [
@@ -163,6 +168,8 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
       ElsaDaily,
       GuildData,
       Quiz,
+      Keep,
+      Wiki,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -171,8 +178,6 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     ReportWFHModule,
   ],
   providers: [
-    PlaySlashCommand,
-    PlaylistSlashCommand,
     CompantripCommand,
     CompanytripService,
     BotGateway,
@@ -259,6 +264,11 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     LinksCommand,
     ServerInfoCommand,
     AddEmojiCommand,
+    TicketSlashCommand,
+    MachleoSlashCommand,
+    KeepSlashCommand,
+    WikiSlashCommand,
+    VocabSlashCommand,
   ],
   controllers: [KomubotrestController],
 })

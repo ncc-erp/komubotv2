@@ -10,7 +10,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "discord.js";
 import { Repository } from "typeorm";
-import { KeepDto } from "../dto/keep.dto";
+import { KeepDto } from "./dto/keep.dto";
 import { Keep } from "../models/keep.entity";
 
 @Command({
@@ -24,13 +24,13 @@ export class KeepSlashCommand implements DiscordTransformedCommand<KeepDto> {
     private keepData: Repository<Keep>
   ) {}
 
-  handler(
+  async handler(
     @Payload() dto: KeepDto,
     { interaction }: TransformedCommandExecutionContext
-  ): any {
+  ): Promise<any> {
     try {
-      const note = dto.note;
-      this.keepData.insert({
+      const note = interaction.options.get("note").value as string;
+      await this.keepData.insert({
         userId: interaction.user.id,
         note: note,
         start_time: Date.now(),
