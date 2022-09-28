@@ -37,9 +37,9 @@ export class HasvotedCommand implements CommandLineClass {
           //   this.clientConfigService.links.topgg_url
           // }/vote
           // ).
-          color: "#3A871F",
+          // color: "#3A871F",
           footer: {
-            text: `${message.client.footer}`,
+            text: `KOMU`,
             icon_url: message.client.user.displayAvatarURL({
               dynamic: true,
               size: 512,

@@ -33,7 +33,7 @@ export class PingCommand implements CommandLineClass {
                 guildDB.lang === "fr" ? "Latence du bot" : "Bot latency"
               }`,
               footer: {
-                text: `${message.client.footer}`,
+                text: `KOMU`,
                 icon_url: message.client.user.displayAvatarURL({
                   dynamic: true,
                   size: 512,

@@ -4,12 +4,12 @@ import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class ClientConfigService {
   constructor(configService: ConfigService) {
-    this.prefix = "*",
-    this.wfh = {
-      api_url: `${configService.get<string>(
-        "TIMESHEET_API"
-      )}Public/GetUserWorkFromHome`,
-    };
+    (this.prefix = "*"),
+      (this.wfh = {
+        api_url: `${configService.get<string>(
+          "TIMESHEET_API"
+        )}Public/GetUserWorkFromHome`,
+      });
     this.ticket = {
       api_url_create: `${configService.get<string>(
         "TIMESHEET_API"
@@ -113,31 +113,31 @@ export class ClientConfigService {
       },
     };
 
-    this.owners= ["KOMU#0139"];
-  //The footer of the embeds that the bot will send
-  this.footer = "KOMU ";
-  // The id of the support
-  this.supportID = "729774155037278268";
-  // The status of your bot
-  this.game = "KOMU ";
-  //the color of the embeds
-  this.color = "#3A871F";
-  // OPTIONAL: Your top.gg token.
-  this.topgg = "TOPGG_TOKEN";
-  // OPTIONAL: The link of your bot's top.gg page.
-  this.topgg_url = "https://top.gg/bot/783708073390112830";
-  //the default bot language. fr or en
-  this.defaultLanguage= "en";
-  // If dev mod is enabled
-  this.devMode = false;
-  // The server where you test the commands
-  this.devServer = "782661233622515772";
-  // If you want to log every command,event etc. Usefull for debuging
-  this.logAll = false;
-  // If you want to test your configuration before starting the bot
-  this.checkConfig = null;
-  //The number of shards. Leave blank for auto
-  this.shards = 1;
+    this.owners = ["KOMU#0139"];
+    //The footer of the embeds that the bot will send
+    this.footer = "KOMU ";
+    // The id of the support
+    this.supportID = "729774155037278268";
+    // The status of your bot
+    this.game = "KOMU ";
+    //the color of the embeds
+    this.color = "#3A871F";
+    // OPTIONAL: Your top.gg token.
+    this.topgg = "TOPGG_TOKEN";
+    // OPTIONAL: The link of your bot's top.gg page.
+    this.topgg_url = "https://top.gg/bot/783708073390112830";
+    //the default bot language. fr or en
+    this.defaultLanguage = "en";
+    // If dev mod is enabled
+    this.devMode = false;
+    // The server where you test the commands
+    this.devServer = "782661233622515772";
+    // If you want to log every command,event etc. Usefull for debuging
+    this.logAll = false;
+    // If you want to test your configuration before starting the bot
+    this.checkConfig = null;
+    //The number of shards. Leave blank for auto
+    this.shards = 1;
   }
 
   wfh: {
@@ -181,32 +181,31 @@ export class ClientConfigService {
   prefix: string;
   // Your ID
   // Your name/tag
-  owners: string[]
+  owners: string[];
   //The footer of the embeds that the bot will send
-  footer: string
+  footer: string;
   // The id of the support
-  supportID: string
+  supportID: string;
   // The status of your bot
-  game: string
+  game: string;
   //the color of the embeds
-  color: string
+  color: string;
   // OPTIONAL: Your top.gg token.
-  topgg: string
+  topgg: string;
   // OPTIONAL: The link of your bot's top.gg page.
-  topgg_url: string
+  topgg_url: string;
   //the default bot language. fr or en
-  defaultLanguage: string
+  defaultLanguage: string;
   // If dev mod is enabled
-  devMode: boolean
+  devMode: boolean;
   // The server where you test the commands
-  devServer:string
+  devServer: string;
   // If you want to log every command,event etc. Usefull for debuging
-  logAll: boolean
+  logAll: boolean;
   // If you want to test your configuration before starting the bot
-  checkConfig: any
+  checkConfig: any;
   //The number of shards. Leave blank for auto
-  shards: number
+  shards: number;
   // The categories. Put null to enabled to disable a category
-  categories: any
+  categories: any;
 }
-

@@ -115,13 +115,15 @@ import { HasvotedCommand } from "./commands/utilities/hasvoted.command";
 import { PingCommand } from "./commands/utilities/ping.command";
 import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { ReportTracker } from "./utils/report-tracker.untils";
-import { CheckListCommand } from "./commands/checklist/checklist.module";
 import { ClCommand } from "./commands/cl/cl.command";
 import { DailyCommand } from "./commands/daily/daily.command";
 import { QuizService } from "./utils/quiz/quiz.service";
 import { Quiz } from "./models/quiz.entity";
 import { UserInfoCommand } from "./commands/utilities/userInfo.command";
 import { LinksCommand } from "./commands/utilities/links.command";
+import { ChecklistCommand } from "./commands/checklist/checklist.command";
+import { ServerInfoCommand } from "./commands/utilities/serverinfo.command";
+import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
 
 @Module({
   imports: [
@@ -250,11 +252,13 @@ import { LinksCommand } from "./commands/utilities/links.command";
     ExtendersService,
     HasvotedCommand,
     PingCommand,
-    CheckListCommand,
+    ChecklistCommand,
     DailyCommand,
     QuizService,
     UserInfoCommand,
     LinksCommand,
+    ServerInfoCommand,
+    AddEmojiCommand,
   ],
   controllers: [KomubotrestController],
 })
