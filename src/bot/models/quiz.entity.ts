@@ -6,7 +6,7 @@ export class Quiz {
   @Column({ type: "text" })
   title: string;
 
-  @Column({ type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   options: string[];
 
   @Column({ type: "text" })
