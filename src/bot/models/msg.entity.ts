@@ -1,4 +1,11 @@
-import { Column, Entity, JoinTable, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 import { TABLE } from "../constants/table";
 import { User } from "./user.entity";
@@ -45,25 +52,25 @@ export class Msg {
   @Column({ type: "text", nullable: true })
   nonce: string;
 
-  @Column({ type: "text", array: true, nullable: true })
+  @Column("text", { array: true, nullable: true })
   embeds: string[];
 
-  @Column({ type: "text", array: true, nullable: true })
+  @Column("text", { array: true, nullable: true })
   components: string[];
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   attachments: string[];
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   stickers: string[];
 
   @Column({ type: "decimal", nullable: true })
   editedTimestamp: number;
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   reactions: string[];
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   mentions: string[];
 
   @Column({ nullable: true, type: "text" })

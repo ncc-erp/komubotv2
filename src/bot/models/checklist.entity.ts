@@ -10,6 +10,6 @@ export class CheckList {
   @Column({ type: "text" })
   subcategory: string;
 
-  @Column({ type: "text" })
+  @Column("text", { array: true })
   category: string[];
 }

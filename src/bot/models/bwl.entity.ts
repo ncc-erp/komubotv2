@@ -18,7 +18,7 @@ export class Bwl {
   @Column({ type: "text", nullable: true })
   authorId: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column("text", { array: true })
   link: string[];
 
   @Column({ type: "decimal", nullable: true })
