@@ -115,6 +115,8 @@ import { HasvotedCommand } from "./commands/utilities/hasvoted.command";
 import { PingCommand } from "./commands/utilities/ping.command";
 import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { ReportTracker } from "./utils/report-tracker.untils";
+import { CheckListCommand } from "./commands/checklist/checklist.module";
+import { ClCommand } from "./commands/cl/cl.command";
 import { DailyCommand } from "./commands/daily/daily.command";
 import { QuizService } from "./utils/quiz/quiz.service";
 import { Quiz } from "./models/quiz.entity";
@@ -175,6 +177,7 @@ import { Quiz } from "./models/quiz.entity";
     MeetingCommand,
     WFHCommand,
     RemindCommand,
+    ClCommand,
     UserStatusCommand,
     UserStatusService,
     KomubotrestController,
@@ -245,6 +248,7 @@ import { Quiz } from "./models/quiz.entity";
     ExtendersService,
     HasvotedCommand,
     PingCommand,
+    CheckListCommand,
     DailyCommand,
     QuizService,
   ],
