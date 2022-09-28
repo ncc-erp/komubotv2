@@ -1,16 +1,33 @@
-import { Controller, Injectable, Post, Req, Res } from "@nestjs/common";
+import {
+  Controller,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Post,
+  Req,
+  Res,
+  UseInterceptors,
+} from "@nestjs/common";
 import { Client } from "discord.js";
 import { KomubotrestService } from "./komubotrest.service";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { Request, Response } from "express";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 
+import { diskStorage } from "multer";
+import { fileFilter, fileName } from "../helper";
+import { Uploadfile } from "src/bot/models/uploadFile.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 @Controller()
 @Injectable()
 export class KomubotrestController {
   constructor(
     private komubotrestService: KomubotrestService,
     @InjectDiscordClient()
-    private client: Client
+    private client: Client,
+    @InjectRepository(Uploadfile)
+    private readonly uploadFileRepository: Repository<Uploadfile>
   ) {}
 
   @Post("/getUserIdByUsername")
@@ -30,7 +47,11 @@ export class KomubotrestController {
 
   @Post("/sendImageCheckInToUser")
   async sendImageCheckInToUser(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendImageCheckInToUser(this.client, req, res);
+    return this.komubotrestService.sendImageCheckInToUser(
+      this.client,
+      req,
+      res
+    );
   }
   @Post("/sendImageLabelToUser")
   async sendImageLabelToUser(@Req() req: Request, @Res() res: Response) {
@@ -49,7 +70,11 @@ export class KomubotrestController {
 
   @Post("/sendMessageToThongBaoPM")
   async sendMessageToThongBaoPM(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendMessageToThongBaoPM(this.client, req, res);
+    return this.komubotrestService.sendMessageToThongBaoPM(
+      this.client,
+      req,
+      res
+    );
   }
   @Post("/sendMessageToFinance")
   async sendMessageToFinance(@Req() req: Request, @Res() res: Response) {
@@ -64,5 +89,40 @@ export class KomubotrestController {
   @Post("/deleteMessage")
   async deleteMessage(@Req() req: Request, @Res() res: Response) {
     return this.komubotrestService.deleteMessage(this.client, req, res);
+  }
+
+  @Post("/uploadFile")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads",
+        filename: fileName,
+      }),
+      limits: {
+        fileSize: 1024 * 1024 * 100,
+      },
+      fileFilter: fileFilter,
+    })
+  )
+  async uploadAvatar(@Req() req: Request, @Res() res: Response) {
+    const file = req.file;
+    if (!file) {
+      throw new HttpException("Please upload a file", HttpStatus.NOT_FOUND);
+    }
+    if (!req.body.episode) {
+      throw new HttpException(
+        "Episode can not be empty!",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    const episode = req.body.episode;
+    await this.uploadFileRepository.insert({
+      filePath: file.path,
+      fileName: `${file.filename}`,
+      createTimestamp: Date.now(),
+      episode,
+    });
+    res.send(file);
   }
 }

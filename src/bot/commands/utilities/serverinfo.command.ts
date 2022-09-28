@@ -1,18 +1,22 @@
 import { Message, Client, parseEmoji, EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 
 @CommandLine({
   name: "serverinfo",
   description: "Gives all the information available on the server",
 })
 export class ServerInfoCommand implements CommandLineClass {
-  constructor() {}
+  constructor(
+    private extendersService: ExtendersService
+  ) {}
+
   async execute(message, args, client, guildDB) {
     if (message.guild.memberCount !== message.guild.members.cache.size) {
       await message.guild.members.fetch();
     }
-    const lang = await message.translate("SERVERINFO", guildDB.lang);
-    const here = await message.translate("CLIQ", guildDB.lang);
+    const lang = await this.extendersService.translateMessage("SERVERINFO", guildDB.lang);
+    const here = await this.extendersService.translateMessage("CLIQ", guildDB.lang);
     const embed = new EmbedBuilder()
       .setAuthor({
         name: `${message.author.username}`,

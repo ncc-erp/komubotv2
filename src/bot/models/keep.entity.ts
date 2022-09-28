@@ -5,6 +5,7 @@ import { TABLE } from "../constants/table";
 export class Keep {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ nullable: true })
   userId: string;
 

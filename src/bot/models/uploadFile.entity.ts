@@ -16,6 +16,6 @@ export class Uploadfile {
   @Column({ type: "decimal", nullable: true })
   createTimestamp: number;
 
-  @Column({ type: "decimal" })
+  @Column({ unique: true })
   episode: number;
 }

@@ -7,18 +7,18 @@ export class Daily {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({})
+  @Column({ nullable: true })
   userid: string;
 
-  @Column({})
+  @Column({ nullable: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   daily: string;
 
   @Column({ type: "decimal", nullable: true })
   createdAt: number;
 
-  @Column()
+  @Column({ nullable: true })
   channelid: string;
 }

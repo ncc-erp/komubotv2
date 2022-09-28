@@ -4,7 +4,6 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.CONVERSATION)
 export class Conversation {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,13 +11,13 @@ export class Conversation {
   channelId: string;
 
   @Column({ nullable: false })
-  fullName: string;
+  authorId: string;
 
-  @Column({ type: "array" })
-  userId: string;
+  @Column({ type: "text" })
+  generated_responses: string[];
 
-  @Column({ type: "array" })
-  email: string;
+  @Column({ type: "text" })
+  past_user_inputs: string[];
 
   @Column({ type: "decimal" })
   createdTimestamp: number;

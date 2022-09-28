@@ -6,21 +6,21 @@ export class Bwl {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   messageId: string;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   guildId: string;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   authorId: string;
 
-  @Column({ type: "array" })
-  link: string;
+  @Column({ type: "text", nullable: true })
+  link: string[];
 
-  @Column({ type: "date" })
+  @Column({ type: "decimal", nullable: true })
   createTimestamp: number;
 }

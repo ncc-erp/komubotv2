@@ -1,12 +1,22 @@
+import { HttpService } from "@nestjs/axios";
 import { EmbedBuilder } from "discord.js";
 import moment from "moment";
+import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { ClientConfigService } from "src/bot/config/client-config.service";
+import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 
 @CommandLine({
   name: "userinfo",
   description: "Gives all available informations about a user",
 })
 export class UserInfoCommand implements CommandLineClass {
+  constructor(
+    private readonly http: HttpService,
+    private readonly clientConfigService: ClientConfigService,
+    private extendersService: ExtendersService,
+  ) {}
+
   async execute(message, args, client, guildDB) {
     let member;
     if (args.length) {
@@ -22,26 +32,31 @@ export class UserInfoCommand implements CommandLineClass {
           )
           .first();
       if (!member) {
-        return message.errorMessage(
-          message.translate("ERROR_USER", guildDB.lang)
+        return this.extendersService.errorMessageMessage(
+          message.translate("ERROR_USER", guildDB.lang),
+          message
         );
       }
     } else {
       member = message.member;
     }
 
-    const data = await axios
-      .get(`${client.config.wiki.api_url}${member.user.username}@ncc.asia`, {
-        headers: { "X-Secret-Key": process.env.WIKI_API_KEY_SECRET },
-      })
-      .catch((err) => {
-        console.log("Error ", err);
-      });
-    const phoneNumber = data.data.result.phoneNumber;
+    const data = await firstValueFrom(
+      this.http
+        .get(`${this.clientConfigService.wiki.api_url}${member.user.username}@ncc.asia`, {
+          headers: { "X-Secret-Key": process.env.WIKI_API_KEY_SECRET },
+        })
+        .pipe((res) => res)
+    ).catch((err) => {
+      console.log("Error ", err);
+    });
+    const phoneNumber = (data as any).data.result.phoneNumber;
     let api_url_getListProjectOfUserApi;
     try {
-      const url = `${client.config.project.api_url_getListProjectOfUser}?email=${member.user.username}@ncc.asia`;
-      api_url_getListProjectOfUserApi = await axios.get(url);
+      const url = `${this.clientConfigService.project.api_url_getListProjectOfUser}?email=${member.user.username}@ncc.asia`;
+      api_url_getListProjectOfUserApi = await firstValueFrom(
+        this.http.get(url).pipe((res) => res)
+      );
     } catch (error) {
       console.log(error);
     }
@@ -59,8 +74,11 @@ export class UserInfoCommand implements CommandLineClass {
     const mess = api_url_getListProject
       .map((item) => `- ${item.projectName} (${item.projectCode})`)
       .join("\n");
-    const lang = message.translate("USERINFO", guildDB.lang);
-    const here = message.translate("CLIQ", guildDB.lang);
+    const lang = this.extendersService.translateMessage(
+      "USERINFO",
+      guildDB.lang
+    );
+    const here = this.extendersService.translateMessage("CLIQ", guildDB.lang);
     const roles = member.roles.cache
       .sort((a, b) => b.position - a.position)
       .map((role) => role.toString())

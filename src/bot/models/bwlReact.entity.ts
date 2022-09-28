@@ -6,21 +6,25 @@ import { TABLE } from "../constants/table";
 export class BwlReaction {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
+
+  @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   messageId: string;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   guildId: string;
 
-  @Column()
+  @Column({ type: "text", nullable: true })
   authorId: string;
 
-  @Column()
+  @Column({ nullable: true })
   emoji: string;
 
   @Column()
   count: number;
+
+  @Column({ type: "decimal" })
+  createTimestamp: number;
 }

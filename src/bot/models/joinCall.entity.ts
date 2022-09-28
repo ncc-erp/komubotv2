@@ -6,21 +6,18 @@ export class JoinCall {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column({ nullable: false })
+  @Column({ type: "text", nullable: true })
   userId: string;
 
-  @Column({ nullable: false })
-  title: string;
-
-  @Column({ nullable: false })
+  @Column({ type: "text", nullable: true })
   status: string;
 
-  @Column({ type: "decimal" })
+  @Column({ type: "decimal", nullable: true })
   start_time: number;
 
-  @Column({ type: "decimal" })
+  @Column({ type: "decimal", nullable: true })
   end_time: number;
 }

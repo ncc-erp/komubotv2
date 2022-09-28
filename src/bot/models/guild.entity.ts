@@ -3,7 +3,6 @@ import { TABLE } from "../constants/table";
 
 @Entity(TABLE.GUILD)
 export class Guild {
-
   @PrimaryGeneratedColumn()
   id: number;
 

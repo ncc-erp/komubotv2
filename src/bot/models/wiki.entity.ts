@@ -5,6 +5,7 @@ import { TABLE } from "../constants/table";
 export class Wiki {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ type: "text", nullable: false })
   name: string;
 

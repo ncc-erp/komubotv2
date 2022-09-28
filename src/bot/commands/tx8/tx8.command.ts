@@ -73,7 +73,7 @@ export class Tx8Command implements CommandLineClass {
 
       if (
         userId != "694732284116598797" &&
-        userId != "871713984670216273" &&
+        userId != "922148445626716182" &&
         args[0] == "draw"
       ) {
         message
