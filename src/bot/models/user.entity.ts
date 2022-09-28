@@ -1,5 +1,12 @@
 import { text } from "stream/consumers";
-import { Column, Entity, JoinTable, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 import { TABLE } from "../constants/table";
 import { Msg } from "./msg.entity";
@@ -7,7 +14,10 @@ import { WorkFromHome } from "./wfh.entity";
 
 @Entity(TABLE.USER)
 export class User {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: "text", nullable: true })
   userId: string;
 
   @Column({ type: "text", nullable: true })

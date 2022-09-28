@@ -115,6 +115,8 @@ import { HasvotedCommand } from "./commands/utilities/hasvoted.command";
 import { PingCommand } from "./commands/utilities/ping.command";
 import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { ReportTracker } from "./utils/report-tracker.untils";
+import { CheckListCommand } from "./commands/checklist/checklist.module";
+import { ClCommand } from "./commands/cl/cl.command";
 
 @Module({
   imports: [
@@ -152,7 +154,7 @@ import { ReportTracker } from "./utils/report-tracker.untils";
       Conversation,
       TimeVoiceAlone,
       ElsaDaily,
-      GuildData
+      GuildData,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -171,6 +173,7 @@ import { ReportTracker } from "./utils/report-tracker.untils";
     MeetingCommand,
     WFHCommand,
     RemindCommand,
+    ClCommand,
     UserStatusCommand,
     UserStatusService,
     KomubotrestController,
@@ -241,6 +244,7 @@ import { ReportTracker } from "./utils/report-tracker.untils";
     ExtendersService,
     HasvotedCommand,
     PingCommand,
+    CheckListCommand,
   ],
   controllers: [KomubotrestController],
 })
