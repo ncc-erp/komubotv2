@@ -7,6 +7,7 @@ import { MoveChannelService } from "./move_channel.service";
 @CommandLine({
   name: "channel",
   description: "channel",
+  cat: 'komu',
 })
 export class MoveChannelCommand implements CommandLineClass {
   constructor(private movelChannelService: MoveChannelService) {}

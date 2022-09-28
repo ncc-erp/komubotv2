@@ -110,6 +110,7 @@ function checkTimeNotWFH() {
 @CommandLine({
   name: "daily",
   description: "daily work",
+  cat: 'komu',
 })
 export class DailyCommand implements CommandLineClass {
   constructor(

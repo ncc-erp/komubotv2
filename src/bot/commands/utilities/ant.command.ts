@@ -48,6 +48,7 @@ const handleAntFeed = async (message, args) => {
 @CommandLine({
   name: "ant",
   description: "Display ant feed",
+  cat: "utilities",
 })
 export class AntCommand implements CommandLineClass {
   async execute(message, args) {

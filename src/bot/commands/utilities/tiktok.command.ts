@@ -6,6 +6,7 @@ import TikTokScraper from "tiktok-scraper";
 @CommandLine({
   name: "tiktok",
   description: "Gives information on a tiktok profile",
+  cat: "utilities",
 })
 export class TiktokCommand implements CommandLineClass {
   constructor(

@@ -1,25 +1,53 @@
+import { DiscoveryService } from "@nestjs/core";
 import { EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { DECORATOR_COMMAND_LINE } from "src/bot/base/command.constans";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import { resolveCategory } from "src/bot/utils/function";
-
+import { Logger } from "@nestjs/common";
 @CommandLine({
   name: "help",
   description:
     "  Affiche une liste de toutes les commandes actuelles, triées par catégorie. Peut être utilisé en conjonction avec une commande pour plus d'informations.",
+  cat: "utilities",
 })
 export class HelpCommand implements CommandLineClass {
-  constructor(private extendersService: ExtendersService) {}
+  private readonly logger = new Logger(HelpCommand.name);
+  constructor(
+    private extendersService: ExtendersService,
+    private discoveryService: DiscoveryService
+  ) {}
 
   async execute(e, s, client, guildDB) {
-    console.log(e.client)
+    let t: any = [];
     if (!s.length) {
-      const { commands: t } = e.client;
-      const o = await this.extendersService.translateMessage(
-          "HELP_FOOTER",
-          guildDB.lang
-        ),
-        m = guildDB.prefix;
+      this.discoveryService.getProviders().forEach((provider) => {
+        if (typeof provider !== "string") {
+          const instance = provider.instance;
+          if (!instance || typeof instance === "string") return;
+          if (!Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)) return;
+          if (
+            !Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)?.name ||
+            !Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)?.description
+          ) {
+            this.logger.error(
+              "please make property name and description in decorator @CommandLine"
+            );
+          }
+          t.push({
+            name: Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)?.name,
+            description: Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)
+              ?.description,
+            cat: Reflect.getMetadata(DECORATOR_COMMAND_LINE, instance)?.cat,
+          });
+        }
+      });
+
+      // const o = await this.extendersService.translateMessage(
+      //     "HELP_FOOTER",
+      //     guildDB.lang
+      //   ),
+      //   m = guildDB.prefix;
       const E = await this.extendersService.translateMessage(
         "HELP_CAT",
         guildDB.lang
@@ -28,7 +56,7 @@ export class HelpCommand implements CommandLineClass {
         .send({
           embeds: [
             {
-              color: guildDB.color,
+              // color: guildDB.color,
               author: {
                 name: "KOMU - Help Menu",
                 icon_url: e.client.user.displayAvatarURL({
@@ -37,7 +65,7 @@ export class HelpCommand implements CommandLineClass {
                 }),
               },
               footer: {
-                text: o.replace("{prefix}", m),
+                // text: o.replace("{prefix}", m),
                 icon_url: e.client.user.displayAvatarURL({
                   dynamic: !0,
                   size: 512,
@@ -53,7 +81,7 @@ export class HelpCommand implements CommandLineClass {
                 {
                   name:
                     "• KOMU (" +
-                    t.filter((item) => item.cat === "komu").size +
+                    t.filter((item) => item.cat === "komu").length +
                     ")",
                   value: t
                     .filter((item) => item.cat === "komu")
@@ -62,7 +90,7 @@ export class HelpCommand implements CommandLineClass {
                 },
                 {
                   name: `• ${E[3]}  (${
-                    t.filter((item) => item.cat === "utilities").size
+                    t.filter((item) => item.cat === "utilities").length
                   })`,
                   value: t
                     .filter((item) => item.cat === "utilities")
@@ -104,7 +132,7 @@ export class HelpCommand implements CommandLineClass {
           return e.channel.send({
             embeds: [
               {
-                color: guildDB.color,
+                // color: guildDB.color,
                 title: checkCat.name,
                 description: `${client.commands
                   .filter((item) => item.cat === checkCat.name.toLowerCase())
@@ -151,7 +179,7 @@ export class HelpCommand implements CommandLineClass {
       return e.channel.send({
         embeds: [
           {
-            color: guildDB.color,
+            // color: guildDB.color,
             title: u.name,
             description: `${E}`,
             fields: [

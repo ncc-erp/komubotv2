@@ -203,7 +203,8 @@ export class BotGateway {
           }
           {
             const missingRole = await this.extendersService.translateMessage(
-              "MISSING_ROLE"
+              "MISSING_ROLE",
+              guildDB
             );
             if (!guildDB.admin_role) {
               return this.extendersService.errorMessageMessage(

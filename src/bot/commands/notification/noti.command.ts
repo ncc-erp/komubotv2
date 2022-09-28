@@ -10,6 +10,7 @@ import { NotifiService } from "./noti.service";
 @CommandLine({
   name: "thongbao",
   description: "Thong bao",
+  cat: 'komu',
 })
 export default class NotificationCommand implements CommandLineClass {
   constructor(

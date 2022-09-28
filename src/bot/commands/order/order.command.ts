@@ -6,6 +6,7 @@ import { OrderService } from "./order.service";
 @CommandLine({
   name: "order",
   description: "order",
+  cat: 'komu',
 })
 export class OrderCommand implements CommandLineClass {
   constructor(

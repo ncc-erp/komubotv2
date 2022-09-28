@@ -146,6 +146,7 @@ function handleWoL(message, args) {
 @CommandLine({
   name: "wol",
   description: "Turn on an pc on LAN (WoL)",
+  cat: "utilities",
 })
 export class WolCommand implements CommandLineClass {
   async execute(message, args) {

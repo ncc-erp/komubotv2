@@ -8,6 +8,7 @@ import { OpenTalkService } from "./open-talk.service";
 @CommandLine({
   name: "opentalk",
   description: "Opentalk",
+  cat: 'komu',
 })
 export class OpenTalkCommand implements CommandLineClass {
   constructor(

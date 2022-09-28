@@ -14,6 +14,7 @@ const messHelp =
 @CommandLine({
   name: "wfh",
   description: "WFH",
+  cat: 'komu',
 })
 export class WFHCommand implements CommandLineClass {
   constructor(

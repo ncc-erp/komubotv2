@@ -5,6 +5,7 @@ import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 @CommandLine({
   name: "addemoji",
   description: "Ajoute un emoji au serveur",
+  cat: "utilities",
 })
 export class AddEmojiCommand implements CommandLineClass {
   constructor(private extendersService: ExtendersService) {}

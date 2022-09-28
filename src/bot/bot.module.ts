@@ -118,6 +118,8 @@ import { ReportTracker } from "./utils/report-tracker.untils";
 import { DailyCommand } from "./commands/daily/daily.command";
 import { QuizService } from "./utils/quiz/quiz.service";
 import { Quiz } from "./models/quiz.entity";
+import { UserInfoCommand } from "./commands/utilities/userInfo.command";
+import { LinksCommand } from "./commands/utilities/links.command";
 
 @Module({
   imports: [
@@ -247,6 +249,8 @@ import { Quiz } from "./models/quiz.entity";
     PingCommand,
     DailyCommand,
     QuizService,
+    UserInfoCommand,
+    LinksCommand,
   ],
   controllers: [KomubotrestController],
 })

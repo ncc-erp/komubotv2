@@ -25,6 +25,7 @@ Please log timesheet follow this template:
 @CommandLine({
   name: "timesheet",
   description: "Log timesheet",
+  cat: 'komu',
 })
 export class TimeSheetCommand implements CommandLineClass {
   constructor(

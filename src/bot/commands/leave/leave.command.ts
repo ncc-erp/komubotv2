@@ -6,6 +6,7 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 @CommandLine({
   name: "leave",
   description: "leave",
+  cat: 'komu',
 })
 export default class LeaveCommand implements CommandLineClass {
   constructor(

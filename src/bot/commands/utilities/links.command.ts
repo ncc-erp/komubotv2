@@ -6,6 +6,7 @@ import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 @CommandLine({
   name: "links",
   description: "Envoye un lien pour inviter le bot :)",
+  cat: "utilities",
 })
 export class LinksCommand implements CommandLineClass {
   constructor(

@@ -4,6 +4,7 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 @CommandLine({
   name: "ping",
   description: "Renvoie la latence du bot",
+  cat: "utilities",
 })
 export class PingCommand implements CommandLineClass {
   async execute(message, args, client, guildDB) {
