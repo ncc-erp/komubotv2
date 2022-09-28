@@ -10,6 +10,7 @@ const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
 @CommandLine({
   name: "remind",
   description: "Remind",
+  cat: 'komu',
 })
 export class RemindCommand implements CommandLineClass {
   constructor(

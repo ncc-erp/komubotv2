@@ -10,6 +10,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "tx8",
   description: "YEP lucky draw",
+  cat: 'komu',
 })
 export class Tx8Command implements CommandLineClass {
   constructor(

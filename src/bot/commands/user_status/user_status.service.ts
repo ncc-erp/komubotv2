@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { TABLE } from "src/bot/constants/table";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
 
@@ -13,9 +12,10 @@ export class UserStatusService {
 
   async getUserStatus(email) {
     return await this.userRepository
-      .createQueryBuilder(TABLE.USER)
-      .where(`${TABLE.USER}.email = :email`, { email: email })
-      .orWhere(`${TABLE.USER}.username = :username`, { username: email })
+      .createQueryBuilder()
+      .where(`"email" = :email`, { email: email })
+      .andWhere(`"username" = :username`, { username: email })
+      .select("*")
       .execute();
   }
 }

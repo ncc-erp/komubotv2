@@ -9,6 +9,7 @@ import { ToggleActiveService } from "./toggleActive.service";
 @CommandLine({
   name: "toggleactivation",
   description: "Toggle Activation",
+  cat: 'komu',
 })
 export class ToggleActiveCommand implements CommandLineClass {
   constructor(

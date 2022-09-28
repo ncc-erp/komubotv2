@@ -1,7 +1,6 @@
-const API_TOKEN = "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";
-const API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+import { HttpService } from "@nestjs/axios";
 import { InjectRepository } from "@nestjs/typeorm";
-import axios from "axios";
+import { firstValueFrom } from "rxjs";
 import { TABLE } from "src/bot/constants/table";
 import { Conversation } from "src/bot/models/conversation.entity";
 import { Repository } from "typeorm";
@@ -14,18 +13,26 @@ export class DmMessageUntil {
     private toggleActiveCommand: ToggleActiveCommand,
     private syncRole: Sync_role,
     @InjectRepository(Conversation)
-    private dmMessageReposistory: Repository<Conversation>
+    private dmMessageReposistory: Repository<Conversation>,
+    private readonly http: HttpService
   ) {}
+
+  API_TOKEN = "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";
+  API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
 
   async getMessageAI(url, sender, message, token) {
     try {
-      const response = await axios.post(
-        url,
-        {
-          sender,
-          message,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const response = await firstValueFrom(
+        this.http
+          .post(
+            url,
+            {
+              sender,
+              message,
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+          .pipe((res) => res)
       );
       return response;
     } catch (e) {
@@ -60,13 +67,6 @@ export class DmMessageUntil {
       const authorId = message.author.id;
       const content = message.content;
 
-      // const data = await conversationData
-      //   .findOne({
-      //     channelId: channelId,
-      //     authorId: authorId,
-      //     createdTimestamp: { $gte: Date.now() - 20000 },
-      //   })
-      //   .catch(console.log);
       const data = await this.dmMessageReposistory
         .createQueryBuilder(TABLE.CONVERSATION)
         .where(`${TABLE.CONVERSATION}.channelId = :channelId`, {
@@ -83,10 +83,10 @@ export class DmMessageUntil {
 
       if (!authorId || !content) return;
       const res = await this.getMessageAI(
-        API_URL,
+        this.API_URL,
         message.author.username,
         `${content}`,
-        API_TOKEN
+        this.API_TOKEN
       );
 
       if (res && res.data && res.data.length) {
@@ -99,30 +99,29 @@ export class DmMessageUntil {
           .catch(console.error);
         return;
       }
-      // can check lai cho nay
-      // if (data) {
-      //   await this.dmMessageReposistory
-      //     .updateOne(
-      //       { _id: data._id },
-      //       {
-      //         past_user_inputs: [content],
-      //         generated_responses: res.data.map((item) => item.text),
-      //         updatedTimestamp: createdTimestamp,
-      //       }
-      //     )
-      //     .catch(console.log);
-      // } else {
-      //   await new conversationData({
-      //     channelId: channelId,
-      //     authorId: authorId,
-      //     createdTimestamp: createdTimestamp,
-      //     updatedTimestamp: createdTimestamp,
-      //     past_user_inputs: [content],
-      //     generated_responses: res.data.map((item) => item.text),
-      //   })
-      //     .save()
-      //     .catch(console.log);
-      // }
+      if (data) {
+        await this.dmMessageReposistory
+          .update(
+            { id: data.id },
+            {
+              past_user_inputs: [content],
+              generated_responses: res.data.map((item) => item.text),
+              updatedTimestamp: createdTimestamp,
+            }
+          )
+          .catch(console.log);
+      } else {
+        await this.dmMessageReposistory
+          .insert({
+            channelId: channelId,
+            authorId: authorId,
+            createdTimestamp: createdTimestamp,
+            updatedTimestamp: createdTimestamp,
+            past_user_inputs: [content],
+            generated_responses: res.data.map((item) => item.text),
+          })
+          .catch(console.log);
+      }
     } catch (error) {
       console.error(error);
     }

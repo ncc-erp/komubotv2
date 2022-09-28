@@ -11,6 +11,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "ncc8",
   description: "Ncc8",
+  cat: 'komu',
 })
 export default class Ncc8Command implements CommandLineClass {
   constructor(

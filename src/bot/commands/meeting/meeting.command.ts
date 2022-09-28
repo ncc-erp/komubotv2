@@ -30,6 +30,7 @@ const messHelp =
 @CommandLine({
   name: "meeting",
   description: "Meeting",
+  cat: 'komu',
 })
 export class MeetingCommand implements CommandLineClass {
   constructor(

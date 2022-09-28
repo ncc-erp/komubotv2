@@ -4,6 +4,7 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 @CommandLine({
   name: "ping",
   description: "Renvoie la latence du bot",
+  cat: "utilities",
 })
 export class PingCommand implements CommandLineClass {
   async execute(message, args, client, guildDB) {
@@ -27,12 +28,12 @@ export class PingCommand implements CommandLineClass {
               }**: \`${message.client.ws.ping}ms\`\n**${
                 guildDB.lang === "fr" ? "Ping de la bdd" : "Database ping"
               }**: \`8ms\``,
-              color: guildDB.color,
+              // color: guildDB.color,
               title: `${
                 guildDB.lang === "fr" ? "Latence du bot" : "Bot latency"
               }`,
               footer: {
-                text: `${message.client.footer}`,
+                text: `KOMU`,
                 icon_url: message.client.user.displayAvatarURL({
                   dynamic: true,
                   size: 512,

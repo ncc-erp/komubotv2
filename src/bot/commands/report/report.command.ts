@@ -26,6 +26,7 @@ const messHelpDaily =
 @CommandLine({
   name: "report",
   description: "report",
+  cat: 'komu',
 })
 export class ReportCommand implements CommandLineClass {
   constructor(

@@ -1,13 +1,15 @@
+import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { PollEmbedUntil } from "src/bot/utils/poll/pollEmbed.until";
 
 @CommandLine({
   name: "poll",
   description: "create a poll",
+  cat: 'komu',
 })
 export class PollCommand implements CommandLineClass {
   constructor(private readonly pollEmbedUntil: PollEmbedUntil) {}
-  async execute(message, args) {
+  async execute(message: Message, args) {
     const cmds = args.join(" ").split("+");
     const options = cmds.slice(1);
 

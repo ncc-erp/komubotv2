@@ -13,10 +13,10 @@ export class Conversation {
   @Column({ nullable: false })
   authorId: string;
 
-  @Column({ type: "text" })
+  @Column("text", { array: true })
   generated_responses: string[];
 
-  @Column({ type: "text" })
+  @Column("text", { array: true })
   past_user_inputs: string[];
 
   @Column({ type: "decimal" })

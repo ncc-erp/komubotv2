@@ -5,6 +5,7 @@ import { DECORATOR_COMMAND_LINE } from "./command.constans";
 export interface CommandLineArgument {
   name: string;
   description: string;
+  cat: string;
 }
 export class CommandLineClass {
   execute: (

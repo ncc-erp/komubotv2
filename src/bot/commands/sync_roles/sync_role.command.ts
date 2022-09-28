@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "sync",
   description: "WFH Daily",
+  cat: 'komu',
 })
 export class Sync_role implements CommandLineClass {
   constructor(

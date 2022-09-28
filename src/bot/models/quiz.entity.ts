@@ -1,12 +1,15 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.QUESTION)
 export class Quiz {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ type: "text" })
   title: string;
 
-  @Column({ type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   options: string[];
 
   @Column({ type: "text" })

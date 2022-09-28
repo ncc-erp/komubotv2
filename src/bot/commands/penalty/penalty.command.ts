@@ -33,6 +33,7 @@ const messHelp =
 @CommandLine({
   name: "penalty",
   description: "penalty",
+  cat: 'komu',
 })
 export default class PenaltyCommand implements CommandLineClass {
   constructor(private PenaltyService: PenaltyService) {}

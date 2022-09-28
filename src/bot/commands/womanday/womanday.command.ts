@@ -11,6 +11,7 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 @CommandLine({
   name: "happy",
   description: "create a poll",
+  cat: 'komu',
 })
 export class WomanDayCommand implements CommandLineClass {
     constructor(  private WomanDayService : WomanDayService, private komubotrestController: KomubotrestService) {
@@ -84,7 +85,7 @@ export class WomanDayCommand implements CommandLineClass {
             for (let i = 0; i < 5; i++) {
               row.addComponents(
                 new ButtonBuilder()
-                  .setCustomId(`8/3_&userid=${user.id}&key=${i}`)
+                  .setCustomId(`8/3_&userid=${user.userId}&key=${i}`)
                   .setLabel('🎁')
                   .setStyle(1)
               );

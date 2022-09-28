@@ -1,18 +1,28 @@
 import { Message, Client, parseEmoji, EmbedBuilder } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 
 @CommandLine({
   name: "serverinfo",
   description: "Gives all the information available on the server",
+  cat: "utilities",
 })
 export class ServerInfoCommand implements CommandLineClass {
-  constructor() {}
+  constructor(private extendersService: ExtendersService) {}
+
   async execute(message, args, client, guildDB) {
     if (message.guild.memberCount !== message.guild.members.cache.size) {
       await message.guild.members.fetch();
     }
-    const lang = await message.translate("SERVERINFO", guildDB.lang);
-    const here = await message.translate("CLIQ", guildDB.lang);
+    const lang = await this.extendersService.translateMessage(
+      "SERVERINFO",
+      guildDB.lang
+    );
+    const here = await this.extendersService.translateMessage(
+      "CLIQ",
+      guildDB.lang
+    );
+
     const embed = new EmbedBuilder()
       .setAuthor({
         name: `${message.author.username}`,
@@ -31,15 +41,16 @@ export class ServerInfoCommand implements CommandLineClass {
       }
        **Bots:** ${message.guild.members.cache.filter((m) => m.user.bot).size}
        **${lang.c}:** ${
-        message.guild.members.cache.filter((m) =>
-          m.permissions.has([
-            "BAN_MEMBERS",
-            "MANAGE_MESSAGES",
-            "KICK_MEMBERS",
-            "MANAGE_GUILD",
-            "ADMINISTRATOR",
-          ])
-        ).size
+        // message.guild.members.cache.filter((m) =>
+        //   m.permissions.has([
+        //     "BAN_MEMBERS",
+        //     "MANAGE_MESSAGES",
+        //     "KICK_MEMBERS",
+        //     "MANAGE_GUILD",
+        //     "ADMINISTRATOR",
+        //   ])
+        // ).size
+        1
       }`,
     });
     const own = await message.guild.fetchOwner();
@@ -94,18 +105,14 @@ export class ServerInfoCommand implements CommandLineClass {
         : "https://cdn.discordapp.com/attachments/748897191879245834/782271474450825226/0.png?size=128"
     );
     embed.setFooter({
-      text: message.client.footer,
+      text: "KOMU",
       iconURL: message.client.user.displayAvatarURL({
         dynamic: true,
         size: 512,
       }),
     });
     message.channel.send({
-      embeds: [
-        {
-          embed: embed,
-        },
-      ],
+      embeds: [embed],
       allowedMentions: { repliedUser: false },
     });
   }

@@ -1,21 +1,28 @@
-import { Column, Entity, JoinTable, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 import { TABLE } from "../constants/table";
 import { User } from "./user.entity";
 
 @Entity(TABLE.MSG)
 export class Msg {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: string;
 
   // @ManyToOne(() => User, (state) => state.msg)
   // @JoinTable({ name: "user" })
   // user: User;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   channelId: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   guildId: string;
 
   @Column({ nullable: true, type: "boolean" })
@@ -24,46 +31,46 @@ export class Msg {
   @Column({ type: "decimal", nullable: true })
   createdTimestamp: number;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   type: string;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   system: boolean;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   content: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   author: string;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   pinned: boolean;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   tts: boolean;
 
   @Column({ type: "text", nullable: true })
   nonce: string;
 
-  @Column({ type: "text", array: true, nullable: true })
+  @Column("text", { array: true, nullable: true })
   embeds: string[];
 
-  @Column({ type: "text", array: true, nullable: true })
+  @Column("text", { array: true, nullable: true })
   components: string[];
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   attachments: string[];
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   stickers: string[];
 
   @Column({ type: "decimal", nullable: true })
   editedTimestamp: number;
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   reactions: string[];
 
-  @Column({ nullable: true, type: "text", array: true })
+  @Column("text", { array: true, nullable: true })
   mentions: string[];
 
   @Column({ nullable: true, type: "text" })

@@ -3,15 +3,20 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import axios from "axios";
 import { UserStatusService } from "./user_status.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
 
 @CommandLine({
   name: "userstatus",
   description: "users tatus",
+  cat: 'komu',
 })
 export class UserStatusCommand implements CommandLineClass {
-  constructor(private readonly userStatusService: UserStatusService,
-    private komubotrestService : KomubotrestService,
-    ) {}
+  constructor(
+    private readonly userStatusService: UserStatusService,
+    private readonly http: HttpService,
+    private komubotrestService: KomubotrestService
+  ) {}
   async execute(message: Message, args, client) {
     try {
       let authorId = message.author.id;
@@ -35,8 +40,12 @@ export class UserStatusCommand implements CommandLineClass {
         return message.reply(`Wrong Email!`).catch((err) => {
           this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
-      const getUserStatus = await axios.get(
-        `${process.env.TIMESHEET_API}Public/GetWorkingStatusByUser?emailAddress=${email}@ncc.asia`
+      const getUserStatus = await firstValueFrom(
+        this.http
+          .get(
+            `${process.env.TIMESHEET_API}Public/GetWorkingStatusByUser?emailAddress=${email}@ncc.asia`
+          )
+          .pipe((res) => res)
       );
       if (!getUserStatus.data) return;
 

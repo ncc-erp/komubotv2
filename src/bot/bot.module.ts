@@ -2,10 +2,7 @@ import { Channel, DiscordModule } from "@discord-nestjs/core";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { BotController } from "./bot.controller";
-import { BotService } from "./bot.service";
 import { CompantripCommand } from "./commands/companytrip/companytrip.command";
-
 import { HttpModule } from "@nestjs/axios";
 import { MulterModule } from "@nestjs/platform-express";
 import { ScheduleModule as NestjsScheduleModule } from "@nestjs/schedule";
@@ -36,26 +33,18 @@ import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/
 import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
 import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { CheckListModule } from "./utils/checklist/checklist.module";
-import { ReportTracker } from "./utils/report-tracker.untils";
 import { UtilsService } from "./utils/utils.service";
-
-
-
 
 import { CompanytripService } from "./commands/companytrip/companytrip.service";
 import NotificationCommand from "./commands/notification/noti.command";
 
-
 import { OpenTalkService } from "./commands/open-talk/open-talk.service";
 import { OrderCommand } from "./commands/order/order.command";
 import { OrderService } from "./commands/order/order.service";
-import { PingCommand } from "./commands/ping/ping";
 import { CompanyTrip } from "./models/companyTrip.entity";
 import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
-import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
 import { UtilsModule } from "./utils/utils.module";
-
 
 import { AudioPlayer } from "@discordjs/voice";
 import { ConfigService } from "@nestjs/config";
@@ -71,7 +60,6 @@ import { CheckListController } from "./utils/checklist/checklist.controller";
 import { CheckListService } from "./utils/checklist/checklist.service";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-
 
 import { DailyService } from "./commands/daily/daily.service";
 import { ElsaCommand } from "./commands/elsa/elsa.command";
@@ -120,6 +108,22 @@ import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { GemrankCommand } from "./commands/gemrank/gemrank.command";
 import { WomanDayCommand } from "./commands/womanday/womanday.command";
+import { TestCommand } from "./commands/test/test.command";
+import { ExtendersService } from "./utils/extenders/extenders.service";
+import { GuildData } from "./models/guildData.entity";
+import { HasvotedCommand } from "./commands/utilities/hasvoted.command";
+import { PingCommand } from "./commands/utilities/ping.command";
+import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
+import { ReportTracker } from "./utils/report-tracker.untils";
+import { ClCommand } from "./commands/cl/cl.command";
+import { DailyCommand } from "./commands/daily/daily.command";
+import { QuizService } from "./utils/quiz/quiz.service";
+import { Quiz } from "./models/quiz.entity";
+import { UserInfoCommand } from "./commands/utilities/userInfo.command";
+import { LinksCommand } from "./commands/utilities/links.command";
+import { ChecklistCommand } from "./commands/checklist/checklist.command";
+import { ServerInfoCommand } from "./commands/utilities/serverinfo.command";
+import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
 
 @Module({
   imports: [
@@ -157,6 +161,8 @@ import { WomanDayCommand } from "./commands/womanday/womanday.command";
       Conversation,
       TimeVoiceAlone,
       ElsaDaily,
+      GuildData,
+      Quiz,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -173,14 +179,11 @@ import { WomanDayCommand } from "./commands/womanday/womanday.command";
     LeaveCommand,
     LeaveService,
     MeetingCommand,
-    
-
     WFHCommand,
     RemindCommand,
+    ClCommand,
     UserStatusCommand,
-    PingCommand,
     UserStatusService,
-    BotService,
     KomubotrestController,
     UtilsService,
     ReportTracker,
@@ -232,7 +235,6 @@ import { WomanDayCommand } from "./commands/womanday/womanday.command";
     BotInfo,
     HelpCommand,
     TiktokCommand,
-    PingCommand,
     DmMessageUntil,
     VoiceChannelSchedulerService,
     GemrankCommand,
@@ -246,7 +248,18 @@ import { WomanDayCommand } from "./commands/womanday/womanday.command";
     Uploadfile,
     HeyboyCommand,
     HeyboyService,
+    TestCommand,
+    ExtendersService,
+    HasvotedCommand,
+    PingCommand,
+    ChecklistCommand,
+    DailyCommand,
+    QuizService,
+    UserInfoCommand,
+    LinksCommand,
+    ServerInfoCommand,
+    AddEmojiCommand,
   ],
-  controllers: [BotController],
+  controllers: [KomubotrestController],
 })
 export class BotModule {}

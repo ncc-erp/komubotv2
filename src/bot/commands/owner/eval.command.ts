@@ -6,6 +6,7 @@ import util from "util";
 @CommandLine({
   name: "eval",
   description: "Evalue une variable",
+  cat: 'owner',
 })
 export class EvalCommand implements CommandLineClass {
   constructor(
@@ -40,8 +41,7 @@ export class EvalCommand implements CommandLineClass {
         .setDescription(`\`\`\`js\n${clean(str)}\n\`\`\``)
         .addFields("Code" as any, `\`\`\`js\n${code}\n\`\`\``)
         .addFields("Type of:" as any, typeof str)
-
-        .setFooter(message.client.footer);
+        .setFooter("Komu" as any);
       message.channel.send({
         embeds: [embed],
         allowedMentions: { repliedUser: false },
@@ -52,8 +52,7 @@ export class EvalCommand implements CommandLineClass {
         .setDescription(`\`\`\`js\n${error}\n\`\`\``)
         .addFields("Code" as any, `\`\`\`js\n${code}\n\`\`\``)
         .addFields("Type of:" as any, typeof error)
-
-        .setFooter(message.client.footer);
+        .setFooter("Komu" as any);
       message.channel.send({
         embeds: [embed],
         allowedMentions: { repliedUser: false },
