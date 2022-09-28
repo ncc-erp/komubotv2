@@ -117,6 +117,9 @@ import { KomubotrestController } from "./utils/komubotrest/komubotrest.controlle
 import { ReportTracker } from "./utils/report-tracker.untils";
 import { CheckListCommand } from "./commands/checklist/checklist.module";
 import { ClCommand } from "./commands/cl/cl.command";
+import { DailyCommand } from "./commands/daily/daily.command";
+import { QuizService } from "./utils/quiz/quiz.service";
+import { Quiz } from "./models/quiz.entity";
 
 @Module({
   imports: [
@@ -155,6 +158,7 @@ import { ClCommand } from "./commands/cl/cl.command";
       TimeVoiceAlone,
       ElsaDaily,
       GuildData,
+      Quiz,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -245,6 +249,8 @@ import { ClCommand } from "./commands/cl/cl.command";
     HasvotedCommand,
     PingCommand,
     CheckListCommand,
+    DailyCommand,
+    QuizService,
   ],
   controllers: [KomubotrestController],
 })

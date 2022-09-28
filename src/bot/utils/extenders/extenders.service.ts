@@ -124,7 +124,7 @@ export class ExtendersService {
     return data;
   }
 
-  translateMessage = function (text, guildDB) {
+  translateMessage = function (text, guildDB = {}) {
     if (!text || !lang.translations[text]) {
       throw new Error(
         `Translate: Params error: Unknow text ID or missing text ${text}`
