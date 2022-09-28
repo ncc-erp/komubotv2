@@ -3,7 +3,7 @@ import * as Joi from "@hapi/joi";
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { GatewayIntentBits } from "discord.js";
+import { GatewayIntentBits, Partials } from "discord.js";
 
 import { BotModule } from "./bot/bot.module";
 // import { CheckListModule } from "./bot/commands/checklist/checklist.module";
@@ -48,6 +48,20 @@ import { ServeStaticModule } from "@nestjs/serve-static";
             GatewayIntentBits.Guilds,
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMessageReactions,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.DirectMessages,
+            GatewayIntentBits.DirectMessageReactions,
+            GatewayIntentBits.GuildEmojisAndStickers,
+            GatewayIntentBits.GuildVoiceStates,
+          ],
+          partials: [
+            Partials.Channel,
+            Partials.User,
+            Partials.Reaction,
+            Partials.Message,
           ],
         },
         registerCommandOptions: [

@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 const defEmojiList = [
   "\u0031\u20E3",
   "\u0032\u20E3",
@@ -22,7 +22,7 @@ const defEmojiList = [
 
 export class PollEmbedUntil {
   pollEmbed = async (
-    msg,
+    msg: Message,
     title,
     options,
     timeout = 12,
@@ -50,20 +50,19 @@ export class PollEmbedUntil {
     const usedEmojis = Object.keys(emojiInfo);
     usedEmojis.push(forceEndPollEmoji);
 
-    const poll = await msg.channel
-      .send({
-        embeds: [
-          this.embedBuilder(title, msg.author.username).setDescription(text),
-        ],
-      })
-      .catch(console.error);
+    const poll = await msg.channel.send({
+      embeds: [
+        this.embedBuilder(title, msg.author.username).setDescription(text),
+      ],
+    });
+
     for (const emoji of usedEmojis) await poll.react(emoji);
 
-    const reactionCollector = poll.createReactionCollector(
-      (reaction, user) => usedEmojis.includes(reaction.emoji.name) && !user.bot,
-      timeout === 0 ? {} : { time: timeout * 3600 * 1000 }
-    );
-
+    const reactionCollector = poll.createReactionCollector({
+      filter: (reaction, user) =>
+        usedEmojis.includes(reaction.emoji.name) && !user.bot,
+      time: timeout === 0 ? undefined : timeout * 3600 * 1000,
+    });
     const voterInfo = new Map();
     reactionCollector.on("collect", (reaction, user) => {
 
