@@ -9,13 +9,13 @@ export class Wiki {
   @Column({ type: "text", nullable: false })
   name: string;
 
-  @Column({ type: "double", nullable: true })
+  @Column({ nullable: true })
   value: string;
 
   @Column({ type: "decimal", nullable: false })
   type: string;
 
-  @Column({ type: "double", nullable: false })
+  @Column({ nullable: false })
   creator: string;
 
   @Column({ type: "boolean", nullable: true })
