@@ -2,14 +2,15 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TABLE } from "src/bot/constants/table";
 import { Opentalk } from "src/bot/models/opentalk.entity";
-import { getTimeWeek } from "src/bot/utils/open-talk.untils";
+import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class OpenTalkService {
   constructor(
     @InjectRepository(Opentalk)
-    private readonly openTalkRepository: Repository<Opentalk>
+    private readonly openTalkRepository: Repository<Opentalk>,
+    private utils: UtilsService
   ) {}
 
   async getUserOpenTalk(userId, username) {
@@ -19,12 +20,12 @@ export class OpenTalkService {
       .andWhere(`"username" = :username`, { username: username })
       .andWhere(
         `${TABLE.OPEN_TALK}.createdTimestamp >= ${
-          getTimeWeek().firstday.timestamp
+          this.utils.getTimeWeek(null).firstday.timestamp
         }`
       )
       .andWhere(
         `${TABLE.OPEN_TALK}.createdTimestamp <= ${
-          getTimeWeek().lastday.timestamp
+          this.utils.getTimeWeek(null).lastday.timestamp
         }`
       )
       .select(`${TABLE.OPEN_TALK}.*`)
