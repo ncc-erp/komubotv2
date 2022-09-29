@@ -1,46 +1,27 @@
 import { EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { RequestOrder } from "src/bot/utils/requestorder.utils";
+import { UtilsService } from "src/bot/utils/utils.service";
 import { ElsaService } from "./elsa.service";
 
 @CommandLine({
   name: "elsa",
   description: "Elsa daily english group",
-  cat: 'komu',
+  cat: "komu",
 })
 export class ElsaCommand implements CommandLineClass {
   constructor(
     private timeDiscord: RequestOrder,
-    private elsaService: ElsaService
+    private elsaService: ElsaService,
+    private utils: UtilsService
   ) {}
 
-  getTimeWeekMondayToSunday(dayNow) {
-    const curr = new Date();
-    const currentWeekDay = curr.getDay();
-    const lessDays = currentWeekDay == 0 ? 6 : currentWeekDay - 1;
-    const firstweek = new Date(
-      new Date(curr).setDate(curr.getDate() - lessDays)
-    );
-    const arrayDay = Array.from(
-      { length: 9 - dayNow - 1 },
-      (v, i) => i + dayNow + 1
-    );
-
-    function getDayofWeek(rank) {
-      return new Date(
-        new Date(firstweek).setDate(firstweek.getDate() + rank - 2)
-      );
-    }
-    console.log('lengthArray day : ', arrayDay);
-    return arrayDay.map((item) => getDayofWeek(item));
-  }
-  async execute(message : Message, args, client, guildDB) {
+  async execute(message: Message, args, client, guildDB) {
     try {
       if (args[0] === "weekly") {
-       
-        const daily = args.filter((value, index)=>index > 1).join(" ");
-        console.log('daily : ', daily);
-        
+        const daily = args.filter((value, index) => index > 1).join(" ");
+        console.log("daily : ", daily);
+
         if (!daily || daily == undefined) {
           return message
             .reply({
@@ -49,8 +30,9 @@ export class ElsaCommand implements CommandLineClass {
             })
             .catch(console.error);
         }
-        this.getTimeWeekMondayToSunday(new Date().getDay()).map(
-          async (item) => {
+        this.utils
+          .getTimeWeekMondayToSunday(new Date().getDay())
+          .map(async (item) => {
             await this.elsaService.createElsaDailyData(
               message.author.id,
               message.member != null || message.member != undefined
@@ -61,14 +43,13 @@ export class ElsaCommand implements CommandLineClass {
               false,
               message.channel.id
             );
-          }
-        );
+          });
         message.reply({
           content: "`✅` Daily elsa weekly saved.",
           // ephemeral: true,
         });
       } else if (args[0] === "day") {
-        const daily = args.filter((value, index)=>index > 1).join(" ");
+        const daily = args.filter((value, index) => index > 1).join(" ");
         if (!daily || daily == undefined) {
           return message
             .reply({
@@ -96,9 +77,9 @@ export class ElsaCommand implements CommandLineClass {
           // ephemeral: true,
         });
       } else if (args[0] === "report") {
-        console.log('yesterday : ', this.timeDiscord.getYesterdayDate());
-        console.log('tommorow : ', this.timeDiscord.getTomorrowDate());
-        
+        console.log("yesterday : ", this.timeDiscord.getYesterdayDate());
+        console.log("tommorow : ", this.timeDiscord.getTomorrowDate());
+
         const report = await this.elsaService.findReport(
           false,
           this.timeDiscord.getYesterdayDate(),
@@ -129,14 +110,14 @@ export class ElsaCommand implements CommandLineClass {
 
         message.attachments.forEach((attachment) => {
           try {
-            console.log('push something in links')
+            console.log("push something in links");
             const imageLink = attachment.proxyURL;
             links.push(imageLink);
           } catch (error) {
             console.error(error);
           }
         });
-        console.log('link.length : ', links.length)
+        console.log("link.length : ", links.length);
         if (links.length > 0) {
           try {
             await this.elsaService.updateOneDaily(
