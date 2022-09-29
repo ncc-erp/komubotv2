@@ -29,10 +29,9 @@ export class ReportCheckCameraService {
       .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
-      .select(".*")
+      .select("*")
       .execute()
       .catch(console.error);
-
     let userCheckCameraId;
     if (userCheckCamera) {
       userCheckCameraId = userCheckCamera.map((item) => item.userId);
@@ -42,15 +41,17 @@ export class ReportCheckCameraService {
 
     const { userOffFullday, userOffMorning } = await getUserOffWork(null);
     const userOff = [...userOffFullday, ...userOffMorning];
+    console.log(userCheckCameraId);
+
     const checkCameraFullday = await this.userReposistory
-      .createQueryBuilder()
+      .createQueryBuilder("")
       .where(`"userId" NOT IN (:...userCheckCameraId)`, {
         userCheckCameraId: userCheckCameraId,
       })
       .andWhere(`"email" NOT IN (:...userOff)`, {
         userOff: userOff,
       })
-      .andWhere(`"deactive" = :deactive`, { deactive: true })
+      .andWhere('"deactive" IS NOT True')
       .andWhere(
         `"roles_discord" @> :CLIENT OR "roles_discord" @> :HR OR "roles_discord" @> :ADMIN`,
         {
@@ -59,9 +60,8 @@ export class ReportCheckCameraService {
           ADMIN: ["ADMIN"],
         }
       )
-      .select(".*")
+      .select("*")
       .execute();
-
     let mess;
     if (!checkCameraFullday) {
       return;

@@ -60,8 +60,6 @@ import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
 
 import { DailyService } from "./commands/daily/daily.service";
-import { ElsaCommand } from "./commands/elsa/elsa.command";
-import { ElsaService } from "./commands/elsa/elsa.service";
 import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
 import { HeyboyService } from "./commands/heyboy/heyboy.service";
 import { KickbotCommand } from "./commands/kickbot/kickbot.command";
@@ -75,14 +73,12 @@ import { UpdateCommand } from "./commands/update/update.command";
 import { AntCommand } from "./commands/utilities/ant.command";
 import { BotInfo } from "./commands/utilities/botinfo.command";
 import { HelpCommand } from "./commands/utilities/help.command";
-import { TiktokCommand } from "./commands/utilities/tiktok.command";
 import { WolCommand } from "./commands/utilities/wol.command";
 import { WomanDayService } from "./commands/womanday/womanday.service";
 import { BirthDay } from "./models/birthday.entity";
 import { CheckCamera } from "./models/checkCamera.entity";
 import { Conversation } from "./models/conversation.entity";
 import { Dating } from "./models/dating.entity";
-import { ElsaDaily } from "./models/elsaDaily.entity";
 import { JoinCall } from "./models/joinCall.entity";
 import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
 import { TrackerSpentTime } from "./models/trackerSpentTime.entity";
@@ -165,7 +161,6 @@ import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
       TrackerSpentTime,
       Conversation,
       TimeVoiceAlone,
-      ElsaDaily,
       GuildData,
       Quiz,
       Keep,
@@ -239,13 +234,10 @@ import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
     EvalCommand,
     BotInfo,
     HelpCommand,
-    TiktokCommand,
     DmMessageUntil,
     VoiceChannelSchedulerService,
     GemrankCommand,
     OpenTalkCommand,
-    ElsaCommand,
-    ElsaService,
     WomanDayCommand,
     WomanDayService,
     RequestOrder,
