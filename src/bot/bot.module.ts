@@ -124,6 +124,9 @@ import { LinksCommand } from "./commands/utilities/links.command";
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
 import { ServerInfoCommand } from "./commands/utilities/serverinfo.command";
 import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
+import { KeepSlashCommand } from "./slash-commands/keep.slashcommand";
+import { Keep } from "./models/keep.entity";
+import { MachleoCommand } from "./slash-commands/machleo.slashcommand";
 
 @Module({
   imports: [
@@ -163,6 +166,7 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
       ElsaDaily,
       GuildData,
       Quiz,
+      Keep
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -259,6 +263,8 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     LinksCommand,
     ServerInfoCommand,
     AddEmojiCommand,
+    KeepSlashCommand,
+    MachleoCommand
   ],
   controllers: [KomubotrestController],
 })

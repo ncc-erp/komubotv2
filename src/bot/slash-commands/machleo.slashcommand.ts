@@ -23,13 +23,20 @@ export class MachleoCommand implements DiscordTransformedCommand<MachleoDto> {
     @InjectDiscordClient()
     private client: Client
   ) {}
-  handler(
+  async handler(
     @Payload() dto: MachleoDto,
     { interaction }: TransformedCommandExecutionContext
-  ): any {
+  ) {
     try {
+      console.log(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID,"sdfhkg");
       const machleomsg = dto.message;
-      const channel = this.client.channels.fetch("1011577280956485643");
+      (
+        (await this.client.channels.cache.get(
+          '1020252263576502283'
+        )) as any
+      )
+        .send(machleomsg)
+        .catch(console.error);
       interaction.reply({
         content: "`✅` Message sent to #macleo.",
         ephemeral: true,
