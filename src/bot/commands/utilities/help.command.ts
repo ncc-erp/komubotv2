@@ -1,5 +1,5 @@
 import { DiscoveryService } from "@nestjs/core";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { DECORATOR_COMMAND_LINE } from "src/bot/base/command.constans";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
@@ -18,7 +18,7 @@ export class HelpCommand implements CommandLineClass {
     private discoveryService: DiscoveryService
   ) {}
 
-  async execute(e, s, client, guildDB) {
+  async execute(e: Message, s, client, guildDB) {
     let t: any = [];
     if (!s.length) {
       this.discoveryService.getProviders().forEach((provider) => {
@@ -43,11 +43,11 @@ export class HelpCommand implements CommandLineClass {
         }
       });
 
-      // const o = await this.extendersService.translateMessage(
-      //     "HELP_FOOTER",
-      //     guildDB.lang
-      //   ),
-      //   m = guildDB.prefix;
+      const o = await this.extendersService.translateMessage(
+          "HELP_FOOTER",
+          guildDB.lang
+        ),
+        m = guildDB.prefix;
       const E = await this.extendersService.translateMessage(
         "HELP_CAT",
         guildDB.lang
@@ -56,18 +56,18 @@ export class HelpCommand implements CommandLineClass {
         .send({
           embeds: [
             {
-              // color: guildDB.color,
+              color: 1752220,
               author: {
                 name: "KOMU - Help Menu",
                 icon_url: e.client.user.displayAvatarURL({
-                  dynamic: !0,
+                  // dynamic: !0,
                   size: 512,
                 }),
               },
               footer: {
-                // text: o.replace("{prefix}", m),
+                text: o.replace("{prefix}", m),
                 icon_url: e.client.user.displayAvatarURL({
-                  dynamic: !0,
+                  // dynamic: !0,
                   size: 512,
                 }),
               },
@@ -157,7 +157,7 @@ export class HelpCommand implements CommandLineClass {
                 footer: {
                   text: "KOMU",
                   icon_url: e.client.user.displayAvatarURL({
-                    dynamic: !0,
+                    // dynamic: !0,
                     size: 512,
                   }),
                 },
@@ -175,7 +175,7 @@ export class HelpCommand implements CommandLineClass {
           );
         }
       }
-      const E = await e.gg(u.description);
+      const E = await this.extendersService.ggMessage(u.description, e);
       return e.channel.send({
         embeds: [
           {
@@ -201,7 +201,7 @@ export class HelpCommand implements CommandLineClass {
             footer: {
               text: "KOMU",
               icon_url: e.client.user.displayAvatarURL({
-                dynamic: !0,
+                // dynamic: !0,
                 size: 512,
               }),
             },

@@ -16,7 +16,6 @@ import { TicketDevDto } from "../slash-commands/dto/ticketdev.dto";
 @Command({
   name: "ticketdev",
   description: "manage ticket",
-  //   include: [UseGroup(QuerySubCommand)],
 })
 export class TicketSlashCommand
   implements DiscordTransformedCommand<TicketDevDto>
