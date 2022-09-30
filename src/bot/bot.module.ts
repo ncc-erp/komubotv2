@@ -48,8 +48,6 @@ import { AudioPlayer } from "@discordjs/voice";
 import { ConfigService } from "@nestjs/config";
 import LeaveCommand from "./commands/leave/leave.command";
 import { LeaveService } from "./commands/leave/leave.service";
-import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
-import { MoveChannelService } from "./commands/move_channel/move_channel.service";
 import { PollCommand } from "./commands/poll/poll.command";
 import { ClientConfigService } from "./config/client-config.service";
 import { CheckList } from "./models/checklist.entity";
@@ -193,7 +191,6 @@ import { Channel } from "./models/channel.entity";
     KomubotrestController,
     UtilsService,
     ReportTracker,
-    MoveChannelCommand,
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
@@ -215,7 +212,6 @@ import { Channel } from "./models/channel.entity";
     PollEmbedUntil,
     ConfigService,
     ClientConfigService,
-    MoveChannelService,
     ReportHolidayService,
     ReportOpenTalkService,
     AudioPlayer,
