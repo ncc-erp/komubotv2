@@ -1,26 +1,31 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
+import { Channel } from "./channel.entity";
+import { User } from "./user.entity";
 
 @Entity(TABLE.BWL)
 export class Bwl {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ type: "text", nullable: true })
-  channelId: string;
-
-  @Column({ type: "text", nullable: true })
+  @PrimaryColumn()
   messageId: string;
+
+  // @OneToMany(() => BwlReaction, (state) => state.messageId)
+  // @JoinColumn()
+  // bwlReact: BwlReaction[];
+
+  @ManyToOne(() => Channel)
+  @JoinColumn({ name: "channelId" })
+  channelId: Channel;
 
   @Column({ type: "text", nullable: true })
   guildId: string;
 
-  @Column({ type: "text", nullable: true })
-  authorId: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "authorId" })
+  authorId: User;
 
-  @Column("text", { array: true })
+  @Column("text", { array: true, nullable: true })
   link: string[];
 
   @Column({ type: "decimal", nullable: true })
-  createTimestamp: number;
+  createdTimestamp: number;
 }

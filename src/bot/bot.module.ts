@@ -102,7 +102,7 @@ import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { GemrankCommand } from "./commands/gemrank/gemrank.command";
 import { WomanDayCommand } from "./commands/womanday/womanday.command";
-import { TestCommand } from "./commands/test/test.command";
+import { BWLCommand } from "./commands/bwl/bwl.command";
 import { ExtendersService } from "./utils/extenders/extenders.service";
 import { GuildData } from "./models/guildData.entity";
 import { HasvotedCommand } from "./commands/utilities/hasvoted.command";
@@ -245,7 +245,7 @@ import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
     Uploadfile,
     HeyboyCommand,
     HeyboyService,
-    TestCommand,
+    BWLCommand,
     ExtendersService,
     HasvotedCommand,
     PingCommand,
