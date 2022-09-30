@@ -1,4 +1,4 @@
-import { Channel, DiscordModule } from "@discord-nestjs/core";
+import { DiscordModule } from "@discord-nestjs/core";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -129,6 +129,7 @@ import { Keep } from "./models/keep.entity";
 import { WikiSlashCommand } from "./slash-commands/wiki.slashcommand";
 import { Wiki } from "./models/wiki.entity";
 import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
+import { Channel } from "./models/channel.entity";
 
 @Module({
   imports: [

@@ -2,7 +2,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { TABLE } from "src/bot/constants/table";
+import { Msg } from "src/bot/models/msg.entity";
 import { TX8 } from "src/bot/models/tx8.entity";
+import { User } from "src/bot/models/user.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
@@ -10,14 +12,18 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "tx8",
   description: "YEP lucky draw",
-  cat: 'komu',
+  cat: "komu",
 })
 export class Tx8Command implements CommandLineClass {
   constructor(
     private komubotrestService: KomubotrestService,
     private readonly utilsService: UtilsService,
     @InjectRepository(TX8)
-    private readonly tx8Repository: Repository<TX8>
+    private readonly tx8Repository: Repository<TX8>,
+    @InjectRepository(Msg)
+    private readonly msgRepository: Repository<Msg>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
   ) {}
   async execute(message: Message, args, client, authorId) {
     try {
@@ -54,9 +60,20 @@ export class Tx8Command implements CommandLineClass {
           return;
         }
 
+        const userInsert = await this.userRepository.findOne({
+          where: {
+            userId: userId,
+          },
+        });
+        const msgInsert = await this.msgRepository.findOne({
+          where: {
+            id: message.id,
+          },
+        });
+
         await this.tx8Repository.insert({
-          messageId: message.id,
-          userId: userId,
+          messageId: msgInsert,
+          userId: userInsert,
           tx8number: tx8Number,
           status: "pending",
           createdTimestamp: message.createdTimestamp,
