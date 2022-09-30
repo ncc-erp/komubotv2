@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Channel } from "src/bot/models/channel.entity";
 import { CheckList } from "src/bot/models/checklist.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { Subcategorys } from "src/bot/models/subcategoryData.entity";
@@ -17,6 +18,7 @@ import { CheckListService } from "./checklist.service";
       Subcategorys,
       Msg,
       WorkFromHome,
+      Channel,
       User,
     ]),
   ],
