@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { TABLE } from "../constants/table";
 import { Msg } from "./msg.entity";
 import { User } from "./user.entity";
@@ -8,15 +14,15 @@ export class TX8 {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Msg)
-  @JoinColumn({ name: "messageId" })
-  messageId: Msg;
+  @ManyToOne(() => Msg, (state) => state.tx8)
+  @JoinColumn({ name: "message" })
+  message: Msg;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: "authorId" })
-  userId: User;
+  @ManyToOne(() => User, (state) => state.tx8)
+  @JoinColumn({ name: "author" })
+  user: User;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ nullable: true })
   tx8number: number;
 
   @Column({ type: "text", nullable: true })

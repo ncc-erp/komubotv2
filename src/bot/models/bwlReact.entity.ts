@@ -17,20 +17,20 @@ export class BwlReaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Bwl)
-  @JoinColumn({ name: "messageId" })
-  messageId: Bwl;
+  @ManyToOne(() => Bwl, (state) => state.bwlReaction)
+  @JoinColumn({ name: "bwl" })
+  bwl: Bwl;
 
-  @ManyToOne(() => Channel)
-  @JoinColumn({ name: "channelId" })
-  channelId: Channel;
+  @ManyToOne(() => Channel, (state) => state.bwlReaction)
+  @JoinColumn({ name: "channel" })
+  channel: Channel;
 
   @Column({ type: "text", nullable: true })
   guildId: string;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: "authorId" })
-  authorId: User;
+  @ManyToOne(() => User, (state) => state.bwlReaction)
+  @JoinColumn({ name: "author" })
+  author: User;
 
   @Column({ nullable: true })
   emoji: string;

@@ -4,6 +4,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import {
 
 import { TABLE } from "../constants/table";
 import { Channel } from "./channel.entity";
+import { TX8 } from "./tx8.entity";
 import { User } from "./user.entity";
 
 @Entity(TABLE.MSG)
@@ -18,13 +20,16 @@ export class Msg {
   @PrimaryColumn()
   id: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (state) => state.msg)
   @JoinColumn({ name: "author" })
   author: User;
 
-  @OneToOne(() => Channel)
-  @JoinColumn({ name: "channelId" })
-  channelId: Channel;
+  @ManyToOne(() => Channel, (state) => state.msg)
+  @JoinColumn({ name: "channel" })
+  channel: Channel;
+
+  @OneToMany(() => TX8, (state) => state.message)
+  tx8: TX8[];
 
   @Column({ type: "text" })
   guildId: string;

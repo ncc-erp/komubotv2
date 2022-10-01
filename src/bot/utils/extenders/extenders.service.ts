@@ -7,20 +7,23 @@ import { Repository } from "typeorm";
 import translate from "@vitalets/google-translate-api";
 import lang from "../../languages/lang.json";
 import { GuildData } from "src/bot/models/guildData.entity";
+import { Channel } from "src/bot/models/channel.entity";
 
 @Injectable()
 export class ExtendersService {
   constructor(
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     @InjectRepository(Msg)
-    private msgReposistory: Repository<Msg>,
+    private msgRepository: Repository<Msg>,
+    @InjectRepository(Channel)
+    private channelRepository: Repository<Channel>,
     @InjectRepository(GuildData)
-    private guildDataReposistory: Repository<GuildData>
+    private guildDataRepository: Repository<GuildData>
   ) {}
 
   async addDBUser(displayname, message) {
-    let data = await this.userReposistory
+    let data = await this.userRepository
       .createQueryBuilder()
       .where(`"username" = :username`, {
         username: message.username,
@@ -30,7 +33,7 @@ export class ExtendersService {
       .execute();
 
     if (!data)
-      await this.userReposistory
+      await this.userRepository
         .insert({
           userId: message.id,
           username: message.username,
@@ -46,7 +49,7 @@ export class ExtendersService {
         })
         .catch((err) => console.log(err));
 
-    data = await this.userReposistory
+    data = await this.userRepository
       .createQueryBuilder()
       .where(`"username" = :username`, {
         email: displayname,
@@ -56,7 +59,7 @@ export class ExtendersService {
       .execute();
 
     if (!data)
-      await this.userReposistory
+      await this.userRepository
         .insert({
           userId: message.id,
           username: message.username,
@@ -74,9 +77,19 @@ export class ExtendersService {
   }
 
   async addDBMessage(message) {
-    return await this.msgReposistory
+    const user = await this.userRepository.findOne({
+      where: {
+        userId: message.author.id,
+      },
+    });
+    const channelInsert = await this.channelRepository.findOne({
+      where: {
+        id: message.channelId,
+      },
+    });
+    return await this.msgRepository
       .insert({
-        channelId: message.channelId,
+        channel: channelInsert,
         guildId: message.guildId,
         deleted: message.deleted,
         id: message.id,
@@ -84,7 +97,7 @@ export class ExtendersService {
         type: message.type,
         system: message.system,
         content: message.content,
-        author: message.author.id,
+        author: user,
         pinned: message.pinned,
         tts: message.tts,
         nonce: message.nonce,
@@ -100,7 +113,7 @@ export class ExtendersService {
     if (!guildID || isNaN(guildID)) {
       guildID = Guild.id;
     }
-    return await this.guildDataReposistory
+    return await this.guildDataRepository
       .insert({
         serverID: guildID,
         prefix: "*",
@@ -117,7 +130,7 @@ export class ExtendersService {
     if (!guildID || isNaN(guildID)) {
       guildID = Guild.id;
     }
-    let data = await this.guildDataReposistory.findOne({
+    let data = await this.guildDataRepository.findOne({
       where: { serverID: guildID },
     });
     if (!data) data = (await this.addDBGuild(guildID, Guild)) as any;
@@ -142,7 +155,7 @@ export class ExtendersService {
     } else {
       throw new Error("Not text Provided");
     }
-    const langbd = await this.guildDataReposistory.findOne({
+    const langbd = await this.guildDataRepository.findOne({
       where: { serverID: Guild.id },
     });
     let target;

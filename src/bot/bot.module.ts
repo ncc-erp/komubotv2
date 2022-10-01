@@ -124,6 +124,8 @@ import { WikiSlashCommand } from "./slash-commands/wiki.slashcommand";
 import { Wiki } from "./models/wiki.entity";
 import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
 import { Channel } from "./models/channel.entity";
+import { Bwl } from "./models/bwl.entity";
+import { BwlReaction } from "./models/bwlReact.entity";
 
 @Module({
   imports: [
@@ -133,6 +135,8 @@ import { Channel } from "./models/channel.entity";
     }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
+      BwlReaction,
+      Bwl,
       Daily,
       Order,
       Leave,
