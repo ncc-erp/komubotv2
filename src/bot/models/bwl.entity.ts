@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { TABLE } from "../constants/table";
+import { BwlReaction } from "./bwlReact.entity";
 import { Channel } from "./channel.entity";
 import { User } from "./user.entity";
 
@@ -8,20 +9,19 @@ export class Bwl {
   @PrimaryColumn()
   messageId: string;
 
-  // @OneToMany(() => BwlReaction, (state) => state.messageId)
-  // @JoinColumn()
-  // bwlReact: BwlReaction[];
+  @OneToMany(() => BwlReaction, (state) => state.bwl)
+  bwlReaction: BwlReaction[];
 
-  @ManyToOne(() => Channel)
-  @JoinColumn({ name: "channelId" })
-  channelId: Channel;
+  @ManyToOne(() => Channel, (state) => state.bwl)
+  @JoinColumn({ name: "channel" })
+  channel: Channel;
 
   @Column({ type: "text", nullable: true })
   guildId: string;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: "authorId" })
-  authorId: User;
+  @ManyToOne(() => User, (state) => state.bwl)
+  @JoinColumn({ name: "author" })
+  author: User;
 
   @Column("text", { array: true, nullable: true })
   link: string[];

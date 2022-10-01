@@ -168,7 +168,7 @@ export class KomubotrestService {
       });
       await this.messageReposistory.insert({
         author: sent.username,
-        channelId: channelInsert,
+        channel: channelInsert,
         deleted: false,
       });
       // botPing : work when bot send quiz wfh user

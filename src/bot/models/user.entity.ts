@@ -1,11 +1,19 @@
 import {
   Column,
   Entity,
+  JoinColumn,
+  JoinTable,
+  OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { TABLE } from "../constants/table";
+import { Bwl } from "./bwl.entity";
+import { BwlReaction } from "./bwlReact.entity";
+import { Msg } from "./msg.entity";
+import { TX8 } from "./tx8.entity";
+
 @Entity(TABLE.USER)
 export class User {
   @PrimaryColumn()
@@ -14,17 +22,17 @@ export class User {
   @Column({ type: "text", nullable: true })
   username: string;
 
-  // @OneToMany(() => Msg, (state) => state.author)
-  // @JoinColumn()
-  // msg: Msg[];
+  @OneToMany(() => Msg, (state) => state.author)
+  msg: Msg[];
 
-  // @OneToMany(() => Bwl, (state) => state.authorId)
-  // @JoinColumn()
-  // bwl: Bwl[];
+  @OneToMany(() => Bwl, (state) => state.author)
+  bwl: Bwl[];
 
-  // @OneToMany(() => BwlReaction, (state) => state.authorId)
-  // @JoinColumn()
-  // bwlReact: BwlReaction[];
+  @OneToMany(() => BwlReaction, (state) => state.author)
+  bwlReaction: BwlReaction[];
+
+  @OneToMany(() => TX8, (state) => state.user)
+  tx8: TX8[];
 
   // @OneToMany(() => WorkFromHome, (state) => state.userid)
   // wfh: WorkFromHome;
