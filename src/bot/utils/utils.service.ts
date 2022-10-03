@@ -8,7 +8,7 @@ import { Holiday } from "../models/holiday.entity";
 export class UtilsService {
   constructor(
     @InjectRepository(Holiday)
-    private holidayReposistory: Repository<Holiday>
+    private holidayRepository: Repository<Holiday>
   ) {}
 
   getYesterdayDate() {
@@ -57,7 +57,7 @@ export class UtilsService {
       (today.getMonth() + 1).toString().padStart(2, "0") +
       "/" +
       today.getFullYear();
-    const holiday = await this.holidayReposistory.find({
+    const holiday = await this.holidayRepository.find({
       where: {
         dateTime: time,
       },
@@ -163,7 +163,7 @@ export class UtilsService {
     if (date.getDay() === 6 || date.getDay() === 0) {
       return true;
     }
-    const holiday = await this.holidayReposistory.find({
+    const holiday = await this.holidayRepository.find({
       where: {
         dateTime: format,
       },

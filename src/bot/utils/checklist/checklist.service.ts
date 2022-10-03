@@ -9,12 +9,12 @@ import { Repository } from "typeorm";
 export class CheckListService {
   constructor(
     @InjectRepository(CheckList)
-    private checklistReposistory: Repository<CheckList>,
+    private checklistRepository: Repository<CheckList>,
     @InjectRepository(Subcategorys)
-    private subcategorysReposistory: Repository<Subcategorys>
+    private subcategorysRepository: Repository<Subcategorys>
   ) {}
   async findCategory(option) {
-    let checklists = await this.checklistReposistory
+    let checklists = await this.checklistRepository
       .createQueryBuilder()
       .where("category = :category", {
         category: [option],
@@ -26,7 +26,7 @@ export class CheckListService {
   }
 
   async findCheckList(optionSubcategoryId: number) {
-    return await this.subcategorysReposistory
+    return await this.subcategorysRepository
       .createQueryBuilder()
       .where(`"checklistId" = :checklistId`, {
         checklistId: optionSubcategoryId,

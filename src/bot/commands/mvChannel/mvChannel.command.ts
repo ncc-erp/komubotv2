@@ -34,7 +34,7 @@ export class MvChannelCommand implements CommandLineClass {
           userId: authorId,
         })
         .andWhere(`"deactive" IS NOT TRUE`)
-        .select(".*")
+        .select("*")
         .execute();
 
       if (checkRole.length === 0) {
