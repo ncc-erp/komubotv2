@@ -11,7 +11,7 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 export class AvatarCommand implements CommandLineClass {
   constructor(private extendersService: ExtendersService) {}
 
-  async execute(message: Message, args, client: Client, guildDB) {
+  async execute(message, args, client, guildDB) {
     let member;
     if (args.length) {
       member =

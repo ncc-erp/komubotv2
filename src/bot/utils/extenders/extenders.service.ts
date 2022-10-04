@@ -26,7 +26,7 @@ export class ExtendersService {
     let data = await this.userRepository
       .createQueryBuilder()
       .where(`"username" = :username`, {
-        username: message.username,
+        username: message.author.username,
       })
       .andWhere(`"isCancel" IS NOT TRUE`)
       .select("*")
@@ -36,16 +36,16 @@ export class ExtendersService {
       await this.userRepository
         .insert({
           userId: message.id,
-          username: message.username,
-          discriminator: message.discriminator,
-          avatar: message.avatar,
-          bot: message.bot,
+          username: message.author.username,
+          discriminator: message.author.discriminator,
+          avatar: message.author.avatar,
+          bot: message.author.bot,
           system: message.system,
-          banner: message.banner,
+          banner: message.author.banner,
           email: displayname,
-          flags: message.flags,
-          premium_type: message.premium_type,
-          public_flags: message.public_flags,
+          flags: message.flags as any,
+          // premium_type: message.premium_type,
+          // public_flags: message.public_flags,
         })
         .catch((err) => console.log(err));
 
@@ -62,16 +62,16 @@ export class ExtendersService {
       await this.userRepository
         .insert({
           userId: message.id,
-          username: message.username,
-          discriminator: message.discriminator,
-          avatar: message.avatar,
-          bot: message.bot,
+          username: message.author.username,
+          discriminator: message.author.discriminator,
+          avatar: message.author.avatar,
+          bot: message.author.bot,
           system: message.system,
-          banner: message.banner,
+          banner: message.author.banner,
           email: displayname,
-          flags: message.flags,
-          premium_type: message.premium_type,
-          public_flags: message.public_flags,
+          flags: message.flags as any,
+          // premium_type: message.premium_type,
+          // public_flags: message.public_flags,
         })
         .catch((err) => console.log(err));
   }

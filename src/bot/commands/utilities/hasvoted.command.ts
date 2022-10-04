@@ -10,7 +10,7 @@ import { ClientConfigService } from "src/bot/config/client-config.service";
 export class HasvotedCommand implements CommandLineClass {
   constructor(private readonly clientConfigService: ClientConfigService) {}
 
-  async execute(message: Message, args, client: Client) {
+  async execute(message: Message, args, client) {
     // if (!this.clientConfigService.links.topgg_url) {
     //   return message.erroMessage(
     //     'This command is currently disabled beacause i am not on top.gg yet :)'

@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, Message, VoiceChannel } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { MeetingService } from "./meeting.service";
 import { UtilsService } from "src/bot/utils/utils.service";
@@ -137,9 +137,9 @@ export class MeetingCommand implements CommandLineClass {
             let guild = await client.guilds.fetch("958646576627187732");
             const getAllVoice = client.channels.cache.filter(
               (guild) =>
-                // guild.type === "GUILD_VOICE" &&
+                // guild.type == "GUILD_VOICE" &&
                 // 921239248991055884
-                guild.parentId === "958646576627187734"
+                (guild as VoiceChannel).parentId === "958646576627187734"
             );
             const voiceChannel = getAllVoice.map((item) => item.id);
 
@@ -153,10 +153,10 @@ export class MeetingCommand implements CommandLineClass {
             });
             const newList = voiceChannel.map(async (voice, index) => {
               const userDiscord = await client.channels.fetch(voice);
-              if (userDiscord.members.size > 0) {
+              if ((userDiscord as VoiceChannel).members.size > 0) {
                 countVoice++;
               }
-              if (userDiscord.members.size === 0) {
+              if ((userDiscord as VoiceChannel).members.size === 0) {
                 roomMap.push(userDiscord.id);
               }
               let roomVoice = roomMap.filter(

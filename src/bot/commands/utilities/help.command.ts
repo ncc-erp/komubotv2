@@ -18,7 +18,7 @@ export class HelpCommand implements CommandLineClass {
     private discoveryService: DiscoveryService
   ) {}
 
-  async execute(e: Message, s, client: Client, guildDB) {
+  async execute(e, s, client, guildDB) {
     let t: any = [];
     if (!s.length) {
       this.discoveryService.getProviders().forEach((provider) => {

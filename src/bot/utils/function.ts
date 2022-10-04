@@ -13,7 +13,7 @@ function hexColorCheck(a) {
  * Returns a list of the commands in html. For a website, top.gg page etc
  * @param {object} client The discord client instance
  */
-export const printCmd = async (message: Message) => {
+export const printCmd = async (message) => {
   let txt = "";
   const a = message.client.commands.filter((c) => c.cat !== "owner");
   const descriptions = new Map();

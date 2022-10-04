@@ -31,7 +31,7 @@ export const parseTimeSheetSentence = (sentence) => {
   return items;
 };
 
-export const parseDailyMessage = (message: Message) => {
+export const parseDailyMessage = (message) => {
   const [, metaRaw, yesterday, todayRaw, block] = message.split(
     new RegExp("\\*daily|- yesterday:|- today:|- block:", "ig")
   );
@@ -55,7 +55,7 @@ export const parseDailyMessage = (message: Message) => {
   return contentObj;
 };
 
-export const parseTimesheetMessage = (message: Message) => {
+export const parseTimesheetMessage = (message) => {
   const [, metaRaw, ...taskRaw] = message.split(
     new RegExp("\\*timesheet|\\+", "ig")
   );

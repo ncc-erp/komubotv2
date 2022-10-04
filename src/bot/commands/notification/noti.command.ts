@@ -1,6 +1,6 @@
 import { HttpService } from "@nestjs/axios";
 import axios from "axios";
-import { Client, Message } from "discord.js";
+import { Client, Message, TextChannel } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
@@ -68,13 +68,14 @@ export default class NotificationCommand implements CommandLineClass {
         fetchChannel.map(async (channel) => {
           const userDiscord = await client.channels.fetch(channel);
           if (message.attachments && message.attachments.first())
-            userDiscord
+            (userDiscord as TextChannel)
               .send({
                 content: `${noti}`,
                 files: [message.attachments.first().url],
               })
               .catch(console.error);
-          else userDiscord.send(`${noti} `).catch(console.error);
+          else
+            (userDiscord as TextChannel).send(`${noti}`).catch(console.error);
         });
       } else {
         return message

@@ -21,7 +21,7 @@ export class DmMessageUntil {
   API_TOKEN = "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";
   API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
 
-  async getMessageAI(url, sender, message: Message, token) {
+  async getMessageAI(url, sender, message, token) {
     try {
       const response = await firstValueFrom(
         this.http

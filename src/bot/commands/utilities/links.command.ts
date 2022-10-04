@@ -14,7 +14,7 @@ export class LinksCommand implements CommandLineClass {
     private readonly clientConfigService: ClientConfigService
   ) {}
 
-  async execute(message: Message, args, client: Client, guildDB) {
+  async execute(message, args, client, guildDB) {
     const here = await this.extendersService.translateMessage(
       "CLIQ",
       guildDB.lang
@@ -39,7 +39,7 @@ export class LinksCommand implements CommandLineClass {
             footer: {
               text: message.client.footer,
               icon_url: message.client.user.displayAvatarURL({
-                dynamic: true,
+                // dynamic: true,
                 size: 512,
               }),
             },

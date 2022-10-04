@@ -1,9 +1,9 @@
-import { Client } from "discord.js";
+import { Client, TextChannel } from "discord.js";
 
 export async function deleteMessage(client: Client, req, res) {
   try {
     const fetchMessage = await client.channels.fetch(req.body.channelId);
-    const msg = await fetchMessage.messages
+    const msg = await (fetchMessage as TextChannel).messages
       .fetch(req.body.messageId)
       .catch((err) => {});
     if (msg) msg.delete();

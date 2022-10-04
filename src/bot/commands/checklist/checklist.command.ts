@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { CheckListController } from "src/bot/utils/checklist/checklist.controller";
 
@@ -10,7 +10,7 @@ import { CheckListController } from "src/bot/utils/checklist/checklist.controlle
 export class ChecklistCommand implements CommandLineClass {
   constructor(private checkListController: CheckListController) {}
 
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       await this.checkListController.execute(message, args, client);
     } catch (error) {}

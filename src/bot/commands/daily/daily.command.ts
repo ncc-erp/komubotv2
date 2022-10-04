@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
@@ -121,7 +121,7 @@ export class DailyCommand implements CommandLineClass {
     private readonly http: HttpService
   ) {}
 
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
       const authorUsername = message.author.username;

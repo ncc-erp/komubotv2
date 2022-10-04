@@ -10,7 +10,7 @@ import { UtilsService } from "./utils.service";
 import { createReadStream } from "fs";
 import { join } from "path";
 import { Injectable } from "@nestjs/common";
-import { Client, Message } from "discord.js";
+import { Client, Message, VoiceChannel } from "discord.js";
 
 function setTime(date, hours, minute, second, msValue) {
   return date.setHours(hours, minute, second, msValue);
@@ -44,8 +44,8 @@ export class AudioPlayer {
       console.log(player, "dsfbsdfsdbf");
       joinVoiceChannel({
         channelId: channel.id,
-        guildId: channel.guild.id,
-        adapterCreator: channel.guild.voiceAdapterCreator,
+        guildId: (channel as VoiceChannel).guild.id,
+        adapterCreator: (channel as VoiceChannel).guild.voiceAdapterCreator,
         selfDeaf: false,
         selfMute: false,
       }).subscribe(player);
