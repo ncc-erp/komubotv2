@@ -1,18 +1,28 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { TABLE } from "../constants/table";
+import { Msg } from "./msg.entity";
+import { User } from "./user.entity";
 
 @Entity(TABLE.TX8)
 export class TX8 {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text", nullable: true })
-  messageId: string;
+  @ManyToOne(() => Msg, (state) => state.tx8)
+  @JoinColumn({ name: "message" })
+  message: Msg;
 
-  @Column({ type: "text", nullable: true })
-  userId: string;
+  @ManyToOne(() => User, (state) => state.tx8)
+  @JoinColumn({ name: "author" })
+  user: User;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ nullable: true })
   tx8number: number;
 
   @Column({ type: "text", nullable: true })

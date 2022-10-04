@@ -1,29 +1,29 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TABLE } from "src/bot/constants/table";
-import { BWL } from "src/bot/models/bwl.entity";
+import { Bwl } from "src/bot/models/bwl.entity";
 import { Channel } from "src/bot/models/channel.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class BWL_UtilsServices {
   constructor(
-    @InjectRepository(BWL)
-    private bwlRepository : Repository<BWL>,
+    @InjectRepository(Bwl)
+    private bwlRepository : Repository<Bwl>,
     @InjectRepository(Channel)
     private channelRepository : Repository<Channel>
   ){}
-    async addNewBWL(_channelId, _messageId, _guildId, _authorId, _links, _createTimestamp){
+    async addNewBWL(_channelId, _messageId, _guildId, _authorId, _links, _createdTimestamp){
       await this.bwlRepository.createQueryBuilder()
-      .insert().into(BWL)
+      .insert().into(Bwl)
       .values([
         {
-          channelId : _channelId, 
+          channel : _channelId,
           messageId : _messageId, 
           guildId : _guildId, 
-          authorId : _authorId, 
           link : _links, 
-          createTimestamp : _createTimestamp
+          createdTimestamp : _createdTimestamp, 
+          author : _authorId
         }
       ]).execute();
     }
@@ -32,7 +32,7 @@ export class BWL_UtilsServices {
       .insert().into(Channel)
        .values([
         {
-          channelId : _channelId, 
+         id : _channelId, 
           name : _name, 
           type : _type, 
           nsfw : _nsfw, 
@@ -42,12 +42,12 @@ export class BWL_UtilsServices {
         }
        ]).execute();
        return await this.channelRepository.createQueryBuilder(TABLE.CHANNEL)
-       .where(`${TABLE.CHANNEL}.channelId = :channelID`, {channelId : _channelId})
+       .where(`${TABLE.CHANNEL}.id = :channelID`, {channelId : _channelId})
        .execute();
     }
     async findDatachk(_channelId){
       return await this.channelRepository.createQueryBuilder(TABLE.CHANNEL)
-      .where(`${TABLE.CHANNEL}.channelId =:channelId`, {channelId : _channelId})
+      .where(`${TABLE.CHANNEL}.id =:channelId`, {channelId : _channelId})
       .execute();
     }
 }

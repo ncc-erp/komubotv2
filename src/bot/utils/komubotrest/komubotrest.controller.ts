@@ -29,7 +29,7 @@ export class KomubotrestController {
     @InjectRepository(Uploadfile)
     private readonly uploadFileRepository: Repository<Uploadfile>
   ) {}
-
+  //xong
   @Post("/getUserIdByUsername")
   async getUserIdByUsername(@Req() req: Request, @Res() res: Response) {
     return this.komubotrestService.getUserIdByUsername(this.client, req, res);
@@ -85,12 +85,12 @@ export class KomubotrestController {
   async sendEmbedMessage(@Req() req: Request, @Res() res: Response) {
     return this.komubotrestService.sendEmbedMessage(this.client, req, res);
   }
-
+//xong
   @Post("/deleteMessage")
   async deleteMessage(@Req() req: Request, @Res() res: Response) {
     return this.komubotrestService.deleteMessage(this.client, req, res);
   }
-
+//xong
   @Post("/uploadFile")
   @UseInterceptors(
     FileInterceptor("file", {

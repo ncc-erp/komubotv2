@@ -6,9 +6,11 @@ import {
   Client,
   EmbedBuilder,
   Message,
+  User as UserDiscord,
 } from "discord.js";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { TABLE } from "src/bot/constants/table";
+import { Channel } from "src/bot/models/channel.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
@@ -22,6 +24,8 @@ export class KomubotrestService {
     private userReposistory: Repository<User>,
     @InjectRepository(Msg)
     private messageReposistory: Repository<Msg>,
+    @InjectRepository(Channel)
+    private channelReposistory: Repository<Channel>,
     @InjectRepository(WorkFromHome)
     private wfhReposistory: Repository<WorkFromHome>
   ) {}
@@ -161,13 +165,24 @@ export class KomubotrestService {
           .catch(console.error);
         return null;``
       }
-      const sent = await  user.send(msg) as any; 
-      await this.messageReposistory.insert({
-        author: sent.username,
-        channelId: "1021944210800263189",
-        deleted: false,
+      const sent = await (user as UserDiscord).send(msg) ;
+      console.log('send : ', sent)
+      const channelInsert = await this.channelReposistory.findOne({
+        where: {
+          id: "1021944210800263189",
+        },
       });
-      console.log('user of send : ', sent.username)
+      try {
+        await this.messageReposistory.insert({
+          //author: sent.author,
+          channel: channelInsert,
+          deleted: false,
+        });
+
+      }catch(error){
+        console.log('Error : ', error)
+      }
+      console.log('user of send : ', sent.author)
       // botPing : work when bot send quiz wfh user
       // isSendQuiz : work when bot send quiz
       if (botPing && isSendQuiz) {

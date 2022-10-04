@@ -2,7 +2,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { TABLE } from "src/bot/constants/table";
+import { Msg } from "src/bot/models/msg.entity";
 import { TX8 } from "src/bot/models/tx8.entity";
+import { User } from "src/bot/models/user.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
@@ -10,14 +12,17 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "tx8",
   description: "YEP lucky draw",
-  cat: 'komu',
+  cat: "komu",
 })
 export class Tx8Command implements CommandLineClass {
   constructor(
     private komubotrestService: KomubotrestService,
-    private readonly utilsService: UtilsService,
     @InjectRepository(TX8)
-    private readonly tx8Repository: Repository<TX8>
+    private readonly tx8Repository: Repository<TX8>,
+    @InjectRepository(Msg)
+    private readonly msgRepository: Repository<Msg>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
   ) {}
   async execute(message: Message, args, client, authorId) {
     try {
@@ -27,7 +32,6 @@ export class Tx8Command implements CommandLineClass {
         return message
           .reply({
             content: "```please add your lucky draw number (100 - 999)```",
-            //   ephemeral: true,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -46,7 +50,6 @@ export class Tx8Command implements CommandLineClass {
           message
             .reply({
               content: "Please enter a number between 100 and 999",
-              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -54,9 +57,20 @@ export class Tx8Command implements CommandLineClass {
           return;
         }
 
+        const userInsert = await this.userRepository.findOne({
+          where: {
+            userId: userId,
+          },
+        });
+        const msgInsert = await this.msgRepository.findOne({
+          where: {
+            id: message.id,
+          },
+        });
+
         await this.tx8Repository.insert({
-          messageId: message.id,
-          userId: userId,
+          message: msgInsert,
+          user: userInsert,
           tx8number: tx8Number,
           status: "pending",
           createdTimestamp: message.createdTimestamp,
@@ -64,7 +78,6 @@ export class Tx8Command implements CommandLineClass {
         message
           .reply({
             content: "`✅` Lucky number saved.",
-            //   ephemeral: true,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -80,7 +93,6 @@ export class Tx8Command implements CommandLineClass {
         message
           .reply({
             content: "```You are not allowed to use this command.```",
-            //   ephemeral: true,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -97,70 +109,35 @@ export class Tx8Command implements CommandLineClass {
         );
         const starttime = startOfDay.getTime() + 8 * 3600000;
         const endtime = starttime + 12 * 3600000;
-        //   const aggregatorOpts = [
-        //     {
-        //       $match: {
-        //         status: 'pending',
-        //         createdTimestamp: {
-        //           $gte: starttime,
-        //           $lt: endtime,
-        //         },
-        //         tx8number: {
-        //           $gte: 99,
-        //           $lt: 1000,
-        //         },
-        //       },
-        //     },
-        //     {
-        //       $group: {
-        //         _id: '$userId',
-        //         lastId: { $last: '$_id' },
-        //         tx8number: { $last: '$tx8number' },
-        //         createdTimestamp: { $last: '$createdTimestamp' },
-        //       },
-        //     },
-        //     {
-        //       $project: {
-        //         _id: '$lastId',
-        //         userId: '$_id',
-        //         tx8number: 1,
-        //         createdTimestamp: 1,
-        //       },
-        //     },
-        //     {
-        //       $lookup: {
-        //         from: 'komu_users',
-        //         localField: 'userId',
-        //         foreignField: 'id',
-        //         as: 'user',
-        //       },
-        //     },
-        //     {
-        //       $sort: {
-        //         createdTimestamp: -1,
-        //       },
-        //     },
-        //   ];
 
-        // const aggregatorOpts =
-
-        //can join bang user
         const data = await this.tx8Repository
-          .createQueryBuilder(TABLE.TX8)
-          .where(`${TABLE.TX8}.status = :status`, { status: "pending" })
-          .andWhere(`${TABLE.TX8}.createdTimestamp > ${starttime}`)
-          .andWhere(`${TABLE.TX8}.createdTimestamp < ${endtime}`)
-          .andWhere(`${TABLE.TX8}.tx8number > 99`)
-          .andWhere(`${TABLE.TX8}.tx8number < 100`)
-          .groupBy(`${TABLE.TX8}.tx8number`)
-          .addGroupBy(`${TABLE.TX8}.createdTimestamp`)
-          .orderBy(`${TABLE.TX8}.createdTimestamp`, "ASC")
+          .createQueryBuilder("tx8")
+          .innerJoinAndSelect("tx8.user", "user")
+          .where(`"status" = :status`, { status: "pending" })
+          .andWhere(`"createdTimestamp" >= :gtecreatedTimestamp`, {
+            gtecreatedTimestamp: starttime,
+          })
+          .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
+            ltecreatedTimestamp: endtime,
+          })
+          .andWhere(`"tx8number" > :gttx8number`, {
+            gttx8number: 99,
+          })
+          .andWhere(`"tx8number" < :lttx8number`, {
+            lttx8number: 1000,
+          })
+          .groupBy("tx8.id")
+          .addGroupBy("user.userId")
+          .addGroupBy("tx8.tx8number")
+          .addGroupBy("tx8.createdTimestamp")
+          .orderBy("tx8.createdTimestamp", "ASC")
+          .select("*")
           .execute();
+
         if (data.length == 0) {
           message
             .reply({
               content: "```No lucky number found```",
-              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -170,23 +147,20 @@ export class Tx8Command implements CommandLineClass {
         const rndNumber = Math.floor(Math.random() * data.length);
         const tx8Number = data[rndNumber].tx8number;
 
-        //   await tx8Data.updateMany(
-        //     { userId: data[rndNumber].userId },
-        //     { status: 'done' }
-        //   );
-
+        const user = await this.userRepository
+          .find({ where: { userId: data[rndNumber].userId } })
+          .catch(console.error);
         await this.tx8Repository
-          .createQueryBuilder()
-          .update(TABLE.TX8)
+          .createQueryBuilder("tx8")
+          .update(TX8)
+          .where(`"author" = :author`, { author: data[rndNumber].userId })
           .set({
-            userId: data[rndNumber].userId,
             status: "done",
           })
           .execute();
         message
           .reply({
-            content: `\`🎉\` Lucky number is \`${tx8Number}\` by \`${data[rndNumber].user[0].email}\``,
-            //   ephemeral: false,
+            content: `\`🎉\` Lucky number is \`${tx8Number}\` by \`${data[rndNumber].email}\``,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -197,7 +171,6 @@ export class Tx8Command implements CommandLineClass {
       message
         .reply({
           content: "```Error```",
-          //   ephemeral: true
         })
         .catch((err) => {
           this.komubotrestService.sendErrorToDevTest(client, authorId, err);

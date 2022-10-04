@@ -9,7 +9,7 @@ import {
 import { TABLE } from "../constants/table";
 import { WorkFromHome } from "./wfh.entity";
 
-@Entity(TABLE.USER)
+@Entity(TABLE.USERQUIZ)
 export class UserQuiz {
   @PrimaryGeneratedColumn()
   quizId: number;

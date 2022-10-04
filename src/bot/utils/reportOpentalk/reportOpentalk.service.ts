@@ -22,12 +22,12 @@ export class ReportOpenTalkService {
         .addSelect('MAX("createdTimestamp")', "timeStamp")
         .andWhere(
           `"createdTimestamp" > ${
-            this.utilsService.getTimeWeek().firstday.timestamp
+            this.utilsService.getTimeWeek(null).firstday.timestamp
           }`
         )
         .andWhere(
           `"createdTimestamp" < ${
-            this.utilsService.getTimeWeek().lastday.timestamp
+            this.utilsService.getTimeWeek(null).lastday.timestamp
           }`
         )
         .groupBy("username")

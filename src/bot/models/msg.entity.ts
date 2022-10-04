@@ -1,28 +1,37 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { TABLE } from "../constants/table";
+import { Channel } from "./channel.entity";
+import { TX8 } from "./tx8.entity";
 import { User } from "./user.entity";
 
 @Entity(TABLE.MSG)
 export class Msg {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: string;
 
-  // @ManyToOne(() => User, (state) => state.msg)
-  // @JoinTable({ name: "user" })
-  // user: User;
+  @ManyToOne(() => User, (state) => state.msg)
+  @JoinColumn({ name: "author" })
+  author: User;
 
-  @Column({ type: "text", nullable: true })
-  channelId: string;
+  @ManyToOne(() => Channel, (state) => state.msg)
+  @JoinColumn({ name: "channel" })
+  channel: Channel;
 
-  @Column({ type: "text", nullable: true })
+  @OneToMany(() => TX8, (state) => state.message)
+  tx8: TX8[];
+
+  @Column({ type: "text" })
   guildId: string;
 
   @Column({ nullable: true, type: "boolean" })
@@ -31,22 +40,19 @@ export class Msg {
   @Column({ type: "decimal", nullable: true })
   createdTimestamp: number;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   type: string;
 
-  @Column({ type: "boolean", nullable: true })
+  @Column({ type: "boolean" })
   system: boolean;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text" })
   content: string;
 
-  @Column({ type: "text", nullable: true })
-  author: string;
-
-  @Column({ type: "boolean", nullable: true })
+  @Column({ type: "boolean" })
   pinned: boolean;
 
-  @Column({ type: "boolean", nullable: true })
+  @Column({ type: "boolean" })
   tts: boolean;
 
   @Column({ type: "text", nullable: true })

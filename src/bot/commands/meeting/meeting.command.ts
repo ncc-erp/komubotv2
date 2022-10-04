@@ -30,15 +30,15 @@ const messHelp =
 @CommandLine({
   name: "meeting",
   description: "Meeting",
-  cat: 'komu',
+  cat: "komu",
 })
 export class MeetingCommand implements CommandLineClass {
   constructor(
     private meetingService: MeetingService,
     private readonly utilsService: UtilsService,
     @InjectRepository(Meeting)
-    private readonly meetingRepository: Repository<Meeting>, 
-    private komubotrestService : KomubotrestService,
+    private readonly meetingRepository: Repository<Meeting>,
+    private komubotrestService: KomubotrestService
   ) {}
 
   async execute(message: Message, args, client) {
@@ -71,7 +71,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
           }
           for (let i = 0; i <= Math.ceil(list.length / 50); i += 1) {
@@ -84,6 +88,7 @@ export class MeetingCommand implements CommandLineClass {
                 .slice(i * 50, (i + 1) * 50)
                 .map((item) => {
                   const dateTime = this.utilsService.formatDate(
+                    //formatDate
                     new Date(Number(item.createdTimestamp))
                   );
                   if (item.repeatTime) {
@@ -100,7 +105,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
           }
         }
@@ -117,7 +126,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
           } else {
             // 921239248991055882
@@ -158,7 +171,11 @@ export class MeetingCommand implements CommandLineClass {
                         // ephemeral: true,
                       })
                       .catch((err) => {
-                        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                        this.komubotrestService.sendErrorToDevTest(
+                          client,
+                          authorId,
+                          err
+                        );
                       });
                   }
                 } else {
@@ -172,7 +189,11 @@ export class MeetingCommand implements CommandLineClass {
                         // ephemeral: true,
                       })
                       .catch((err) => {
-                        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                        this.komubotrestService.sendErrorToDevTest(
+                          client,
+                          authorId,
+                          err
+                        );
                       });
                   } else
                     await message
@@ -181,7 +202,11 @@ export class MeetingCommand implements CommandLineClass {
                         // ephemeral: true,
                       })
                       .catch((err) => {
-                        this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                        this.komubotrestService.sendErrorToDevTest(
+                          client,
+                          authorId,
+                          err
+                        );
                       });
                 }
               }
@@ -201,7 +226,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
           } else {
             return message
@@ -210,7 +239,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true,
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
           }
         } else if (args[0] === "meet") {
@@ -303,7 +336,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
 
             await page.evaluate(async () => {
@@ -337,7 +374,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
           }
           if (!/(2[0-3]|[01][0-9]):[0-5][0-9]/.exec(checkTime)) {
@@ -347,7 +388,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
           }
 
@@ -360,7 +405,11 @@ export class MeetingCommand implements CommandLineClass {
                 // ephemeral: true
               })
               .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
               });
 
           const day = datetime.slice(0, 2);
