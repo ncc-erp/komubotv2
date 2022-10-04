@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import axios from "axios";
 import { UserStatusService } from "./user_status.service";
@@ -9,7 +9,7 @@ import { firstValueFrom } from "rxjs";
 @CommandLine({
   name: "userstatus",
   description: "users tatus",
-  cat: 'komu',
+  cat: "komu",
 })
 export class UserStatusCommand implements CommandLineClass {
   constructor(
@@ -17,7 +17,7 @@ export class UserStatusCommand implements CommandLineClass {
     private readonly http: HttpService,
     private komubotrestService: KomubotrestService
   ) {}
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       let authorId = message.author.id;
       if (args[0] === "help" || !args[0]) {

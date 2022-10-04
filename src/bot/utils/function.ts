@@ -1,3 +1,4 @@
+import { Message } from "discord.js";
 import hexColorRegex from "hex-color-regex";
 function hexColorCheck(a) {
   const check = hexColorRegex().test(a);
@@ -158,7 +159,7 @@ export const checkConfig = async (config) => {
       error = true;
     }
   }
-  if (!config.logAll || typeof config.logAll as any !== Boolean) {
+  if (!config.logAll || (typeof config.logAll as any) !== Boolean) {
     console.error("✗ The logAll parameter is missing or is not a bolean value");
     error = true;
   }
@@ -171,7 +172,7 @@ export const checkConfig = async (config) => {
     error = true;
   } else if (
     !config.database.cached ||
-    typeof config.database.cached as any !== Boolean
+    (typeof config.database.cached as any) !== Boolean
   ) {
     console.error(
       "✗ The database.cache parameter is missing or is not a bolean value"

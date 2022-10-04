@@ -1,7 +1,7 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { intervalToDuration } from "date-fns";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { getUserOffWork } from "../getUserOffWork";
 import { firstValueFrom } from "rxjs";
@@ -55,7 +55,7 @@ export class ReportCheckoutService {
     return result;
   };
 
-  async reportCheckout(message, args, client) {
+  async reportCheckout(message: Message, args, client: Client) {
     if (!args[1]) {
       try {
         const lists = await firstValueFrom(
@@ -107,7 +107,7 @@ export class ReportCheckoutService {
       await message
         .reply({
           content: this.messHelp,
-          ephemeral: true,
+          // ephemeral: true,
         })
         .catch(console.error);
     } else if (args[1] === "weekly") {
@@ -137,7 +137,10 @@ export class ReportCheckoutService {
               )
               .pipe((res) => res)
           );
-          const checkTimesheet = await this.dateCalculate(lists.data.result, startDate);
+          const checkTimesheet = await this.dateCalculate(
+            lists.data.result,
+            startDate
+          );
 
           let mess;
           if (!checkTimesheet) {
@@ -187,7 +190,10 @@ export class ReportCheckoutService {
             )
             .pipe((res) => res)
         );
-        const checkTimesheet = await this.dateCalculate(lists.data.result, startDate);
+        const checkTimesheet = await this.dateCalculate(
+          lists.data.result,
+          startDate
+        );
 
         let mess;
         if (!checkTimesheet) {

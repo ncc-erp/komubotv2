@@ -36,7 +36,7 @@ export class User {
   tx8: TX8[];
 
   @OneToMany(() => WorkFromHome, (state) => state.user)
-  wfh: WorkFromHome;
+  wfh: WorkFromHome[];
 
   @Column({ type: "text", nullable: true })
   discriminator: string;

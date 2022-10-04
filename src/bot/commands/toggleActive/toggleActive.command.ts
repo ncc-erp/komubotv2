@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Message, EmbedBuilder } from "discord.js";
+import { Message, EmbedBuilder, Client } from "discord.js";
 import { User } from "src/bot/models/user.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { Repository } from "typeorm";
@@ -9,14 +9,14 @@ import { ToggleActiveService } from "./toggleActive.service";
 @CommandLine({
   name: "toggleactivation",
   description: "Toggle Activation",
-  cat: 'komu',
+  cat: "komu",
 })
 export class ToggleActiveCommand implements CommandLineClass {
   constructor(
     @InjectRepository(User)
     private userData: Repository<User>,
-    private toggleActiveService: ToggleActiveService, 
-    private komubotrestService : KomubotrestService,
+    private toggleActiveService: ToggleActiveService,
+    private komubotrestService: KomubotrestService
   ) {}
   messHelp =
     "```" +
@@ -25,7 +25,7 @@ export class ToggleActiveCommand implements CommandLineClass {
     "*toggleactivation id" +
     "```";
 
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       let authorId = args[0];
       let userId = args[0].slice(2, -1);

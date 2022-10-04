@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 
 @CommandLine({
@@ -7,7 +7,7 @@ import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
   cat: "utilities",
 })
 export class PingCommand implements CommandLineClass {
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     message.channel
       .send("<a:green_loading:824308769713815612> **Pinging...**")
       .then(async (m) => {
@@ -17,7 +17,7 @@ export class PingCommand implements CommandLineClass {
               author: {
                 name: `${message.member.user.tag}`,
                 icon_url: message.member.user.displayAvatarURL({
-                  dynamic: true,
+                  // dynamic: true,
                   size: 512,
                 }),
               },
@@ -35,7 +35,7 @@ export class PingCommand implements CommandLineClass {
               footer: {
                 text: `KOMU`,
                 icon_url: message.client.user.displayAvatarURL({
-                  dynamic: true,
+                  // dynamic: true,
                   size: 512,
                 }),
               },

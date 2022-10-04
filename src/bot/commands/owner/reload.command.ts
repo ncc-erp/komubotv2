@@ -1,3 +1,4 @@
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 

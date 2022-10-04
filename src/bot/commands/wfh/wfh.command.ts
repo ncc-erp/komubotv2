@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { ReportTracker } from "src/bot/utils/report-tracker.untils";
@@ -14,14 +14,14 @@ const messHelp =
 @CommandLine({
   name: "wfh",
   description: "WFH",
-  cat: 'komu',
+  cat: "komu",
 })
 export class WFHCommand implements CommandLineClass {
   constructor(
     private readonly reqortTracker: ReportTracker,
     private komubotrestService: KomubotrestService
   ) {}
-  async execute(message: Message, args, client, authorId) {
+  async execute(message: Message, args, client: Client, authorId) {
     try {
       if (args[0] === "daily") {
         let currentDate = new Date();
@@ -48,11 +48,7 @@ export class WFHCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           for (let i = 0; i <= Math.ceil(data.length / 50); i += 1) {
@@ -155,11 +151,7 @@ export class WFHCommand implements CommandLineClass {
             // ephemeral: true
           })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(
-              client,
-              authorId,
-              err
-            );
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
       if (!args[0]) {
@@ -184,11 +176,7 @@ export class WFHCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                authorId,
-                err
-              );
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           for (let i = 0; i <= Math.ceil(data.length / 50); i += 1) {

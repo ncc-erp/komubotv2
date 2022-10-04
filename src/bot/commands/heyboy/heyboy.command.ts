@@ -1,6 +1,6 @@
 import { HttpService } from "@nestjs/axios";
 import axios from "axios";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
@@ -9,7 +9,7 @@ import { HeyboyService } from "./heyboy.service";
 @CommandLine({
   name: "chuc",
   description: "create a poll",
-  cat: 'komu',
+  cat: "komu",
 })
 export class HeyboyCommand implements CommandLineClass {
   constructor(
@@ -87,7 +87,7 @@ export class HeyboyCommand implements CommandLineClass {
     .setImage(
       "https://media.discordapp.net/attachments/921593472039915551/950241681041670164/unknown.png"
     );
-  async execute(message, args, client) {
+  async execute(message: Message, args, client: Client) {
     if (args[0] !== "mung" || args[1] !== "ngay" || args[2] !== "8/3") return;
     const ID_USER_PRIVATE = "869774806965420062";
     if (message.author.id !== ID_USER_PRIVATE) {

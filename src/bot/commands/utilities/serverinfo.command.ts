@@ -10,7 +10,7 @@ import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 export class ServerInfoCommand implements CommandLineClass {
   constructor(private extendersService: ExtendersService) {}
 
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     if (message.guild.memberCount !== message.guild.members.cache.size) {
       await message.guild.members.fetch();
     }
@@ -26,7 +26,10 @@ export class ServerInfoCommand implements CommandLineClass {
     const embed = new EmbedBuilder()
       .setAuthor({
         name: `${message.author.username}`,
-        iconURL: message.author.displayAvatarURL({ dynamic: true, size: 512 }),
+        iconURL: message.author.displayAvatarURL({
+          // dynamic: true,
+          size: 512,
+        }),
       })
       .setTitle(message.guild.name);
     if (message.guild.description) {
@@ -101,13 +104,15 @@ export class ServerInfoCommand implements CommandLineClass {
     });
     embed.setThumbnail(
       message.guild.icon
-        ? message.guild.iconURL({ dynamic: true })
+        ? message.guild.iconURL({
+            // dynamic: true
+          })
         : "https://cdn.discordapp.com/attachments/748897191879245834/782271474450825226/0.png?size=128"
     );
     embed.setFooter({
       text: "KOMU",
       iconURL: message.client.user.displayAvatarURL({
-        dynamic: true,
+        // dynamic: true,
         size: 512,
       }),
     });

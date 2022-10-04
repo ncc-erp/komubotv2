@@ -26,7 +26,7 @@ const messHelpDaily =
 @CommandLine({
   name: "report",
   description: "report",
-  cat: 'komu',
+  cat: "komu",
 })
 export class ReportCommand implements CommandLineClass {
   constructor(
@@ -41,8 +41,7 @@ export class ReportCommand implements CommandLineClass {
     private reportScoreService: ReportScoreService,
     private reportCheckCameraService: ReportCheckCameraService,
     private odinReportService: OdinReportService,
-    private reportTrackerService: ReportTrackerService,
-    
+    private reportTrackerService: ReportTrackerService
   ) {}
 
   getTimeWeekMondayToFriday(dayNow) {
@@ -123,7 +122,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "wfh") {
         await this.reportWFHService.reportWfh(message, args, client);
       } else if (args[0] === "msgcount") {
-        // await reportMessageCount(message, args, client, guildDB);
+        // await this.reportMessageCount.reportMessageCount(message);
       } else if (args[0] === "quiz") {
         await this.reportScoreService.reportScore(message);
       } else if (args[0] === "womenday") {

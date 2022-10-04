@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Remind } from "src/bot/models/remind.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
@@ -10,16 +10,15 @@ const messHelp = "```" + "*remind @username dd/MM/YYYY HH:mm content" + "```";
 @CommandLine({
   name: "remind",
   description: "Remind",
-  cat: 'komu',
+  cat: "komu",
 })
 export class RemindCommand implements CommandLineClass {
   constructor(
     @InjectRepository(Remind)
-    private readonly remindRepository: Repository<Remind>, 
-    private komubotrestService : KomubotrestService,
-    
+    private readonly remindRepository: Repository<Remind>,
+    private komubotrestService: KomubotrestService
   ) {}
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       let authorId = message.author.id;
       if (!args[0]) {

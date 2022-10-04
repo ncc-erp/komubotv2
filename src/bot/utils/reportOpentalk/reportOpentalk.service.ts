@@ -1,7 +1,7 @@
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Client, EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { Opentalk } from "src/bot/models/opentalk.entity";
 import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
@@ -14,7 +14,7 @@ export class ReportOpenTalkService {
     private opentalkRepository: Repository<Opentalk>
   ) {}
 
-  async reportOpentalk(message) {
+  async reportOpentalk(message: Message) {
     try {
       const arrayUser = await this.opentalkRepository
         .createQueryBuilder("opentalks")
