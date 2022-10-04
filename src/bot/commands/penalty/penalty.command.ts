@@ -1,4 +1,13 @@
-import { Message, Client, EmbedBuilder, User } from "discord.js";
+import { channel } from "diagnostics_channel";
+import {
+  Message,
+  Client,
+  EmbedBuilder,
+  User,
+  ActionRowBuilder,
+  ButtonBuilder,
+} from "discord.js";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { DataSource, Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { Penalty } from "../../models/penatly.entity";
@@ -36,197 +45,174 @@ const messHelp =
   cat: 'komu',
 })
 export default class PenaltyCommand implements CommandLineClass {
-  constructor(private PenaltyService: PenaltyService) {}
+  constructor(
+    private penaltyService: PenaltyService,
+    private komubotrestService: KomubotrestService
+  ) {}
 
-  async execute(message: Message, args, _, __, ___, dataSource: DataSource) {
-    const penaltyData = dataSource.getRepository(Penalty);
+  async execute(message : Message, args, client : Client, guildDB) {
     try {
       const authorId = message.author.id;
       if (args[0] === "help") {
+        console.log('sao chay vao day duoc nhi')
         return message.channel.send(messHelp);
       } else if (args[0] === "summary") {
-        // await dataSource
-        //   .createQueryBuilder()
-        //   .insert()
-        //   .into(User)
-        //   .values([
-        //     { is_reject: false },
-        //     { channel_id: message.channel.id },
-        //   ])
-        //   .execute();
+        console.log('this is sumary');
+        
+        const result = await this.penaltyService.findPenatly(message.channel.id);
 
-        // const aggregatorOpts = [
-        //   {
-        //     where: {
-        //       is_reject: false,
-        //       channel_id: message.channel.id,
-        //       delete: false,
-        //     },
-        //   },
-        //   {
-        //     andWhere: {
-        //       id: "user_id",
-        //       amount: "$ammount",
-        //       username: "$username",
-        //     },
-        //   },
-        //   {
-        //     $sort: {
-        //       amount: -1,
-        //     },
-        //   },
-        // ];
+        let mess;
+        if (Array.isArray(result) && result.length === 0) {
+          mess = '```' + 'no result' + '```';
+        } else {
+          mess = result
+            .map((item) => `<@${item.userId}>(${item.komu_penatly_username}) : ${item.ammount} vnd`)
+            .join('\n');
+        }
+        console.log('result : ', result);
+        console.log('mess : ', mess);
+        
+        return message.channel
+          .send('```' + 'Top bị phạt :' + '\n' + '```' + '\n' + mess)
+          .catch(console.error);
+      } else if (args[0] === "detail") {
+        const checkMention = message.mentions.members.first();
 
-        // const result = await this.PenaltyService(aggregatorOpts);
+        if (!checkMention) return message.channel.send(messHelp);
+        let dataPen;
+        if (checkMention.user.id) {
+          dataPen = await this.penaltyService.findDataPenWithUserId(
+            checkMention.user.id,
+            message.channel.id
+          );
+        } else {
+          dataPen = await this.penaltyService.findDataPenWithUsername(
+            checkMention.user.username,
+            message.channel.id
+          );
+        }
 
-        // let mess;
-        // if (Array.isArray(result) && result.length === 0) {
-        //   mess = "```" + "no result" + "```";
-        // } else {
-        //   mess = result
-        //     .map((item) => `<@${item.id}>(${item.username}) : ${item.ammount}`)
-        //     .join("\n");
-        // }
+        if (!dataPen || (Array.isArray(dataPen) && dataPen.length === 0)) {
+          return message.channel.send("```" + "no result" + "```");
+        }
+        const mess = dataPen
+          .map(
+            (item, index) => `${index + 1} - ${item.komu_penatly_reason} (${item.komu_penatly_ammount})`
+          )
+          .join("\n");
+          console.log('dataPen : ', dataPen);
+         console.log('mess : ', mess);
+        return message.channel
+          .send(
+            "```" + `Lý do ${dataPen[0].komu_penatly_username} bị phạt` + "\n" + mess + "```"
+          )
+          .catch(console.error);
+      } else if (args[0] === "clear") {
+        // clear
+        await this.penaltyService.clearPenatly(message.channel.id);
+        console.log('success')
+        message
+          .reply({
+            content: "Clear penatly successfully",
+          })
+          .catch((err) => {
+            this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+          });
+      } else {
+        console.log('add penatly');
+        
+        const channel_id = message.channel.id;
+        if (!args[0] || !args[1] || !args[2]) {
+          return message.channel.send(messHelp);
+        }
+        const userArgs = message.mentions.members.first();
+        const ammount = transAmmount(args[1]);
+        if (!ammount || !userArgs) {
+          return message.channel.send(messHelp);
+        }
+        const reason = args.slice(2, args.length).join(" ");
 
-      //   return message.channel
-      //     .send("```" + "Top bị phạt :" + "\n" + "```" + "\n" + mess)
-      //     .catch(console.error);
-      // } else if (args[0] === "detail") {
-      //   // detail
-      //   let checkMention = message.mentions.members.first();
-
-      //   if (!checkMention) return message.channel.send(messHelp);
-      //   let dataPen;
-      //   if (checkMention.user.id) {
-      //     dataPen = await penaltyData.insert({
-      //       user_id: checkMention.user.id,
-      //       channel_id: message.channel.id,
-      //     });
-      //   } else {
-      //     dataPen = await penaltyData.insert({
-      //       username: checkMention.user.username,
-      //       channel_id: message.channel.id,
-      //     });
-      //   }
-
-        // if (!dataPen || (Array.isArray(dataPen) && dataPen.length === 0)) {
-        //   return message.channel.send("```" + "no result" + "```");
-        // }
-      //   const mess = dataPen
-      //     .map(
-      //       (item, index) => `${index + 1} - ${item.reason} (${item.ammount})`
-      //     )
-      //     .join("\n");
-      //   return message.channel
-      //     .send(
-      //       "```" + `Lý do ${dataPen[0].username} bị phạt` + "\n" + mess + "```"
-      //     )
-      //     .catch(console.error);
-      // } else if (args[0] === "clear") {
-      //   // clear
-      //   await penaltyData.insert(
-      //     {
-      //       channel_id: message.channel.id,
-      //       // delete: { $ne: true },
-      //     }
-      //     // { delete: true }
-      //   );
-      //   message
-      //     .reply({
-      //       content: "Clear penatly successfully",
-      //     })
-      //     .catch((err) => {
-      //       sendErrorToDevTest(Client, authorId, err);
-      //     });
-      // } else {
-      //   if (!args[0] || !args[1] || !args[2]) {
-      //     return message.channel.send(messHelp);
-      //   }
-      //   const userArgs = message.mentions.members.first();
-      //   // tien
-      //   const ammount = transAmmount(args[1]);
-
-      //   if (!ammount || !userArgs) {
-      //     return message.channel.send(messHelp);
-      //   }
-        //li do
-        // const reason = args.slice(2, args.length).join(" ");
-        // let user = message.author.id;
-        // const userChannel = userArgs?.user.id;
-        // if (!user) return message.channel.send("```" + "no result" + "```");
-        // console.log("user mess", user);
-        // console.log("user in channel", userChannel);
-        // if (userChannel) {
-        // await this.PenaltyService.addUserIntoPenalty(
-        //   message,
-        //   {
-        //     ammount: +ammount,
-        //     reason: reason,
-        //   },
-        //   userChannel,
-        //   userArgs?.user.username
-        // );
-        // return message
-        //   .reply({ content: "`✅` Penalty saved." })
-        //   .catch((err) => {
-        //     sendErrorToDevTest(Client, authorId, err);
-        //   });
-        // }
-        // else {
-        //   return message.reply({ content: "User not exit in channel" });
-        // }
-
-        // const embed = new MessageEmbed()
-        //   .setColor("#0099ff")
-        //   .setTitle("PENALTY")
-        //   .setDescription(
-        //     `You have been fined by ${message.author.username} ${ammount} for: ${reason}`
-        //   );
-
-        //   const row = new MessageActionRow().addComp onents(
-        //     new MessageButton()
-        //       .setCustomId(`rejectpenalty${newPenatlyData.}`)
-        //       .setLabel("REJECT")
-        //       .setStyle("DANGER")
-        //   );
-
-        //   const userSend = await sendErrorToDevTest(
-        //     Client,
-        //     {
-        //       components: [row],
-        //       embeds: [embed],
-        //     },
-        //     user.username
-        //   );
-        //   const filter = (interaction) =>
-        //     interaction.customId === `rejectpenalty${newPenatlyData.splice}`;
-
-        //   let interaction;
-        //   try {
-        //     interaction = await userSend.dmChannel.awaitMessageComponent({
-        //       filter,
-        //       max: 1,
-        //       time: 86400000,
-        //       errors: ["time"],
-        //     });
-        //   } catch (error) {
-        //     console.log(error);
-        //   }
-
-        //   if (interaction) {
-        //     message.channel
-        //       .send(`<@!${user.id}>(${user.username}) reject penalty`)
-        //       .catch(console.error);
-        //     await interaction.reply("Rejection sent!!!").catch((err) => {
-        //       sendErrorToDevTest(Client, authorId, err);
-        //     });
-        //     await penaltyData.save(
-        //       { id: newPenatlyData. }
-        //       // {
-        //       //   is_reject: true,
-        //       // }
-        //     );
-        //   }
+        
+        let users;
+        if (userArgs?.user.id) {
+        
+          users = await this.penaltyService.findUserWithId(userArgs.user.id);
+    
+        } else {
+        
+          
+          users = await this.penaltyService.findUserWithUsername(
+            userArgs.user.username          );
+      
+          
+        }
+        //console.log('user : ', users, 'ammount : ', ammount, ' reason : ', reason, ' - channelId : ', channel_id);
+        console.log('user : ', users)
+        if (!users) 
+         return message.channel.send("```" + "no result" + "```")
+        const newPenatlyData =await this.penaltyService.addNewPenatly(
+          users[0].komu_user_userId,
+          users[0].komu_user_username,
+          ammount,
+          reason,
+           Date.now(),
+          false,
+          channel_id,
+           false,
+        );
+        message.reply({ content: "`✅` Penalty saved." }).catch((err) => {
+          this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+        });
+        const embed = new EmbedBuilder()
+          .setColor("#0099ff")
+          .setTitle("PENALTY")
+          .setDescription(
+            `You have been fined by ${message.author.username} ${ammount} for: ${reason}`
+          );
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId(`rejectpenalty${newPenatlyData.userId}`)
+            .setLabel("REJECT")
+            .setStyle(4)
+        );
+         console.log('here',  users[0].komu_user_username) 
+        const userSend = await this.komubotrestService.sendMessageKomuToUser(
+          client,
+          {
+            components: [row as any],
+            embeds: [embed ],
+          },
+          users[0].komu_user_username
+        );
+        console.log('are u ready', userSend)
+        const filter = (interaction) =>
+          interaction.customId === `rejectpenalty${newPenatlyData._id}`;
+          console.log('hometown : ',filter);
+          
+        let interaction;
+         try {
+          interaction = await (userSend as User).dmChannel.awaitMessageComponent({
+            filter,
+            // max: 1,
+            time: 86400000,
+          //  errors: ["time"],
+          });
+        } catch (error) {
+          console.log('Error comehere ', error);
+        }
+        console.log('error ?');
+        
+        if (interaction) {
+          message.channel
+            .send(`<@!${users[0].komu_user_userId}>(${users[0].komu_user_username}) reject penalty`)
+            .catch(console.error);
+          await interaction.reply("Rejection sent!!!").catch((err) => {
+            this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+          });
+          const whatRe = await this.penaltyService.updateIsReject(newPenatlyData.userId);
+          console.log('return what ? ', whatRe);
+          
+        }
       }
     } catch (error) {
       console.log(error);

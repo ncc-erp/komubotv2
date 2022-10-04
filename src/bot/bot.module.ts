@@ -124,6 +124,13 @@ import { LinksCommand } from "./commands/utilities/links.command";
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
 import { ServerInfoCommand } from "./commands/utilities/serverinfo.command";
 import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
+import PenaltyCommand from "./commands/penalty/penalty.command";
+import { PenaltyService } from "./commands/penalty/penalty.service";
+import { Penalty } from "./models/penatly.entity";
+import { BWLCommand } from "./commands/bwl/bwl.command";
+import { BWLService } from "./commands/bwl/bwl.service";
+import { BwlReaction } from "./models/bwlReact.entity";
+import { BWL } from "./models/bwl.entity";
 
 @Module({
   imports: [
@@ -133,7 +140,10 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
+      BwlReaction, 
+      BWL, 
       Daily,
+      Penalty,
       Order,
       Leave,
       Holiday,
@@ -259,6 +269,10 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     LinksCommand,
     ServerInfoCommand,
     AddEmojiCommand,
+    PenaltyCommand, 
+    PenaltyService, 
+    BWLCommand, 
+    BWLService,
   ],
   controllers: [KomubotrestController],
 })

@@ -1,3 +1,4 @@
+import { number } from '@hapi/joi';
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 import { TABLE } from '../constants/table';
@@ -8,25 +9,25 @@ export class Penalty {
   id: number;
 
   @Column({ type: "text" })
-  user_id: string;
+  userId: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable : true })
   username: string;
 
-  @Column({ type: "boolean" })
+  @Column({type : "int"})
   ammount: number;
 
   @Column({ type: "text" })
   reason: string;
 
-  @Column({ type: "date" })
-  createdTimestamp: Date;
+  @Column({ type: "decimal" })
+  createdTimestamp: number;
 
   @Column({ type: "boolean" })
-  is_reject: boolean;
+  isReject: boolean;
 
   @Column({ type: "text" })
-  channel_id: string;
+  channelId: string;
 
   @Column({ type: "boolean" })
   delete: boolean;
