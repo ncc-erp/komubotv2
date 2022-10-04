@@ -1,3 +1,4 @@
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 
@@ -9,7 +10,7 @@ import { ClientConfigService } from "src/bot/config/client-config.service";
 export class HasvotedCommand implements CommandLineClass {
   constructor(private readonly clientConfigService: ClientConfigService) {}
 
-  async execute(message, args, client) {
+  async execute(message: Message, args, client: Client) {
     // if (!this.clientConfigService.links.topgg_url) {
     //   return message.erroMessage(
     //     'This command is currently disabled beacause i am not on top.gg yet :)'
@@ -22,7 +23,7 @@ export class HasvotedCommand implements CommandLineClass {
           author: {
             name: message.member.user.username,
             icon_url: message.member.user.displayAvatarURL({
-              dynamic: true,
+              // dynamic: true,
               size: 512,
             }),
             url: process.env.LINKS_INVITE,
@@ -41,7 +42,7 @@ export class HasvotedCommand implements CommandLineClass {
           footer: {
             text: `KOMU`,
             icon_url: message.client.user.displayAvatarURL({
-              dynamic: true,
+              // dynamic: true,
               size: 512,
             }),
           },

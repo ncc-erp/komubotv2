@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { TABLE } from "src/bot/constants/table";
 import { Msg } from "src/bot/models/msg.entity";
@@ -24,7 +24,7 @@ export class Tx8Command implements CommandLineClass {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
   ) {}
-  async execute(message: Message, args, client, authorId) {
+  async execute(message: Message, args, client: Client, authorId) {
     try {
       const userId = message.author.id;
 

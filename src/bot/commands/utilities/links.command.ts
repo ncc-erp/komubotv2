@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
@@ -14,7 +14,7 @@ export class LinksCommand implements CommandLineClass {
     private readonly clientConfigService: ClientConfigService
   ) {}
 
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     const here = await this.extendersService.translateMessage(
       "CLIQ",
       guildDB.lang
@@ -30,7 +30,7 @@ export class LinksCommand implements CommandLineClass {
             author: {
               name: message.author.username,
               icon_url: message.author.displayAvatarURL({
-                dynamic: true,
+                // dynamic: true,
                 size: 512,
               }),
             },
@@ -54,7 +54,10 @@ export class LinksCommand implements CommandLineClass {
       const embed = new EmbedBuilder()
         .setAuthor({
           name: `${message.author.username}`,
-          url: message.author.displayAvatarURL({ dynamic: true, size: 512 }),
+          url: message.author.displayAvatarURL({
+            // dynamic: true,
+            size: 512,
+          }),
         })
         .setColor(guildDB.color)
         .setDescription(
@@ -71,7 +74,7 @@ export class LinksCommand implements CommandLineClass {
         .setFooter({
           text: message.client.footer,
           iconURL: message.client.user.displayAvatarURL({
-            dynamic: true,
+            // dynamic: true,
             size: 512,
           }),
         });
@@ -83,7 +86,10 @@ export class LinksCommand implements CommandLineClass {
       const embed = new EmbedBuilder()
         .setAuthor({
           name: `${message.author.username}`,
-          url: message.author.displayAvatarURL({ dynamic: true, size: 512 }),
+          url: message.author.displayAvatarURL({
+            //  dynamic: true,
+            size: 512,
+          }),
         })
         .setColor(guildDB.color)
         .setDescription(
@@ -100,7 +106,7 @@ export class LinksCommand implements CommandLineClass {
         .setFooter({
           text: "KOMU",
           iconURL: message.client.user.displayAvatarURL({
-            dynamic: true,
+            // dynamic: true,
             size: 512,
           }),
         });
@@ -112,7 +118,10 @@ export class LinksCommand implements CommandLineClass {
       const embed = new EmbedBuilder()
         .setAuthor({
           name: `${message.author.username}`,
-          url: message.author.displayAvatarURL({ dynamic: true, size: 512 }),
+          url: message.author.displayAvatarURL({
+            //  dynamic: true,
+            size: 512,
+          }),
         })
         .setColor(guildDB.color)
         .addFields({
@@ -139,14 +148,14 @@ export class LinksCommand implements CommandLineClass {
         .setDescription(lang)
         .setThumbnail(
           message.client.user.displayAvatarURL({
-            dynamic: true,
+            // dynamic: true,
             size: 512,
           })
         )
         .setFooter({
           text: "KOMU",
           iconURL: message.client.user.displayAvatarURL({
-            dynamic: true,
+            // dynamic: true,
             size: 512,
           }),
         });

@@ -10,7 +10,7 @@ import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 export class AddEmojiCommand implements CommandLineClass {
   constructor(private extendersService: ExtendersService) {}
 
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     let type = "";
     let name = "";
     let emote = args.join(" ").match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/gi);

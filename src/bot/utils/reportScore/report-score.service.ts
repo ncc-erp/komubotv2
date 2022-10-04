@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { TABLE } from "src/bot/constants/table";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
@@ -14,7 +14,7 @@ export class ReportScoreService {
     private utilsService: UtilsService
   ) {}
 
-  async reportScore(message) {
+  async reportScore(message: Message) {
     try {
       const userid = message.author.id;
       const username = message.author.username;

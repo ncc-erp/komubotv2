@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
@@ -22,7 +22,7 @@ export class ExtendersService {
     private guildDataRepository: Repository<GuildData>
   ) {}
 
-  async addDBUser(displayname, message) {
+  async addDBUser(displayname, message: Message) {
     let data = await this.userRepository
       .createQueryBuilder()
       .where(`"username" = :username`, {

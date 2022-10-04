@@ -1,4 +1,4 @@
-import { Client, EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { CompanytripService } from "./companytrip.service";
@@ -6,7 +6,7 @@ import { CompanytripService } from "./companytrip.service";
 @CommandLine({
   name: "roommate",
   description: "NCC company trip",
-  cat: 'komu',
+  cat: "komu",
 })
 export class CompantripCommand implements CommandLineClass {
   constructor(
@@ -25,7 +25,7 @@ export class CompantripCommand implements CommandLineClass {
       return { email: userArgs, year: this.currentYear };
     }
   }
-  async execute(message, args) {
+  async execute(message: Message, args) {
     try {
       let authorId = message.author.id;
       if (args[0]) {
@@ -39,7 +39,7 @@ export class CompantripCommand implements CommandLineClass {
             .reply({
               content:
                 "Người này không có trong danh sách. Hẹn gặp vào NCC COMPANY TRIP 2023",
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(
@@ -89,7 +89,7 @@ export class CompantripCommand implements CommandLineClass {
           message
             .reply({
               content: "Hẹn gặp bạn vào NCC COMPANY TRIP 2023",
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(

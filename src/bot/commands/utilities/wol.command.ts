@@ -4,6 +4,7 @@ import find from "local-devices";
 import broadcastAddress from "broadcast-address";
 import os from "os";
 import net from "net";
+import { Message } from "discord.js";
 
 function getAvailableBroadcastAddresses() {
   const interfacesNames = Object.keys(os.networkInterfaces());
@@ -112,7 +113,7 @@ function sendCMDToPfsense(branch, identity, ipAddress) {
   }
 }
 
-function handleWoL(message, args) {
+function handleWoL(message: Message, args) {
   const identity = args[0];
   const ipAddress = args[1];
   const branch = args[2];

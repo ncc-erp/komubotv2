@@ -30,6 +30,7 @@ import { ReportHolidayModule } from "./reportHoliday/reportHoliday.module";
 import { ReportHolidayService } from "./reportHoliday/reportHoliday.service";
 import { ReportMentionModule } from "./reportMention/reportMention.module";
 import { ReportMentionService } from "./reportMention/reportMention.service";
+import { ReportMessageCount } from "./reportMessageCount/reportMessageCount.service";
 import { ReportOpenTalkModule } from "./reportOpentalk/reportOpentalk.module";
 import { ReportOpenTalkService } from "./reportOpentalk/reportOpentalk.service";
 import { ReportOrderModule } from "./reportOrder/reportOrder.module";
@@ -91,6 +92,7 @@ import { UtilsService } from "./utils.service";
     OdinReportService,
     ReportTrackerService,
     UserNotDailyService,
+    ReportMessageCount,
   ],
 })
 export class UtilsModule {}

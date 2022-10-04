@@ -126,6 +126,7 @@ import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
 import { Channel } from "./models/channel.entity";
 import { Bwl } from "./models/bwl.entity";
 import { BwlReaction } from "./models/bwlReact.entity";
+import { ReportMessageCount } from "./utils/reportMessageCount/reportMessageCount.service";
 
 @Module({
   imports: [
@@ -262,6 +263,7 @@ import { BwlReaction } from "./models/bwlReact.entity";
     KeepSlashCommand,
     WikiSlashCommand,
     VocabSlashCommand,
+    ReportMessageCount,
   ],
   controllers: [KomubotrestController],
 })

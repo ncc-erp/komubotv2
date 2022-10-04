@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { fetchAntFeed } from "src/bot/utils/ant";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 
@@ -51,7 +51,7 @@ const handleAntFeed = async (message, args) => {
   cat: "utilities",
 })
 export class AntCommand implements CommandLineClass {
-  async execute(message, args) {
+  async execute(message: Message, args) {
     try {
       if (args[0] === "help") {
         return message.reply(

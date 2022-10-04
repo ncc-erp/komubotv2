@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import moment from "moment";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
@@ -18,7 +18,7 @@ export class UserInfoCommand implements CommandLineClass {
     private extendersService: ExtendersService
   ) {}
 
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     let member;
     if (args.length) {
       member =
@@ -96,7 +96,10 @@ export class UserInfoCommand implements CommandLineClass {
       )
       .setAuthor({
         name: `${message.author.username}`,
-        url: message.author.displayAvatarURL({ dynamic: true, size: 512 }),
+        url: message.author.displayAvatarURL({
+          // dynamic: true,
+          size: 512,
+        }),
       })
       .addFields({
         name: `__**${lang.title}**__`,
@@ -152,7 +155,7 @@ export class UserInfoCommand implements CommandLineClass {
       .setFooter({
         text: "KOMU",
         iconURL: message.client.user.displayAvatarURL({
-          dynamic: true,
+          // dynamic: true,
           size: 512,
         }),
       });

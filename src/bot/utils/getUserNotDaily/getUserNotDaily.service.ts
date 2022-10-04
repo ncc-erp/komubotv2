@@ -1,6 +1,7 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Client, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { Daily } from "src/bot/models/daily.entity";
@@ -21,7 +22,7 @@ export class UserNotDailyService {
     private clientConfigService: ClientConfigService
   ) {}
 
-  async getUserNotDaily(date, message, args, client) {
+  async getUserNotDaily(date, message: Message, args, client: Client) {
     try {
       let wfhGetApi;
       try {

@@ -1,5 +1,5 @@
 import { DiscoveryService } from "@nestjs/core";
-import { EmbedBuilder, Message } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { DECORATOR_COMMAND_LINE } from "src/bot/base/command.constans";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
@@ -18,7 +18,7 @@ export class HelpCommand implements CommandLineClass {
     private discoveryService: DiscoveryService
   ) {}
 
-  async execute(e: Message, s, client, guildDB) {
+  async execute(e: Message, s, client: Client, guildDB) {
     let t: any = [];
     if (!s.length) {
       this.discoveryService.getProviders().forEach((provider) => {

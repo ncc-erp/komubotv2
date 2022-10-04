@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import util from "util";
@@ -6,14 +6,12 @@ import util from "util";
 @CommandLine({
   name: "eval",
   description: "Evalue une variable",
-  cat: 'owner',
+  cat: "owner",
 })
 export class EvalCommand implements CommandLineClass {
-  constructor(
-    private clientConfigService : ClientConfigService
-  ) {}
+  constructor(private clientConfigService: ClientConfigService) {}
 
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     if (!this.clientConfigService.owners.includes(message.author.id)) return;
 
     let code = args.join(" ");

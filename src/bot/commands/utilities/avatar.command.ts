@@ -1,3 +1,4 @@
+import { Client, Message } from "discord.js";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 
@@ -10,7 +11,7 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 export class AvatarCommand implements CommandLineClass {
   constructor(private extendersService: ExtendersService) {}
 
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     let member;
     if (args.length) {
       member =
@@ -60,7 +61,7 @@ export class AvatarCommand implements CommandLineClass {
           footer: {
             text: message.client.footer,
             icon_url: message.client.user.displayAvatarURL({
-              dynamic: true,
+              // dynamic: true,
               size: 512,
             }),
           },

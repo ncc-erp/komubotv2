@@ -1,3 +1,4 @@
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 
@@ -9,7 +10,7 @@ import { ClientConfigService } from "src/bot/config/client-config.service";
 export class ReloadCommand implements CommandLineClass {
   constructor(private clientConfigService: ClientConfigService) {}
 
-  execute(message, args, client) {
+  execute(message: Message, args, client: Client) {
     if (!this.clientConfigService.owners.includes(message.author.id)) return;
 
     const commandName = args[1].toLowerCase();

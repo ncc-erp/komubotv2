@@ -1,6 +1,6 @@
 import { HttpService } from "@nestjs/axios";
 import axios from "axios";
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
@@ -10,7 +10,7 @@ import { NotifiService } from "./noti.service";
 @CommandLine({
   name: "thongbao",
   description: "Thong bao",
-  cat: 'komu',
+  cat: "komu",
 })
 export default class NotificationCommand implements CommandLineClass {
   constructor(
@@ -20,7 +20,7 @@ export default class NotificationCommand implements CommandLineClass {
     private readonly http: HttpService
   ) {}
 
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
       const noti = args.join(" ");

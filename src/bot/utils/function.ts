@@ -1,3 +1,4 @@
+import { Message } from "discord.js";
 import hexColorRegex from "hex-color-regex";
 function hexColorCheck(a) {
   const check = hexColorRegex().test(a);
@@ -12,7 +13,7 @@ function hexColorCheck(a) {
  * Returns a list of the commands in html. For a website, top.gg page etc
  * @param {object} client The discord client instance
  */
-export const printCmd = async (message) => {
+export const printCmd = async (message: Message) => {
   let txt = "";
   const a = message.client.commands.filter((c) => c.cat !== "owner");
   const descriptions = new Map();
@@ -158,7 +159,7 @@ export const checkConfig = async (config) => {
       error = true;
     }
   }
-  if (!config.logAll || typeof config.logAll as any !== Boolean) {
+  if (!config.logAll || (typeof config.logAll as any) !== Boolean) {
     console.error("✗ The logAll parameter is missing or is not a bolean value");
     error = true;
   }
@@ -171,7 +172,7 @@ export const checkConfig = async (config) => {
     error = true;
   } else if (
     !config.database.cached ||
-    typeof config.database.cached as any !== Boolean
+    (typeof config.database.cached as any) !== Boolean
   ) {
     console.error(
       "✗ The database.cache parameter is missing or is not a bolean value"

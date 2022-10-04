@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { MeetingService } from "./meeting.service";
 import { UtilsService } from "src/bot/utils/utils.service";
@@ -41,7 +41,7 @@ export class MeetingCommand implements CommandLineClass {
     private komubotrestService: KomubotrestService
   ) {}
 
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       let authorId = message.author.id;
       const channel_id = message.channel.id;

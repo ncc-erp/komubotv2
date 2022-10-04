@@ -1,6 +1,7 @@
 import axios from "axios";
 import parseDuration from "parse-duration";
 import * as chrono from "chrono-node";
+import { Message } from "discord.js";
 
 let DEBUG = false;
 export const normalizeString = (str) => {
@@ -30,7 +31,7 @@ export const parseTimeSheetSentence = (sentence) => {
   return items;
 };
 
-export const parseDailyMessage = (message) => {
+export const parseDailyMessage = (message: Message) => {
   const [, metaRaw, yesterday, todayRaw, block] = message.split(
     new RegExp("\\*daily|- yesterday:|- today:|- block:", "ig")
   );
@@ -54,7 +55,7 @@ export const parseDailyMessage = (message) => {
   return contentObj;
 };
 
-export const parseTimesheetMessage = (message) => {
+export const parseTimesheetMessage = (message: Message) => {
   const [, metaRaw, ...taskRaw] = message.split(
     new RegExp("\\*timesheet|\\+", "ig")
   );

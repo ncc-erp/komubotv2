@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Channel } from "src/bot/models/channel.entity";
 import { User } from "src/bot/models/user.entity";
@@ -9,7 +9,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "mv",
   description: "move channel",
-  cat: 'komu',
+  cat: "komu",
 })
 export class MvChannelCommand implements CommandLineClass {
   constructor(
@@ -22,7 +22,7 @@ export class MvChannelCommand implements CommandLineClass {
 
   messHelp = `*mv <this|channel> <category>`;
 
-  async execute(message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       let authorId = message.author.id;
       const checkRole = await this.userRepository
@@ -42,7 +42,7 @@ export class MvChannelCommand implements CommandLineClass {
           .reply({
             content:
               "```You do not have permission to execute this command!```",
-            ephemeral: true,
+            // ephemeral: true,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -72,21 +72,27 @@ export class MvChannelCommand implements CommandLineClass {
           await message
             .reply({
               content: `move channel to ${category.name} successfully`,
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           return message
-            .reply({ content: this.messHelp, ephemeral: true })
+            .reply({
+              content: this.messHelp,
+              // , ephemeral: true
+            })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         }
       } else {
         return message
-          .reply({ content: this.messHelp, ephemeral: true })
+          .reply({
+            content: this.messHelp,
+            //  ephemeral: true
+          })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });

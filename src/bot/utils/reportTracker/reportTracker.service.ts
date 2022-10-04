@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Client, EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
@@ -49,7 +49,7 @@ export class ReportTrackerService {
   messHelpDate = "```" + "Không có bản ghi nào trong ngày này" + "```";
   messHelpTime = "```" + "Không có bản ghi nào" + "```";
 
-  async getUserWFH(date, message, args, client) {
+  async getUserWFH(date, message: Message, args, client: Client) {
     let wfhGetApi;
     try {
       const url = date
@@ -115,7 +115,7 @@ export class ReportTrackerService {
     return query;
   }
 
-  async reportTracker(message, args, client) {
+  async reportTracker(message: Message, args, client) {
     let authorId = message.author.id;
 
     let awc = new AWClient("komubot-client", {
@@ -124,7 +124,10 @@ export class ReportTrackerService {
     });
     if (!args[0] || !args[1])
       return message
-        .reply({ content: this.messTrackerHelp, ephemeral: true })
+        .reply({
+          content: this.messTrackerHelp,
+          // ephemeral: true
+        })
         .catch((err) => {
           this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
@@ -721,7 +724,10 @@ export class ReportTrackerService {
         )
       ) {
         return message
-          .reply({ content: this.messTrackerHelp, ephemeral: true })
+          .reply({
+            content: this.messTrackerHelp,
+            // ephemeral: true
+          })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });

@@ -6,6 +6,7 @@ import { ReportCheckoutService } from "src/bot/utils/reportCheckout/reportChecko
 import { ReportDailyService } from "src/bot/utils/reportDaily/report-daily.service";
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
 import { ReportMentionService } from "src/bot/utils/reportMention/reportMention.service";
+import { ReportMessageCount } from "src/bot/utils/reportMessageCount/reportMessageCount.service";
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
 import { ReportScoreService } from "src/bot/utils/reportScore/report-score.service";
@@ -26,7 +27,7 @@ const messHelpDaily =
 @CommandLine({
   name: "report",
   description: "report",
-  cat: 'komu',
+  cat: "komu",
 })
 export class ReportCommand implements CommandLineClass {
   constructor(
@@ -42,7 +43,7 @@ export class ReportCommand implements CommandLineClass {
     private reportCheckCameraService: ReportCheckCameraService,
     private odinReportService: OdinReportService,
     private reportTrackerService: ReportTrackerService,
-    
+    private reportMessageCount: ReportMessageCount
   ) {}
 
   getTimeWeekMondayToFriday(dayNow) {
@@ -123,7 +124,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "wfh") {
         await this.reportWFHService.reportWfh(message, args, client);
       } else if (args[0] === "msgcount") {
-        // await reportMessageCount(message, args, client, guildDB);
+        await this.reportMessageCount.reportMessageCount(message);
       } else if (args[0] === "quiz") {
         await this.reportScoreService.reportScore(message);
       } else if (args[0] === "womenday") {

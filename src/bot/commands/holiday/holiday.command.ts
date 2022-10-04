@@ -7,15 +7,14 @@ const messHelp = "```" + "*holiday register dd/MM/YYYY content" + "```";
 @CommandLine({
   name: "holiday",
   description: "Holiday",
-  cat: 'komu',
+  cat: "komu",
 })
 export default class HolidayCommand implements CommandLineClass {
   constructor(
     private holidayService: HolidayService,
     private komubotrestService: KomubotrestService
-    
   ) {}
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       const holidayData = this.holidayService;
       let authorId = message.author.id;

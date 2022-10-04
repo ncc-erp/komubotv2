@@ -3,7 +3,7 @@ import { TABLE } from "src/bot/constants/table";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { Injectable } from "@nestjs/common";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
@@ -13,10 +13,10 @@ export class ReportWFHService {
     @InjectRepository(WorkFromHome)
     private wfhReposistory: Repository<WorkFromHome>,
     private komubotrestService: KomubotrestService,
-    private utilsService: UtilsService,
+    private utilsService: UtilsService
   ) {}
 
-  async reportWfh(message, args, client) {
+  async reportWfh(message: Message, args, client: Client) {
     let authorId = message.author.id;
     let fomatDate;
     if (args[1]) {
@@ -35,7 +35,7 @@ export class ReportWFHService {
 
     const wfhFullday = await this.wfhReposistory
       .createQueryBuilder(TABLE.WFH)
-      .leftJoinAndSelect(`user.userId`, "user")
+      .leftJoinAndSelect(`${TABLE.WFH}.user`, "user")
       .where(`${TABLE.WFH}.type = :type`, { type: "wfh" })
       .andWhere(
         `${TABLE.WFH}.createdAt > ${

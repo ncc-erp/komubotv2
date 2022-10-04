@@ -10,6 +10,7 @@ import { UtilsService } from "./utils.service";
 import { createReadStream } from "fs";
 import { join } from "path";
 import { Injectable } from "@nestjs/common";
+import { Client, Message } from "discord.js";
 
 function setTime(date, hours, minute, second, msValue) {
   return date.setHours(hours, minute, second, msValue);
@@ -35,9 +36,7 @@ export class AudioPlayer {
     private utils: UtilsService
   ) {}
 
-  async audioPlayer(client, message, episode) {
-    console.log("sdfgfsdgsdgsd");
-
+  async audioPlayer(client: Client, message: Message, episode) {
     try {
       const channel = await client.channels.fetch("995889802996088905");
       const player = createAudioPlayer();

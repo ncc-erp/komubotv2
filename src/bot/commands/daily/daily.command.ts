@@ -110,7 +110,7 @@ function checkTimeNotWFH() {
 @CommandLine({
   name: "daily",
   description: "daily work",
-  cat: 'komu',
+  cat: "komu",
 })
 export class DailyCommand implements CommandLineClass {
   constructor(
@@ -121,7 +121,7 @@ export class DailyCommand implements CommandLineClass {
     private readonly http: HttpService
   ) {}
 
-  async execute(message, args, client) {
+  async execute(message: Message, args, client) {
     try {
       const authorId = message.author.id;
       const authorUsername = message.author.username;
@@ -129,7 +129,7 @@ export class DailyCommand implements CommandLineClass {
         return message
           .reply({
             content: dailyHelp,
-            ephemeral: true,
+            // ephemeral: true,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -149,7 +149,7 @@ export class DailyCommand implements CommandLineClass {
           return message
             .reply({
               content: messHelp,
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -160,7 +160,7 @@ export class DailyCommand implements CommandLineClass {
           return message
             .reply({
               content: "```please add your daily text```",
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -172,7 +172,7 @@ export class DailyCommand implements CommandLineClass {
             .reply({
               content:
                 "```Please enter at least 100 characters in your daily text```",
-              ephemeral: true,
+              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -232,7 +232,7 @@ export class DailyCommand implements CommandLineClass {
               .reply({
                 content:
                   "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-14h. WFH not daily 20k/day.)```",
-                ephemeral: true,
+                // ephemeral: true,
               })
               .catch((err) => {
                 this.komubotrestService.sendErrorToDevTest(
@@ -243,7 +243,10 @@ export class DailyCommand implements CommandLineClass {
               });
           } else {
             message
-              .reply({ content: "✅ Daily saved.", ephemeral: true })
+              .reply({
+                content: "✅ Daily saved.",
+                // ephemeral: true
+              })
               .catch((err) => {
                 this.komubotrestService.sendErrorToDevTest(
                   client,
@@ -267,7 +270,7 @@ export class DailyCommand implements CommandLineClass {
               .reply({
                 content:
                   "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-17h. not daily 20k/day.)```",
-                ephemeral: true,
+                // ephemeral: true,
               })
               .catch((err) => {
                 this.komubotrestService.sendErrorToDevTest(
@@ -278,7 +281,10 @@ export class DailyCommand implements CommandLineClass {
               });
           } else {
             message
-              .reply({ content: "`✅` Daily saved.", ephemeral: true })
+              .reply({
+                content: "`✅` Daily saved.",
+                //  ephemeral: true
+              })
               .catch((err) => {
                 this.komubotrestService.sendErrorToDevTest(
                   client,
