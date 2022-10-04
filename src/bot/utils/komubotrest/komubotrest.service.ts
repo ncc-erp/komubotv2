@@ -5,7 +5,10 @@ import {
   ButtonBuilder,
   Client,
   EmbedBuilder,
+  Message,
+  User as UserDiscord,
 } from "discord.js";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 import { TABLE } from "src/bot/constants/table";
 import { Channel } from "src/bot/models/channel.entity";
 import { Msg } from "src/bot/models/msg.entity";
@@ -16,6 +19,7 @@ import { Brackets, Repository } from "typeorm";
 @Injectable()
 export class KomubotrestService {
   constructor(
+    // private clientConfigServiec : ClientConfigService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(Msg)
@@ -119,17 +123,17 @@ export class KomubotrestService {
       .status(200)
       .send({ username: req.body.username, userid: userdb.userId });
   };
+
   //todo :
   sendMessageKomuToUser = async (
-    client,
-    msg,
+    client: Client,
+    msg ,
     username,
     botPing = false,
     isSendQuiz = false
   ) => {
     try {
-      console.log(username, msg);
-
+      console.log('username : ', username, msg);
       const userdb = await this.userRepository
         .createQueryBuilder("users")
         .where('"email" = :username and deactive IS NOT True ', {
@@ -145,20 +149,21 @@ export class KomubotrestService {
       if (!userdb) {
         return null;
       }
-      const user = await client.users
+      let user = await client.users
         .fetch(userdb[0].userId)
         .catch(console.error);
       if (msg == null) {
         return user;
       }
+      console.log("user komuserviece : ", user);
       if (!user) {
         // notify to machleo channel
         const message = `<@${process.env.KOMUBOTREST_ADMIN_USER_ID}> ơi, đồng chí ${username} không đúng format rồi!!!`;
-        await client.channels.cache
+        await (client.channels.cache as any)
           .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
           .send(message)
           .catch(console.error);
-        return null;
+        return null;``
       }
       const sent = await user.send(msg);
       const channelInsert = await this.channelRepository.findOne({
@@ -166,11 +171,17 @@ export class KomubotrestService {
           id: "1021944210800263189",
         },
       });
-      await this.messageRepository.insert({
-        author: sent.username,
-        channel: channelInsert,
-        deleted: false,
-      });
+      try {
+        await this.messageRepository.insert({
+          // author: sent.username,
+          channel: channelInsert,
+          deleted: false,
+        });
+
+      }catch(error){
+        console.log('Error : ', error)
+      }
+      console.log('user of send : ', sent.author)
       // botPing : work when bot send quiz wfh user
       // isSendQuiz : work when bot send quiz
       if (botPing && isSendQuiz) {
@@ -199,12 +210,12 @@ export class KomubotrestService {
       userDb.forEach((item) => console.log(item, "fdsfdsfssdfsdgjlsn"));
 
       const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
-      await client.channels.cache
+      await (client.channels.cache as any)
         .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
         .send(message)
         .catch(console.error);
       const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}(${userDb[0].email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
-      await client.channels.cache
+      await (client.channels.cache as any)
         .get(process.env.KOMUBOTREST_ITADMIN_CHANNEL_ID)
         .send(messageItAdmin)
         .catch(console.error);
@@ -294,7 +305,7 @@ export class KomubotrestService {
         .setImage("attachment://checkin.jpg")
         .setDescription("Đây có phải là bạn không?");
 
-      await user.send({ embeds: [embed], files: [path], components: [row] });
+      //    await user.send({ embeds: [embed], files: [path], components: [row] });
       res.status(200).send({ message: "Successfully!" });
     } catch (error) {
       console.log("ERROR: " + error);
@@ -358,7 +369,11 @@ export class KomubotrestService {
         .setImage("attachment://checkin.jpg")
         .setDescription(messages);
 
-      await user.send({ embeds: [embed], files: [path], components: [row] });
+      await user.send({
+        embeds: [embed],
+        files: [path],
+        components: [row as any],
+      });
       res.status(200).send({ message: "Successfully!" });
     } catch (error) {
       console.log("ERROR: " + error);

@@ -24,18 +24,18 @@ import {
 } from "discord.js";
 import { DataSource, Repository } from "typeorm";
 import { DiscoveryService } from "@nestjs/core";
-import { MessageFromUserGuard } from "../guards/message-from-user.guard";
-import { MessageToUpperPipe } from "../pipes/message-to-upper.pipe";
-import { DECORATOR_COMMAND_LINE } from "../base/command.constans";
-import { ClientConfigService } from "../config/client-config.service";
+import { MessageFromUserGuard } from "../message-from-user.guard";
+import { MessageToUpperPipe } from "../../pipes/message-to-upper.pipe";
+import { DECORATOR_COMMAND_LINE } from "../../base/command.constans";
+import { ClientConfigService } from "../../config/client-config.service";
 import DBL from "dblapi.js";
-import { DmMessageUntil } from "../utils/dmmessage/dmmessage.until";
-import { ExtendersService } from "../utils/extenders/extenders.service";
+import { DmMessageUntil } from "../../utils/dmmessage/dmmessage.until";
+import { ExtendersService } from "../../utils/extenders/extenders.service";
 import permes from "../constants/permes.json";
 import * as queryString from "query-string";
-import { User } from "../models/user.entity";
-import { QuizService } from "../utils/quiz/quiz.service";
-import { KomubotrestService } from "../utils/komubotrest/komubotrest.service";
+import { User } from "../../models/user.entity";
+import { QuizService } from "../../utils/quiz/quiz.service";
+import { KomubotrestService } from "../../utils/komubotrest/komubotrest.service";
 export type ChanneNotDM =
   | NewsChannel
   | TextChannel
