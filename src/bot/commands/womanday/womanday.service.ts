@@ -8,10 +8,10 @@ import { Repository } from "typeorm";
 export class WomanDayService{
     constructor(
         @InjectRepository(User)
-        private userReposistory : Repository<User>
+        private userRepository : Repository<User>
     ){}
     async findWomanUser(userWomenTest){
-        return await this.userReposistory
+        return await this.userRepository
         .createQueryBuilder(TABLE.USER)
         .select([`${TABLE.USER}.id`, `${TABLE.USER}.email`])
         .where(`${TABLE.USER}.email IN (:emails)`,{emails : userWomenTest} )

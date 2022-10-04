@@ -21,17 +21,17 @@ export class KomubotrestService {
   constructor(
     // private clientConfigServiec : ClientConfigService,
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     @InjectRepository(Msg)
-    private messageReposistory: Repository<Msg>,
+    private messageRepository: Repository<Msg>,
     @InjectRepository(Channel)
-    private channelReposistory: Repository<Channel>,
+    private channelRepository: Repository<Channel>,
     @InjectRepository(WorkFromHome)
-    private wfhReposistory: Repository<WorkFromHome>
+    private wfhRepository: Repository<WorkFromHome>
   ) {}
   private data;
   async findUserData(_pramams) {
-    return await this.userReposistory
+    return await this.userRepository
       .createQueryBuilder(TABLE.USER)
       .where(
         new Brackets((qb) => {
@@ -54,7 +54,7 @@ export class KomubotrestService {
       .getOne();
   }
   async insertNewMsg(sent) {
-    return await this.messageReposistory
+    return await this.messageRepository
       .createQueryBuilder()
       .insert()
       .into(TABLE.MSG)
@@ -67,7 +67,7 @@ export class KomubotrestService {
       .returning("*");
   }
   async replaceDataUser() {
-    return await this.messageReposistory
+    return await this.messageRepository
       .createQueryBuilder()
       .insert()
       .into(TABLE.USER)
@@ -75,7 +75,7 @@ export class KomubotrestService {
       .execute();
   }
   async insertDataToWFH(_userid, _wfhMsg, _complain, _pmconfirm, _status) {
-    return await this.wfhReposistory
+    return await this.wfhRepository
       .createQueryBuilder()
       .insert()
       .into(TABLE.WFH)
@@ -89,7 +89,7 @@ export class KomubotrestService {
       .execute();
   }
   async findUserOne(_id) {
-    return await this.userReposistory
+    return await this.userRepository
       .createQueryBuilder(TABLE.USER)
       .where(`${TABLE.USER}.id = :id`, {
         id: _id,
@@ -97,7 +97,7 @@ export class KomubotrestService {
       .getOne();
   }
   async findAllUser() {
-    return await this.userReposistory.createQueryBuilder(TABLE.USER).getMany();
+    return await this.userRepository.createQueryBuilder(TABLE.USER).getMany();
   }
   getUserIdByUsername = async (client, req, res) => {
     if (
@@ -134,7 +134,7 @@ export class KomubotrestService {
   ) => {
     try {
       console.log('username : ', username, msg);
-      const userdb = await this.userReposistory
+      const userdb = await this.userRepository
         .createQueryBuilder("users")
         .where('"email" = :username and deactive IS NOT True ', {
           username: username,
@@ -165,16 +165,15 @@ export class KomubotrestService {
           .catch(console.error);
         return null;``
       }
-      const sent = await (user as UserDiscord).send(msg) ;
-      console.log('send : ', sent)
-      const channelInsert = await this.channelReposistory.findOne({
+      const sent = await user.send(msg);
+      const channelInsert = await this.channelRepository.findOne({
         where: {
           id: "1021944210800263189",
         },
       });
       try {
-        await this.messageReposistory.insert({
-          //author: sent.author,
+        await this.messageRepository.insert({
+          // author: sent.username,
           channel: channelInsert,
           deleted: false,
         });
@@ -197,7 +196,7 @@ export class KomubotrestService {
       return user;
     } catch (error) {
       console.log("error", error);
-      const userDb = await this.userReposistory
+      const userDb = await this.userRepository
         .createQueryBuilder("users")
         .where('"email" = :username and deactive IS NOT True ', {
           username: username,

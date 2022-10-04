@@ -12,11 +12,11 @@ import { KomubotrestService } from "../komubotrest/komubotrest.service";
 export class QuizService {
   constructor(
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     @InjectRepository(UserQuiz)
-    private userQuizReposistory: Repository<UserQuiz>,
+    private userQuizRepository: Repository<UserQuiz>,
     @InjectRepository(Quiz)
-    private quizReposistory: Repository<Quiz>,
+    private quizRepository: Repository<Quiz>,
     private komubotrestService: KomubotrestService
   ) {}
 
@@ -41,7 +41,7 @@ export class QuizService {
         roleRandom = roleSelect;
       }
 
-      const questionAnswered = await this.userQuizReposistory.find({
+      const questionAnswered = await this.userQuizRepository.find({
         where: {
           userId: userInput.id,
         },
@@ -49,35 +49,31 @@ export class QuizService {
 
       let questionAnsweredId = questionAnswered.map((item) => item.quizId);
 
-      // const questions = await questionData.aggregate([
-      //   {
-      //     $match: {
-      //       _id: { $nin: questionAnsweredId },
-      //       role: roleRandom,
-      //       isVerify: true,
-      //       accept: true,
-      //     },
-      //   },
-      //   {
-      //     $match: {
-      //       title: { $exists: true },
-      //       $expr: { $lte: [{ $strLenCP: "$title" }, 236] },
-      //     },
-      //   },
+      const questions = this.quizRepository
+        .createQueryBuilder("questions")
+        .where('"id" NOT IN :questionAnsweredId', {
+          questionAnsweredId: questionAnsweredId,
+        })
+        .andWhere('"role" = :roleRandom', { roleRandom: roleRandom })
+        .andWhere('"isVerify" = True')
+        .andWhere('"accept" = True')
+        .andWhere('"title" IS EXISTS')
+        .andWhere('length("title") < :strLenCp', { strLenCp: 236 })
+        .select("*")
+        .getMany();
       //   {
       //     $sample: { size: 1 },
       //   },
-      // ]);
-      // if (Array.isArray(questions) && questions.length === 0) {
-      //   const mess = "You have answered all the questions!!!";
-      //   if (type === "commands") {
-      //     await context.channel.send(mess).catch(console.error);
-      //   } else {
-      //     return;
-      //   }
-      // } else {
-      //   return questions[0];
-      // }
+      if (Array.isArray(questions) && questions.length === 0) {
+        const mess = "You have answered all the questions!!!";
+        if (type === "commands") {
+          await context.channel.send(mess).catch(console.error);
+        } else {
+          return;
+        }
+      } else {
+        return questions[0];
+      }
     } catch (error) {
       console.log(error);
     }
@@ -104,7 +100,7 @@ export class QuizService {
   }
   async addScores(userId) {
     try {
-      const user = await this.userReposistory
+      const user = await this.userRepository
         .createQueryBuilder("users")
         .where('"userId = :userId"', { userId: userId })
         .andWhere('"deactive" IS NOT True')
@@ -127,7 +123,7 @@ export class QuizService {
 
   async saveQuestionCorrect(userId, questionid, answerkey) {
     try {
-      await this.userQuizReposistory.update(
+      await this.userQuizRepository.update(
         {
           userId,
           quizId: questionid,
@@ -135,7 +131,7 @@ export class QuizService {
         {
           correct: true,
           answer: answerkey,
-          updateAt:  Date.now(),
+          updateAt: Date.now(),
         }
       );
     } catch (error) {
@@ -145,7 +141,7 @@ export class QuizService {
 
   async saveQuestionInCorrect(userId, questionid, answerkey) {
     try {
-      await this.userQuizReposistory.update(
+      await this.userQuizRepository.update(
         {
           userId,
           quizId: questionid,
@@ -162,7 +158,7 @@ export class QuizService {
   }
   async saveQuestion(userId, questionid) {
     try {
-      await this.userQuizReposistory
+      await this.userQuizRepository
         .insert({
           userId,
           quizId: questionid,

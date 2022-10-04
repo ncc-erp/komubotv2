@@ -13,7 +13,7 @@ export class DmMessageUntil {
     private toggleActiveCommand: ToggleActiveCommand,
     private syncRole: Sync_role,
     @InjectRepository(Conversation)
-    private dmMessageReposistory: Repository<Conversation>,
+    private dmMessageRepository: Repository<Conversation>,
     private readonly http: HttpService
   ) {}
 
@@ -67,7 +67,7 @@ export class DmMessageUntil {
       const authorId = message.author.id;
       const content = message.content;
 
-      const data = await this.dmMessageReposistory
+      const data = await this.dmMessageRepository
         .createQueryBuilder(TABLE.CONVERSATION)
         .where(`${TABLE.CONVERSATION}.channelId = :channelId`, {
           channelId: channelId,
@@ -100,7 +100,7 @@ export class DmMessageUntil {
         return;
       }
       if (data) {
-        await this.dmMessageReposistory
+        await this.dmMessageRepository
           .update(
             { id: data.id },
             {
@@ -111,7 +111,7 @@ export class DmMessageUntil {
           )
           .catch(console.log);
       } else {
-        await this.dmMessageReposistory
+        await this.dmMessageRepository
           .insert({
             channelId: channelId,
             authorId: authorId,

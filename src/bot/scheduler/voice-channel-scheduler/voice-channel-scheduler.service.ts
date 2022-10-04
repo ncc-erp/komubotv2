@@ -15,11 +15,11 @@ export class VoiceChannelSchedulerService {
   constructor(
     private utilsService: UtilsService,
     @InjectRepository(TimeVoiceAlone)
-    private timeVoiceAloneReposistory: Repository<TimeVoiceAlone>,
+    private timeVoiceAloneRepository: Repository<TimeVoiceAlone>,
     @InjectRepository(JoinCall)
-    private joinCallReposistory: Repository<JoinCall>,
+    private joinCallRepository: Repository<JoinCall>,
     @InjectRepository(VoiceChannels)
-    private voiceChannelReposistory: Repository<VoiceChannels>,
+    private voiceChannelRepository: Repository<VoiceChannels>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client
@@ -68,7 +68,7 @@ export class VoiceChannelSchedulerService {
     let roomMap = [];
     let voiceNow = [];
 
-    const timeVoiceAlone = await this.timeVoiceAloneReposistory
+    const timeVoiceAlone = await this.timeVoiceAloneRepository
       .createQueryBuilder("timeVoicelone")
       .where('"status" IS NOT True')
       .select("timeVoicelone.*")
@@ -84,7 +84,7 @@ export class VoiceChannelSchedulerService {
             target.voice.disconnect().catch(console.error);
         }
 
-        await this.timeVoiceAloneReposistory.update(
+        await this.timeVoiceAloneRepository.update(
           { channelId: item.channelId },
           { status: true }
         );
@@ -94,7 +94,7 @@ export class VoiceChannelSchedulerService {
     voiceChannel.map(async (voice, index) => {
       const userDiscord = await client.channels.fetch(voice);
       if (userDiscord.members.size === 0 || userDiscord.members.size > 1) {
-        await this.timeVoiceAloneReposistory.update(
+        await this.timeVoiceAloneRepository.update(
           { channelId: voice },
           { status: true }
         );
@@ -108,7 +108,7 @@ export class VoiceChannelSchedulerService {
 
       if (index === voiceChannel.length - 1) {
         roomVoice.map(async (item) => {
-          await this.timeVoiceAloneReposistory
+          await this.timeVoiceAloneRepository
             .insert({
               channelId: item,
               status: false,
@@ -122,7 +122,7 @@ export class VoiceChannelSchedulerService {
 
   async renameVoiceChannel(client) {
     try {
-      const findVoice = await this.voiceChannelReposistory
+      const findVoice = await this.voiceChannelRepository
         .createQueryBuilder("voiceChannel")
         .where('"status" = :status', { status: "start" })
         .andWhere('"createdTimestamp" >= :gtecreatedTimestamp', {
@@ -137,7 +137,7 @@ export class VoiceChannelSchedulerService {
       findVoice.map(async (item) => {
         const channelName = await client.channels.fetch(item.voiceChannelId);
         await channelName.setName(`${item.originalName}`);
-        await this.voiceChannelReposistory.update(
+        await this.voiceChannelRepository.update(
           { id: item.id },
           { status: "finished" }
         );
@@ -162,7 +162,7 @@ export class VoiceChannelSchedulerService {
     const HOURS = 2;
     const beforeHours = new Date(now.getTime() - 1000 * 60 * 60 * HOURS);
 
-    await this.joinCallReposistory
+    await this.joinCallRepository
       .createQueryBuilder()
       .update(JoinCall)
       .set({ status: "finish", end_time: Date.now() })

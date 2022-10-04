@@ -18,9 +18,9 @@ export class ReminderSchedulerService {
   constructor(
     private utilsService: UtilsService,
     @InjectRepository(Meeting)
-    private meetingReposistory: Repository<Meeting>,
+    private meetingRepository: Repository<Meeting>,
     @InjectRepository(Remind)
-    private remindReposistory: Repository<Remind>,
+    private remindRepository: Repository<Remind>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
@@ -91,7 +91,7 @@ export class ReminderSchedulerService {
 
   async pingReminder(client) {
     if (await this.utilsService.checkHoliday()) return;
-    const remindLists = await this.remindReposistory
+    const remindLists = await this.remindRepository
       .createQueryBuilder("remind")
       .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
@@ -102,7 +102,7 @@ export class ReminderSchedulerService {
       .select("remind.*")
       .execute();
 
-    const meetingLists = await this.meetingReposistory
+    const meetingLists = await this.meetingRepository
       .createQueryBuilder("meeting")
       .where(`"reminder" IS NOT TRUE`)
       .andWhere(`"cancel" IS NOT TRUE`)
@@ -195,7 +195,7 @@ export class ReminderSchedulerService {
   async sendMesageRemind(client) {
     try {
       if (await this.utilsService.checkHoliday()) return;
-      const data = await this.remindReposistory.find({
+      const data = await this.remindRepository.find({
         where: { cancel: false },
       });
 
@@ -238,7 +238,7 @@ export class ReminderSchedulerService {
               `<@${item.mentionUserId}>, due today ${item.content} of <@${item.authorId}>`
             )
             .catch(console.error);
-          await this.remindReposistory.update(
+          await this.remindRepository.update(
             { id: item.id },
             { cancel: true }
           );

@@ -11,12 +11,12 @@ export class ReportOpenTalkService {
   constructor(
     private utilsService: UtilsService,
     @InjectRepository(Opentalk)
-    private opentalkReposistory: Repository<Opentalk>
+    private opentalkRepository: Repository<Opentalk>
   ) {}
 
   async reportOpentalk(message) {
     try {
-      const arrayUser = await this.opentalkReposistory
+      const arrayUser = await this.opentalkRepository
         .createQueryBuilder("opentalks")
         .select("username")
         .addSelect('MAX("createdTimestamp")', "timeStamp")
@@ -34,7 +34,7 @@ export class ReportOpenTalkService {
         .execute();
 
       if (arrayUser.length > 0) {
-        const listOpentalk = await this.opentalkReposistory
+        const listOpentalk = await this.opentalkRepository
           .createQueryBuilder("opentalks")
           .where('"createdTimestamp" IN (:...time_stamps)', {
             time_stamps: arrayUser.map((item) => item.timeStamp),

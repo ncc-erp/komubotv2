@@ -58,6 +58,7 @@ import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
 
 
+import { BWLCommand } from "./commands/bwl/bwl.command";
 import { BWLService } from "./commands/bwl/bwl.service";
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
 import { ClCommand } from "./commands/cl/cl.command";
@@ -89,6 +90,7 @@ import { WolCommand } from "./commands/utilities/wol.command";
 import { WomanDayCommand } from "./commands/womanday/womanday.command";
 import { WomanDayService } from "./commands/womanday/womanday.service";
 import { BirthDay } from "./models/birthday.entity";
+import { Bwl } from "./models/bwl.entity";
 import { BwlReaction } from "./models/bwlReact.entity";
 import { CheckCamera } from "./models/checkCamera.entity";
 import { Conversation } from "./models/conversation.entity";
@@ -104,6 +106,7 @@ import { TX8 } from "./models/tx8.entity";
 import { UserQuiz } from "./models/userQuiz";
 import { Wiki } from "./models/wiki.entity";
 import { WomenDay } from "./models/womenDay.entity";
+import { SendquizSchedulerService } from "./scheduler/sendquiz-scheduler/sendquiz-scheduler.service";
 import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/updateRole-scheduler.service";
 import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
 import { KeepSlashCommand } from "./slash-commands/keep.slashcommand";
@@ -128,8 +131,7 @@ import { ReportTrackerService } from "./utils/reportTracker/reportTracker.servic
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
-import { Bwl } from "./models/bwl.entity";
-import { BWLCommand } from "./commands/bwl/bwl.command";
+import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 
 @Module({
   imports: [
@@ -271,6 +273,8 @@ import { BWLCommand } from "./commands/bwl/bwl.command";
     KeepSlashCommand,
     WikiSlashCommand,
     VocabSlashCommand,
+    SendquizSchedulerService,
+    SendQuizToSingleUserService,
   ],
   controllers: [KomubotrestController],
 })

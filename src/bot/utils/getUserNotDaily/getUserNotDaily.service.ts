@@ -16,7 +16,7 @@ export class UserNotDailyService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(Daily)
-    private dailyReposistory: Repository<Daily>,
+    private dailyRepository: Repository<Daily>,
     private readonly http: HttpService,
     private clientConfigService: ClientConfigService
   ) {}
@@ -62,7 +62,7 @@ export class UserNotDailyService {
       const { userOffFullday } = await getUserOffWork(date);
       const userOff = [...wfhUserEmail, ...userOffFullday];
       const userNotWFH = await this.userRepository
-        .createQueryBuilder()
+        .createQueryBuilder("user")
         .where("roles_discord = :roles_discord", {
           roles_discord: ["INTERN"],
         })
@@ -73,12 +73,13 @@ export class UserNotDailyService {
           userOff: userOff,
         })
         .andWhere(`"deactive" IS NOT TRUE`)
-        .select(".*")
+        .select("*")
         .execute();
 
+        console.log(userNotWFH, "userNotWFH")
       const userEmail = userNotWFH.map((item) => item.email);
 
-      const dailyMorning = await this.dailyReposistory
+      const dailyMorning = await this.dailyRepository
         .createQueryBuilder()
         .where(`"createdAt" >= :gtecreatedAt`, {
           gtecreatedAt: this.utilsService.getDateDay(date).morning.lastime,
@@ -89,7 +90,7 @@ export class UserNotDailyService {
         .select(".*")
         .execute();
 
-      const dailyAfternoon = await this.dailyReposistory
+      const dailyAfternoon = await this.dailyRepository
         .createQueryBuilder()
         .where(`"createdAt" >= :gtecreatedAt`, {
           gtecreatedAt: this.utilsService.getDateDay(date).afternoon.lastime,
@@ -100,7 +101,7 @@ export class UserNotDailyService {
         .select("*")
         .execute();
 
-      const dailyFullday = await this.dailyReposistory
+      const dailyFullday = await this.dailyRepository
         .createQueryBuilder()
         .where(`"createdAt" >= :gtecreatedAt`, {
           gtecreatedAt: this.utilsService.getDateDay(date).fullday.lastime,
@@ -186,6 +187,11 @@ export class UserNotDailyService {
           userNotDaily[i] = notDaily[i];
         }
       }
+      console.log(notDaily, "notDaily")
+      console.log(userNotDaily, "userNotDaily")
+      console.log(notDailyMorning, "notDailyMorning")
+      console.log(notDailyFullday, "notDailyFullday")
+      console.log(notDailyAfternoon, "notDailyAfternoon")
       return {
         notDaily,
         userNotDaily,
