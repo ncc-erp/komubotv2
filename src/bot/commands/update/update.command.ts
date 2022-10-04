@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { User } from "src/bot/models/user.entity";
 import { UserQuiz } from "src/bot/models/userQuiz";
@@ -8,7 +8,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "update",
   description: "update point quiz user",
-  cat: 'komu',
+  cat: "komu",
 })
 export class UpdateCommand implements CommandLineClass {
   constructor(
@@ -18,7 +18,7 @@ export class UpdateCommand implements CommandLineClass {
     private readonly userQuizRepository: Repository<UserQuiz>
   ) {}
 
-  async execute(message, args) {
+  async execute(message: Message, args) {
     try {
       if (args[0] === "point") {
         const user = await this.userRepository.find();

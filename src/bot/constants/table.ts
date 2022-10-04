@@ -29,7 +29,7 @@ export const TABLE = {
   MEETING: "komu_meeting",
   LEAVE: "komu_leave",
   KEEP: "komu_keep",
-  JOIN_CALL: "komu_joincall",
+  JOIN_CALL: "komu_joinCall",
   HOLIDAY: "komu_holiday",
   GUILDDATA: "komu_guilddata",
   GUILD: "guild",

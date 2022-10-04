@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
-import { Message, EmbedBuilder } from "discord.js";
+import { Message, EmbedBuilder, Client } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { AudioPlayer } from "src/bot/utils/audioPlayer.utils";
@@ -11,17 +11,18 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "ncc8",
   description: "Ncc8",
-  cat: 'komu',
+  cat: "komu",
 })
 export default class Ncc8Command implements CommandLineClass {
   constructor(
     @InjectRepository(Uploadfile)
     private uploadFileData: Repository<Uploadfile>,
     private utils: UtilsService,
-    private audioPlayer: AudioPlayer,  private komubotrestService : KomubotrestService,
+    private audioPlayer: AudioPlayer,
+    private komubotrestService: KomubotrestService
   ) {}
 
-  async execute(message: Message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       let authorId = message.author.id;
       if (args[0] === "playlist") {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import parseDuration from "parse-duration";
 import * as chrono from "chrono-node";
+import { Message } from "discord.js";
 
 let DEBUG = false;
 export const normalizeString = (str) => {

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Message } from "discord.js";
 import { WomenDay } from "src/bot/models/womenDay.entity";
 import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
@@ -11,7 +12,7 @@ export class ReportWomenDayService {
     private womenDayRepository: Repository<WomenDay>
   ) {}
 
-  async reportWomenDay(message) {
+  async reportWomenDay(message: Message) {
     try {
       const userWin = await this.womenDayRepository.find({
         where: {

@@ -1,7 +1,7 @@
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Client, EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { Order } from "src/bot/models/order.entity";
 import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
@@ -14,7 +14,7 @@ export class ReportOrderService {
     private orderRepository: Repository<Order>
   ) {}
 
-  async reportOrder(message) {
+  async reportOrder(message: Message) {
     try {
       const channel = message.channelId;
 

@@ -20,6 +20,7 @@ export class BWLService {
     async findBwlReactData(_channelId, firstday, lastday, top){
       return await this.bwlReactionRepository.createQueryBuilder("bwlReaction")
       .select("COUNT(bwlReaction.author)", "totalReaction")
+      .distinctOn(["author.username"])
       .addSelect("bwlReaction.bwl")
       .addSelect("author.username")
       .innerJoin("bwlReaction.bwl", "bwl")

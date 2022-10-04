@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Message } from "discord.js";
+import { Client, GuildChannel, Message, TextChannel } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { Channel } from "src/bot/models/channel.entity";
 import { User } from "src/bot/models/user.entity";
@@ -9,7 +9,7 @@ import { Repository } from "typeorm";
 @CommandLine({
   name: "mv",
   description: "move channel",
-  cat: 'komu',
+  cat: "komu",
 })
 export class MvChannelCommand implements CommandLineClass {
   constructor(
@@ -22,7 +22,7 @@ export class MvChannelCommand implements CommandLineClass {
 
   messHelp = `*mv <this|channel> <category>`;
 
-  async execute(message, args, client) {
+  async execute(message: Message, args, client: Client, guild: GuildChannel) {
     try {
       let authorId = message.author.id;
       const checkRole = await this.userRepository
@@ -42,7 +42,7 @@ export class MvChannelCommand implements CommandLineClass {
           .reply({
             content:
               "```You do not have permission to execute this command!```",
-            ephemeral: true,
+            // ephemeral: true,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
@@ -54,39 +54,50 @@ export class MvChannelCommand implements CommandLineClass {
         let category = client.channels.cache.find(
           (cat) =>
             cat.id === findCategory ||
-            cat.name.toUpperCase() === findCategory.toUpperCase()
+            (cat as TextChannel).name.toUpperCase() ===
+              findCategory.toUpperCase()
         );
         const getChannel = client.channels.cache.find(
           (guild) =>
             guild.id === args[0] ||
-            guild.name.toUpperCase() === args[0].toUpperCase()
+            (guild as TextChannel).name.toUpperCase() === args[0].toUpperCase()
         );
 
         if (getChannel && category) {
           const channel = await client.channels.fetch(getChannel.id);
-          channel.setParent(category.id, { lockPermissions: false });
+          (channel as TextChannel).setParent(category.id, {
+            lockPermissions: false,
+          });
           await this.channelRepository.update(
             { id: args[0] },
             { parentId: category.id }
           );
           await message
             .reply({
-              content: `move channel to ${category.name} successfully`,
-              ephemeral: true,
+              content: `move channel to ${
+                (category as TextChannel).name
+              } successfully`,
+              // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         } else {
           return message
-            .reply({ content: this.messHelp, ephemeral: true })
+            .reply({
+              content: this.messHelp,
+              // , ephemeral: true
+            })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         }
       } else {
         return message
-          .reply({ content: this.messHelp, ephemeral: true })
+          .reply({
+            content: this.messHelp,
+            //  ephemeral: true
+          })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });

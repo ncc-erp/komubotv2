@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Client, EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CheckCamera } from "src/bot/models/checkCamera.entity";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
@@ -19,7 +19,7 @@ export class ReportCheckCameraService {
     private komubotrestService: KomubotrestService
   ) {}
 
-  async reportCheckCamera(message, args, client) {
+  async reportCheckCamera(message: Message, args, client: Client) {
     let authorId = message.author.id;
     const userCheckCamera = await this.checkCameraRepository
       .createQueryBuilder()

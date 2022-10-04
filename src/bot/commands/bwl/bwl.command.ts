@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { firstValueFrom } from "rxjs";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
@@ -13,7 +13,7 @@ import { BWLService } from "./bwl.service";
 export class BWLCommand implements CommandLineClass {
   constructor(private utilsService: UtilsService,    private bwlService : BWLService,) {}
 
-  async execute(message, args) {
+  async execute(message: Message, args) {
     try {
       if (args[0] === "help") {
         return message.channel.send(

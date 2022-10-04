@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 
 import axios from "axios";
@@ -10,7 +10,7 @@ import { firstValueFrom } from "rxjs";
 @CommandLine({
   name: "gem",
   description: "Gem rank",
-  cat: 'komu',
+  cat: "komu",
 })
 export class GemrankCommand implements CommandLineClass {
   constructor(
@@ -20,7 +20,7 @@ export class GemrankCommand implements CommandLineClass {
   ) {}
   private messHelp: string =
     "```" + "*gem rank" + "\n" + "*gem rank username" + "```";
-  async execute(message, args, client) {
+  async execute(message: Message, args, client: Client) {
     try {
       let authorId = message.author.id;
       if (args[0] === "rank") {
@@ -38,7 +38,7 @@ export class GemrankCommand implements CommandLineClass {
           } catch (error) {
             return message.reply({
               content: `${this.messHelp}`,
-              ephemeral: true,
+              // ephemeral: true,
             });
           }
 
@@ -82,7 +82,7 @@ export class GemrankCommand implements CommandLineClass {
         return message
           .reply({
             content: `${this.messHelp}`,
-            ephemeral: true,
+            // ephemeral: true,
           })
           .catch((err) => {
             this.komuborestController.sendErrorToDevTest(client, authorId, err);
