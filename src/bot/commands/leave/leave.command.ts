@@ -6,7 +6,7 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 @CommandLine({
   name: "leave",
   description: "leave",
-  cat: 'komu',
+  cat: "komu",
 })
 export default class LeaveCommand implements CommandLineClass {
   constructor(
@@ -14,7 +14,7 @@ export default class LeaveCommand implements CommandLineClass {
     private komubotrestService: KomubotrestService
   ) {}
 
-  async execute(message: Message, args, Client) {
+  async execute(message: Message, args, Client: Client) {
     try {
       let authorId = message.author.id;
       if (!args[0] || !args[1]) {

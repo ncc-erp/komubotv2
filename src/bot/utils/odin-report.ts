@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import puppeteer from "puppeteer";
-import { AttachmentBuilder, EmbedBuilder } from "discord.js";
+import { AttachmentBuilder, EmbedBuilder, Message } from "discord.js";
 import { startOfWeek, format, toDate } from "date-fns";
 
 function delay(time) {
@@ -80,13 +80,13 @@ export async function getKomuWeeklyReport(options) {
   return { filePath: reportPath };
 }
 
-export async function handleKomuWeeklyReport(message, args) {
+export async function handleKomuWeeklyReport(message: Message, args) {
   try {
     if (args[1] && args[1] == "help") {
       return message.reply({
         content:
           "View komu weekly report\n*report komuweekly [date]\n*note: date format dd/mm/yyyy",
-        ephemeral: true,
+        // ephemeral: true,
       });
     }
 
@@ -111,7 +111,10 @@ export async function handleKomuWeeklyReport(message, args) {
 
     const attachment = new AttachmentBuilder(report.filePath);
     const embed = new EmbedBuilder().setTitle("Komu report weekly");
-    await message.channel.send({ files: [attachment], embed: embed });
+    await message.channel.send({
+      files: [attachment],
+      //  embed: embed
+    });
   } catch (error) {
     console.error(error);
     message.channel.send(`Sorry, ${error.message}`);

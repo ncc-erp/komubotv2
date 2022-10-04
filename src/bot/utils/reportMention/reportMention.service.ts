@@ -7,7 +7,7 @@ import { EmbedBuilder } from "discord.js";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
 @Injectable()
-export class ReportMentionService{
+export class ReportMentionService {
   constructor(
     @InjectRepository(WorkFromHome)
     private wfhRepository: Repository<WorkFromHome>,
@@ -19,7 +19,7 @@ export class ReportMentionService{
     const authorId = message.author.id;
     const mentionFullday = await this.wfhRepository
       .createQueryBuilder("wfhs,users")
-      .leftJoinAndSelect("users.userId", "users")
+      .leftJoinAndSelect("user.userId", "users")
       .where('"wfhs.type" = :type', { type: "wfh" })
       .andWhere(
         `"wfhs.createdAt" > ${this.utilsService.getTimeToDayMention().firstDay}`

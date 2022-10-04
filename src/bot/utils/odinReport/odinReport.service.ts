@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AttachmentBuilder, Client, EmbedBuilder } from "discord.js";
+import { AttachmentBuilder, Client, EmbedBuilder, Message } from "discord.js";
 import puppeteer from "puppeteer";
 import path from "path";
 import fs from "fs";
@@ -80,13 +80,13 @@ export class OdinReportService {
     return { filePath: reportPath };
   }
 
-  async handleKomuWeeklyReport(message, args) {
+  async handleKomuWeeklyReport(message: Message, args) {
     try {
       if (args[1] && args[1] == "help") {
         return message.reply({
           content:
             "View komu weekly report\n*report komuweekly [date]\n*note: date format dd/mm/yyyy",
-          ephemeral: true,
+          // ephemeral: true,
         });
       }
 
@@ -111,7 +111,10 @@ export class OdinReportService {
 
       const attachment = new AttachmentBuilder(report.filePath);
       const embed = new EmbedBuilder().setTitle("Komu report weekly");
-      await message.channel.send({ files: [attachment], embed: embed });
+      await message.channel.send({
+        files: [attachment],
+        //  embed: embed
+      });
     } catch (error) {
       console.error(error);
       message.channel.send(`Sorry, ${error.message}`);

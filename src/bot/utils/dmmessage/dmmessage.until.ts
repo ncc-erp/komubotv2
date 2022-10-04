@@ -1,5 +1,6 @@
 import { HttpService } from "@nestjs/axios";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Client, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { TABLE } from "src/bot/constants/table";
 import { Conversation } from "src/bot/models/conversation.entity";
@@ -40,7 +41,7 @@ export class DmMessageUntil {
     }
   }
 
-  async dmmessage(message, client) {
+  async dmmessage(message: Message, client: Client) {
     try {
       const checkArgs = message.content.split(" ").shift();
       const args = message.content.split(" ").splice(1);

@@ -1,5 +1,5 @@
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 
@@ -13,7 +13,7 @@ export class BotInfo implements CommandLineClass {
     private extendersService: ExtendersService,
     private readonly clientConfigService: ClientConfigService
   ) {}
-  async execute(message, args, client, guildDB) {
+  async execute(message: Message, args, client: Client, guildDB) {
     const lang = await this.extendersService.translateMessage(
       "STATS",
       guildDB.lang
@@ -45,7 +45,7 @@ export class BotInfo implements CommandLineClass {
       .setColor(guildDB.color)
       .setThumbnail(
         message.client.user.displayAvatarURL({
-          dynamic: true,
+          // dynamic: true,
           size: 512,
         })
       )
@@ -57,7 +57,7 @@ export class BotInfo implements CommandLineClass {
       .setFooter({
         text: `KOMU`,
         iconURL: message.client.user.displayAvatarURL({
-          dynamic: true,
+          // dynamic: true,
           size: 512,
         }),
       });
