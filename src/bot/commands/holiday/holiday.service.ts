@@ -7,11 +7,11 @@ import { Repository } from "typeorm";
 export class HolidayService {
   constructor(
     @InjectRepository(Holiday)
-    private leaveReposistory: Repository<Holiday>
+    private leaveRepository: Repository<Holiday>
   ) {}
 
   async addHoliday(dateTime, messageHoliday) {
-    await this.leaveReposistory.insert({
+    await this.leaveRepository.insert({
       dateTime: dateTime,
       content: messageHoliday,
     });

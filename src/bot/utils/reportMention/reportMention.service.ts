@@ -10,14 +10,14 @@ import { KomubotrestService } from "../komubotrest/komubotrest.service";
 export class ReportMentionService {
   constructor(
     @InjectRepository(WorkFromHome)
-    private wfhReposistory: Repository<WorkFromHome>,
+    private wfhRepository: Repository<WorkFromHome>,
     private komubotrestService: KomubotrestService,
     private utilsService: UtilsService
   ) {}
 
   async reportMention(message, client) {
     const authorId = message.author.id;
-    const mentionFullday = await this.wfhReposistory
+    const mentionFullday = await this.wfhRepository
       .createQueryBuilder("wfhs,users")
       .leftJoinAndSelect("user.userId", "users")
       .where('"wfhs.type" = :type', { type: "wfh" })

@@ -16,9 +16,9 @@ import { ClientConfigService } from "src/bot/config/client-config.service";
 export class ReportTrackerService {
   constructor(
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     @InjectRepository(TrackerSpentTime)
-    private trackerSpentTimeReposistory: Repository<TrackerSpentTime>,
+    private trackerSpentTimeRepository: Repository<TrackerSpentTime>,
     private utilsService: UtilsService,
     private readonly http: HttpService,
     private readonly clientConfigService: ClientConfigService,
@@ -161,13 +161,13 @@ export class ReportTrackerService {
       if (args[2]) {
         let email = args[2] || "";
         if (!email) {
-          const user = await this.userReposistory.findOne({
+          const user = await this.userRepository.findOne({
             where: { userId: message.author.id },
           });
           email = user.email;
         }
 
-        const arrayUser = await this.trackerSpentTimeReposistory
+        const arrayUser = await this.trackerSpentTimeRepository
           .createQueryBuilder("users")
           .select("email")
           .addSelect('MAX("spent_time")', "timeStamp")
@@ -182,7 +182,7 @@ export class ReportTrackerService {
           .execute();
 
         if (arrayUser.length > 0) {
-          const userTracker = await this.trackerSpentTimeReposistory
+          const userTracker = await this.trackerSpentTimeRepository
             .createQueryBuilder("users")
             .where('"spent_time" IN (:...time_stamps)', {
               time_stamps: arrayUser.map((item) => item.timeStamp),
@@ -260,7 +260,7 @@ export class ReportTrackerService {
 
         await Promise.all(
           userWFH.map(async (item) => {
-            const arrayUser = await this.trackerSpentTimeReposistory
+            const arrayUser = await this.trackerSpentTimeRepository
               .createQueryBuilder("users")
               .select("email")
               .addSelect('MAX("spent_time")', "timeStamp")
@@ -278,7 +278,7 @@ export class ReportTrackerService {
               .execute();
 
             if (arrayUser.length > 0) {
-              const userTracker = await this.trackerSpentTimeReposistory
+              const userTracker = await this.trackerSpentTimeRepository
                 .createQueryBuilder("users")
                 .where('"spent_time" IN (:...time_stamps)', {
                   time_stamps: arrayUser.map((item) => item.timeStamp),
@@ -366,7 +366,7 @@ export class ReportTrackerService {
       if (args[2]) {
         let email = args[2] || "";
         if (!email) {
-          const user = await this.userReposistory.findOne({
+          const user = await this.userRepository.findOne({
             where: { userId: message.author.id },
           });
           email = user.email;
@@ -391,7 +391,7 @@ export class ReportTrackerService {
             currentDate.getDate() + 1
           );
 
-          const arrayUser = await this.trackerSpentTimeReposistory
+          const arrayUser = await this.trackerSpentTimeRepository
             .createQueryBuilder("users")
             .select("email")
             .addSelect('MAX("spent_time")', "timeStamp")
@@ -412,7 +412,7 @@ export class ReportTrackerService {
             .execute();
 
           if (arrayUser.length > 0) {
-            const userTracker = await this.trackerSpentTimeReposistory
+            const userTracker = await this.trackerSpentTimeRepository
               .createQueryBuilder("users")
               .where('"spent_time" IN (:...time_stamps)', {
                 time_stamps: arrayUser.map((item) => item.timeStamp),
@@ -516,7 +516,7 @@ export class ReportTrackerService {
 
           await Promise.all(
             userWFH.map(async (item) => {
-              const arrayUser = await this.trackerSpentTimeReposistory
+              const arrayUser = await this.trackerSpentTimeRepository
                 .createQueryBuilder("users")
                 .select("email")
                 .addSelect('MAX("spent_time")', "timeStamp")
@@ -534,7 +534,7 @@ export class ReportTrackerService {
                 .execute();
 
               if (arrayUser.length > 0) {
-                const userTracker = await this.trackerSpentTimeReposistory
+                const userTracker = await this.trackerSpentTimeRepository
                   .createQueryBuilder("users")
                   .where('"spent_time" IN (:...time_stamps)', {
                     time_stamps: arrayUser.map((item) => item.timeStamp),
@@ -614,7 +614,7 @@ export class ReportTrackerService {
     } else if (args[1] === "time") {
       let email = args[2] || "";
       if (!email) {
-        const user = await this.userReposistory.findOne({
+        const user = await this.userRepository.findOne({
           where: { userId: message.author.id },
         });
         email = user.email;
@@ -645,7 +645,7 @@ export class ReportTrackerService {
         day: "2-digit",
       });
 
-      const arrayUser = await this.trackerSpentTimeReposistory
+      const arrayUser = await this.trackerSpentTimeRepository
         .createQueryBuilder("users")
         .select("email")
         .addSelect('MAX("spent_time")', "timeStamp")
@@ -660,7 +660,7 @@ export class ReportTrackerService {
         .execute();
 
       if (arrayUser.length > 0) {
-        const userTracker = await this.trackerSpentTimeReposistory
+        const userTracker = await this.trackerSpentTimeRepository
           .createQueryBuilder("users")
           .where('"spent_time" IN (:...time_stamps)', {
             time_stamps: arrayUser.map((item) => item.timeStamp),
@@ -754,13 +754,13 @@ export class ReportTrackerService {
       if (args[2]) {
         let email = args[2] || "";
         if (!email) {
-          const user = await this.userReposistory.findOne({
+          const user = await this.userRepository.findOne({
             where: { userId: message.author.id },
           });
           email = user.email;
         }
 
-        const arrayUser = await this.trackerSpentTimeReposistory
+        const arrayUser = await this.trackerSpentTimeRepository
           .createQueryBuilder("users")
           .select("email")
           .addSelect('MAX("spent_time")', "timeStamp")
@@ -775,7 +775,7 @@ export class ReportTrackerService {
           .execute();
 
         if (arrayUser.length > 0) {
-          const userTracker = await this.trackerSpentTimeReposistory
+          const userTracker = await this.trackerSpentTimeRepository
             .createQueryBuilder("users")
             .where('"spent_time" IN (:...time_stamps)', {
               time_stamps: arrayUser.map((item) => item.timeStamp),
@@ -855,7 +855,7 @@ export class ReportTrackerService {
 
         await Promise.all(
           userWFH.map(async (item) => {
-            const arrayUser = await this.trackerSpentTimeReposistory
+            const arrayUser = await this.trackerSpentTimeRepository
               .createQueryBuilder("users")
               .select("email")
               .addSelect('MAX("spent_time")', "timeStamp")
@@ -870,7 +870,7 @@ export class ReportTrackerService {
               .execute();
 
             if (arrayUser.length > 0) {
-              const userTracker = await this.trackerSpentTimeReposistory
+              const userTracker = await this.trackerSpentTimeRepository
                 .createQueryBuilder("users")
                 .where('"spent_time" IN (:...time_stamps)', {
                   time_stamps: arrayUser.map((item) => item.timeStamp),

@@ -14,9 +14,9 @@ export class MeetingSchedulerService {
   constructor(
     private utilsService: UtilsService,
     @InjectRepository(Meeting)
-    private meetingReposistory: Repository<Meeting>,
+    private meetingRepository: Repository<Meeting>,
     @InjectRepository(VoiceChannels)
-    private voiceChannelReposistory: Repository<VoiceChannels>,
+    private voiceChannelRepository: Repository<VoiceChannels>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client
@@ -54,7 +54,7 @@ export class MeetingSchedulerService {
         // guild.type === "GUILD_VOICE" &&
         guild.parentId === "1019615919204483074"
     );
-    const repeatMeet = await this.meetingReposistory
+    const repeatMeet = await this.meetingRepository
       .createQueryBuilder("meeting")
       .where(`"reminder" IS NOT TRUE`)
       .andWhere(`"cancel" IS NOT TRUE`)
@@ -67,7 +67,7 @@ export class MeetingSchedulerService {
     let roomMap = [];
     let voiceNow = [];
 
-    const findVoice = await this.voiceChannelReposistory.find({
+    const findVoice = await this.voiceChannelRepository.find({
       where: {
         status: "start",
       },
@@ -148,7 +148,7 @@ export class MeetingSchedulerService {
                         `${channelNameOnce.name} (${item.task})`
                       );
                     const newRoomOnce = channelNameOnce.name;
-                    await this.voiceChannelReposistory
+                    await this.voiceChannelRepository
                       .insert({
                         voiceChannelId: channelNameOnce.id,
                         originalName: originalNameOnce,
@@ -160,7 +160,7 @@ export class MeetingSchedulerService {
                     await onceFetchChannel
                       .send(`@here voice channel full`)
                       .catch(console.error);
-                  await this.meetingReposistory
+                  await this.meetingRepository
                     .createQueryBuilder()
                     .update(Meeting)
                     .set({ reminder: true })
@@ -201,7 +201,7 @@ export class MeetingSchedulerService {
                       );
                     console.log(`setname ${item.task} daily ${item.channelId}`);
                     const newRoomDaily = channelNameDaily.name;
-                    await this.voiceChannelReposistory
+                    await this.voiceChannelRepository
                       .insert({
                         voiceChannelId: channelNameDaily.id,
                         originalName: originalNameDaily,
@@ -232,7 +232,7 @@ export class MeetingSchedulerService {
                   console.log(
                     `checkholiday set timestamp ${item.task} ${item.channelId}`
                   );
-                  await this.meetingReposistory
+                  await this.meetingRepository
                     .createQueryBuilder()
                     .update(Meeting)
                     .set({
@@ -246,7 +246,7 @@ export class MeetingSchedulerService {
                     `update daily ${item.task} successfully ${item.channelId}`
                   );
 
-                  const findMeetingAfter = await this.meetingReposistory.find({
+                  const findMeetingAfter = await this.meetingRepository.find({
                     where: {
                       channelId: item.channelId,
                       task: item.task,
@@ -290,7 +290,7 @@ export class MeetingSchedulerService {
                         `${channelNameWeekly.name} (${item.task})`
                       );
                     const newRoomWeekly = channelNameWeekly.name;
-                    await this.voiceChannelReposistory
+                    await this.voiceChannelRepository
                       .insert({
                         voiceChannelId: channelNameWeekly.id,
                         originalName: originalNameWeekly,
@@ -313,7 +313,7 @@ export class MeetingSchedulerService {
                       currentDate.getDate() + 7
                     );
                   }
-                  await this.meetingReposistory
+                  await this.meetingRepository
                     .createQueryBuilder()
                     .update(Meeting)
                     .set({
@@ -359,7 +359,7 @@ export class MeetingSchedulerService {
                         `${channelNameRepeat.name} (${item.task})`
                       );
                     const newRoomRepeat = channelNameRepeat.name;
-                    await this.voiceChannelReposistory
+                    await this.voiceChannelRepository
                       .insert({
                         voiceChannelId: channelNameRepeat.id,
                         originalName: originalNameRepeat,
@@ -383,7 +383,7 @@ export class MeetingSchedulerService {
                       currentDate.getDate() + item.repeatTime
                     );
                   }
-                  await this.meetingReposistory
+                  await this.meetingRepository
                     .createQueryBuilder()
                     .update(Meeting)
                     .set({
@@ -406,7 +406,7 @@ export class MeetingSchedulerService {
 
   async updateReminderMeeting() {
     if (await this.utilsService.checkHoliday()) return;
-    const repeatMeet = await this.meetingReposistory.find({
+    const repeatMeet = await this.meetingRepository.find({
       where: {
         reminder: true,
       },
@@ -434,12 +434,12 @@ export class MeetingSchedulerService {
       }
       if (hourDateNow === hourTimestamp && checkFiveMinute > 5)
         if (item.repeat === "once") {
-          await this.meetingReposistory.update(
+          await this.meetingRepository.update(
             { id: item.id },
             { cancel: true }
           );
         } else {
-          await this.meetingReposistory.update(
+          await this.meetingRepository.update(
             { id: item.id },
             { reminder: false }
           );

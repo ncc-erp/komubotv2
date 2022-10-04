@@ -38,7 +38,6 @@ export default class NotificationCommand implements CommandLineClass {
         await firstValueFrom(
           this.http
             .post(
-              // client.config.noti.api_url_quickNews,
               this.clientConfigService.noti.api_url_quickNews,
               {
                 content: noti,

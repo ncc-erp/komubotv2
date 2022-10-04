@@ -11,7 +11,7 @@ import { KomubotrestService } from "../komubotrest/komubotrest.service";
 export class ReportWFHService {
   constructor(
     @InjectRepository(WorkFromHome)
-    private wfhReposistory: Repository<WorkFromHome>,
+    private wfhRepository: Repository<WorkFromHome>,
     private komubotrestService: KomubotrestService,
     private utilsService: UtilsService
   ) {}
@@ -33,7 +33,7 @@ export class ReportWFHService {
       });
     }
 
-    const wfhFullday = await this.wfhReposistory
+    const wfhFullday = await this.wfhRepository
       .createQueryBuilder(TABLE.WFH)
       .leftJoinAndSelect(`${TABLE.WFH}.user`, "user")
       .where(`${TABLE.WFH}.type = :type`, { type: "wfh" })
@@ -111,7 +111,7 @@ export class ReportWFHService {
     //   },
     // });
 
-    const wfhFullday = await this.wfhReposistory
+    const wfhFullday = await this.wfhRepository
       .createQueryBuilder(TABLE.WFH)
       .where(`${TABLE.WFH}.status = :status`, { status: "APPROVED" })
       .andWhere(`${TABLE.WFH}.complain = :complain`, { complain: true })

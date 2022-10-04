@@ -8,10 +8,10 @@ import { Repository } from "typeorm";
 export class HeyboyService{
     constructor(
         @InjectRepository(User)
-        private userReposistory : Repository<User>
+        private userRepository : Repository<User>
     ){}
     async findWomanUser(_emails){
-        return await this.userReposistory
+        return await this.userRepository
         .createQueryBuilder(TABLE.USER)
         .where(`${TABLE.USER}.email IN (:emails)`,{emails : _emails} )
         .andWhere(`${TABLE.USER}.deactive = :deactive`, {deactive : true})

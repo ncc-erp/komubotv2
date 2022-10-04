@@ -10,7 +10,7 @@ import { UtilsService } from "../utils.service";
 export class ReportScoreService {
   constructor(
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     private utilsService: UtilsService
   ) {}
 
@@ -21,7 +21,7 @@ export class ReportScoreService {
 
       if (!userid || !username) return;
 
-      const scoresQuizData = await this.userReposistory
+      const scoresQuizData = await this.userRepository
         .createQueryBuilder(TABLE.USER)
         .where(`${TABLE.USER}.deactive = :deactive`, { deactive: true })
         .orderBy(`${TABLE.USER}.scores_quiz`, "ASC")

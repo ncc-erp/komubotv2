@@ -126,6 +126,8 @@ import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
 import { Channel } from "./models/channel.entity";
 import { Bwl } from "./models/bwl.entity";
 import { BwlReaction } from "./models/bwlReact.entity";
+import { SendquizSchedulerService } from "./scheduler/sendquiz-scheduler/sendquiz-scheduler.service";
+import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 
 @Module({
   imports: [
@@ -262,6 +264,8 @@ import { BwlReaction } from "./models/bwlReact.entity";
     KeepSlashCommand,
     WikiSlashCommand,
     VocabSlashCommand,
+    SendquizSchedulerService,
+    SendQuizToSingleUserService,
   ],
   controllers: [KomubotrestController],
 })

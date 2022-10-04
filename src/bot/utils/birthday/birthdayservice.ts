@@ -11,9 +11,9 @@ import { Repository } from "typeorm";
 export class BirthdayService {
   constructor(
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     @InjectRepository(BirthDay)
-    private birthdayReposistory: Repository<BirthDay>,
+    private birthdayRepository: Repository<BirthDay>,
     private clientConfigService: ClientConfigService,
     private readonly http: HttpService
   ) {}
@@ -52,14 +52,14 @@ export class BirthdayService {
 
   async birthdayUser(client) {
     const result = [];
-    const getAllUser = await this.userReposistory
+    const getAllUser = await this.userRepository
       .createQueryBuilder("users")
       .where('"deactive" IS NOT True')
       .select("users.*")
       .execute();
 
     const emailArray = getAllUser.map((item) => item.email);
-    const resultBirthday = await this.birthdayReposistory.find();
+    const resultBirthday = await this.birthdayRepository.find();
     const items = resultBirthday.map((item) => item.title);
     let wishes = items;
     for (const email of emailArray) {
@@ -72,11 +72,12 @@ export class BirthdayService {
       const index = Math.floor(Math.random() * items.length);
       const birthdayWish = wishes[index];
       wishes.splice(index, 1);
-      const birthday = await this.userReposistory
+      const birthday = await this.userRepository
         .createQueryBuilder("users")
-        .where('"email" = :email AND "deactive" IS NOT True', {
+        .where('"email" = :email', {
           email: emailBirthday,
         })
+        .andWhere('"deactive" IS NOT True')
         .select("users.*")
         .execute();
       result.push({ user: birthday, wish: birthdayWish });

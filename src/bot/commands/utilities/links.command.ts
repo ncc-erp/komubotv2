@@ -96,10 +96,10 @@ export class LinksCommand implements CommandLineClass {
           `${
             guildDB.lang === "fr"
               ? "Vous pouvez voter pour KOMU [ici](" +
-                client.config.topgg_url +
+                this.clientConfigService.topgg_url +
                 "/vote)"
               : " You can upvote me by clicking [here](" +
-                client.config.topgg_url +
+              this.clientConfigService.topgg_url +
                 "/vote)"
           }`
         )

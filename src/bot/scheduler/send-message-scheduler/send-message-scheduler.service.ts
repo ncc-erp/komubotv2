@@ -21,7 +21,7 @@ export class SendMessageSchedulerService {
     private utilsService: UtilsService,
     private readonly http: HttpService,
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
@@ -114,15 +114,15 @@ export class SendMessageSchedulerService {
     }
     getListUserLogTimesheet.data.result.map(async (item) => {
       const list = this.utilsService.getUserNameByEmail(item.emailAddress);
-      const checkUser = await this.userReposistory
-        .createQueryBuilder("user")
+      const checkUser = await this.userRepository
+        .createQueryBuilder()
         .where(`"email" = :email`, {
           email: list,
         })
         .andWhere(`"deactive" IS NOT TRUE`)
         // .andWhere(`"roles_discord" IS NOT TRUE`)
         // roles_discord: { $ne: [], $exists: true },
-        .select("user.*")
+        .select("*")
         .execute();
 
       checkUser.map(async (user) => {
@@ -156,7 +156,7 @@ export class SendMessageSchedulerService {
       const { userOffFullday } = await getUserOffWork(null);
 
       userListNotCheckIn.map(async (user) => {
-        const checkUser = await this.userReposistory
+        const checkUser = await this.userRepository
           .createQueryBuilder("users")
           .where("email = :email", {
             email: user.komuUserName,
@@ -188,12 +188,12 @@ export class SendMessageSchedulerService {
 
     try {
       await Promise.all(
-        await result.map((item) =>
+        await result.map((item) => {
           this.komubotrestService.sendMessageToNhaCuaChung(
             client,
-            `${item.wish} <@${item.user.id}> +1 trà sữa full topping nhé b iu`
-          )
-        )
+            `${item.wish} <@${item.user[0].userId}> +1 trà sữa full topping nhé b iu`
+          );
+        })
       );
     } catch (error) {
       console.log(error);

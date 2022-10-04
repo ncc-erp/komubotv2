@@ -17,11 +17,11 @@ export class DatingSchedulerService {
   constructor(
     private utilsService: UtilsService,
     @InjectRepository(Dating)
-    private datingReposistory: Repository<Dating>,
+    private datingRepository: Repository<Dating>,
     @InjectRepository(JoinCall)
-    private joinCallReposistory: Repository<JoinCall>,
+    private joinCallRepository: Repository<JoinCall>,
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
@@ -99,12 +99,12 @@ export class DatingSchedulerService {
       });
 
       let result = [];
-      const userDating = await this.datingReposistory.find();
+      const userDating = await this.datingRepository.find();
       userDating.map(async (item) => {
         result.push(item.email);
       });
 
-      const checkJoinCall = await this.joinCallReposistory.find({
+      const checkJoinCall = await this.joinCallRepository.find({
         where: {
           status: "joining",
         },
@@ -113,7 +113,7 @@ export class DatingSchedulerService {
         listJoinCall.push(item.userId);
       });
 
-      const checkUserMan = await this.userReposistory
+      const checkUserMan = await this.userRepository
         .createQueryBuilder("users")
         .where('"email" IN (:...emailUserMan)', {
           emailUserMan: emailUserMan,
@@ -129,7 +129,7 @@ export class DatingSchedulerService {
         .execute();
       console.log(checkUserMan);
 
-      const checkUserWoman = await this.userReposistory
+      const checkUserWoman = await this.userRepository
         .createQueryBuilder("users")
         .where('"email" IN (:...emailUserWomen)', {
           emailUserWomen: emailUserWomen,
@@ -244,7 +244,7 @@ export class DatingSchedulerService {
                 await nowFetchChannel.send(
                   `Hãy vào <#${roomMap[0]}> trò chuyện cuối tuần thôi nào <@${datingIdMan[i]}> <@${datingIdWoman[i]}>`
                 );
-                await this.datingReposistory
+                await this.datingRepository
                   .insert({
                     channelId: roomMap[0],
                     userId: datingIdMan[i],
@@ -255,7 +255,7 @@ export class DatingSchedulerService {
                   })
                   .catch((err) => console.log(err));
 
-                await this.datingReposistory
+                await this.datingRepository
                   .insert({
                     channelId: roomMap[0],
                     userId: datingIdWoman[i],
@@ -282,7 +282,7 @@ export class DatingSchedulerService {
       const timeNow = new Date();
       const timeStart = timeNow.setHours(0, 0, 0, 0);
       const timeEnd = timeNow.setHours(23, 0, 0, 0);
-      const findDating = await this.datingReposistory
+      const findDating = await this.datingRepository
         .createQueryBuilder()
         .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
           gtecreatedTimestamp: timeStart,
@@ -291,7 +291,7 @@ export class DatingSchedulerService {
           ltecreatedTimestamp: timeEnd,
         })
         .orderBy("loop", "ASC")
-        .select(".*")
+        .select("*")
         .execute();
 
       findDating.map((item) => {

@@ -12,16 +12,16 @@ import { UtilsService } from "../utils.service";
 export class ReportCheckCameraService {
   constructor(
     @InjectRepository(User)
-    private userReposistory: Repository<User>,
+    private userRepository: Repository<User>,
     @InjectRepository(CheckCamera)
-    private checkCameraReposistory: Repository<CheckCamera>,
+    private checkCameraRepository: Repository<CheckCamera>,
     private utilsService: UtilsService,
     private komubotrestService: KomubotrestService
   ) {}
 
   async reportCheckCamera(message: Message, args, client: Client) {
     let authorId = message.author.id;
-    const userCheckCamera = await this.checkCameraReposistory
+    const userCheckCamera = await this.checkCameraRepository
       .createQueryBuilder()
       .andWhere(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
@@ -43,7 +43,7 @@ export class ReportCheckCameraService {
     const userOff = [...userOffFullday, ...userOffMorning];
     console.log(userCheckCameraId);
 
-    const checkCameraFullday = await this.userReposistory
+    const checkCameraFullday = await this.userRepository
       .createQueryBuilder("")
       .where(`"userId" NOT IN (:...userCheckCameraId)`, {
         userCheckCameraId: userCheckCameraId,
