@@ -1,4 +1,4 @@
-import { Channel, DiscordModule } from "@discord-nestjs/core";
+import { DiscordModule } from "@discord-nestjs/core";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -30,8 +30,6 @@ import { WorkFromHome } from "./models/wfh.entity";
 import { MeetingSchedulerService } from "./scheduler/meeting-scheduler/meeting-scheduler.service";
 import { ReminderSchedulerService } from "./scheduler/reminder-scheduler/reminder-scheduler.service";
 import { SendMessageSchedulerService } from "./scheduler/send-message-scheduler/send-message-scheduler.service";
-import { PlaySlashCommand } from "./slash-commands/play.slashcommand";
-import { PlaylistSlashCommand } from "./slash-commands/playlist.slashcommand";
 import { CheckListModule } from "./utils/checklist/checklist.module";
 import { UtilsService } from "./utils/utils.service";
 
@@ -50,8 +48,6 @@ import { AudioPlayer } from "@discordjs/voice";
 import { ConfigService } from "@nestjs/config";
 import LeaveCommand from "./commands/leave/leave.command";
 import { LeaveService } from "./commands/leave/leave.service";
-import { MoveChannelCommand } from "./commands/move_channel/move_channel.command";
-import { MoveChannelService } from "./commands/move_channel/move_channel.service";
 import { PollCommand } from "./commands/poll/poll.command";
 import { ClientConfigService } from "./config/client-config.service";
 import { CheckList } from "./models/checklist.entity";
@@ -62,8 +58,6 @@ import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
 
 import { DailyService } from "./commands/daily/daily.service";
-import { ElsaCommand } from "./commands/elsa/elsa.command";
-import { ElsaService } from "./commands/elsa/elsa.service";
 import { HeyboyCommand } from "./commands/heyboy/heyboy.command";
 import { HeyboyService } from "./commands/heyboy/heyboy.service";
 import { KickbotCommand } from "./commands/kickbot/kickbot.command";
@@ -77,14 +71,12 @@ import { UpdateCommand } from "./commands/update/update.command";
 import { AntCommand } from "./commands/utilities/ant.command";
 import { BotInfo } from "./commands/utilities/botinfo.command";
 import { HelpCommand } from "./commands/utilities/help.command";
-import { TiktokCommand } from "./commands/utilities/tiktok.command";
 import { WolCommand } from "./commands/utilities/wol.command";
 import { WomanDayService } from "./commands/womanday/womanday.service";
 import { BirthDay } from "./models/birthday.entity";
 import { CheckCamera } from "./models/checkCamera.entity";
 import { Conversation } from "./models/conversation.entity";
 import { Dating } from "./models/dating.entity";
-import { ElsaDaily } from "./models/elsaDaily.entity";
 import { JoinCall } from "./models/joinCall.entity";
 import { TimeVoiceAlone } from "./models/timeVoiceAlone.entity";
 import { TrackerSpentTime } from "./models/trackerSpentTime.entity";
@@ -108,7 +100,7 @@ import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { GemrankCommand } from "./commands/gemrank/gemrank.command";
 import { WomanDayCommand } from "./commands/womanday/womanday.command";
-import { TestCommand } from "./commands/test/test.command";
+import { BWLCommand } from "./commands/bwl/bwl.command";
 import { ExtendersService } from "./utils/extenders/extenders.service";
 import { GuildData } from "./models/guildData.entity";
 import { HasvotedCommand } from "./commands/utilities/hasvoted.command";
@@ -124,6 +116,16 @@ import { LinksCommand } from "./commands/utilities/links.command";
 import { ChecklistCommand } from "./commands/checklist/checklist.command";
 import { ServerInfoCommand } from "./commands/utilities/serverinfo.command";
 import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
+import { TicketSlashCommand } from "./slash-commands/ticket.slashcommand";
+import { MachleoSlashCommand } from "./slash-commands/machleo.slashcommand";
+import { KeepSlashCommand } from "./slash-commands/keep.slashcommand";
+import { Keep } from "./models/keep.entity";
+import { WikiSlashCommand } from "./slash-commands/wiki.slashcommand";
+import { Wiki } from "./models/wiki.entity";
+import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
+import { Channel } from "./models/channel.entity";
+import { Bwl } from "./models/bwl.entity";
+import { BwlReaction } from "./models/bwlReact.entity";
 
 @Module({
   imports: [
@@ -133,6 +135,8 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
+      BwlReaction,
+      Bwl,
       Daily,
       Order,
       Leave,
@@ -160,9 +164,10 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
       TrackerSpentTime,
       Conversation,
       TimeVoiceAlone,
-      ElsaDaily,
       GuildData,
       Quiz,
+      Keep,
+      Wiki,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -171,8 +176,6 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     ReportWFHModule,
   ],
   providers: [
-    PlaySlashCommand,
-    PlaylistSlashCommand,
     CompantripCommand,
     CompanytripService,
     BotGateway,
@@ -187,7 +190,6 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     KomubotrestController,
     UtilsService,
     ReportTracker,
-    MoveChannelCommand,
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
@@ -209,7 +211,6 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     PollEmbedUntil,
     ConfigService,
     ClientConfigService,
-    MoveChannelService,
     ReportHolidayService,
     ReportOpenTalkService,
     AudioPlayer,
@@ -234,13 +235,10 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     EvalCommand,
     BotInfo,
     HelpCommand,
-    TiktokCommand,
     DmMessageUntil,
     VoiceChannelSchedulerService,
     GemrankCommand,
     OpenTalkCommand,
-    ElsaCommand,
-    ElsaService,
     WomanDayCommand,
     WomanDayService,
     RequestOrder,
@@ -248,7 +246,7 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     Uploadfile,
     HeyboyCommand,
     HeyboyService,
-    TestCommand,
+    BWLCommand,
     ExtendersService,
     HasvotedCommand,
     PingCommand,
@@ -259,6 +257,11 @@ import { AddEmojiCommand } from "./commands/utilities/addemoji.command";
     LinksCommand,
     ServerInfoCommand,
     AddEmojiCommand,
+    TicketSlashCommand,
+    MachleoSlashCommand,
+    KeepSlashCommand,
+    WikiSlashCommand,
+    VocabSlashCommand,
   ],
   controllers: [KomubotrestController],
 })

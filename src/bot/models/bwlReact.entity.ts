@@ -1,23 +1,36 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { TABLE } from "../constants/table";
+import { Bwl } from "./bwl.entity";
+import { Channel } from "./channel.entity";
+import { User } from "./user.entity";
 
 @Entity(TABLE.BWLREACTION)
 export class BwlReaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text", nullable: true })
-  channelId: string;
+  @ManyToOne(() => Bwl, (state) => state.bwlReaction)
+  @JoinColumn({ name: "bwl" })
+  bwl: Bwl;
 
-  @Column({ type: "text", nullable: true })
-  messageId: string;
+  @ManyToOne(() => Channel, (state) => state.bwlReaction)
+  @JoinColumn({ name: "channel" })
+  channel: Channel;
 
   @Column({ type: "text", nullable: true })
   guildId: string;
 
-  @Column({ type: "text", nullable: true })
-  authorId: string;
+  @ManyToOne(() => User, (state) => state.bwlReaction)
+  @JoinColumn({ name: "author" })
+  author: User;
 
   @Column({ nullable: true })
   emoji: string;
@@ -26,5 +39,5 @@ export class BwlReaction {
   count: number;
 
   @Column({ type: "decimal" })
-  createTimestamp: number;
+  createdTimestamp: number;
 }

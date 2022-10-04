@@ -7,6 +7,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ReportCommand } from "../commands/report/report.command";
 import { Tx8Command } from "../commands/tx8/tx8.command";
 import { ClientConfigService } from "../config/client-config.service";
+import { Channel } from "../models/channel.entity";
 import { CheckCamera } from "../models/checkCamera.entity";
 import { Daily } from "../models/daily.entity";
 import { Holiday } from "../models/holiday.entity";
@@ -58,6 +59,7 @@ import { UtilsService } from "./utils.service";
       CheckCamera,
       TrackerSpentTime,
       Msg,
+      Channel,
     ]),
     ReportOrderModule,
     ReportHolidayModule,

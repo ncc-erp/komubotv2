@@ -150,17 +150,12 @@ export class UtilsService {
     return result;
   }
 
-  formatDate(date) {
-    const dateNow = date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    const month = dateNow.slice(0, 2);
-    const day = dateNow.slice(3, 5);
-    const year = dateNow.slice(6);
-
-    return `${day}/${month}/${year}`;
+  formatDate(time) {
+    const today = new Date(time);
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
   }
 
   async checkHolidayMeeting(date) {
@@ -229,22 +224,48 @@ export class UtilsService {
     return date;
   }
 
-  getTimeWeek() {
-    let curr = new Date();
+  validateTimeDDMMYYYY(time) {
+    return /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/.test(
+      time
+    );
+  }
+
+  formatDayMonth(time) {
+    const day = time.split("").slice(0, 2).join("");
+    const month = time.split("").slice(3, 5).join("");
+    const year = time.split("").slice(6, 10).join("");
+    return `${month}/${day}/${year}`;
+  }
+
+  getTimeWeek(time) {
+    let curr;
+    if (time) {
+      if (!this.validateTimeDDMMYYYY(time)) {
+        return;
+      }
+      const timeFormat = this.formatDayMonth(time);
+      curr = new Date(timeFormat);
+    } else {
+      curr = new Date();
+    }
     // current date of week
     const currentWeekDay = curr.getDay();
     const lessDays = currentWeekDay == 0 ? 6 : currentWeekDay - 1;
     const firstweek = new Date(
       new Date(curr).setDate(curr.getDate() - lessDays)
     );
-    const lastweek = new Date(new Date(firstweek).setDate(firstweek.getDate()));
+    const lastweek = new Date(
+      new Date(firstweek).setDate(firstweek.getDate() + 7)
+    );
 
     return {
       firstday: {
         timestamp: new Date(this.withoutTime(firstweek)).getTime(),
+        date: this.formatDate(new Date(this.withoutTime(firstweek))),
       },
       lastday: {
         timestamp: new Date(this.withoutTime(lastweek)).getTime(),
+        date: this.formatDate(new Date(this.withoutTime(lastweek))),
       },
     };
   }
@@ -335,5 +356,26 @@ export class UtilsService {
       firstDay: new Date(this.withoutTimeMention(today)),
       lastDay: new Date(this.withoutTimeMention(tomorrowsDate)),
     };
+  }
+
+  getTimeWeekMondayToSunday(dayNow) {
+    const curr = new Date();
+    const currentWeekDay = curr.getDay();
+    const lessDays = currentWeekDay == 0 ? 6 : currentWeekDay - 1;
+    const firstweek = new Date(
+      new Date(curr).setDate(curr.getDate() - lessDays)
+    );
+    const arrayDay = Array.from(
+      { length: 9 - dayNow - 1 },
+      (v, i) => i + dayNow + 1
+    );
+
+    function getDayofWeek(rank) {
+      return new Date(
+        new Date(firstweek).setDate(firstweek.getDate() + rank - 2)
+      );
+    }
+    console.log("lengthArray day : ", arrayDay);
+    return arrayDay.map((item) => getDayofWeek(item));
   }
 }

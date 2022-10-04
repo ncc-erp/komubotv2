@@ -1,7 +1,7 @@
-import { text } from "stream/consumers";
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   OneToMany,
   PrimaryColumn,
@@ -9,23 +9,30 @@ import {
 } from "typeorm";
 
 import { TABLE } from "../constants/table";
+import { Bwl } from "./bwl.entity";
+import { BwlReaction } from "./bwlReact.entity";
 import { Msg } from "./msg.entity";
-import { WorkFromHome } from "./wfh.entity";
+import { TX8 } from "./tx8.entity";
 
 @Entity(TABLE.USER)
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ type: "text", nullable: true })
+  @PrimaryColumn()
   userId: string;
 
   @Column({ type: "text", nullable: true })
   username: string;
 
-  // @OneToMany(() => Msg, (state) => state.user)
-  // @JoinTable()
-  // msg: Msg[];
+  @OneToMany(() => Msg, (state) => state.author)
+  msg: Msg[];
+
+  @OneToMany(() => Bwl, (state) => state.author)
+  bwl: Bwl[];
+
+  @OneToMany(() => BwlReaction, (state) => state.author)
+  bwlReaction: BwlReaction[];
+
+  @OneToMany(() => TX8, (state) => state.user)
+  tx8: TX8[];
 
   // @OneToMany(() => WorkFromHome, (state) => state.userid)
   // wfh: WorkFromHome;

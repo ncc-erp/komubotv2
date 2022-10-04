@@ -33,12 +33,11 @@ export const TABLE = {
   HOLIDAY: "komu_holiday",
   GUILDDATA: "komu_guilddata",
   GUILD: "guild",
-  ELSADAILY: "komu_elsaDaily",
   DATING: "komu_dating",
   CONVERSATION: "komu_conversation",
   COMPANYTRIP: "komu_companytrip",
   CHECKLIST: "komu_checklist",
-  CHECK_CAMERA: "komu_check_camera",
+  CHECK_CAMERA: "komu_checkCamera",
   CHANNEL: "komu_channel",
   BWLREACTION: "komu_bwlreaction",
 };

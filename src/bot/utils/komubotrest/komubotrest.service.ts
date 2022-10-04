@@ -7,6 +7,7 @@ import {
   EmbedBuilder,
 } from "discord.js";
 import { TABLE } from "src/bot/constants/table";
+import { Channel } from "src/bot/models/channel.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
@@ -19,6 +20,8 @@ export class KomubotrestService {
     private userReposistory: Repository<User>,
     @InjectRepository(Msg)
     private messageReposistory: Repository<Msg>,
+    @InjectRepository(Channel)
+    private channelReposistory: Repository<Channel>,
     @InjectRepository(WorkFromHome)
     private wfhReposistory: Repository<WorkFromHome>
   ) {}
@@ -158,11 +161,15 @@ export class KomubotrestService {
         return null;
       }
       const sent = await user.send(msg);
-      console.log(sent, "fdsgfsdgsdgdsgsdgsdggsdggdsgsdgdsdggsgsđ");
+      const channelInsert = await this.channelReposistory.findOne({
+        where: {
+          id: "1021944210800263189",
+        },
+      });
       await this.messageReposistory.insert({
         author: sent.username,
-        channelId:'1021944210800263189',
-        deleted:false,
+        channel: channelInsert,
+        deleted: false,
       });
       // botPing : work when bot send quiz wfh user
       // isSendQuiz : work when bot send quiz

@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { Channel } from "src/bot/models/channel.entity";
 import { Daily } from "src/bot/models/daily.entity";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Msg } from "src/bot/models/msg.entity";
@@ -17,10 +18,17 @@ import { ReportDailyService } from "./report-daily.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Daily, Holiday, User, Msg, WorkFromHome]),
+    TypeOrmModule.forFeature([
+      Daily,
+      Holiday,
+      User,
+      Msg,
+      WorkFromHome,
+      Channel,
+    ]),
     DiscordModule.forFeature(),
     DiscoveryModule,
-    HttpModule
+    HttpModule,
   ],
   providers: [
     ReportDailyService,
