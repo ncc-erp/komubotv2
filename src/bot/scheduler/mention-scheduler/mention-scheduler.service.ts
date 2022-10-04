@@ -16,9 +16,9 @@ export class MentionSchedulerService {
   constructor(
     private utilsService: UtilsService,
     @InjectRepository(Mentioned)
-    private mentionReposistory: Repository<Mentioned>,
+    private mentionRepository: Repository<Mentioned>,
     @InjectRepository(WorkFromHome)
-    private wfhReposistory: Repository<WorkFromHome>,
+    private wfhRepository: Repository<WorkFromHome>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
@@ -51,7 +51,7 @@ export class MentionSchedulerService {
     if (this.utilsService.checkTime(new Date())) return;
     const now = Date.now();
     try {
-      let mentionedUsers = await this.mentionReposistory.find({
+      let mentionedUsers = await this.mentionRepository.find({
         where: { confirm: false },
       });
       const notiUser = mentionedUsers.filter(
@@ -82,7 +82,7 @@ export class MentionSchedulerService {
               `Hãy trả lời ${mentionName.username} tại channel ${mentionChannel.name} nhé!`
             )
             .catch(console.error);
-          await this.mentionReposistory.update({ id: user.id }, { noti: true });
+          await this.mentionRepository.update({ id: user.id }, { noti: true });
         })
       );
 
@@ -103,7 +103,7 @@ export class MentionSchedulerService {
             .format("YYYY-MM-DD HH:mm:ss")} tại channel ${
             mentionChannel.name
           }!\n`;
-          const data = await this.wfhReposistory.insert({
+          const data = await this.wfhRepository.insert({
             // userid: user.mentionUserId,
             wfhMsg: content,
             complain: false,
@@ -120,7 +120,7 @@ export class MentionSchedulerService {
             process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
           );
           await channel.send(message).catch(console.error);
-          await this.mentionReposistory.update(
+          await this.mentionRepository.update(
             { id: user.id },
             { confirm: true, punish: true }
           );

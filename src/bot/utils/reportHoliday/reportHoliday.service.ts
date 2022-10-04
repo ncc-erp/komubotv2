@@ -8,7 +8,7 @@ import { KomubotrestService } from "../komubotrest/komubotrest.service";
 export class ReportHolidayService {
   constructor(
     @InjectRepository(Holiday)
-    private holidayReposistory: Repository<Holiday>,
+    private holidayRepository: Repository<Holiday>,
     private komubotrestService: KomubotrestService
   ) {}
 
@@ -16,7 +16,7 @@ export class ReportHolidayService {
     let authorId = message.author.id;
     const today = Date.now();
     const getYear = new Date(today).getFullYear();
-    const holiday = await this.holidayReposistory.find();
+    const holiday = await this.holidayRepository.find();
 
     let mess: any;
     if (!holiday) {

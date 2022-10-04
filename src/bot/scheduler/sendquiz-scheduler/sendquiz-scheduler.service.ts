@@ -6,19 +6,17 @@ import { UtilsService } from "src/bot/utils/utils.service";
 import { CronJob } from "cron";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Mentioned } from "src/bot/models/mentioned.entity";
-import moment from "moment";
-import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
+import { SendQuizToSingleUserService } from "src/bot/utils/sendQuizToSingleUser.until";
+import { User } from "src/bot/models/user.entity";
 
 @Injectable()
 export class SendquizSchedulerService {
   constructor(
     private utilsService: UtilsService,
-    // @InjectRepository(Mentioned)
-    // private mentionReposistory: Repository<Mentioned>,
-    // @InjectRepository(WorkFromHome)
-    // private wfhReposistory: Repository<WorkFromHome>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private sendQuizToSingleUserService: SendQuizToSingleUserService,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client
@@ -40,9 +38,61 @@ export class SendquizSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("checkMention", CronExpression.EVERY_MINUTE, () =>
-    //   this.checkMention(this.client)
+    // this.addCronJob("sendQuiz", CronExpression.EVERY_10_SECONDS, () =>
+    //   this.sendQuiz(this.client)
     // );
+    // this.addCronJob("sendQuizEnglish", CronExpression.EVERY_10_SECONDS, () =>
+    //   this.sendQuizEnglish(this.client)
+    // );
+  }
+
+  async sendQuiz(client) {
+    try {
+      if (await this.utilsService.checkHoliday()) return;
+      let userOff = [];
+      try {
+        const { notSendUser } = await getUserOffWork(null);
+        userOff = notSendUser;
+      } catch (error) {
+        console.log(error);
+      }
+
+      const userSendQuiz = await this.userRepository
+        .createQueryBuilder("user")
+        .innerJoinAndSelect("user.msg", "msg")
+        .where('"email" NOT IN (:...userOff)', {
+          userOff: userOff,
+        })
+        .andWhere('"deactive" IS NOT True')
+        .where("roles_discord = :roles_discord", {
+          roles_discord: ["INTERN"],
+        })
+        .orWhere("roles_discord = :roles_discord", {
+          roles_discord: ["STAFF"],
+        })
+        // .andWhere('"last_bot_message_id" IS EXISTS True')
+        // .select("*")
+        .getMany();
+
+      console.log(userSendQuiz[0].msg);
+
+      // let arrayUser = userSendQuiz.filter(
+      //   (user) =>
+      //     !user.last_message_time ||
+      //     Date.now() - user.last_message_time >= 1000 * 60 * 60 * 2
+      // );
+      // await Promise.all(
+      //   arrayUser.map((user) =>
+      //     this.sendQuizToSingleUserService.sendQuizToSingleUser(
+      //       client,
+      //       user,
+      //       false
+      //     )
+      //   )
+      // );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async sendQuizEnglish(client) {
@@ -56,19 +106,25 @@ export class SendquizSchedulerService {
         console.log(error);
       }
 
-      console.log(userOff, "notSendUser");
-      // const userSendQuiz = await userData
-      //   .find({
-      //     email: { $nin: userOff },
-      //     deactive: { $ne: true },
-      //   })
-      //   .select("id roles username -_id");
+      const userSendQuiz = await this.userRepository
+        .createQueryBuilder("users")
+        .where('"email"  (:...userOff)', {
+          userOff: userOff,
+        })
+        .andWhere(`"deactive" IS NOT TRUE`)
+        .select("users.*")
+        .execute();
 
-      // await Promise.all(
-      //   userSendQuiz.map((user) =>
-      //     sendQuizToSingleUser(client, user, false, "english")
-      //   )
-      // );
+      await Promise.all(
+        userSendQuiz.map((user) =>
+          this.sendQuizToSingleUserService.sendQuizToSingleUser(
+            client,
+            user,
+            false,
+            "english"
+          )
+        )
+      );
     } catch (error) {
       console.log(error);
     }

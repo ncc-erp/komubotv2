@@ -11,14 +11,14 @@ export class ReportOrderService {
   constructor(
     private utilsService: UtilsService,
     @InjectRepository(Order)
-    private orderReposistory: Repository<Order>
+    private orderRepository: Repository<Order>
   ) {}
 
   async reportOrder(message) {
     try {
       const channel = message.channelId;
 
-      const arrayUser = await this.orderReposistory
+      const arrayUser = await this.orderRepository
         .createQueryBuilder("orders")
         .select("username")
         .addSelect('MAX("createdTimestamp")', "timeStamp")
@@ -34,7 +34,7 @@ export class ReportOrderService {
         .execute();
 
       if (arrayUser.length > 0) {
-        const listOrder = await this.orderReposistory
+        const listOrder = await this.orderRepository
           .createQueryBuilder("orders")
           .where('"createdTimestamp" IN (:...time_stamps)', {
             time_stamps: arrayUser.map((item) => item.timeStamp),

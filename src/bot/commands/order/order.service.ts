@@ -7,10 +7,10 @@ import { Order } from "../../models/order.entity";
 export class OrderService {
   constructor(
     @InjectRepository(Order)
-    private orderReposistory: Repository<Order>
+    private orderRepository: Repository<Order>
   ) {}
   async getUserCancelOrder(channelId, author, username) {
-    return await this.orderReposistory
+    return await this.orderRepository
       .createQueryBuilder("orders")
       .where(`"channelId" = :channelId`, {
         channelId: channelId,
@@ -27,7 +27,7 @@ export class OrderService {
   }
 
   async upDateUserCancel(item) {
-    return await this.orderReposistory
+    return await this.orderRepository
       .createQueryBuilder("orders")
       .update(Order)
       .set({ isCancel: true })
@@ -36,7 +36,7 @@ export class OrderService {
   }
 
   async getListUserOrderPending(channelId, author, username) {
-    return await this.orderReposistory
+    return await this.orderRepository
       .createQueryBuilder("orders")
       .where(`"channelId" = :channelId`, {
         channelId: channelId,
@@ -51,7 +51,7 @@ export class OrderService {
   }
 
   async getListUserFinish(channelId, yesterdayDate, tomorrowDate) {
-    const arrayUser = await this.orderReposistory
+    const arrayUser = await this.orderRepository
       .createQueryBuilder("orders")
       .select("username")
       .addSelect('MAX("createdTimestamp")', "timeStamp")
@@ -64,7 +64,7 @@ export class OrderService {
       .groupBy("username")
       .execute();
 
-    return await this.orderReposistory
+    return await this.orderRepository
       .createQueryBuilder("orders")
       .where('"createdTimestamp" IN (:...time_stamps)', {
         time_stamps: arrayUser.map((item) => item.timeStamp),
@@ -72,7 +72,7 @@ export class OrderService {
       .select("orders.*")
       .execute();
 
-    // return await this.orderReposistory
+    // return await this.orderRepository
     // .createQueryBuilder("orders")
     // .distinctOn(['username'])
     // .orderBy('"username"', 'DESC')
@@ -87,7 +87,7 @@ export class OrderService {
   }
 
   async updateFinishOrder(channelId) {
-    return await this.orderReposistory
+    return await this.orderRepository
       .createQueryBuilder("orders")
       .where(`"channelId" = :channelId`, {
         channelId: channelId,
@@ -100,7 +100,7 @@ export class OrderService {
   }
   
   async order(channelId, author, username, list) {
-    return await this.orderReposistory.insert({
+    return await this.orderRepository.insert({
       channelId: channelId,
       userId: author,
       username: username,
