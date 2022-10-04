@@ -8,12 +8,12 @@ import { UtilsService } from "../utils.service";
 export class ReportWomenDayService {
   constructor(
     @InjectRepository(WomenDay)
-    private womenDayReposistory: Repository<WomenDay>
+    private womenDayRepository: Repository<WomenDay>
   ) {}
 
   async reportWomenDay(message) {
     try {
-      const userWin = await this.womenDayReposistory.find({
+      const userWin = await this.womenDayRepository.find({
         where: {
           win: true,
         },
