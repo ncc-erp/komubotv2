@@ -31,7 +31,7 @@ import { ClientConfigService } from "../../config/client-config.service";
 import DBL from "dblapi.js";
 import { DmMessageUntil } from "../../utils/dmmessage/dmmessage.until";
 import { ExtendersService } from "../../utils/extenders/extenders.service";
-import permes from "../constants/permes.json";
+import permes from "../../constants/permes.json";
 import * as queryString from "query-string";
 import { User } from "../../models/user.entity";
 import { QuizService } from "../../utils/quiz/quiz.service";
