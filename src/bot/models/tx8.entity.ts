@@ -15,11 +15,11 @@ export class TX8 {
   id: number;
 
   @ManyToOne(() => Msg, (state) => state.tx8)
-  @JoinColumn({ name: "message" })
+  @JoinColumn({ name: "messageId" })
   message: Msg;
 
   @ManyToOne(() => User, (state) => state.tx8)
-  @JoinColumn({ name: "author" })
+  @JoinColumn({ name: "authorId" })
   user: User;
 
   @Column({ nullable: true })
