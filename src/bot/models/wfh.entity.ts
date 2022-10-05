@@ -11,13 +11,13 @@ import {
 import { TABLE } from "../constants/table";
 import { User } from "./user.entity";
 
-@Entity(TABLE.WTH)
+@Entity(TABLE.WFH)
 export class WorkFromHome {
   @PrimaryGeneratedColumn()
   id: number;
 
   @ManyToOne(() => User, (state) => state.wfh)
-  @JoinColumn({ name: "user" })
+  @JoinColumn({ name: "userId" })
   user: User;
 
   @Column({ type: "text" })
@@ -26,8 +26,8 @@ export class WorkFromHome {
   @Column({ type: "text" })
   wfhMsg: string;
 
-  @Column({ type: "date" })
-  createdAt: Date;
+  @Column({ type: "decimal" })
+  createdAt: number;
 
   @Column({ type: "boolean" })
   complain: boolean;

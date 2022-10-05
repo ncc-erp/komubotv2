@@ -13,14 +13,14 @@ export class Bwl {
   bwlReaction: BwlReaction[];
 
   @ManyToOne(() => Channel, (state) => state.bwl)
-  @JoinColumn({ name: "channel" })
+  @JoinColumn({ name: "channelId" })
   channel: Channel;
 
   @Column({ type: "text", nullable: true })
   guildId: string;
 
   @ManyToOne(() => User, (state) => state.bwl)
-  @JoinColumn({ name: "author" })
+  @JoinColumn({ name: "authorId" })
   author: User;
 
   @Column("text", { array: true, nullable: true })

@@ -21,11 +21,11 @@ export class Msg {
   id: string;
 
   @ManyToOne(() => User, (state) => state.msg)
-  @JoinColumn({ name: "author" })
+  @JoinColumn({ name: "authorId" })
   author: User;
 
   @ManyToOne(() => Channel, (state) => state.msg)
-  @JoinColumn({ name: "channel" })
+  @JoinColumn({ name: "channelId" })
   channel: Channel;
 
   @OneToMany(() => TX8, (state) => state.message)

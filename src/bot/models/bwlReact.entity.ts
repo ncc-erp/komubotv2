@@ -18,18 +18,18 @@ export class BwlReaction {
   id: number;
 
   @ManyToOne(() => Bwl, (state) => state.bwlReaction)
-  @JoinColumn({ name: "bwl" })
+  @JoinColumn({ name: "bwlId" })
   bwl: Bwl;
 
   @ManyToOne(() => Channel, (state) => state.bwlReaction)
-  @JoinColumn({ name: "channel" })
+  @JoinColumn({ name: "channelId" })
   channel: Channel;
 
   @Column({ type: "text", nullable: true })
   guildId: string;
 
   @ManyToOne(() => User, (state) => state.bwlReaction)
-  @JoinColumn({ name: "author" })
+  @JoinColumn({ name: "authorId" })
   author: User;
 
   @Column({ nullable: true })
