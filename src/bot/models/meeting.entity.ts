@@ -19,10 +19,10 @@ export class Meeting {
   @Column({ type: "text", nullable: true })
   repeat: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   cancel: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   reminder: boolean;
 
   @Column({ nullable: true })

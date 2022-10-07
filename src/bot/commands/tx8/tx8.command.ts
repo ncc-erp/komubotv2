@@ -119,20 +119,20 @@ export class Tx8Command implements CommandLineClass {
         return;
       }
 
-      // if (
-      //   userId != "694732284116598797" &&
-      //   userId != "922148445626716182" &&
-      //   args[0] == "draw"
-      // ) {
-      //   message
-      //     .reply({
-      //       content: "```You are not allowed to use this command.```",
-      //     })
-      //     .catch((err) => {
-      //       this.komubotrestService.sendErrorToDevTest(client, authorId, err);
-      //     });
-      //   return;
-      // }
+      if (
+        userId != "694732284116598797" &&
+        userId != "922148445626716182" &&
+        args[0] == "draw"
+      ) {
+        message
+          .reply({
+            content: "```You are not allowed to use this command.```",
+          })
+          .catch((err) => {
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+          });
+        return;
+      }
 
       if (args[0] == "draw") {
         const now = new Date();
@@ -160,13 +160,10 @@ export class Tx8Command implements CommandLineClass {
           .andWhere(`"tx8number" < :lttx8number`, {
             lttx8number: 1000,
           })
-          // .groupBy("tx8.id")
+          .groupBy("tx8.id")
           .addGroupBy("user.userId")
-          // .addGroupBy("tx8.tx8number")
-          // .addGroupBy("tx8.createdTimestamp")
           .orderBy("tx8.createdTimestamp", "ASC")
           .select("*")
-          .addSelect("LAST(user)", "lastId")
           .execute();
 
         if (data.length == 0) {
@@ -188,7 +185,7 @@ export class Tx8Command implements CommandLineClass {
         await this.tx8Repository
           .createQueryBuilder("tx8")
           .update(TX8)
-          .where(`"author" = :author`, { author: data[rndNumber].userId })
+          .where(`"authorId" = :authorId`, { authorId: data[rndNumber].userId })
           .set({
             status: "done",
           })
