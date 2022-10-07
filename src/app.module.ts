@@ -34,9 +34,10 @@ import { ServeStaticModule } from "@nestjs/serve-static";
         username: configService.get("POSTGRES_USER"),
         password: configService.get("POSTGRES_PASSWORD"),
         database: configService.get("POSTGRES_DB"),
-        // entities: [__dirname + '/../**/*.entity.ts'],
+        //entities: [__dirname + '/../**/*.entity.ts'],
         autoLoadEntities: true,
         synchronize: true,
+       // logging : true,
       }),
     }),
     DiscordModule.forRootAsync({

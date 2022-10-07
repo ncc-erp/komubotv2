@@ -127,13 +127,12 @@ export class KomubotrestService {
   //todo :
   sendMessageKomuToUser = async (
     client: Client,
-    msg ,
+    msg,
     username,
     botPing = false,
     isSendQuiz = false
   ) => {
     try {
-      console.log('username : ', username, msg);
       const userdb = await this.userRepository
         .createQueryBuilder("users")
         .where('"email" = :username and deactive IS NOT True ', {
@@ -145,7 +144,6 @@ export class KomubotrestService {
         .select("users.*")
         .execute()
         .catch(console.error);
-      userdb.forEach((item) => console.log(item, "fdsfdsfssdfsdgjlsn"));
       if (!userdb) {
         return null;
       }
@@ -163,27 +161,40 @@ export class KomubotrestService {
           .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
           .send(message)
           .catch(console.error);
-        return null;``
+        return null;
+        ``;
       }
       const sent = await user.send(msg);
-      const channelInsert = await this.channelRepository.findOne({
-        where: {
-          id: "1021944210800263189",
-        },
-      });
+
+
+       const channelInsert = await this.channelRepository
+        .createQueryBuilder(TABLE.CHANNEL)
+        .where(`${TABLE.CHANNEL}.id = :id`, {id : process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID})
+        .execute();
+
+      
+
+      console.log("import success", channelInsert);
+      console.log("sent : ", sent)
       try {
         await this.messageRepository.insert({
-          // author: sent.username,
+          id: sent.id,
+          author: userdb,
+          guildId : sent.guildId,
+          type : sent.type.toString(), 
+          system : sent.system, 
+          content : sent.content, 
+          pinned : sent.pinned, 
+          tts : sent.tts,
           channel: channelInsert,
           deleted: false,
         });
-
-      }catch(error){
-        console.log('Error : ', error)
+    } catch (error) {
+        console.log("Error : ", error);
       }
-      console.log('user of send : ', sent.author)
+      console.log("user of send : ", sent.author);
       // botPing : work when bot send quiz wfh user
-      // isSendQuiz : work when bot send quiz
+      //* isSendQuiz : work when bot send quiz
       if (botPing && isSendQuiz) {
         userdb.last_bot_message_id = sent.id;
         userdb.botPing = true;

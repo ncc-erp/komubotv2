@@ -1,4 +1,4 @@
-import { Channel, DiscordModule } from "@discord-nestjs/core";
+import { DiscordModule } from "@discord-nestjs/core";
 import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
@@ -133,6 +133,7 @@ import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 import { BackupCommand } from "./commands/backupdata/backupData";
+import { Channel } from "./models/channel.entity";
 
 @Module({
   imports: [
