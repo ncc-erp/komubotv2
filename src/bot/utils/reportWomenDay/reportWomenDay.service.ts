@@ -35,7 +35,7 @@ export class ReportWomenDayService {
             "```" +
             userWin
               .slice(i * 50, (i + 1) * 50)
-              .map((userW) => `<@${userW.userid}> : ${userW.gift}`)
+              .map((userW) => `<@${userW.userId}> : ${userW.gift}`)
               .join("\n");
           message.reply(mess).catch(console.error);
         }

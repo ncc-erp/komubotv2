@@ -132,6 +132,7 @@ import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.ser
 import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
+import { BackupCommand } from "./commands/backupdata/backupData";
 
 @Module({
   imports: [
@@ -275,6 +276,7 @@ import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until"
     VocabSlashCommand,
     SendquizSchedulerService,
     SendQuizToSingleUserService,
+    BackupCommand,
   ],
   controllers: [KomubotrestController],
 })

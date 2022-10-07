@@ -8,11 +8,11 @@ export class WomenDay {
   id: number;
 
   @Column({ type: "text" })
-  userid: string;
+  userId: string;
 
   @Column({ type: "boolean" })
   win: boolean;
 
-  @Column({ type: "boolean" })
-  gift: boolean;
+  @Column({ type: "text" })
+  gift: string;
 }

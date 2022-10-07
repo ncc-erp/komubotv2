@@ -28,8 +28,8 @@ export class CheckListService {
   async findCheckList(optionSubcategoryId: number) {
     return await this.subcategorysRepository
       .createQueryBuilder()
-      .where(`"checklistId" = :checklistId`, {
-        checklistId: optionSubcategoryId,
+      .where(`"id" = :id`, {
+        id: optionSubcategoryId,
       })
       .select("*")
       .execute();

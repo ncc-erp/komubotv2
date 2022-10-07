@@ -8,9 +8,6 @@ export class Subcategorys{
   id: number;
 
   @Column({})
-  checklistId: number;
-
-  @Column({})
   title: string;
  
 }

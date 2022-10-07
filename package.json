@@ -53,6 +53,7 @@
     "is-url": "^1.2.4",
     "local-devices": "^4.0.0",
     "moment": "^2.29.4",
+    "mongoose": "^6.6.5",
     "net": "^1.0.2",
     "os": "^0.1.2",
     "parse-duration": "^1.0.2",
