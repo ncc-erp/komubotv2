@@ -38,10 +38,9 @@ export class AudioPlayer {
 
   async audioPlayer(client: Client, message: Message, episode) {
     try {
-      const channel = await client.channels.fetch("995889802996088905");
+      const channel = await client.channels.fetch("1024993309296443483");
       const player = createAudioPlayer();
 
-      console.log(player, "dsfbsdfsdbf");
       joinVoiceChannel({
         channelId: channel.id,
         guildId: (channel as VoiceChannel).guild.id,
@@ -52,10 +51,12 @@ export class AudioPlayer {
       let dataMp3;
       if (!episode) {
         dataMp3 = await this.uploadFileData
-          .createQueryBuilder("uploadFile.*")
-          .where('"episode" IS EXISTS')
+          .createQueryBuilder()
+          .where('"episode" IS NOT NULL')
           .orderBy("episode", "DESC")
-          .limit(1);
+          .limit(1)
+          .select("*")
+          .execute();
       } else {
         if (checkTimeSchulderNCC8()) {
           return message.reply("scheduled playing");
@@ -72,7 +73,7 @@ export class AudioPlayer {
         return await item.fileName;
       });
       const resource = await createAudioResource(
-        createReadStream(join("uploads", `${fileNameMp3[0]}`)),
+        createReadStream(join("uploads", `${await fileNameMp3[0]}`)),
         {
           inlineVolume: true,
         }
@@ -81,7 +82,7 @@ export class AudioPlayer {
 
       if (episode && message) {
         message.channel
-          .send(`@here go to <#995889802996088905>`)
+          .send(`@here go to <#1024993309296443483>`)
           .catch(console.error);
       }
     } catch (err) {

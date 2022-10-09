@@ -9,6 +9,7 @@ import { TimeVoiceAlone } from "src/bot/models/timeVoiceAlone.entity";
 import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { JoinCall } from "src/bot/models/joinCall.entity";
+import { AudioPlayer } from "src/bot/utils/audioPlayer.utils";
 
 @Injectable()
 export class VoiceChannelSchedulerService {
@@ -22,7 +23,8 @@ export class VoiceChannelSchedulerService {
     private voiceChannelRepository: Repository<VoiceChannels>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
-    private client: Client
+    private client: Client,
+    private audioPlayerService: AudioPlayer
   ) {}
 
   private readonly logger = new Logger(VoiceChannelSchedulerService.name);
@@ -44,6 +46,9 @@ export class VoiceChannelSchedulerService {
     // this.addCronJob("kickMemberVoiceChannel", CronExpression.EVERY_MINUTE, () =>
     //   this.kickMemberVoiceChannel(this.client)
     // );
+    this.addCronJob("audioPlayer", CronExpression.EVERY_MINUTE, () =>
+      this.audioPlayerService.audioPlayer(this.client, null, null)
+    );
     this.addCronJob("renameVoiceChannel", "00 00 23 * * 0-6", () =>
       this.renameVoiceChannel(this.client)
     );

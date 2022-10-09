@@ -22,7 +22,7 @@
     "@discord-nestjs/common": "^4.0.6",
     "@discord-nestjs/core": "*",
     "@discordjs/opus": "^0.8.0",
-    "@discordjs/voice": "^0.11.0",
+    "@discordjs/voice": "^0.13.0",
     "@hapi/joi": "^17.1.1",
     "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "9.0.7",
