@@ -135,6 +135,7 @@ import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import { GetApiWfh } from "./utils/getApiWfh.untils";
 import { WfhUntil } from "./utils/wfh.until";
+import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
 
 @Module({
   imports: [
@@ -280,6 +281,7 @@ import { WfhUntil } from "./utils/wfh.until";
     SendQuizToSingleUserService,
     BackupCommand,
     WfhUntil,
+    ReportMsgCountService,
   ],
   controllers: [KomubotrestController],
 })

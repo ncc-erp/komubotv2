@@ -38,14 +38,14 @@ export class ReportWFHService {
       .leftJoinAndSelect(`${TABLE.WFH}.user`, "user")
       .where(`${TABLE.WFH}.type = :type`, { type: "wfh" })
       .andWhere(
-        `${TABLE.WFH}.createdAt > ${
-          this.utilsService.getTimeToDay(fomatDate).firstDay
-        }`
+        `${TABLE.WFH}.createdAt > ${this.utilsService
+          .getTimeToDay(fomatDate)
+          .firstDay.getTime()}`
       )
       .andWhere(
-        `${TABLE.WFH}.createdAt < ${
-          this.utilsService.getTimeToDay(fomatDate).lastDay
-        }`
+        `${TABLE.WFH}.createdAt < ${this.utilsService
+          .getTimeToDay(fomatDate)
+          .lastDay.getTime()}`
       )
       .orWhere(`${TABLE.WFH}.status = :status`, { status: "ACCEPT" })
       .orWhere(`${TABLE.WFH}.status = :status`, { status: "ACTIVE" })
@@ -102,28 +102,19 @@ export class ReportWFHService {
       });
     }
 
-    // const wfhFullday = await wfhData.find({
-    //   status: 'APPROVED',
-    //   complain: true,
-    //   createdAt: {
-    //     $gte: getTimeToDay(fomatDate).firstDay,
-    //     $lte: getTimeToDay(fomatDate).lastDay,
-    //   },
-    // });
-
     const wfhFullday = await this.wfhRepository
       .createQueryBuilder(TABLE.WFH)
       .where(`${TABLE.WFH}.status = :status`, { status: "APPROVED" })
       .andWhere(`${TABLE.WFH}.complain = :complain`, { complain: true })
       .andWhere(
-        `${TABLE.WFH}.createdAt > ${
-          this.utilsService.getTimeToDay(fomatDate).firstDay
-        }`
+        `${TABLE.WFH}.createdAt > ${this.utilsService
+          .getTimeToDay(fomatDate)
+          .firstDay.getTime()}`
       )
       .andWhere(
-        `${TABLE.WFH}.createdAt < ${
-          this.utilsService.getTimeToDay(fomatDate).lastDay
-        }`
+        `${TABLE.WFH}.createdAt < ${this.utilsService
+          .getTimeToDay(fomatDate)
+          .lastDay.getTime()}`
       )
       .execute();
 

@@ -219,9 +219,9 @@ export class WfhSchedulerService {
       if (
         Date.now() - user.createdTimestamp >= 1800000 &&
         user.createdTimestamp <=
-          this.utilsService.getTimeToDay(null).lastDay.getTime() &&
+          this.utilsService.getTimeToDay(null).firstDay.getTime() &&
         user.createdTimestamp >=
-          this.utilsService.getTimeToDay(null).firstDay.getTime()
+          this.utilsService.getTimeToDay(null).lastDay.getTime()
       ) {
         const content = `<@${user.id}> không trả lời tin nhắn WFH lúc ${moment(
           parseInt(user.createdTimestamp.toString())
