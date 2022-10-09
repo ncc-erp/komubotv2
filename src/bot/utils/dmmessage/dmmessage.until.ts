@@ -35,7 +35,7 @@ export class DmMessageUntil {
           )
           .pipe((res) => res)
       );
-      return response;
+      return response as any;
     } catch (e) {
       return null;
     }

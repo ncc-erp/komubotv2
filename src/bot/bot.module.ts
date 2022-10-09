@@ -1,4 +1,4 @@
-import { Channel, DiscordModule } from "@discord-nestjs/core";
+import {  DiscordModule } from "@discord-nestjs/core";
 import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
@@ -44,7 +44,6 @@ import { Opentalk } from "./models/opentalk.entity";
 import { Uploadfile } from "./models/uploadFile.entity";
 import { UtilsModule } from "./utils/utils.module";
 
-import { AudioPlayer } from "@discordjs/voice";
 import { ConfigService } from "@nestjs/config";
 import LeaveCommand from "./commands/leave/leave.command";
 import { LeaveService } from "./commands/leave/leave.service";
@@ -133,6 +132,9 @@ import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 import { BackupCommand } from "./commands/backupdata/backupData";
+import { Channel } from "./models/channel.entity";
+import Ncc8Command from "./commands/ncc8/ncc8.command";
+import { AudioPlayer } from "./utils/audioPlayer.utils";
 
 @Module({
   imports: [
@@ -221,7 +223,6 @@ import { BackupCommand } from "./commands/backupdata/backupData";
     ClientConfigService,
     ReportHolidayService,
     ReportOpenTalkService,
-    AudioPlayer,
     ReportWomenDayService,
     ReportCheckoutService,
     UserNotDailyService,
@@ -277,6 +278,7 @@ import { BackupCommand } from "./commands/backupdata/backupData";
     SendquizSchedulerService,
     SendQuizToSingleUserService,
     BackupCommand,
+    Ncc8Command
   ],
   controllers: [KomubotrestController],
 })
