@@ -36,6 +36,7 @@ import * as queryString from "query-string";
 import { User } from "../../models/user.entity";
 import { QuizService } from "../../utils/quiz/quiz.service";
 import { KomubotrestService } from "../../utils/komubotrest/komubotrest.service";
+import { WfhUntil } from "src/bot/utils/wfh.until";
 export type ChanneNotDM =
   | NewsChannel
   | TextChannel
@@ -55,7 +56,8 @@ export class BotGateway {
     private dmMessageUntil: DmMessageUntil,
     @InjectRepository(User) private userRepository: Repository<User>,
     private quizService: QuizService,
-    private komubotrestService: KomubotrestService
+    private komubotrestService: KomubotrestService,
+    private wfhUntil: WfhUntil
   ) {}
   ID_KOMU = "1015574796567851039";
 
@@ -320,7 +322,7 @@ export class BotGateway {
     if (interaction.isButton()) {
       // handle wfh button
       if (interaction.customId.startsWith("komu_")) {
-        // await wfh(interaction, client).catch(console.error);
+        await this.wfhUntil.wfh(interaction, this.client).catch(console.error);
         return;
       }
       if (interaction.customId.startsWith("question_")) {

@@ -105,102 +105,67 @@ export class WfhSchedulerService {
       ) {
         return;
       }
-      const filterFindUser = (filterEmail) => {
-        return [
+
+      const userWfhWithSomeCodition = await this.userRepository
+        .createQueryBuilder("user")
+        .innerJoinAndSelect("user.msg", "msg")
+        .where('"email" IN (:...userOff)', {
+          userOff: userOff,
+        })
+        .where('"userId" IN (:...useridJoining)', {
+          useridJoining: useridJoining,
+        })
+        .andWhere('"deactive" IS NOT True')
+        .orWhere("roles_discord = :roles_discord", {
+          roles_discord: ["INTERN"],
+        })
+        .orWhere("roles_discord = :roles_discord", {
+          roles_discord: ["STAFF"],
+        })
+        .andWhere('"last_message_id" IS Not Null And IS Not :last_message_id', {
+          last_message_id: "",
+        })
+        .andWhere(
+          '"last_bot_message_id" IS Not Null And IS Not :last_bot_message_id',
           {
-            $match: {
-              email: filterEmail,
-              deactive: { $ne: true },
-              id: { $nin: useridJoining },
-              $or: [
-                { roles_discord: { $all: ["INTERN"] } },
-                { roles_discord: { $all: ["STAFF"] } },
-              ],
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-              username: 1,
-              last_message_id: 1,
-              id: 1,
-              roles: 1,
-              last_bot_message_id: 1,
-            },
-          },
-          {
-            $match: {
-              last_message_id: { $exists: true },
-              last_bot_message_id: {
-                $exists: true,
-              },
-            },
-          },
-          {
-            $lookup: {
-              from: "komu_msgs",
-              localField: "last_bot_message_id",
-              foreignField: "id",
-              as: "last_message_bot",
-            },
-          },
-          {
-            $lookup: {
-              from: "komu_msgs",
-              localField: "last_message_id",
-              foreignField: "id",
-              as: "last_message",
-            },
-          },
-          {
-            $project: {
-              username: 1,
-              message_bot_timestamp: {
-                $first: "$last_message_bot.createdTimestamp",
-              },
-              message_timestamp: {
-                $first: "$last_message.createdTimestamp",
-              },
-              id: 1,
-              roles: 1,
-            },
-          },
-        ];
+            last_bot_message_id: "",
+          }
+        )
+        .innerJoinAndSelect("user.msg", "msg")
+        .select("*")
+        .getRawOne();
+
+      const coditionGetTimeStamp = (user) => {
+        let result = false;
+        if (!user.message_bot_timestamp || !user.message_timestamp) {
+          result = true;
+        } else {
+          if (
+            Date.now() - user.message_bot_timestamp >= 1800000 &&
+            Date.now() - user.message_timestamp >= 1800000
+          ) {
+            result = true;
+          }
+        }
+        return result;
       };
-      // const userWfhWithSomeCodition = await userData.aggregate(
-      //   filterFindUser({ $nin: userOff })
-      // );
-      // const coditionGetTimeStamp = (user) => {
-      //   let result = false;
-      //   if (!user.message_bot_timestamp || !user.message_timestamp) {
-      //     result = true;
-      //   } else {
-      //     if (
-      //       Date.now() - user.message_bot_timestamp >= 1800000 &&
-      //       Date.now() - user.message_timestamp >= 1800000
-      //     ) {
-      //       result = true;
-      //     }
-      //   }
-      //   return result;
-      // };
-      // const arrayUser = userWfhWithSomeCodition.filter((user) =>
-      //   coditionGetTimeStamp(user)
-      // );
-      // try {
-      //   await Promise.all(
-      //     arrayUser.map((userWfh) =>
-      //       this.sendQuizToSingleUserService.sendQuizToSingleUser(
-      //         client,
-      //         userWfh,
-      //         true,
-      //         null
-      //       )
-      //     )
-      //   );
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      const arrayUser = userWfhWithSomeCodition.filter((user) =>
+        coditionGetTimeStamp(user)
+      );
+      try {
+        await Promise.all(
+          arrayUser.map((userWfh) =>
+            this.sendQuizToSingleUserService.sendQuizToSingleUser(
+              client,
+              userWfh,
+              true,
+              null
+            )
+          )
+        );
+      } catch (error) {
+        console.log(error);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -230,82 +195,71 @@ export class WfhSchedulerService {
     const wfhUserEmail = wfhGetApi.data.result.map((item) =>
       this.utilsService.getUserNameByEmail(item.emailAddress)
     );
-    // const users = await userData.aggregate([
-    //   {
-    //     $match: {
-    //       deactive: { $ne: true },
-    //       roles_discord: { $ne: [], $exists: true },
-    //       last_bot_message_id: { $exists: true, $ne: "" },
-    //       email: { $in: wfhUserEmail },
-    //       botPing: true,
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "komu_msgs",
-    //       localField: "last_bot_message_id",
-    //       foreignField: "id",
-    //       as: "last_message",
-    //     },
-    //   },
-    //   {
-    //     $project: {
-    //       id: 1,
-    //       username: 1,
-    //       botPing: 1,
-    //       createdTimestamp: {
-    //         $first: "$last_message.createdTimestamp",
-    //       },
-    //     },
-    //   },
-    // ]);
 
-    // console.log("sendmachleo", users);
-    // users.map(async (user) => {
-    //   if (
-    //     Date.now() - user.createdTimestamp >= 1800000 &&
-    //     user.createdTimestamp <=
-    //       this.utilsService.getTimeToDay(null).lastDay.getTime() &&
-    //     user.createdTimestamp >=
-    //       this.utilsService.getTimeToDay(null).firstDay.getTime()
-    //   ) {
-    //     const content = `<@${user.id}> không trả lời tin nhắn WFH lúc ${moment(
-    //       parseInt(user.createdTimestamp.toString())
-    //     )
-    //       .utcOffset(420)
-    //       .format("YYYY-MM-DD HH:mm:ss")} !\n`;
-    //     const userInsert = await this.userRepository.findOne({
-    //       where: {
-    //         userId: user.id,
-    //       },
-    //     });
-    //     const data = await this.wfhRepository.insert({
-    //       user: userInsert,
-    //       wfhMsg: content,
-    //       complain: false,
-    //       pmconfirm: false,
-    //       status: "ACTIVE",
-    //     });
-    //     const message = this.komubotrestService.getWFHWarninghMessage(
-    //       content,
-    //       user.id,
-    //       data.raw
-    //     );
-    //     const channel = await client.channels.fetch(
-    //       process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
-    //     );
-    //     await this.userRepository
-    //       .createQueryBuilder("user")
-    //       .update(User)
-    //       .set({
-    //         botPing: false,
-    //       })
-    //       .where(`"userId" = :userId`, { userId: user.id })
-    //       .andWhere(`"deactive" IS NOT TRUE`)
-    //       .execute();
-    //     console.log("update botping punish", user.id);
-    //     await channel.send(message).catch(console.error);
-    //   }
-    // });
+    const users = await this.userRepository
+      .createQueryBuilder("user")
+      .innerJoinAndSelect("user.msg", "msg")
+      .where('"email" IN (:...wfhUserEmail)', {
+        wfhUserEmail: wfhUserEmail,
+      })
+      .andWhere('"deactive" IS NOT True')
+      .andWhere('"roles_discord" IS Not Null And IS Not :roles_discord', {
+        roles_discord: [],
+      })
+      .andWhere("botPing = :botPing", {
+        botPing: true,
+      })
+      .andWhere('"last_bot_message_id" IS NOT Null')
+      .innerJoinAndSelect("user.msg", "msg")
+      .select("*")
+      .getRawOne();
+
+    console.log("sendmachleo", users);
+    users.map(async (user) => {
+      if (
+        Date.now() - user.createdTimestamp >= 1800000 &&
+        user.createdTimestamp <=
+          this.utilsService.getTimeToDay(null).lastDay.getTime() &&
+        user.createdTimestamp >=
+          this.utilsService.getTimeToDay(null).firstDay.getTime()
+      ) {
+        const content = `<@${user.id}> không trả lời tin nhắn WFH lúc ${moment(
+          parseInt(user.createdTimestamp.toString())
+        )
+          .utcOffset(420)
+          .format("YYYY-MM-DD HH:mm:ss")} !\n`;
+        const userInsert = await this.userRepository.findOne({
+          where: {
+            userId: user.id,
+          },
+        });
+        const data = await this.wfhRepository.insert({
+          user: userInsert,
+          wfhMsg: content,
+          complain: false,
+          pmconfirm: false,
+          status: "ACTIVE",
+        });
+        const message = this.komubotrestService.getWFHWarninghMessage(
+          content,
+          user.id,
+          data.raw
+        );
+        const channel = await client.channels.fetch(
+          process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
+        );
+        await this.userRepository
+          .createQueryBuilder("user")
+          .update(User)
+          .set({
+            botPing: false,
+          })
+          .where(`"userId" = :userId`, { userId: user.id })
+          .andWhere(`"deactive" IS NOT TRUE`)
+          .execute();
+        console.log("update botping punish", user.id);
+        await channel.send(message).catch(console.error);
+      }
+    });
   }
 }
