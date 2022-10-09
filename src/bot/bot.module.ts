@@ -136,6 +136,7 @@ import Ncc8Command from "./commands/ncc8/ncc8.command";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { GetApiWfh } from "./utils/getApiWfh.untils";
 import { WfhUntil } from "./utils/wfh.until";
+import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
 
 @Module({
   imports: [
@@ -281,6 +282,7 @@ import { WfhUntil } from "./utils/wfh.until";
     BackupCommand,
     Ncc8Command,
     WfhUntil,
+    ReportMsgCountService,
   ],
   controllers: [KomubotrestController],
 })

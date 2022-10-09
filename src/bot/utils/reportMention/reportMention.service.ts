@@ -21,10 +21,10 @@ export class ReportMentionService {
       .createQueryBuilder("wfh")
       .where('"wfh.type" = :type', { type: "wfh" })
       .andWhere(
-        `"wfh.createdAt" > ${this.utilsService.getTimeToDayMention().firstDay}`
+        `"wfh.createdAt" > ${this.utilsService.getTimeToDayMention().firstDay.getTime()}`
       )
       .andWhere(
-        `"wfh.createdAt" < ${this.utilsService.getTimeToDayMention().lastDay}`
+        `"wfh.createdAt" < ${this.utilsService.getTimeToDayMention().lastDay.getTime()}`
       )
       .orWhere('"wfh.status" = :status', { status: "ACCEPT" })
       .orWhere('"wfh.status" = :status', { status: "ACTIVE" })

@@ -6,6 +6,7 @@ import { ReportCheckoutService } from "src/bot/utils/reportCheckout/reportChecko
 import { ReportDailyService } from "src/bot/utils/reportDaily/report-daily.service";
 import { ReportHolidayService } from "src/bot/utils/reportHoliday/reportHoliday.service";
 import { ReportMentionService } from "src/bot/utils/reportMention/reportMention.service";
+import { ReportMsgCountService } from "src/bot/utils/reportMsgCount/reportMsgCount.service";
 import { ReportOpenTalkService } from "src/bot/utils/reportOpentalk/reportOpentalk.service";
 import { ReportOrderService } from "src/bot/utils/reportOrder/reportOrder.service";
 import { ReportScoreService } from "src/bot/utils/reportScore/report-score.service";
@@ -41,7 +42,8 @@ export class ReportCommand implements CommandLineClass {
     private reportScoreService: ReportScoreService,
     private reportCheckCameraService: ReportCheckCameraService,
     private odinReportService: OdinReportService,
-    private reportTrackerService: ReportTrackerService
+    private reportTrackerService: ReportTrackerService,
+    private reportMsgCountService: ReportMsgCountService,
   ) {}
 
   getTimeWeekMondayToFriday(dayNow) {
@@ -122,7 +124,7 @@ export class ReportCommand implements CommandLineClass {
       } else if (args[0] === "wfh") {
         await this.reportWFHService.reportWfh(message, args, client);
       } else if (args[0] === "msgcount") {
-        // await this.reportMessageCount.reportMessageCount(message);
+        await this.reportMsgCountService.reportMessageCount(message);
       } else if (args[0] === "quiz") {
         await this.reportScoreService.reportScore(message);
       } else if (args[0] === "womenday") {
