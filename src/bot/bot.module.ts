@@ -122,7 +122,6 @@ import { KomubotrestController } from "./utils/komubotrest/komubotrest.controlle
 import { KomubotrestService } from "./utils/komubotrest/komubotrest.service";
 import { OdinReportService } from "./utils/odinReport/odinReport.service";
 import { QuizService } from "./utils/quiz/quiz.service";
-import { ReportTracker } from "./utils/report-tracker.untils";
 import { ReportCheckCameraService } from "./utils/reportCheckCamera/reportCheckCamera.service";
 import { ReportCheckoutService } from "./utils/reportCheckout/reportCheckout.service";
 import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.service";
@@ -134,6 +133,8 @@ import { UpdateRole } from "./utils/roles.utils";
 import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
+import { GetApiWfh } from "./utils/getApiWfh.untils";
+import { WfhUntil } from "./utils/wfh.until";
 
 @Module({
   imports: [
@@ -198,7 +199,7 @@ import { Channel } from "./models/channel.entity";
     UserStatusService,
     KomubotrestController,
     UtilsService,
-    ReportTracker,
+    GetApiWfh,
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
@@ -278,6 +279,7 @@ import { Channel } from "./models/channel.entity";
     SendquizSchedulerService,
     SendQuizToSingleUserService,
     BackupCommand,
+    WfhUntil,
   ],
   controllers: [KomubotrestController],
 })

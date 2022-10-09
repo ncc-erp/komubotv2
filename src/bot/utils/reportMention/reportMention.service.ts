@@ -18,24 +18,26 @@ export class ReportMentionService {
   async reportMention(message, client) {
     const authorId = message.author.id;
     const mentionFullday = await this.wfhRepository
-      .createQueryBuilder("wfhs,users")
-      .leftJoinAndSelect("user.userId", "users")
-      .where('"wfhs.type" = :type', { type: "wfh" })
+      .createQueryBuilder("wfh")
+      .where('"wfh.type" = :type', { type: "wfh" })
       .andWhere(
-        `"wfhs.createdAt" > ${this.utilsService.getTimeToDayMention().firstDay}`
+        `"wfh.createdAt" > ${this.utilsService.getTimeToDayMention().firstDay}`
       )
       .andWhere(
-        `"wfhs.createdAt" < ${this.utilsService.getTimeToDayMention().lastDay}`
+        `"wfh.createdAt" < ${this.utilsService.getTimeToDayMention().lastDay}`
       )
-      .orWhere('"wfhs.status" = :status', { status: "ACCEPT" })
-      .orWhere('"wfhs.status" = :status', { status: "ACTIVE" })
-      .orWhere('"wfhs.status" = :status', {
+      .orWhere('"wfh.status" = :status', { status: "ACCEPT" })
+      .orWhere('"wfh.status" = :status', { status: "ACTIVE" })
+      .orWhere('"wfh.status" = :status', {
         status: "APPROVED",
         pmconfirm: false,
       })
-      .select('SUM("wfhs.userId")', "sum")
-      .groupBy("userid")
+      .groupBy("wfh.userId")
+      .having("count(1) = :number", { number: 1 })
+      .orderBy("COUNT(wfh.userId)", "DESC")
+      .leftJoinAndSelect("wfh.userId", "users")
       .execute();
+      
     let mess;
     if (!mentionFullday) {
       return;

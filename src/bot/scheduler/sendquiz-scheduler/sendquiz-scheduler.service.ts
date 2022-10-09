@@ -70,26 +70,27 @@ export class SendquizSchedulerService {
         .orWhere("roles_discord = :roles_discord", {
           roles_discord: ["STAFF"],
         })
-        // .andWhere('"last_bot_message_id" IS EXISTS True')
-        // .select("*")
-        .getMany();
+        .andWhere('"last_bot_message_id" IS NOT Null')
+        .innerJoinAndSelect("user.msg", "msg")
+        .select("*")
+        .getRawOne();
 
-      console.log(userSendQuiz[0].msg);
+      // console.log(userSendQuiz[0].msg);
 
-      // let arrayUser = userSendQuiz.filter(
-      //   (user) =>
-      //     !user.last_message_time ||
-      //     Date.now() - user.last_message_time >= 1000 * 60 * 60 * 2
-      // );
-      // await Promise.all(
-      //   arrayUser.map((user) =>
-      //     this.sendQuizToSingleUserService.sendQuizToSingleUser(
-      //       client,
-      //       user,
-      //       false
-      //     )
-      //   )
-      // );
+      let arrayUser = userSendQuiz.filter(
+        (user) =>
+          !user.last_message_time ||
+          Date.now() - user.last_message_time >= 1000 * 60 * 60 * 2
+      );
+      await Promise.all(
+        arrayUser.map((user) =>
+          this.sendQuizToSingleUserService.sendQuizToSingleUser(
+            client,
+            user,
+            false
+          )
+        )
+      );
     } catch (error) {
       console.log(error);
     }

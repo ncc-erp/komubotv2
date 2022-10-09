@@ -188,11 +188,6 @@ export class UserNotDailyService {
           userNotDaily[i] = notDaily[i];
         }
       }
-      console.log(notDaily, "notDaily")
-      console.log(userNotDaily, "userNotDaily")
-      console.log(notDailyMorning, "notDailyMorning")
-      console.log(notDailyFullday, "notDailyFullday")
-      console.log(notDailyAfternoon, "notDailyAfternoon")
       return {
         notDaily,
         userNotDaily,

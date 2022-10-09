@@ -1,7 +1,7 @@
 import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
-import { ReportTracker } from "src/bot/utils/report-tracker.untils";
+import { GetApiWfh } from "src/bot/utils/getApiWfh.untils";
 
 const messHelp =
   "```" +
@@ -18,7 +18,7 @@ const messHelp =
 })
 export class WFHCommand implements CommandLineClass {
   constructor(
-    private readonly reqortTracker: ReportTracker,
+    private readonly getApiWfh: GetApiWfh,
     private komubotrestService: KomubotrestService
   ) {}
   async execute(message: Message, args, client: Client, authorId) {
@@ -36,7 +36,7 @@ export class WFHCommand implements CommandLineClass {
 
         const date = `${year}-${month}-${day}`;
 
-        const data = await this.reqortTracker.getApiWfh(client, date);
+        const data = await this.getApiWfh.getApiWfh(client, date);
 
         let mess;
         if (!data) {
@@ -99,7 +99,7 @@ export class WFHCommand implements CommandLineClass {
           const date = `${year}-${month}-${day}`;
           const dateFormat = `${day}-${month}-${year}`;
 
-          const data = await this.reqortTracker.getApiWfh(client, date);
+          const data = await this.getApiWfh.getApiWfh(client, date);
 
           let mess;
           if (!data) {
@@ -164,7 +164,7 @@ export class WFHCommand implements CommandLineClass {
 
         const date = `${year}-${month}-${day}`;
 
-        const data = await this.reqortTracker.getApiWfh(client, date);
+        const data = await this.getApiWfh.getApiWfh(client, date);
 
         let mess;
         if (!data) {

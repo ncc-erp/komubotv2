@@ -24,9 +24,10 @@ export class WfhUntil {
     @InjectRepository(User)
     private userRepository: Repository<User>
   ) {}
-  async wfh(interaction, client, authorId) {
+  async wfh(interaction, client) {
     const arrIds = interaction.customId.split("#");
     const customId = arrIds[0];
+    const authorId = interaction.message.author.id;
     const labelImageId = arrIds.length > 1 ? arrIds[1] : "";
     let isCheckin = true;
     let msg = "";

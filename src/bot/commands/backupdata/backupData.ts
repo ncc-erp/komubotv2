@@ -33,25 +33,25 @@ export class BackupCommand implements CommandLineClass {
 
           const db = client.db("komubot");
 
-          // db.collection("komu_birthdays")
-          //   .find()
-          //   .toArray(async function (err, result) {
-          //     await clientPg4.connect();
-          //     if (err) {
-          //       console.log(err);
-          //     } else if (result.length) {
-          //       result.map(async (item) => {
-          //         await clientPg4.query(
-          //           `INSERT INTO komu_birthdays("title") VALUES ('${item.title}')`
-          //         );
-          //       });
-          //     } else {
-          //       console.log(
-          //         'No document(s) found with defined "find" criteria!'
-          //       );
-          //     }
-          //     client.close();
-          //   });
+          db.collection("komu_birthdays")
+            .find()
+            .toArray(async function (err, result) {
+              await clientPg4.connect();
+              if (err) {
+                console.log(err);
+              } else if (result.length) {
+                result.map(async (item) => {
+                  await clientPg4.query(
+                    `INSERT INTO komu_birthdays("title") VALUES ('${item.title}')`
+                  );
+                });
+              } else {
+                console.log(
+                  'No document(s) found with defined "find" criteria!'
+                );
+              }
+              client.close();
+            });
 
           // db.collection("komu_checklists")
           //   .find()
@@ -143,32 +143,32 @@ export class BackupCommand implements CommandLineClass {
           //     client.close();
           //   });
 
-          db.collection("komu_users")
-            .find()
-            .toArray(async function (err, result) {
-              await clientPg4.connect();
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  const sumWithInitial = item.category.reduce(
-                    (previousValue, currentValue) =>
-                      previousValue + "'" + currentValue + "',",
-                    ""
-                  );
-                  await clientPg4.query(
-                    `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
-                      item.subcategory
-                    }', ARRAY[${sumWithInitial.slice(0, sumWithInitial.length - 1)}])`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-              client.close();
-            });
+          // db.collection("komu_users")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     await clientPg4.connect();
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         const sumWithInitial = item.category.reduce(
+          //           (previousValue, currentValue) =>
+          //             previousValue + "'" + currentValue + "',",
+          //           ""
+          //         );
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
+          //             item.subcategory
+          //           }', ARRAY[${sumWithInitial.slice(0, sumWithInitial.length - 1)}])`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
         }
       });
     } catch (err) {
