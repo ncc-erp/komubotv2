@@ -1,10 +1,9 @@
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TABLE } from "src/bot/constants/table";
 import { Penalty } from "src/bot/models/penatly.entity";
-import { Brackets, Repository } from "typeorm";
-import { Injectable } from "@nestjs/common";
-import { Message } from "discord.js";
 import { User } from "src/bot/models/user.entity";
+import { Brackets, Repository } from "typeorm";
 
 @Injectable()
 export class PenaltyService {
@@ -17,7 +16,7 @@ export class PenaltyService {
   async findDataPenWithUserId(_userId, _channelId) {
     return await this.penaltyRepository
       .createQueryBuilder(TABLE.PENATLY)
-      .where(`${TABLE.PENATLY}.userId = :userId`, { userId: _userId })
+      .where(`${TABLE.PENATLY}."userId" = :userId`, { userId: _userId })
       .andWhere(`${TABLE.PENATLY}.channelId = :channelId`, {
         channelId: _channelId,
       })
@@ -33,8 +32,8 @@ export class PenaltyService {
       .execute();
   }
   async clearPenatly(_channelId) {
-    console.log('channelId service : ', _channelId);
-    
+   
+
     return await this.penaltyRepository
       .createQueryBuilder()
       .update(Penalty)
@@ -59,24 +58,20 @@ export class PenaltyService {
       .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
       .execute();
   }
-  async findUserWithId(_userId){
-    console.log('userId : ', _userId)
+  async findUserWithId(_userId) {
+   
     return await this.userRepository
-    .createQueryBuilder(TABLE.USER)
-    .where(
-      `${TABLE.USER}.userId = :userId`, { userId: _userId }
-    )
-    .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
-    .execute();
+      .createQueryBuilder(TABLE.USER)
+      .where(`${TABLE.USER}."userId" = :userId`, { userId: _userId })
+      .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
+      .execute();
   }
-  async findUserWithUsername(_username){
+  async findUserWithUsername(_username) {
     return await this.userRepository
-    .createQueryBuilder(TABLE.USER)
-    .where(
-      `${TABLE.USER}.username =:username`, { username: _username }
-    )
-    .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
-    .execute();
+      .createQueryBuilder(TABLE.USER)
+      .where(`${TABLE.USER}.username =:username`, { username: _username })
+      .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
+      .execute();
   }
   async addNewPenatly(
     _userId,
@@ -88,39 +83,34 @@ export class PenaltyService {
     _channelId,
     _delete
   ) {
-    await this.penaltyRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Penalty)
-      .values([
-        {
-          userId: _userId,
-          username: _username,
-          ammount: _ammount,
-          reason: _reason,
-          createdTimestamp: _createdTimestamp,
-          isReject: _isReject,
-          channelId: _channelId,
-          delete: _delete,
-        },
-      ])
-      .execute();
+    const insertData = await this.penaltyRepository.save({
+      userId: _userId,
+      username: _username,
+      ammount: _ammount,
+      reason: _reason,
+      createdTimestamp: _createdTimestamp,
+      isReject: _isReject,
+      channelId: _channelId,
+      delete: _delete,
+    });
     return await this.penaltyRepository
-      .createQueryBuilder(TABLE.PENATLY)
-      .where(`${TABLE.PENATLY}.userId =:userId`, { userId: _userId })
+      .createQueryBuilder()
+      .where(`"userId" =:userId`, { userId: _userId })
+      .andWhere(`"id" =:id`, { id: insertData.id })
+      .select("*")
       .execute();
   }
-  async updateIsReject(_userId) {
+  async updateIsReject(id) {
     return await this.penaltyRepository
       .createQueryBuilder()
       .update(Penalty)
       .set({ isReject: true })
-      .where(`${TABLE.PENATLY}.userId =:userId`, { userId: _userId })
+      .where(`"id" =:id`, { id: id })
       .execute();
   }
   async findPenatly(_channelId) {
     return await this.penaltyRepository
-      .createQueryBuilder(TABLE.PENATLY)   
+      .createQueryBuilder(TABLE.PENATLY)
       .where(`${TABLE.PENATLY}.channelId =:channelId`, {
         channelId: _channelId,
       })

@@ -1,43 +1,36 @@
-import { InjectRepository } from "@nestjs/typeorm";
-import { TABLE } from "src/bot/constants/table";
-import { CompanyTrip } from "src/bot/models/companyTrip.entity";
-import { Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
-import { Bwl } from "src/bot/models/bwl.entity";
-import { User } from "discord.js";
+import { InjectRepository } from "@nestjs/typeorm";
 import { BwlReaction } from "src/bot/models/bwlReact.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class BWLService {
   constructor(
-    @InjectRepository(Bwl)
-    private bwlRepository: Repository<Bwl>,
     @InjectRepository(BwlReaction)
-    private bwlReactionRepository: Repository<BwlReaction>, 
-    @InjectRepository(User)
-    private userRepository: Repository<User>
-    ) {}
-    async findBwlReactData(_channelId, firstday, lastday, top){
-      return await this.bwlReactionRepository.createQueryBuilder("bwlReaction")
+    private bwlReactionRepository: Repository<BwlReaction>
+  ) {}
+  async findBwlReactData(_channelId, firstday, lastday, top) {
+    return await this.bwlReactionRepository
+      .createQueryBuilder("bwlReaction")
       .select("COUNT(bwlReaction.author)", "totalReaction")
-      .distinctOn(["author.username"])
       .addSelect("bwlReaction.bwl")
       .addSelect("author.username")
       .innerJoin("bwlReaction.bwl", "bwl")
-      .innerJoin('bwl.author', 'author')
-      .where(`bwlReaction.channel =:channel`, {channel : _channelId})
-      .andWhere(qb=>{
-        qb.where('bwl.createdTimestamp <= :lastday', {
-          lastday
-        }).andWhere('bwl.createdTimestamp >= :firstday', {
-          firstday 
-        })
+      .innerJoin("bwl.author", "author")
+      .where(`bwlReaction.channel =:channel`, { channel: _channelId })
+      .andWhere((qb) => {
+        qb.where("bwl.createdTimestamp <= :lastday", {
+          lastday,
+        }).andWhere("bwl.createdTimestamp >= :firstday", {
+          firstday,
+        });
       })
       .groupBy("bwlReaction.bwl")
       .addGroupBy("bwlReaction.author")
       .addGroupBy("author.username")
+      .having("count(1) = :number", { number: 1 })
       .orderBy("COUNT(bwlReaction.author)", "DESC")
-       .limit(top)
+      .limit(top)
       .execute();
-    }
+  }
 }

@@ -22,9 +22,9 @@ export class ReportScoreService {
       if (!userid || !username) return;
 
       const scoresQuizData = await this.userRepository
-        .createQueryBuilder(TABLE.USER)
-        .where(`${TABLE.USER}.deactive = :deactive`, { deactive: true })
-        .orderBy(`${TABLE.USER}.scores_quiz`, "ASC")
+        .createQueryBuilder()
+        .where(`"deactive" = :deactive`, { deactive: true })
+        .orderBy(`"scores_quiz"`, "ASC")
         .limit(10)
         .execute();
 

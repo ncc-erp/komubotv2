@@ -60,7 +60,7 @@ export class QuizService {
         .andWhere('"title" IS EXISTS')
         .andWhere('length("title") < :strLenCp', { strLenCp: 236 })
         .select("*")
-        .getMany();
+        .getRawOne();
       //   {
       //     $sample: { size: 1 },
       //   },
