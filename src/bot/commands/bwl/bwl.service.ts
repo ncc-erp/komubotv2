@@ -26,9 +26,8 @@ export class BWLService {
         });
       })
       .groupBy("bwlReaction.bwl")
-      .addGroupBy("bwlReaction.author")
+      // .addGroupBy("bwlReaction.author")
       .addGroupBy("author.username")
-      .having("count(1) = :number", { number: 1 })
       .orderBy("COUNT(bwlReaction.author)", "DESC")
       .limit(top)
       .execute();
