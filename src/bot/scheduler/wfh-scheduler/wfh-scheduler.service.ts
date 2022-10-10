@@ -11,11 +11,11 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 import { JoinCall } from "src/bot/models/joinCall.entity";
-import { SendQuizToSingleUserService } from "src/bot/utils/sendQuizToSingleUser.until";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import moment from "moment";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { SendQuizToSingleUserService } from "src/bot/utils/sendQuizToSingleUser/sendQuizToSingleUser.service";
 
 @Injectable()
 export class WfhSchedulerService {

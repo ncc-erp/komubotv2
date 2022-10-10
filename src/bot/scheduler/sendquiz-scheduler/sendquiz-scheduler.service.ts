@@ -7,8 +7,8 @@ import { CronJob } from "cron";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
-import { SendQuizToSingleUserService } from "src/bot/utils/sendQuizToSingleUser.until";
 import { User } from "src/bot/models/user.entity";
+import { SendQuizToSingleUserService } from "src/bot/utils/sendQuizToSingleUser/sendQuizToSingleUser.service";
 
 @Injectable()
 export class SendquizSchedulerService {
@@ -41,9 +41,9 @@ export class SendquizSchedulerService {
     // this.addCronJob("sendQuiz", CronExpression.EVERY_10_SECONDS, () =>
     //   this.sendQuiz(this.client)
     // );
-    // this.addCronJob("sendQuizEnglish", CronExpression.EVERY_10_SECONDS, () =>
-    //   this.sendQuizEnglish(this.client)
-    // );
+    this.addCronJob("sendQuizEnglish", CronExpression.EVERY_10_SECONDS, () =>
+      this.sendQuizEnglish(this.client)
+    );
   }
 
   async sendQuiz(client) {
@@ -102,6 +102,8 @@ export class SendquizSchedulerService {
       let userOff = [];
       try {
         const { notSendUser } = await getUserOffWork(null);
+        console.log(notSendUser, "11");
+
         userOff = notSendUser;
       } catch (error) {
         console.log(error);
@@ -109,7 +111,7 @@ export class SendquizSchedulerService {
 
       const userSendQuiz = await this.userRepository
         .createQueryBuilder("users")
-        .where('"email"  (:...userOff)', {
+        .where('"email" NOT IN (:...userOff)', {
           userOff: userOff,
         })
         .andWhere(`"deactive" IS NOT TRUE`)

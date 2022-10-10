@@ -12,7 +12,7 @@ const clientPg4 = new Client({
   host: "localhost",
   user: "postgres",
   database: "komubot",
-  password: "123456",
+  password: "123456789",
   port: 5432,
 });
 
@@ -25,6 +25,7 @@ export class BackupCommand implements CommandLineClass {
   constructor() {}
   async execute() {
     try {
+      await clientPg4.connect();
       MongoClient.connect(url, function (err, client) {
         if (err) {
           console.log("Unable to connect to the mongoDB server. Error:", err);
@@ -33,16 +34,68 @@ export class BackupCommand implements CommandLineClass {
 
           const db = client.db("komubot");
 
-          db.collection("komu_birthdays")
+          // db.collection("komu_birthdays")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_birthdays("title") VALUES ('${item.title}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_questions")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_question("title", "options", "correct", "role", "isVerify","accept","author_email", "topic") VALUES('${item.title}', ARRAY[${sumWithInitial.slice(0, sumWithInitial.length - 1)}]),'${item.correct}', '${item.role}', '${item.isVerify}', '${item.accept}', '${item.author_email}', '${item.topic})`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+          db.collection("komu_questions")
             .find()
             .toArray(async function (err, result) {
-              await clientPg4.connect();
               if (err) {
                 console.log(err);
               } else if (result.length) {
                 result.map(async (item) => {
+                  console.log(item);
+
+                  const sumWithOptions = item.options.reduce(
+                    (previousValue, currentValue) =>
+                      previousValue + "'" + currentValue + "',",
+                    ""
+                  );
                   await clientPg4.query(
-                    `INSERT INTO komu_birthdays("title") VALUES ('${item.title}')`
+                    `INSERT INTO komu_question("title", "options", "correct", "role", "isVerify","accept","author_email", "topic") VALUES ('${
+                      item.title
+                    }', ARRAY[${sumWithOptions.slice(
+                      0,
+                      sumWithOptions.length - 1
+                    )}], '${item.correct}', '${item.role}', '${
+                      item.isVerify
+                    }', '${item.accept}', '${item.author_email}', '${
+                      item.topic
+                    }')`
                   );
                 });
               } else {
@@ -56,7 +109,6 @@ export class BackupCommand implements CommandLineClass {
           // db.collection("komu_checklists")
           //   .find()
           //   .toArray(async function (err, result) {
-          //     await clientPg4.connect();
           //     if (err) {
           //       console.log(err);
           //     } else if (result.length) {
@@ -83,7 +135,6 @@ export class BackupCommand implements CommandLineClass {
           // db.collection("komu_subcategorys")
           //   .find()
           //   .toArray(async function (err, result) {
-          //     await clientPg4.connect();
           //     if (err) {
           //       console.log(err);
           //     } else if (result.length) {
@@ -103,7 +154,6 @@ export class BackupCommand implements CommandLineClass {
           // db.collection("komu_meetings")
           //   .find()
           //   .toArray(async function (err, result) {
-          //     await clientPg4.connect();
           //     if (err) {
           //       console.log(err);
           //     } else if (result.length) {
@@ -126,7 +176,6 @@ export class BackupCommand implements CommandLineClass {
           // db.collection("komu_women_days")
           //   .find()
           //   .toArray(async function (err, result) {
-          //     await clientPg4.connect();
           //     if (err) {
           //       console.log(err);
           //     } else if (result.length) {
@@ -146,7 +195,6 @@ export class BackupCommand implements CommandLineClass {
           // db.collection("komu_users")
           //   .find()
           //   .toArray(async function (err, result) {
-          //     await clientPg4.connect();
           //     if (err) {
           //       console.log(err);
           //     } else if (result.length) {

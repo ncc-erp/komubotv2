@@ -1,4 +1,4 @@
-import {  DiscordModule } from "@discord-nestjs/core";
+import { DiscordModule } from "@discord-nestjs/core";
 import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
@@ -55,7 +55,6 @@ import { CheckListController } from "./utils/checklist/checklist.controller";
 import { CheckListService } from "./utils/checklist/checklist.service";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-
 
 import { BWLCommand } from "./commands/bwl/bwl.command";
 import { BWLService } from "./commands/bwl/bwl.service";
@@ -129,7 +128,6 @@ import { ReportTrackerService } from "./utils/reportTracker/reportTracker.servic
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
-import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
@@ -137,6 +135,7 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { GetApiWfh } from "./utils/getApiWfh.untils";
 import { WfhUntil } from "./utils/wfh.until";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
+import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQuizToSingleUser.service";
 
 @Module({
   imports: [
@@ -146,8 +145,8 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
-      BwlReaction, 
-      Bwl, 
+      BwlReaction,
+      Bwl,
       Daily,
       Penalty,
       Order,
@@ -268,9 +267,9 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     LinksCommand,
     ServerInfoCommand,
     AddEmojiCommand,
-    PenaltyCommand, 
-    PenaltyService, 
-    BWLCommand, 
+    PenaltyCommand,
+    PenaltyService,
+    BWLCommand,
     BWLService,
     TicketSlashCommand,
     MachleoSlashCommand,
