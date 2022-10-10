@@ -1,8 +1,9 @@
+import { Injectable } from "@nestjs/common";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
-import { KomubotrestController } from "./komubotrest/komubotrest.controller";
-import { KomubotrestService } from "./komubotrest/komubotrest.service";
-import { QuizService } from "./quiz/quiz.service";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
+import { QuizService } from "../quiz/quiz.service";
 
+@Injectable()
 export class SendQuizToSingleUserService {
   constructor(
     private quizService: QuizService,
@@ -14,6 +15,8 @@ export class SendQuizToSingleUserService {
     botPing = false,
     roleSelect = null
   ) {
+    console.log(userInput, "gg");
+
     try {
       // random userid
       if (!userInput) return;
@@ -26,6 +29,8 @@ export class SendQuizToSingleUserService {
         "scheduler",
         roleSelect
       );
+      console.log(q, "333");
+
       if (!q) return;
       // const btn = new MessageEmbed()
       //   .setColor('#e11919')

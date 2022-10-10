@@ -25,7 +25,7 @@ export class QuizService {
     // message if this is commands
     // client if this is scheduler
     // type is commands or scheduler
-
+    console.log("abc", userInput);
     try {
       let roles;
       let roleRandom;
@@ -43,13 +43,31 @@ export class QuizService {
 
       const questionAnswered = await this.userQuizRepository.find({
         where: {
-          userId: userInput.id,
+          userId: userInput.userId,
         },
       });
 
-      let questionAnsweredId = questionAnswered.map((item) => item.quizId);
+      console.log("a000", questionAnswered);
 
-      const questions = this.quizRepository
+      let questionAnsweredId = questionAnswered.map((item) => item.quizId);
+      console.log(questionAnsweredId, "questionAnsweredId");
+
+      console.log(
+        this.quizRepository
+          .createQueryBuilder("questions")
+          .where('"id" NOT IN (:...questionAnsweredId)', {
+            questionAnsweredId: questionAnsweredId,
+          })
+          .andWhere('"role" = :roleRandom', { roleRandom: roleRandom })
+          .andWhere('"isVerify" = True')
+          .andWhere('"accept" = True')
+          .andWhere('"title" IS EXISTS')
+          .andWhere('length("title") < :strLenCp', { strLenCp: 236 })
+          .select("*")
+          .getQueryAndParameters()
+      );
+
+      const questions = await this.quizRepository
         .createQueryBuilder("questions")
         .where('"id" NOT IN :questionAnsweredId', {
           questionAnsweredId: questionAnsweredId,
@@ -60,10 +78,11 @@ export class QuizService {
         .andWhere('"title" IS EXISTS')
         .andWhere('length("title") < :strLenCp', { strLenCp: 236 })
         .select("*")
-        .getRawOne();
+        .execute();
       //   {
       //     $sample: { size: 1 },
       //   },
+      console.log("avvv", questions);
       if (Array.isArray(questions) && questions.length === 0) {
         const mess = "You have answered all the questions!!!";
         if (type === "commands") {
