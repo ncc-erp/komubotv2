@@ -137,6 +137,9 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { GetApiWfh } from "./utils/getApiWfh.untils";
 import { WfhUntil } from "./utils/wfh.until";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
+import HolidayCommand from "./commands/holiday/holiday.command";
+import { HolidayService } from "./commands/holiday/holiday.service";
+import { AvatarCommand } from "./commands/utilities/avatar.command";
 
 @Module({
   imports: [
@@ -283,6 +286,9 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     Ncc8Command,
     WfhUntil,
     ReportMsgCountService,
+    HolidayCommand,
+    HolidayService,
+    AvatarCommand,
   ],
   controllers: [KomubotrestController],
 })

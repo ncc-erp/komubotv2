@@ -23,9 +23,10 @@ export class ReportScoreService {
 
       const scoresQuizData = await this.userRepository
         .createQueryBuilder()
-        .where(`"deactive" = :deactive`, { deactive: true })
-        .orderBy(`"scores_quiz"`, "ASC")
+        .andWhere(`"deactive" IS NOT TRUE`)
+        .orderBy(`"scores_quiz"`, "DESC")
         .limit(10)
+        .select("*")
         .execute();
 
       let mess;
@@ -35,7 +36,7 @@ export class ReportScoreService {
         mess = scoresQuizData
           .map(
             (item) =>
-              `<@${item.id}>(${item.username}) - ${
+              `<@${item.userId}>(${item.username}) - ${
                 item.scores_quiz || 0
               } points`
           )

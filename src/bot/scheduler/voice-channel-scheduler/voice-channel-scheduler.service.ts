@@ -46,9 +46,9 @@ export class VoiceChannelSchedulerService {
     // this.addCronJob("kickMemberVoiceChannel", CronExpression.EVERY_MINUTE, () =>
     //   this.kickMemberVoiceChannel(this.client)
     // );
-    this.addCronJob("audioPlayer", CronExpression.EVERY_MINUTE, () =>
-      this.audioPlayerService.audioPlayer(this.client, null, null)
-    );
+    // this.addCronJob("audioPlayer", CronExpression.EVERY_MINUTE, () =>
+    //   this.audioPlayerService.audioPlayer(this.client, null, null)
+    // );
     this.addCronJob("renameVoiceChannel", "00 00 23 * * 0-6", () =>
       this.renameVoiceChannel(this.client)
     );
@@ -74,9 +74,9 @@ export class VoiceChannelSchedulerService {
     let voiceNow = [];
 
     const timeVoiceAlone = await this.timeVoiceAloneRepository
-      .createQueryBuilder("timeVoicelone")
+      .createQueryBuilder()
       .where('"status" IS NOT True')
-      .select("timeVoicelone.*")
+      .select("*")
       .execute();
 
     timeVoiceAlone.map(async (item) => {
@@ -128,7 +128,7 @@ export class VoiceChannelSchedulerService {
   async renameVoiceChannel(client) {
     try {
       const findVoice = await this.voiceChannelRepository
-        .createQueryBuilder("voiceChannel")
+        .createQueryBuilder()
         .where('"status" = :status', { status: "start" })
         .andWhere('"createdTimestamp" >= :gtecreatedTimestamp', {
           gtecreatedTimestamp: this.utilsService.getYesterdayDate(),

@@ -48,11 +48,10 @@ export class MeetingSchedulerService {
 
   async tagMeeting(client: any) {
     if (await this.utilsService.checkHoliday()) return;
-    let guild = client.guilds.fetch("1019615919204483072");
+    let guild = client.guilds.fetch("958646576627187732");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
-        // guild.type === "GUILD_VOICE" &&
-        guild.parentId === "1019615919204483074"
+        guild.type === "GUILD_VOICE" && guild.parentId === "958646576627187734"
     );
     const repeatMeet = await this.meetingRepository
       .createQueryBuilder("meeting")
@@ -432,7 +431,7 @@ export class MeetingSchedulerService {
         checkFiveMinute = minuteDateNow - minuteDb;
         hourTimestamp = dateScheduler.getHours();
       }
-      if (hourDateNow === hourTimestamp && checkFiveMinute > 5)
+      if (hourDateNow === hourTimestamp && checkFiveMinute > 1) {
         if (item.repeat === "once") {
           await this.meetingRepository.update(
             { id: item.id },
@@ -444,6 +443,7 @@ export class MeetingSchedulerService {
             { reminder: false }
           );
         }
+      }
     });
   }
 }

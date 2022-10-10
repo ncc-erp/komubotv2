@@ -36,13 +36,13 @@ export class ReportMsgCountService {
             .getTimeToDay(null)
             .lastDay.getTime(),
         })
-        .loadRelationCountAndMap("author.userId", "countMessage")
         .groupBy("author.userId")
         .addGroupBy("msg.id")
-        .orderBy("countMessage", "DESC")
+        .addSelect("COUNT(author.userId)", "countMessage")
+        .orderBy("author.userId", "DESC")
         .limit(20)
         .select("*")
-        .getRawMany();
+        .execute();
       console.log(messageData);
 
       let mess;
