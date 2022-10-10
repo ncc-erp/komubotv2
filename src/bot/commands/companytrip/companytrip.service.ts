@@ -11,28 +11,42 @@ export class CompanytripService {
     private companyRepository: Repository<CompanyTrip>
   ) {}
   async findUserMention(filter) {
-    return await this.companyRepository
-      .createQueryBuilder(TABLE.COMPANYTRIP)
-      .andWhere(`${TABLE.COMPANYTRIP}.year = :year`, { year: filter.year })
-      .andWhere(`${TABLE.COMPANYTRIP}.userId = :userId`, {
-        userId: filter.userId,
-      })
-      .getMany();
+    if (filter.email) {
+      return await this.companyRepository
+        .createQueryBuilder()
+        .andWhere('"year" = :year', { year: filter.year })
+        .andWhere('"email" = :email', {
+          email: filter.email,
+        })
+        .select("*")
+        .execute();
+    } else {
+      return await this.companyRepository
+        .createQueryBuilder()
+        .andWhere('"year" = :year', { year: filter.year })
+        .andWhere('"userId" = :userId', {
+          userId: filter.userId,
+        })
+        .select("*")
+        .execute();
+    }
   }
 
   async findlistUserRoomMention(room, currentYear) {
     return await this.companyRepository
-      .createQueryBuilder(TABLE.COMPANYTRIP)
-      .where(`${TABLE.COMPANYTRIP}.room = :room`, { room: room })
-      .andWhere(`${TABLE.COMPANYTRIP}.year = :year`, { year: currentYear })
-      .getMany();
+      .createQueryBuilder()
+      .where('"room" = :room', { room: room })
+      .andWhere('"year" = :year', { year: currentYear })
+      .select("*")
+      .execute();
   }
 
   async findUser(author, currentYear) {
     return await this.companyRepository
-      .createQueryBuilder(TABLE.COMPANYTRIP)
-      .where(`${TABLE.COMPANYTRIP}.userId = :userId`, { userId: author })
-      .andWhere(`${TABLE.COMPANYTRIP}.year = :year`, { year: currentYear })
-      .getMany();
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, { userId: author })
+      .andWhere(`"year" = :year`, { year: currentYear })
+      .select("*")
+      .execute();
   }
 }

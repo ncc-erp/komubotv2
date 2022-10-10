@@ -44,21 +44,21 @@ export class ReminderSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("pingReminder", CronExpression.EVERY_MINUTE, () =>
-      this.pingReminder(this.client)
-    );
+    // this.addCronJob("pingReminder", CronExpression.EVERY_MINUTE, () =>
+    //   this.pingReminder(this.client)
+    // );
     this.addCronJob("sendMesageRemind", CronExpression.EVERY_MINUTE, () =>
       this.sendMesageRemind(this.client)
     );
-    this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
-      this.sendOdinReport(this.client)
-    );
-    this.addCronJob("remindDailyMorning", "00 00 13 * * 1-5", () =>
-      this.remindDailyMorning(this.client)
-    );
-    this.addCronJob("remindDailyAfternoon", "00 00 09 * * 1-5", () =>
-      this.remindDailyAfternoon(this.client)
-    );
+    // this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
+    //   this.sendOdinReport(this.client)
+    // );
+    // this.addCronJob("remindDailyMorning", "00 00 13 * * 1-5", () =>
+    //   this.remindDailyMorning(this.client)
+    // );
+    // this.addCronJob("remindDailyAfternoon", "00 00 09 * * 1-5", () =>
+    //   this.remindDailyAfternoon(this.client)
+    // );
   }
 
   async sendMessageReminder(client, channelId, task, dateTime, mentionUserId) {
@@ -238,10 +238,7 @@ export class ReminderSchedulerService {
               `<@${item.mentionUserId}>, due today ${item.content} of <@${item.authorId}>`
             )
             .catch(console.error);
-          await this.remindRepository.update(
-            { id: item.id },
-            { cancel: true }
-          );
+          await this.remindRepository.update({ id: item.id }, { cancel: true });
         }
       });
     } catch (error) {
@@ -291,13 +288,12 @@ export class ReminderSchedulerService {
     console.log("[Scheduler] Run");
     try {
       const { notDailyMorning, notDailyFullday } =
-       
         await this.userNotDailyService.getUserNotDaily(
-            null,
-            null,
-            null,
-            client
-          );
+          null,
+          null,
+          null,
+          client
+        );
       // send message komu to user
 
       const userNotDaily = [...notDailyMorning, ...notDailyFullday];
@@ -320,19 +316,18 @@ export class ReminderSchedulerService {
     console.log("[Scheduler] Run");
     try {
       const { notDailyAfternoon, notDailyFullday } =
-       
         await this.userNotDailyService.getUserNotDaily(
-            null,
-            null,
-            null,
-            client
-          );
+          null,
+          null,
+          null,
+          client
+        );
       // send message komu to user
 
       const userNotDaily = [...notDailyAfternoon, ...notDailyFullday];
       await Promise.all(
         userNotDaily.map((email) =>
-            this.komubotrestService.sendMessageKomuToUser(
+          this.komubotrestService.sendMessageKomuToUser(
             client,
             "Don't forget to daily, dude! Don't be mad at me, we are friends I mean we are best friends.",
             email

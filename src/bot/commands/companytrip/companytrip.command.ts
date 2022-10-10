@@ -52,11 +52,11 @@ export class CompantripCommand implements CommandLineClass {
 
         userMention.map(async (item) => {
           const listUserRoomMention =
-            this.companytripService.findlistUserRoomMention(
+            await this.companytripService.findlistUserRoomMention(
               item.room,
               this.currentYear
             );
-          const roomTripMention = (await listUserRoomMention)
+          const roomTripMention = await listUserRoomMention
             .map(
               (room) =>
                 `<@${room.userId}>(${room.email}) văn phòng ${room.office} (${room.role})`

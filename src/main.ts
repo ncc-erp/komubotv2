@@ -17,8 +17,8 @@ async function bootstrap() {
   // await meetingSchedulerService.startCronJobs();
   // const reminderSchedulerService = app.get(ReminderSchedulerService);
   // await reminderSchedulerService.startCronJobs();
-  // const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
-  // await sendMessageSchedulerService.startCronJobs();
+  const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
+  await sendMessageSchedulerService.startCronJobs();
   // const datingSchedulerService = app.get(DatingSchedulerService);
   // await datingSchedulerService.startCronJobs();
   // const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);

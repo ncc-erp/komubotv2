@@ -4,12 +4,12 @@ import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class ClientConfigService {
   constructor(configService: ConfigService) {
-    (this.prefix = "*"),
-      (this.wfh = {
-        api_url: `${configService.get<string>(
-          "TIMESHEET_API"
-        )}Public/GetUserWorkFromHome`,
-      });
+    this.prefix = "*";
+    this.wfh = {
+      api_url: `${configService.get<string>(
+        "TIMESHEET_API"
+      )}Public/GetUserWorkFromHome`,
+    };
     this.ticket = {
       api_url_create: `${configService.get<string>(
         "TIMESHEET_API"

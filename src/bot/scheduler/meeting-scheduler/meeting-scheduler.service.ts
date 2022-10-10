@@ -52,7 +52,7 @@ export class MeetingSchedulerService {
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
         // guild.type === "GUILD_VOICE" &&
-        guild.parentId === "1019615919204483074"
+        guild.parentId === "1019615919204483072"
     );
     const repeatMeet = await this.meetingRepository
       .createQueryBuilder("meeting")

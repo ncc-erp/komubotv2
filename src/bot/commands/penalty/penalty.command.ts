@@ -56,8 +56,6 @@ export default class PenaltyCommand implements CommandLineClass {
       if (args[0] === "help") {
         return message.channel.send(messHelp);
       } else if (args[0] === "summary") {
-     
-
         const result = await this.penaltyService.findPenatly(
           message.channel.id
         );
@@ -73,7 +71,7 @@ export default class PenaltyCommand implements CommandLineClass {
             )
             .join("\n");
         }
-  
+
         return message.channel
           .send("```" + "Top bị phạt :" + "\n" + "```" + "\n" + mess)
           .catch(console.error);
@@ -105,7 +103,7 @@ export default class PenaltyCommand implements CommandLineClass {
               })`
           )
           .join("\n");
-     
+
         return message.channel
           .send(
             "```" +
@@ -118,13 +116,13 @@ export default class PenaltyCommand implements CommandLineClass {
       } else if (args[0] === "clear") {
         // clear
         await this.penaltyService.clearPenatly(message.channel.id);
-  
+
         message
           .reply({
             content: "Clear penatly successfully",
           })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       } else {
         const channel_id = message.channel.id;
@@ -146,7 +144,7 @@ export default class PenaltyCommand implements CommandLineClass {
             userArgs.user.username
           );
         }
-    
+
         if (!users) return message.channel.send("```" + "no result" + "```");
         const newPenatlyData = await this.penaltyService.addNewPenatly(
           users[0].komu_user_userId,
@@ -159,7 +157,7 @@ export default class PenaltyCommand implements CommandLineClass {
           false
         );
         message.reply({ content: "`✅` Penalty saved." }).catch((err) => {
-          this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
         const embed = new EmbedBuilder()
           .setColor("#0099ff")
@@ -197,7 +195,6 @@ export default class PenaltyCommand implements CommandLineClass {
         } catch (error) {
           console.log("Error comehere ", error);
         }
- 
 
         if (interaction) {
           message.channel
@@ -206,12 +203,9 @@ export default class PenaltyCommand implements CommandLineClass {
             )
             .catch(console.error);
           await interaction.reply("Rejection sent!!!").catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
-         await this.penaltyService.updateIsReject(
-            newPenatlyData[0].id
-          );
-       
+          await this.penaltyService.updateIsReject(newPenatlyData[0].id);
         }
       }
     } catch (error) {

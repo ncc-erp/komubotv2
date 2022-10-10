@@ -12,7 +12,7 @@ const clientPg4 = new Client({
   host: "localhost",
   user: "postgres",
   database: "komubot",
-  password: "123456",
+  password: "ahihi123a",
   port: 5432,
 });
 
@@ -33,25 +33,46 @@ export class BackupCommand implements CommandLineClass {
 
           const db = client.db("komubot");
 
-          db.collection("komu_birthdays")
-            .find()
-            .toArray(async function (err, result) {
-              await clientPg4.connect();
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  await clientPg4.query(
-                    `INSERT INTO komu_birthdays("title") VALUES ('${item.title}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-              client.close();
-            });
+          // db.collection("komu_birthdays")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     await clientPg4.connect();
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_birthdays("title") VALUES ('${item.title}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+          // db.collection("komu_companytrips")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     await clientPg4.connect();
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_companytrip("year","fullName","userId","email","phone","office","role","kingOfRoom","room")
+          //           VALUES ('${item.year}','${item.fullName}','${item.userId}','${item.email}','${item.phone}',
+          //           '${item.office}','${item.role}','${item.kingOfRoom}','${item.room}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
 
           // db.collection("komu_checklists")
           //   .find()
@@ -161,6 +182,70 @@ export class BackupCommand implements CommandLineClass {
           //             item.subcategory
           //           }', ARRAY[${sumWithInitial.slice(0, sumWithInitial.length - 1)}])`
           //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+          // db.collection("komu_users")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     await clientPg4.connect();
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         if (!item.role) {
+          //           item.role = [];
+          //         }
+          //         if (!item.roles_discord) {
+          //           item.role = [];
+          //         }
+
+          //         const sumWithInitialRole = item.role.reduce(
+          //           (previousValue, currentValue) =>
+          //             previousValue + "'" + currentValue + "',",
+          //           ""
+          //         );
+          //         const sumWithInitialRoleDiscord = item.roles_discord.reduce(
+          //           (previousValue, currentValue) =>
+          //             previousValue + "'" + currentValue + "',",
+          //           ""
+          //         );
+          //         if (item.role.length == 0 && item.roles_discord != 0) {
+          //           await clientPg4.query(
+          //             `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
+          //               item.subcategory
+          //             }', ARRAY[${sumWithInitialRole.slice(
+          //               0,
+          //               sumWithInitialRole.length - 1
+          //             )}])`
+          //           );
+          //         } else if (
+          //           item.role.length != 0 &&
+          //           item.roles_discord.length == 0
+          //         ) {
+          //           await clientPg4.query(
+          //             `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
+          //               item.subcategory
+          //             }', ARRAY[${sumWithInitialRole.slice(
+          //               0,
+          //               sumWithInitialRole.length - 1
+          //             )}])`
+          //           );
+          //         } else {
+          //           await clientPg4.query(
+          //             `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
+          //               item.subcategory
+          //             }', ARRAY[${sumWithInitialRole.slice(
+          //               0,
+          //               sumWithInitialRole.length - 1
+          //             )}])`
+          //           );
+          //         }
           //       });
           //     } else {
           //       console.log(

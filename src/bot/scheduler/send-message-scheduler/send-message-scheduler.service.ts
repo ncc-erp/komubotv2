@@ -1,6 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
-import { AttachmentBuilder, Client, EmbedBuilder } from "discord.js";
+import {
+  AttachmentBuilder,
+  Client,
+  EmbedBuilder,
+  TextChannel,
+} from "discord.js";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { CronJob } from "cron";
@@ -46,32 +51,32 @@ export class SendMessageSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("sendMessagePMs", "00 00 15 * * 2", () =>
-      this.sendMessagePMs(this.client)
-    );
-    this.addCronJob("sendMessTurnOffPc", "00 30 17 * * 1-5", () =>
+    // this.addCronJob("sendMessagePMs", CronExpression.EVERY_MINUTE, () =>
+    //   this.sendMessagePMs(this.client)
+    // );
+    this.addCronJob("sendMessTurnOffPc", CronExpression.EVERY_MINUTE, () =>
       this.sendMessTurnOffPc(this.client)
     );
-    this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
-      this.sendSubmitTimesheet(this.client)
-    );
-    this.addCronJob("remindCheckout", CronExpression.EVERY_MINUTE, () =>
-      this.remindCheckout(this.client)
-    );
-    this.addCronJob("happyBirthday", "00 00 09 * * 0-6", () =>
-      this.happyBirthday(this.client)
-    );
-    this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
-      this.sendOdinReport(this.client)
-    );
-    this.addCronJob("topTracker", "00 45 08 * * 1-5", () =>
-      this.topTracker(this.client)
-    );
+    // this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
+    //   this.sendSubmitTimesheet(this.client)
+    // );
+    // this.addCronJob("remindCheckout", CronExpression.EVERY_MINUTE, () =>
+    //   this.remindCheckout(this.client)
+    // );
+    // this.addCronJob("happyBirthday", "00 00 09 * * 0-6", () =>
+    //   this.happyBirthday(this.client)
+    // );
+    // this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
+    //   this.sendOdinReport(this.client)
+    // );
+    // this.addCronJob("topTracker", "00 45 08 * * 1-5", () =>
+    //   this.topTracker(this.client)
+    // );
   }
 
   async sendMessagePMs(client) {
     if (await this.utilsService.checkHoliday()) return;
-    const userDiscord = await client.channels.fetch("921787088830103593");
+    const userDiscord = await client.channels.fetch("1020251275796955236");
     userDiscord
       .send(
         `Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report tuần này đi.`
@@ -79,14 +84,21 @@ export class SendMessageSchedulerService {
       .catch(console.error);
   }
 
-  async sendMessTurnOffPc(client) {
+  async sendMessTurnOffPc(client: Client) {
     if (await this.utilsService.checkHoliday()) return;
-    const staffRoleId = "921328149927690251";
-    const channel = await client.channels.fetch("921239541388554240");
-    const roles = await channel.guild.roles.fetch(staffRoleId);
-    roles.members.map((member) => {
+    const users = await this.userRepository
+      .createQueryBuilder("users")
+      .where('"roles" @> :staff OR "roles" @> :hr', {
+        staff: ["STAFF"],
+        hr: ["HR"],
+      })
+      .select("users.*")
+      .execute();
+
+    users.map(async (user) => {
       try {
-        member
+        const channel = await client.users.fetch(user.userId);
+        return channel
           .send("Nhớ tắt máy trước khi ra về nếu không dùng nữa nhé!!!")
           .catch((err) => {
             console.log(err);

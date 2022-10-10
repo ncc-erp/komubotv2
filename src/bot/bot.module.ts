@@ -1,4 +1,4 @@
-import {  DiscordModule } from "@discord-nestjs/core";
+import { DiscordModule } from "@discord-nestjs/core";
 import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
@@ -55,7 +55,6 @@ import { CheckListController } from "./utils/checklist/checklist.controller";
 import { CheckListService } from "./utils/checklist/checklist.service";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-
 
 import { BWLCommand } from "./commands/bwl/bwl.command";
 import { BWLService } from "./commands/bwl/bwl.service";
@@ -134,9 +133,10 @@ import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
-import { GetApiWfh } from "./utils/getApiWfh.untils";
 import { WfhUntil } from "./utils/wfh.until";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
+import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
+import { getApiWfhModule } from "./utils/getApiWfh/getApiWfh.module";
 
 @Module({
   imports: [
@@ -146,8 +146,8 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
-      BwlReaction, 
-      Bwl, 
+      BwlReaction,
+      Bwl,
       Daily,
       Penalty,
       Order,
@@ -186,6 +186,7 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     HttpModule,
     UtilsModule,
     ReportWFHModule,
+    getApiWfhModule,
   ],
   providers: [
     CompantripCommand,
@@ -201,7 +202,7 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     UserStatusService,
     KomubotrestController,
     UtilsService,
-    GetApiWfh,
+    GetApiWfhService,
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
@@ -268,9 +269,9 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     LinksCommand,
     ServerInfoCommand,
     AddEmojiCommand,
-    PenaltyCommand, 
-    PenaltyService, 
-    BWLCommand, 
+    PenaltyCommand,
+    PenaltyService,
+    BWLCommand,
     BWLService,
     TicketSlashCommand,
     MachleoSlashCommand,
@@ -283,6 +284,7 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
     Ncc8Command,
     WfhUntil,
     ReportMsgCountService,
+    getApiWfhModule,
   ],
   controllers: [KomubotrestController],
 })
