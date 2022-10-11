@@ -1,6 +1,4 @@
-import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
-import { ClientConfigService } from "src/bot/config/client-config.service";
 import { UtilsService } from "../utils.service";
 import { Msg } from "src/bot/models/msg.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -36,10 +34,10 @@ export class ReportMsgCountService {
             .getTimeToDay(null)
             .lastDay.getTime(),
         })
-        .loadRelationCountAndMap("author.userId", "countMessage")
-        .groupBy("author.userId")
-        .addGroupBy("msg.id")
-        .orderBy("countMessage", "DESC")
+        .loadRelationCountAndMap("msg.countMessage", "msg.author")
+        .groupBy('msg."id"')
+        .addGroupBy('author."userId"')
+        .orderBy("msg.id", "DESC")
         .limit(20)
         .select("*")
         .getRawMany();
