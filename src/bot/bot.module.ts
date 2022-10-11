@@ -1,4 +1,4 @@
-import {  DiscordModule } from "@discord-nestjs/core";
+import { DiscordModule } from "@discord-nestjs/core";
 import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
@@ -55,7 +55,6 @@ import { CheckListController } from "./utils/checklist/checklist.controller";
 import { CheckListService } from "./utils/checklist/checklist.service";
 import { PollEmbedUntil } from "./utils/poll/pollEmbed.until";
 import { ReportWFHModule } from "./utils/reportWFH/report-wfh.module";
-
 
 import { BWLCommand } from "./commands/bwl/bwl.command";
 import { BWLService } from "./commands/bwl/bwl.service";
@@ -129,7 +128,6 @@ import { ReportTrackerService } from "./utils/reportTracker/reportTracker.servic
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
-import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
@@ -140,6 +138,11 @@ import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.ser
 import HolidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
 import { AvatarCommand } from "./commands/utilities/avatar.command";
+import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQuizToSingleUser.service";
+import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-scheduler.service";
+import { MentionSchedulerService } from "./scheduler/mention-scheduler/mention-scheduler.service";
+import { Mentioned } from "./models/mentioned.entity";
+import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.service";
 
 @Module({
   imports: [
@@ -149,8 +152,8 @@ import { AvatarCommand } from "./commands/utilities/avatar.command";
     }),
     DiscoveryModule,
     TypeOrmModule.forFeature([
-      BwlReaction, 
-      Bwl, 
+      BwlReaction,
+      Bwl,
       Daily,
       Penalty,
       Order,
@@ -183,6 +186,7 @@ import { AvatarCommand } from "./commands/utilities/avatar.command";
       Quiz,
       Keep,
       Wiki,
+      Mentioned,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -271,9 +275,9 @@ import { AvatarCommand } from "./commands/utilities/avatar.command";
     LinksCommand,
     ServerInfoCommand,
     AddEmojiCommand,
-    PenaltyCommand, 
-    PenaltyService, 
-    BWLCommand, 
+    PenaltyCommand,
+    PenaltyService,
+    BWLCommand,
     BWLService,
     TicketSlashCommand,
     MachleoSlashCommand,
@@ -289,6 +293,9 @@ import { AvatarCommand } from "./commands/utilities/avatar.command";
     HolidayCommand,
     HolidayService,
     AvatarCommand,
+    DatingSchedulerService,
+    MentionSchedulerService,
+    WfhSchedulerService,
   ],
   controllers: [KomubotrestController],
 })

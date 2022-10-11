@@ -21,9 +21,6 @@ export class WorkFromHome {
   user: User;
 
   @Column({ type: "text" })
-  messageid: string;
-
-  @Column({ type: "text" })
   wfhMsg: string;
 
   @Column({ type: "decimal" })
@@ -38,9 +35,9 @@ export class WorkFromHome {
   @Column({ type: "text" })
   status: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   data: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   type: string;
 }

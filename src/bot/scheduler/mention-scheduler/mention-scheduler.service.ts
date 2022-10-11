@@ -10,6 +10,7 @@ import { Mentioned } from "src/bot/models/mentioned.entity";
 import moment from "moment";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { User } from "src/bot/models/user.entity";
 
 @Injectable()
 export class MentionSchedulerService {
@@ -17,6 +18,8 @@ export class MentionSchedulerService {
     private utilsService: UtilsService,
     @InjectRepository(Mentioned)
     private mentionRepository: Repository<Mentioned>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(WorkFromHome)
     private wfhRepository: Repository<WorkFromHome>,
     private schedulerRegistry: SchedulerRegistry,
@@ -41,14 +44,14 @@ export class MentionSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("checkMention", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("checkMention", CronExpression.EVERY_10_SECONDS, () =>
       this.checkMention(this.client)
     );
   }
 
   async checkMention(client) {
     if (await this.utilsService.checkHoliday()) return;
-    if (this.utilsService.checkTime(new Date())) return;
+    // if (this.utilsService.checkTime(new Date())) return;
     const now = Date.now();
     try {
       let mentionedUsers = await this.mentionRepository.find({
@@ -60,7 +63,6 @@ export class MentionSchedulerService {
           now - item.createdTimestamp < 1800000 &&
           !item.noti
       );
-
       mentionedUsers = mentionedUsers.filter(
         (item) => now - item.createdTimestamp >= 1800000
       );
@@ -89,11 +91,11 @@ export class MentionSchedulerService {
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
-          if (mentionChannel.type !== "GUILD_TEXT") {
-            mentionChannel = await client.channels.fetch(
-              mentionChannel.parentId
-            );
-          }
+          // if (mentionChannel.type !== "GUILD_TEXT") {
+          //   mentionChannel = await client.channels.fetch(
+          //     mentionChannel.parentId
+          //   );
+          // }
           const content = `<@${
             user.mentionUserId
           }> không trả lời tin nhắn mention của <@${
@@ -103,22 +105,24 @@ export class MentionSchedulerService {
             .format("YYYY-MM-DD HH:mm:ss")} tại channel ${
             mentionChannel.name
           }!\n`;
-          const data = await this.wfhRepository.insert({
-            // userid: user.mentionUserId,
+          const findUser = await this.userRepository.findOne({
+            where: { userId: user.authorId },
+          });
+          const data = await this.wfhRepository.save({
+            user: findUser,
             wfhMsg: content,
             complain: false,
             pmconfirm: false,
             status: "ACTIVE",
             type: "mention",
+            createdAt: Date.now(),
           });
           const message = this.komubotrestService.getWFHWarninghMessage(
             content,
             user.mentionUserId,
-            "data.id.toString()"
+            data.id.toString()
           );
-          const channel = await client.channels.fetch(
-            process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
-          );
+          const channel = await client.channels.fetch(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID);
           await channel.send(message).catch(console.error);
           await this.mentionRepository.update(
             { id: user.id },

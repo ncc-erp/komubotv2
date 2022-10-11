@@ -25,7 +25,6 @@ export class QuizService {
     // message if this is commands
     // client if this is scheduler
     // type is commands or scheduler
-
     try {
       let roles;
       let roleRandom;
@@ -43,27 +42,32 @@ export class QuizService {
 
       const questionAnswered = await this.userQuizRepository.find({
         where: {
-          userId: userInput.id,
+          userId: userInput.userId,
         },
       });
 
       let questionAnsweredId = questionAnswered.map((item) => item.quizId);
 
-      const questions = this.quizRepository
+      const questions = await this.quizRepository
         .createQueryBuilder("questions")
-        .where('"id" NOT IN :questionAnsweredId', {
-          questionAnsweredId: questionAnsweredId,
-        })
+        .where(
+          questionAnsweredId && questionAnsweredId.length > 0
+            ? '"id" NOT IN (:...questionAnsweredId)'
+            : "true",
+          {
+            questionAnsweredId: questionAnsweredId,
+          }
+        )
         .andWhere('"role" = :roleRandom', { roleRandom: roleRandom })
         .andWhere('"isVerify" = True')
         .andWhere('"accept" = True')
-        .andWhere('"title" IS EXISTS')
+        .andWhere('"title" IS NOT NULL')
         .andWhere('length("title") < :strLenCp', { strLenCp: 236 })
         .select("*")
-        .getRawOne();
-      //   {
-      //     $sample: { size: 1 },
-      //   },
+        .orderBy("RANDOM()")
+        .limit(1)
+        .execute();
+
       if (Array.isArray(questions) && questions.length === 0) {
         const mess = "You have answered all the questions!!!";
         if (type === "commands") {
@@ -101,20 +105,35 @@ export class QuizService {
   async addScores(userId) {
     try {
       const user = await this.userRepository
-        .createQueryBuilder("users")
-        .where('"userId = :userId"', { userId: userId })
+        .createQueryBuilder()
+        .where('"userId" = :userId', { userId: userId })
         .andWhere('"deactive" IS NOT True')
-        .select("users.*")
+        .select("*")
         .execute();
 
-      let newUser;
-      if (user.scores_quiz) {
-        user.scores_quiz = user.scores_quiz + 5;
-        newUser = await user.save();
+      if (user[0].scores_quiz) {
+        await this.userRepository
+          .createQueryBuilder()
+          .update(User)
+          .set({ scores_quiz: user[0].scores_quiz + 5 })
+          .where('"userId" = :userId', { userId: user[0].userId })
+          .execute()
+          .catch(console.error);
       } else {
-        user.scores_quiz = 5;
-        newUser = await user.save();
+        await this.userRepository
+          .createQueryBuilder()
+          .update(User)
+          .set({ scores_quiz: 5 })
+          .where('"userId" = :userId', { userId: user[0].userId })
+          .execute()
+          .catch(console.error);
       }
+      const newUser = await this.userRepository
+        .createQueryBuilder()
+        .where('"userId" = :userId', { userId: user[0].userId })
+        .select("*")
+        .execute()
+        .catch(console.error);
       return newUser;
     } catch (error) {
       console.log(error);

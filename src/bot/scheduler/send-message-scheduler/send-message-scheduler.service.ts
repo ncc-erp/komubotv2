@@ -120,8 +120,7 @@ export class SendMessageSchedulerService {
           email: list,
         })
         .andWhere(`"deactive" IS NOT TRUE`)
-        // .andWhere(`"roles_discord" IS NOT TRUE`)
-        // roles_discord: { $ne: [], $exists: true },
+        .andWhere(`"roles_discord" IS NOT NUll`)
         .select("*")
         .execute();
 

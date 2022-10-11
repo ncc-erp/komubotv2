@@ -18,11 +18,11 @@ export class Quiz {
   @Column({ type: "text" })
   role: string;
 
-  @Column({ type: "text" })
-  isVerify: string;
+  @Column()
+  isVerify: boolean;
 
-  @Column({ type: "text" })
-  accept: string;
+  @Column()
+  accept: boolean;
 
   @Column({ type: "text" })
   author_email: string;

@@ -347,7 +347,7 @@ export class BotGateway {
           await this.quizService.saveQuestionCorrect(userid, id, key);
 
           const EmbedCorrect = new EmbedBuilder()
-            .setTitle(`Correct!!!, you have ${newUser.scores_quiz} points`)
+            .setTitle(`Correct!!!, you have ${newUser[0].scores_quiz} points`)
             .setColor("Green");
           const btnCorrect = new EmbedBuilder()
             .setColor("#e11919")

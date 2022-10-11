@@ -24,7 +24,7 @@ export const TABLE = {
   PENATLY: "komu_penatly",
   ORDER: "komu_order",
   MSG: "komu_msg",
-  MENTIONED: "komu_metioned",
+  MENTIONED: "komu_mentioned",
   MEETING: "komu_meeting",
   LEAVE: "komu_leave",
   KEEP: "komu_keep",
