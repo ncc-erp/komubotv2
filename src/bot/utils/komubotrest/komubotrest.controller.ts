@@ -19,6 +19,7 @@ import { fileFilter, fileName } from "../helper";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { deleteMessage } from "../deleteMessage.utils";
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -88,7 +89,7 @@ export class KomubotrestController {
 //xong
   @Post("/deleteMessage")
   async deleteMessage(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.deleteMessage(this.client, req, res);
+   deleteMessage(this.client, req, res);
   }
 //xong
   @Post("/uploadFile")
