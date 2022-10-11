@@ -22,7 +22,7 @@ export class ReportMsgCountService {
 
       const messageData = await this.msgRepository
         .createQueryBuilder("msg")
-        .innerJoinAndSelect("msg.author", "author")
+        .innerJoinAndSelect("komu_user", "m", "msg.authorId = m.userId")
         .where('"authorId" NOT IN (:...authorId)', {
           authorId: ["922003239887581205", "931377010616451122"],
         })
@@ -36,21 +36,19 @@ export class ReportMsgCountService {
             .getTimeToDay(null)
             .lastDay.getTime(),
         })
-        .groupBy("author.userId")
-        .addGroupBy("msg.id")
-        .addSelect("COUNT(author.userId)", "countMessage")
-        .orderBy("author.userId", "DESC")
+        .groupBy("m.username")
+        .addGroupBy("msg.authorId")
+        .select("msg.authorId, COUNT(msg.authorId) as total, m.username")
+        .orderBy("total", "DESC")
         .limit(20)
-        .select("*")
         .execute();
-      console.log(messageData);
 
       let mess;
       if (Array.isArray(messageData) && messageData.length === 0) {
         mess = "```" + "no result" + "```";
       } else {
         mess = messageData
-          .map((item) => `(${item.username}) : ${item.countMessage}`)
+          .map((item) => `(${item.username}) : ${item.total}`)
           .join("\n");
       }
 
