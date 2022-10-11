@@ -128,7 +128,6 @@ import { ReportTrackerService } from "./utils/reportTracker/reportTracker.servic
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
-import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser.until";
 import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
@@ -137,6 +136,7 @@ import { WfhUntil } from "./utils/wfh.until";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
 import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
 import { getApiWfhModule } from "./utils/getApiWfh/getApiWfh.module";
+import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQuizToSingleUser.service";
 
 @Module({
   imports: [

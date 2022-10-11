@@ -19,6 +19,7 @@ import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 import { BirthdayService } from "src/bot/utils/birthday/birthdayservice";
 import { OdinReportService } from "src/bot/utils/odinReport/odinReport.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @Injectable()
 export class SendMessageSchedulerService {
@@ -32,7 +33,8 @@ export class SendMessageSchedulerService {
     private client: Client,
     private birthdayService: BirthdayService,
     private komubotrestService: KomubotrestService,
-    private odinReportService: OdinReportService
+    private odinReportService: OdinReportService,
+    private clientConfigService: ClientConfigService
   ) {}
 
   private readonly logger = new Logger(SendMessageSchedulerService.name);
@@ -54,13 +56,13 @@ export class SendMessageSchedulerService {
     // this.addCronJob("sendMessagePMs", CronExpression.EVERY_MINUTE, () =>
     //   this.sendMessagePMs(this.client)
     // );
-    this.addCronJob("sendMessTurnOffPc", CronExpression.EVERY_MINUTE, () =>
-      this.sendMessTurnOffPc(this.client)
-    );
+    // this.addCronJob("sendMessTurnOffPc", CronExpression.EVERY_MINUTE, () =>
+    //   this.sendMessTurnOffPc(this.client)
+    // );
     // this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
     //   this.sendSubmitTimesheet(this.client)
     // );
-    // this.addCronJob("remindCheckout", CronExpression.EVERY_MINUTE, () =>
+    // this.addCronJob("remindCheckout", CronExpression.EVERY_10_SECONDS, () =>
     //   this.remindCheckout(this.client)
     // );
     // this.addCronJob("happyBirthday", "00 00 09 * * 0-6", () =>
@@ -150,18 +152,20 @@ export class SendMessageSchedulerService {
     });
   }
 
-  async remindCheckout(client) {
+  async remindCheckout(client:Client) {
     if (await this.utilsService.checkHoliday()) return;
     try {
       const listsUser = await firstValueFrom(
         this.http
-          .get(`${process.env.CHECKIN_API}/v1/employees/report-checkin`, {
+          .get(this.clientConfigService.checkout.api_url, {
             headers: {
-              "X-Secret-Key": `${process.env.CHECKIN_API_KEY_SECRET}`,
+              "X-Secret-Key": `${process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY}`,
             },
           })
           .pipe((res) => res)
       );
+      console.log(listsUser, "aaa");
+
       const userListNotCheckIn = listsUser.data.filter(
         (user) => user.checkout === null
       );
@@ -182,7 +186,7 @@ export class SendMessageSchedulerService {
           .andWhere(`"deactive" IS NOT TRUE`)
           .select("users.*")
           .execute();
-
+        console.log(checkUser, "ssss");
         if (checkUser && checkUser !== null) {
           const userDiscord = await client.users.fetch(checkUser.id);
           userDiscord
@@ -252,15 +256,16 @@ export class SendMessageSchedulerService {
   async topTracker(client) {
     if (await this.utilsService.checkHoliday()) return;
     const userTracker = [
-      "922148445626716182",
-      "922416220056199198",
-      "921689631110602792",
-      "922297847876034562",
-      "922306295346921552",
-      "921601073939116073",
-      "921261168088190997",
-      "921312679354834984",
-      "665925240404181002",
+      // "922148445626716182",
+      // "922416220056199198",
+      // "921689631110602792",
+      // "922297847876034562",
+      // "922306295346921552",
+      // "921601073939116073",
+      // "921261168088190997",
+      // "921312679354834984",
+      // "665925240404181002",
+      "960372801880080504"
     ];
     await Promise.all(
       userTracker.map(async (user) => {
