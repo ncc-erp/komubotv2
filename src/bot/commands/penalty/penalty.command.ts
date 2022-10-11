@@ -56,8 +56,6 @@ export default class PenaltyCommand implements CommandLineClass {
       if (args[0] === "help") {
         return message.channel.send(messHelp);
       } else if (args[0] === "summary") {
-     
-
         const result = await this.penaltyService.findPenatly(
           message.channel.id
         );
@@ -69,11 +67,11 @@ export default class PenaltyCommand implements CommandLineClass {
           mess = result
             .map(
               (item) =>
-                `<@${item.userId}>(${item.komu_penatly_username}) : ${item.ammount} vnd`
+                `<@${item.userId}>(${item.username}) : ${item.ammount} vnd`
             )
             .join("\n");
         }
-  
+
         return message.channel
           .send("```" + "Top bị phạt :" + "\n" + "```" + "\n" + mess)
           .catch(console.error);
@@ -100,16 +98,16 @@ export default class PenaltyCommand implements CommandLineClass {
         const mess = dataPen
           .map(
             (item, index) =>
-              `${index + 1} - ${item.komu_penatly_reason} (${
-                item.komu_penatly_ammount
+              `${index + 1} - ${item.reason} (${
+                item.ammount
               })`
           )
           .join("\n");
-     
+
         return message.channel
           .send(
             "```" +
-              `Lý do ${dataPen[0].komu_penatly_username} bị phạt` +
+              `Lý do ${dataPen[0].username} bị phạt` +
               "\n" +
               mess +
               "```"
@@ -118,7 +116,7 @@ export default class PenaltyCommand implements CommandLineClass {
       } else if (args[0] === "clear") {
         // clear
         await this.penaltyService.clearPenatly(message.channel.id);
-  
+
         message
           .reply({
             content: "Clear penatly successfully",
@@ -146,11 +144,11 @@ export default class PenaltyCommand implements CommandLineClass {
             userArgs.user.username
           );
         }
-    
+
         if (!users) return message.channel.send("```" + "no result" + "```");
         const newPenatlyData = await this.penaltyService.addNewPenatly(
-          users[0].komu_user_userId,
-          users[0].komu_user_username,
+          users[0].userId,
+          users[0].username,
           ammount,
           reason,
           Date.now(),
@@ -169,7 +167,7 @@ export default class PenaltyCommand implements CommandLineClass {
           );
         const row = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
-            .setCustomId(`rejectpenalty${newPenatlyData[0].userId}`)
+            .setCustomId(`rejectpenalty${newPenatlyData[0].id}`)
             .setLabel("REJECT")
             .setStyle(4)
         );
@@ -179,10 +177,10 @@ export default class PenaltyCommand implements CommandLineClass {
             components: [row],
             embeds: [embed],
           },
-          users[0].komu_user_username
+          users[0].username
         );
         const filter = (interaction) =>
-          interaction.customId === `rejectpenalty${newPenatlyData[0].userId}`;
+          interaction.customId === `rejectpenalty${newPenatlyData[0].id}`;
 
         let interaction;
         try {
@@ -197,21 +195,17 @@ export default class PenaltyCommand implements CommandLineClass {
         } catch (error) {
           console.log("Error comehere ", error);
         }
- 
 
         if (interaction) {
           message.channel
             .send(
-              `<@!${users[0].komu_user_userId}>(${users[0].komu_user_username}) reject penalty`
+              `<@!${users[0].userId}>(${users[0].username}) reject penalty`
             )
             .catch(console.error);
           await interaction.reply("Rejection sent!!!").catch((err) => {
             this.komubotrestService.sendErrorToDevTest(message, authorId, err);
           });
-         await this.penaltyService.updateIsReject(
-            newPenatlyData[0].id
-          );
-       
+          await this.penaltyService.updateIsReject(newPenatlyData[0].id);
         }
       }
     } catch (error) {

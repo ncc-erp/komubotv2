@@ -18,9 +18,9 @@ export class ReportDailyService {
     private komubotrestService: KomubotrestService
   ) {}
 
-  async findCountNotDaily(arr, email) {
+  findCountNotDaily(arr, email) {
     const users = arr.filter((item) => item.email === email);
-    return (await users[0]) ? users[0].countnotdaily : 1;
+    return users[0] ? users[0].countnotdaily : 1;
   }
   async reportDaily(date, message, args, client, guildDB) {
     try {
@@ -52,12 +52,12 @@ export class ReportDailyService {
             .slice(i * 50, (i + 1) * 50)
             .map((user) => {
               if (user.id) {
-                return `${user.email} (${this.findCountNotDaily(
+                return `${user[0].email} (${this.findCountNotDaily(
                   notDaily,
                   user.username
                 )})`;
               } else {
-                return `${user.email} (${this.findCountNotDaily(
+                return `${user[0].email} (${this.findCountNotDaily(
                   notDaily,
                   user.username
                 )})`;

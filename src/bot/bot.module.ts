@@ -135,7 +135,14 @@ import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { GetApiWfh } from "./utils/getApiWfh.untils";
 import { WfhUntil } from "./utils/wfh.until";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
+import HolidayCommand from "./commands/holiday/holiday.command";
+import { HolidayService } from "./commands/holiday/holiday.service";
+import { AvatarCommand } from "./commands/utilities/avatar.command";
 import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQuizToSingleUser.service";
+import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-scheduler.service";
+import { MentionSchedulerService } from "./scheduler/mention-scheduler/mention-scheduler.service";
+import { Mentioned } from "./models/mentioned.entity";
+import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.service";
 
 @Module({
   imports: [
@@ -179,6 +186,7 @@ import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQu
       Quiz,
       Keep,
       Wiki,
+      Mentioned,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -282,6 +290,12 @@ import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQu
     Ncc8Command,
     WfhUntil,
     ReportMsgCountService,
+    HolidayCommand,
+    HolidayService,
+    AvatarCommand,
+    DatingSchedulerService,
+    MentionSchedulerService,
+    WfhSchedulerService,
   ],
   controllers: [KomubotrestController],
 })

@@ -27,9 +27,7 @@ export class MvChannelCommand implements CommandLineClass {
       let authorId = message.author.id;
       const checkRole = await this.userRepository
         .createQueryBuilder()
-        .where(`"roles_discord" = :roles_discord`, {
-          roles_discord: ["PM"],
-        })
+        .where('("roles_discord" @> :pm)', { pm: ["PM"] })
         .andWhere(`"userId" = :userId`, {
           userId: authorId,
         })
@@ -37,6 +35,7 @@ export class MvChannelCommand implements CommandLineClass {
         .select("*")
         .execute();
 
+      console.log(checkRole);
       if (checkRole.length === 0) {
         return message
           .reply({

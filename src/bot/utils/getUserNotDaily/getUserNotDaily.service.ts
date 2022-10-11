@@ -64,20 +64,17 @@ export class UserNotDailyService {
       const userOff = [...wfhUserEmail, ...userOffFullday];
       const userNotWFH = await this.userRepository
         .createQueryBuilder("user")
-        .where("roles_discord = :roles_discord", {
-          roles_discord: ["INTERN"],
-        })
-        .orWhere("roles_discord = :roles_discord", {
-          roles_discord: ["STAFF"],
-        })
-        .andWhere('"email" IN (:...userOff)', {
+        .where('"email" NOT IN (:...userOff)', {
           userOff: userOff,
+        })
+        .andWhere('("roles_discord" @> :intern OR "roles_discord" @> :staff)', {
+          intern: ["INTERN"],
+          staff: ["STAFF"],
         })
         .andWhere(`"deactive" IS NOT TRUE`)
         .select("*")
         .execute();
 
-        console.log(userNotWFH, "userNotWFH")
       const userEmail = userNotWFH.map((item) => item.email);
 
       const dailyMorning = await this.dailyRepository
@@ -88,7 +85,7 @@ export class UserNotDailyService {
         .andWhere(`"createdAt" <= :ltecreatedAt`, {
           ltecreatedAt: this.utilsService.getDateDay(date).morning.fisttime,
         })
-        .select(".*")
+        .select("*")
         .execute();
 
       const dailyAfternoon = await this.dailyRepository
@@ -110,7 +107,7 @@ export class UserNotDailyService {
         .andWhere(`"createdAt" <= :ltecreatedAt`, {
           ltecreatedAt: this.utilsService.getDateDay(date).fullday.fisttime,
         })
-        .select(".*")
+        .select("*")
         .execute();
 
       const dailyEmailMorning = dailyMorning.map((item) => item.email);
@@ -138,7 +135,7 @@ export class UserNotDailyService {
           notDailyFullday.push(userNotWFHData);
         }
       }
-
+      
       const spreadNotDaily = [
         ...notDailyMorning,
         ...notDailyAfternoon,
@@ -175,7 +172,7 @@ export class UserNotDailyService {
                 username: user.email,
               })
               .andWhere(`"deactive" IS NOT TRUE`)
-              .select(".*")
+              .select("*")
               .execute()
           )
         );

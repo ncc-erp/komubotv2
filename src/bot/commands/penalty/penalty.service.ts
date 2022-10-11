@@ -15,62 +15,63 @@ export class PenaltyService {
   ) {}
   async findDataPenWithUserId(_userId, _channelId) {
     return await this.penaltyRepository
-      .createQueryBuilder(TABLE.PENATLY)
-      .where(`${TABLE.PENATLY}."userId" = :userId`, { userId: _userId })
-      .andWhere(`${TABLE.PENATLY}.channelId = :channelId`, {
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, { userId: _userId })
+      .andWhere(`"channelId" = :channelId`, {
         channelId: _channelId,
       })
+      .select("*")
       .execute();
   }
   async findDataPenWithUsername(_username, _channelId) {
     return await this.penaltyRepository
-      .createQueryBuilder(TABLE.PENATLY)
-      .where(`${TABLE.PENATLY}.username = :username`, { username: _username })
-      .andWhere(`${TABLE.PENATLY}.channelId = :channelId`, {
+      .createQueryBuilder()
+      .where(`"username" = :username`, { username: _username })
+      .andWhere(`"channelId" = :channelId`, {
         channelId: _channelId,
       })
+      .select("*")
       .execute();
   }
   async clearPenatly(_channelId) {
-   
-
     return await this.penaltyRepository
       .createQueryBuilder()
       .update(Penalty)
       .set({ delete: true })
-      .where(`${TABLE.PENATLY}.delete = :delete`, { delete: false })
-      .andWhere(`${TABLE.PENATLY}."channelId" = :channelId`, {
+      .where(`"delete" = :delete`, { delete: false })
+      .andWhere(`"channelId" = :channelId`, {
         channelId: _channelId,
       })
       .execute();
   }
   async findUser(param: string, prop: string) {
     return await this.userRepository
-      .createQueryBuilder(TABLE.USER)
+      .createQueryBuilder()
       .where(
         new Brackets((qb) => {
           if (prop === "userId")
-            qb.where(`${TABLE.USER}.userId = :userId`, { userId: param });
-          else
-            qb.where(`${TABLE.USER}.username = :username`, { username: param });
+            qb.where(`"userId" = :userId`, { userId: param });
+          else qb.where(`"username" = :username`, { username: param });
         })
       )
-      .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
+      .andWhere(`"deactive" IS NOT true`)
+      .select("*")
       .execute();
   }
   async findUserWithId(_userId) {
-   
     return await this.userRepository
-      .createQueryBuilder(TABLE.USER)
-      .where(`${TABLE.USER}."userId" = :userId`, { userId: _userId })
-      .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, { userId: _userId })
+      .andWhere(`"deactive" IS NOT true`)
+      .select("*")
       .execute();
   }
   async findUserWithUsername(_username) {
     return await this.userRepository
-      .createQueryBuilder(TABLE.USER)
-      .where(`${TABLE.USER}.username =:username`, { username: _username })
-      .andWhere(`${TABLE.USER}.deactive =:deactive`, { deactive: false })
+      .createQueryBuilder()
+      .where(`"username" =:username`, { username: _username })
+      .andWhere(`"deactive" IS NOT true`)
+      .select("*")
       .execute();
   }
   async addNewPenatly(
@@ -110,20 +111,21 @@ export class PenaltyService {
   }
   async findPenatly(_channelId) {
     return await this.penaltyRepository
-      .createQueryBuilder(TABLE.PENATLY)
-      .where(`${TABLE.PENATLY}.channelId =:channelId`, {
+      .createQueryBuilder()
+      .where(`"channelId" =:channelId`, {
         channelId: _channelId,
       })
-      .andWhere(`${TABLE.PENATLY}.isReject =:isReject`, { isReject: false })
-      .andWhere(`${TABLE.PENATLY}.delete =:delete`, { delete: false })
-      .groupBy(`${TABLE.PENATLY}.userId`)
-      .addGroupBy(`${TABLE.PENATLY}.username`)
-      .select(`SUM(${TABLE.PENATLY}.ammount)`, "ammount")
-      .addSelect(`${TABLE.PENATLY}.username`)
-      .addSelect(`${TABLE.PENATLY}."userId"`)
+      .andWhere(`"isReject" IS NOT true`)
+      .andWhere(`"delete" IS NOT true`)
+      .groupBy("Penalty.userId")
+      .addGroupBy("Penalty.id")
+      .select("SUM(ammount)", "ammount")
+      .addSelect("Penalty.username")
+      .addSelect("Penalty.userId")
       .orderBy({
         ammount: "DESC",
       })
+      .select("*")
       .execute();
   }
 }

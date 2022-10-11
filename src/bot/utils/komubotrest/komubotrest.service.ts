@@ -166,30 +166,29 @@ export class KomubotrestService {
       }
       const sent = await user.send(msg);
 
-
-       const channelInsert = await this.channelRepository
+      const channelInsert = await this.channelRepository
         .createQueryBuilder(TABLE.CHANNEL)
-        .where(`${TABLE.CHANNEL}.id = :id`, {id : process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID})
+        .where(`${TABLE.CHANNEL}.id = :id`, {
+          id: process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID,
+        })
         .execute();
 
-      
-
       console.log("import success", channelInsert);
-      console.log("sent : ", sent)
+      console.log("sent : ", sent);
       try {
         await this.messageRepository.insert({
           id: sent.id,
           author: userdb,
-          guildId : sent.guildId,
-          type : sent.type.toString(), 
-          system : sent.system, 
-          content : sent.content, 
-          pinned : sent.pinned, 
-          tts : sent.tts,
+          guildId: sent.guildId,
+          type: sent.type.toString(),
+          system: sent.system,
+          content: sent.content,
+          pinned: sent.pinned,
+          tts: sent.tts,
           channel: channelInsert,
           deleted: false,
         });
-    } catch (error) {
+      } catch (error) {
         console.log("Error : ", error);
       }
       console.log("user of send : ", sent.author);
@@ -218,7 +217,7 @@ export class KomubotrestService {
         .select("users.*")
         .execute()
         .catch(console.error);
-      userDb.forEach((item) => console.log(item, "fdsfdsfssdfsdgjlsn"));
+      userDb.forEach((item) => {});
 
       const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
@@ -430,6 +429,7 @@ export class KomubotrestService {
     }
   };
   getWFHWarninghMessage = (content, userId, wfhId) => {
+    console.log(content, userId, wfhId);
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId("komu_wfh_complain#" + userId + "#" + wfhId)

@@ -120,8 +120,7 @@ export class SendMessageSchedulerService {
           email: list,
         })
         .andWhere(`"deactive" IS NOT TRUE`)
-        // .andWhere(`"roles_discord" IS NOT TRUE`)
-        // roles_discord: { $ne: [], $exists: true },
+        .andWhere(`"roles_discord" IS NOT NUll`)
         .select("*")
         .execute();
 
@@ -155,14 +154,15 @@ export class SendMessageSchedulerService {
       );
       const { userOffFullday } = await getUserOffWork(null);
 
+      console.log(userListNotCheckIn, "userListNotCheckIn");
       userListNotCheckIn.map(async (user) => {
         const checkUser = await this.userRepository
           .createQueryBuilder("users")
           .where("email = :email", {
             email: user.komuUserName,
           })
-          .orWhere("email = :email", {
-            email: user.komuUserName,
+          .orWhere("username = :username", {
+            username: user.komuUserName,
           })
           .andWhere('"email" IN (:...userOffFullday)', {
             userOffFullday: userOffFullday,

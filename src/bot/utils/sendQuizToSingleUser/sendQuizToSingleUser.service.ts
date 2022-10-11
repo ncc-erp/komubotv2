@@ -15,12 +15,11 @@ export class SendQuizToSingleUserService {
     botPing = false,
     roleSelect = null
   ) {
-    console.log(userInput, "gg");
 
     try {
       // random userid
       if (!userInput) return;
-      const userid = userInput.id;
+      const userid = userInput.userId;
       const username = userInput.username;
 
       const q = await this.quizService.randomQuiz(
@@ -29,7 +28,6 @@ export class SendQuizToSingleUserService {
         "scheduler",
         roleSelect
       );
-      console.log(q, "333");
 
       if (!q) return;
       // const btn = new MessageEmbed()

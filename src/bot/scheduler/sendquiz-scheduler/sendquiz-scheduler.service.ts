@@ -38,10 +38,10 @@ export class SendquizSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("sendQuiz", CronExpression.EVERY_10_SECONDS, () =>
-    //   this.sendQuiz(this.client)
-    // );
-    this.addCronJob("sendQuizEnglish", CronExpression.EVERY_10_SECONDS, () =>
+    this.addCronJob("sendQuiz", CronExpression.EVERY_MINUTE, () =>
+      this.sendQuiz(this.client)
+    );
+    this.addCronJob("sendQuizEnglish", CronExpression.EVERY_MINUTE, () =>
       this.sendQuizEnglish(this.client)
     );
   }
@@ -59,28 +59,22 @@ export class SendquizSchedulerService {
 
       const userSendQuiz = await this.userRepository
         .createQueryBuilder("user")
-        .innerJoinAndSelect("user.msg", "msg")
         .where('"email" NOT IN (:...userOff)', {
           userOff: userOff,
         })
         .andWhere('"deactive" IS NOT True')
-        .where("roles_discord = :roles_discord", {
-          roles_discord: ["INTERN"],
-        })
-        .orWhere("roles_discord = :roles_discord", {
-          roles_discord: ["STAFF"],
+        .andWhere('("roles_discord" @> :intern OR "roles_discord" @> :staff)', {
+          intern: ["INTERN"],
+          staff: ["STAFF"],
         })
         .andWhere('"last_bot_message_id" IS NOT Null')
-        .innerJoinAndSelect("user.msg", "msg")
         .select("*")
-        .getRawOne();
-
-      // console.log(userSendQuiz[0].msg);
+        .execute();
 
       let arrayUser = userSendQuiz.filter(
         (user) =>
           !user.last_message_time ||
-          Date.now() - user.last_message_time >= 1000 * 60 * 60 * 2
+          Date.now() - user.last_message_time >= 1
       );
       await Promise.all(
         arrayUser.map((user) =>
@@ -102,7 +96,6 @@ export class SendquizSchedulerService {
       let userOff = [];
       try {
         const { notSendUser } = await getUserOffWork(null);
-        console.log(notSendUser, "11");
 
         userOff = notSendUser;
       } catch (error) {
