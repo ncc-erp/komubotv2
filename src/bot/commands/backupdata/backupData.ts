@@ -2,6 +2,7 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 import * as mongodb from "mongodb";
 import { Client } from "pg";
 import { Message } from "discord.js";
+import { ConfigService } from "nestjs/config"
 
 const MongoClient = mongodb.MongoClient;
 const url = "mongodb://172.16.100.196:27017";
