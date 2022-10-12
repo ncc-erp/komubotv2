@@ -6,24 +6,26 @@ import { Message } from "discord.js";
 const MongoClient = mongodb.MongoClient;
 const url = "mongodb://172.16.100.196:27017";
 
-const clientPg4 = new Client({
-  host: process.env.POSTGRES_HOST,
-  user: process.env.POSTGRES_USER,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  port: process.env.POSTGRES_PORT,
-});
-
 @CommandLine({
   name: "backup",
   description: "backup data",
   cat: "komu",
 })
 export class BackupCommand implements CommandLineClass {
-  constructor() {}
+  clientPg4: Client
+  constructor(private configService: ConfigService) {
+    this.clientPg4 = new Client({
+      host: this.configService.get('POSTGRES_HOST'),
+      user: this.configService.get('POSTGRES_USER'),
+      database: this.configService.get('POSTGRES_DB'),
+      password: this.configService.get('POSTGRES_PASSWORD'),
+      port: this.configService.get('POSTGRES_PORT'),
+    });
+  }
+  
   async execute(message: Message, args) {
     try {
-      await clientPg4.connect();
+      await this.clientPg4.connect();
       MongoClient.connect(url, function (err, client) {
         if (err) {
           console.log("Unable to connect to the mongoDB server. Error:", err);
@@ -47,7 +49,7 @@ export class BackupCommand implements CommandLineClass {
                         !item.deactive ||
                         !item.botping
                       ) {
-                        await clientPg4.query(
+                        await this.clientPg4.query(
                           `INSERT INTO komu_user("userId", "username","discriminator","avatar",
                       "system","email","last_mentioned_message_id","last_message_id")
                       VALUES ('${item.id}','${item.username}','${item.discriminator}', '${item.avatar}',
@@ -56,7 +58,7 @@ export class BackupCommand implements CommandLineClass {
                       )`
                         );
                       } else {
-                        await clientPg4.query(
+                        await this.clientPg4.query(
                           `INSERT INTO komu_user("userId", "username","discriminator","avatar","bot",
                       "system","email","flags","deactive","last_mentioned_message_id","last_message_id","scores_quiz","botPing")
                       VALUES ('${item.id}','${item.username}','${item.discriminator}', '${item.avatar}',
@@ -93,7 +95,7 @@ export class BackupCommand implements CommandLineClass {
                           !item.deactive ||
                           !item.botping
                         ) {
-                          await clientPg4.query(
+                          await this.clientPg4.query(
                             `INSERT INTO komu_user("userId", "username","discriminator","avatar",
                         "system","email","last_mentioned_message_id","last_message_id","roles","roles_discord")
                         VALUES ('${item.id}','${item.username}','${
@@ -113,7 +115,7 @@ export class BackupCommand implements CommandLineClass {
                         )}]::text[])`
                           );
                         } else {
-                          await clientPg4.query(
+                          await this.clientPg4.query(
                             `INSERT INTO komu_user("userId", "username","discriminator","avatar","bot",
                         "system","email","flags","deactive","last_mentioned_message_id","last_message_id","scores_quiz","botPing","roles","roles_discord")
                         VALUES ('${item.id}','${item.username}','${
@@ -153,7 +155,7 @@ export class BackupCommand implements CommandLineClass {
                   console.log(err);
                 } else if (result.length) {
                   result.map(async (item) => {
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_birthdays("title") VALUES ('${item.title}')`
                     );
                   });
@@ -177,7 +179,7 @@ export class BackupCommand implements CommandLineClass {
                         previousValue + "'" + currentValue + "',",
                       ""
                     );
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
                         item.subcategory
                       }', ARRAY[${sumWithInitial.slice(
@@ -201,7 +203,7 @@ export class BackupCommand implements CommandLineClass {
                   console.log(err);
                 } else if (result.length) {
                   result.map(async (item) => {
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_subcategorys("title") VALUES ('${item.title}')`
                     );
                   });
@@ -226,7 +228,7 @@ export class BackupCommand implements CommandLineClass {
                     )
                       return;
                     if (item.repeatTime === undefined) item.repeatTime = null;
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_meeting("channelId", "task", "repeat", "cancel", "reminder", "repeatTime", "createdTimestamp") VALUES ('${item.channelId}','${item.task}','${item.repeat}','${item.cancel}','${item.reminder}','${item.repeatTime}','${item.createdTimestamp}')`
                     );
                   });
@@ -245,7 +247,7 @@ export class BackupCommand implements CommandLineClass {
                   console.log(err);
                 } else if (result.length) {
                   result.map(async (item) => {
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_womenday("userId", "win", "gift") VALUES ('${item.userid}','${item.win}','${item.gift}')`
                     );
                   });
@@ -266,7 +268,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     console.log(item);
 
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_remind("channelId", "mentionUserId", "authorId", "content", "cancel", "createdTimestamp") VALUES (
                       '${item.channelId}','${item.mentionUserId}','${item.authorId}, '${item.content}', '${item.cancel}', '${item.createdTimestamp}')`
                     );
@@ -287,7 +289,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_wiki("name", "value", "type", "creator", "status", "createdate", "note") VALUES (
                     '${item.name}','${item.value}','${item.type}, '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
                     );
@@ -308,7 +310,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_dating("channelId", "userId", "email", "sex", "loop", "createdTimestamp") VALUES (
                   '${item.channelId}','${item.userId}','${item.email}, '${item.sex}', '${item.loop}', '${item.createdTimestamp}')`
                     );
@@ -329,7 +331,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_opentalk("userId", "username", "createdTimestamp") VALUES (
                     '${item.userId}','${item.username}, '${item.createdTimestamp}')`
                     );
@@ -350,7 +352,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO sugg("autorID", "messageID", "serverID", "content", "Date") VALUES (
                   '${item.autorID}','${item.messageID}, '${item.serverID}', '${item.Date}')`
                     );
@@ -371,7 +373,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_wfh("user", "wfhMsg", "createdAt", "complain", "pmconfirm", "status", "data", "type") VALUES (
                     '${item.user}','${item.wfhMsg}, '${item.createdAt}', '${item.complain}', '${item.pmconfirm}', '${item.status}', '${item.data}', '${item.type})`
                     );
@@ -392,7 +394,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO guild("serverID", "description", "content", "reason") VALUES (
                   '${item.serverID}','${item.description}, '${item.content}', '${item.reason}')`
                     );
@@ -413,7 +415,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_keep("userId", "note", "start_time", "status") VALUES (
                   '${item.userId}','${item.note}, '${item.start_time}', '${item.status}')`
                     );
@@ -434,7 +436,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_daily("userId", "email", "daily", "createdAt", "channelid") VALUES (
                 '${item.userId}','${item.email}, '${item.daily}', '${item.createdAt}', '${item.channelid}')`
                     );
@@ -455,7 +457,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_holiday("dateTime", "content") VALUES (
               '${item.dateTime}','${item.content}')`
                     );
@@ -476,7 +478,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_companytrip("year", "fullName", "userId", "email", "phone", "office", "role", "kingOfRoom", "room") VALUES (
               '${item.year}','${item.fullName}', '${item.userId}', '${item.email}', '${item.phone}', '${item.office}', '${item.role}', '${item.kingOfRoom}', '${item.room}')`
                     );
@@ -497,7 +499,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_checkCamera("userId", "channelId", "enableCamera", "createdTimestamp") VALUES (
               '${item.userId}','${item.channelId}', '${item.enableCamera}', '${item.createdTimestamp}')`
                     );
@@ -518,7 +520,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_channel("name", "type", "nsfw", "rawPosition", "lastMessageId", "rateLimitPerUser", "parentId") VALUES (
               '${item.name}','${item.type}', '${item.nsfw}', '${item.rawPosition}', '${item.lastMessageId}', '${item.rateLimitPerUser}', '${item.parentId})`
                     );
@@ -539,7 +541,7 @@ export class BackupCommand implements CommandLineClass {
                 } else if (result.length) {
                   result.map(async (item) => {
                     console.log(item);
-                    await clientPg4.query(
+                    await this.clientPg4.query(
                       `INSERT INTO komu_joinCall("channelId", "userId", "status", "start_time", "end_time") VALUES (
             '${item.channelId}','${item.userId}', '${item.status}', '${item.start_time}', '${item.end_time}')`
                     );
@@ -622,7 +624,7 @@ export class BackupCommand implements CommandLineClass {
                   } else if (result.length) {
                     result.map(async (item) => {
                       console.log(item);
-                      await clientPg4.query(
+                      await this.clientPg4.query(
                         `INSERT INTO komu_ticket("title", "desc", "asignee", "creator", "status", "createdate", "note") VALUES (
             '${item.title}', '${item.desc}','${item.asignee}', '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
                       );
