@@ -18,7 +18,8 @@ export class ReportMentionService {
   async reportMention(message, client) {
     const authorId = message.author.id;
     const mentionFullday = await this.wfhRepository
-      .createQueryBuilder()
+      .createQueryBuilder("wfh")
+      .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
       .andWhere(
         `"createdAt" > ${this.utilsService
           .getTimeToDayMention()
@@ -39,10 +40,10 @@ export class ReportMentionService {
           pmconfirm: false,
         }
       )
-      // .groupBy("userId")
-      // .having("count(1) = :number", { number: 1 })
-      // .orderBy("COUNT(userId)", "DESC")
-      // .leftJoinAndSelect("userId", "users")
+      .groupBy("m.username")
+      .addGroupBy("wfh.userId")
+      .select("wfh.userId, COUNT(wfh.userId) as total, m.username")
+      .orderBy("total", "DESC")
       .execute();
 
     let mess;

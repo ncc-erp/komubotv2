@@ -133,7 +133,6 @@ import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
 import { GetApiWfh } from "./utils/getApiWfh.untils";
-import { WfhUntil } from "./utils/wfh.until";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
 import HolidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
@@ -143,6 +142,7 @@ import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-sche
 import { MentionSchedulerService } from "./scheduler/mention-scheduler/mention-scheduler.service";
 import { Mentioned } from "./models/mentioned.entity";
 import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.service";
+import { WfhService } from "./utils/wfh/wfh.service";
 
 @Module({
   imports: [
@@ -288,7 +288,6 @@ import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.ser
     SendQuizToSingleUserService,
     BackupCommand,
     Ncc8Command,
-    WfhUntil,
     ReportMsgCountService,
     HolidayCommand,
     HolidayService,
@@ -296,6 +295,7 @@ import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.ser
     DatingSchedulerService,
     MentionSchedulerService,
     WfhSchedulerService,
+    WfhService,
   ],
   controllers: [KomubotrestController],
 })

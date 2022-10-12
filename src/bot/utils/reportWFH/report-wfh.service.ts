@@ -34,8 +34,8 @@ export class ReportWFHService {
     }
 
     const wfhFullday = await this.wfhRepository
-      .createQueryBuilder()
-      // .leftJoinAndSelect(`user`, "user")
+      .createQueryBuilder("wfh")
+      .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
       .andWhere(
         `"createdAt" > ${this.utilsService
           .getTimeToDay(fomatDate)
@@ -56,8 +56,10 @@ export class ReportWFHService {
           pmconfirm: false,
         }
       )
-      // .select(`SUM("userId")`, "sum")
-      // .groupBy("userid")
+      .groupBy("m.username")
+      .addGroupBy("wfh.userId")
+      .select("wfh.userId, COUNT(wfh.userId) as total, m.username")
+      .orderBy("total", "DESC")
       .execute();
 
     let mess;
@@ -73,7 +75,7 @@ export class ReportWFHService {
         if (wfhFullday.slice(i * 50, (i + 1) * 50).length === 0) break;
         mess = wfhFullday
           .slice(i * 50, (i + 1) * 50)
-          .map((wfh) => `<@${wfh._id}>(${wfh.username}) - (${wfh.total})`)
+          .map((wfh) => `${wfh.username} - (${wfh.total})`)
           .join("\n");
         const Embed = new EmbedBuilder()
           .setTitle(

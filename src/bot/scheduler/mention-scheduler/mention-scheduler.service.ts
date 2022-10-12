@@ -88,6 +88,7 @@ export class MentionSchedulerService {
         })
       );
 
+      console.log(mentionedUsers)
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
@@ -106,7 +107,7 @@ export class MentionSchedulerService {
             mentionChannel.name
           }!\n`;
           const findUser = await this.userRepository.findOne({
-            where: { userId: user.authorId },
+            where: { userId: user.mentionUserId },
           });
           const data = await this.wfhRepository.save({
             user: findUser,
@@ -122,7 +123,7 @@ export class MentionSchedulerService {
             user.mentionUserId,
             data.id.toString()
           );
-          const channel = await client.channels.fetch(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID);
+          const channel = await client.channels.fetch("1022413213062672445");
           await channel.send(message).catch(console.error);
           await this.mentionRepository.update(
             { id: user.id },
