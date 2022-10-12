@@ -69,7 +69,10 @@ export class BackupCommand implements CommandLineClass {
           //         await clientPg4.query(
           //           `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
           //             item.subcategory
-          //           }', ARRAY[${sumWithInitial.slice(0, sumWithInitial.length - 1)}])`
+          //           }', ARRAY[${sumWithInitial.slice(
+          //             0,
+          //             sumWithInitial.length - 1
+          //           )}])`
           //         );
           //       });
           //     } else {
@@ -285,27 +288,6 @@ export class BackupCommand implements CommandLineClass {
           //       console.log(err);
           //     } else if (result.length) {
           //       result.map(async (item) => {
-          //         await clientPg4.query(
-          //           `INSERT INTO komu_companytrip("year","fullName","userId","email","phone","office","role","kingOfRoom","room")
-          //           VALUES ('${item.year}','${item.fullName}','${item.userId}','${item.email}','${item.phone}',
-          //           '${item.office}','${item.role}','${item.kingOfRoom}','${item.room}')`
-          //           `INSERT INTO komu_question("title", "options", "correct", "role", "isVerify","accept","author_email", "topic") VALUES('${item.title}', ARRAY[${sumWithInitial.slice(0, sumWithInitial.length - 1)}]),'${item.correct}', '${item.role}', '${item.isVerify}', '${item.accept}', '${item.author_email}', '${item.topic})`
-          //         );
-          //       });
-          //     } else {
-          //       console.log(
-          //         'No document(s) found with defined "find" criteria!'
-          //       );
-          //     }
-          //     client.close();
-          //   });
-          // db.collection("komu_questions")
-          //   .find()
-          //   .toArray(async function (err, result) {
-          //     if (err) {
-          //       console.log(err);
-          //     } else if (result.length) {
-          //       result.map(async (item) => {
           //         console.log(item);
 
           //         const sumWithOptions = item.options.reduce(
@@ -349,7 +331,10 @@ export class BackupCommand implements CommandLineClass {
           //         await clientPg4.query(
           //           `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
           //             item.subcategory
-          //           }', ARRAY[${sumWithInitial.slice(0, sumWithInitial.length - 1)}])`
+          //           }', ARRAY[${sumWithInitial.slice(
+          //             0,
+          //             sumWithInitial.length - 1
+          //           )}])`
           //         );
           //       });
           //     } else {
@@ -533,6 +518,447 @@ export class BackupCommand implements CommandLineClass {
           //     }
           //     client.close();
           //   });
+
+          // db.collection("komu_reminds")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_remind("channelId", "mentionUserId", "authorId", "content", "cancel", "createdTimestamp") VALUES (
+          //             '${item.channelId}','${item.mentionUserId}','${item.authorId}, '${item.content}', '${item.cancel}', '${item.createdTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_wikis")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_wiki("name", "value", "type", "creator", "status", "createdate", "note") VALUES (
+          //           '${item.name}','${item.value}','${item.type}, '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_datings")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_dating("channelId", "userId", "email", "sex", "loop", "createdTimestamp") VALUES (
+          //           '${item.channelId}','${item.userId}','${item.email}, '${item.sex}', '${item.loop}', '${item.createdTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_datings")
+          // .find()
+          // .toArray(async function (err, result) {
+          //   if (err) {
+          //     console.log(err);
+          //   } else if (result.length) {
+          //     result.map(async (item) => {
+          //       console.log(item);
+          //       await clientPg4.query(
+          //         `INSERT INTO komu_dating("channelId", "userId", "email", "sex", "loop", "createdTimestamp") VALUES (
+          //         '${item.channelId}','${item.userId}','${item.email}, '${item.sex}', '${item.loop}', '${item.createdTimestamp}')`
+          //       );
+          //     });
+          //   } else {
+          //     console.log(
+          //       'No document(s) found with defined "find" criteria!'
+          //     );
+          //   }
+          //   client.close();
+          // });
+
+          // db.collection("komu_opentalks")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_opentalk("userId", "username", "createdTimestamp") VALUES (
+          //           '${item.userId}','${item.username}, '${item.createdTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("suggs")
+          // .find()
+          // .toArray(async function (err, result) {
+          //   if (err) {
+          //     console.log(err);
+          //   } else if (result.length) {
+          //     result.map(async (item) => {
+          //       console.log(item);
+          //       await clientPg4.query(
+          //         `INSERT INTO sugg("autorID", "messageID", "serverID", "content", "Date") VALUES (
+          //         '${item.autorID}','${item.messageID}, '${item.serverID}', '${item.Date}')`
+          //       );
+          //     });
+          //   } else {
+          //     console.log(
+          //       'No document(s) found with defined "find" criteria!'
+          //     );
+          //   }
+          //   client.close();
+          // });
+
+          // db.collection("suggs")
+          // .find()
+          // .toArray(async function (err, result) {
+          //   if (err) {
+          //     console.log(err);
+          //   } else if (result.length) {
+          //     result.map(async (item) => {
+          //       console.log(item);
+          //       await clientPg4.query(
+          //         `INSERT INTO sugg("autorID", "messageID", "serverID", "content", "Date") VALUES (
+          //         '${item.autorID}','${item.messageID}, '${item.serverID}', '${item.Date}')`
+          //       );
+          //     });
+          //   } else {
+          //     console.log(
+          //       'No document(s) found with defined "find" criteria!'
+          //     );
+          //   }
+          //   client.close();
+          // });
+
+          // db.collection("komu_wfhs")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_wfh("user", "wfhMsg", "createdAt", "complain", "pmconfirm", "status", "data", "type") VALUES (
+          //           '${item.user}','${item.wfhMsg}, '${item.createdAt}', '${item.complain}', '${item.pmconfirm}', '${item.status}', '${item.data}', '${item.type})`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("guilds")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO guild("serverID", "description", "content", "reason") VALUES (
+          //         '${item.serverID}','${item.description}, '${item.content}', '${item.reason}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_keeps")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_keep("userId", "note", "start_time", "status") VALUES (
+          //         '${item.userId}','${item.note}, '${item.start_time}', '${item.status}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_dailys")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_daily("userId", "email", "daily", "createdAt", "channelid") VALUES (
+          //       '${item.userId}','${item.email}, '${item.daily}', '${item.createdAt}', '${item.channelid}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_holidays")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_holiday("dateTime", "content") VALUES (
+          //     '${item.dateTime}','${item.content}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_companytrips")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_companytrip("year", "fullName", "userId", "email", "phone", "office", "role", "kingOfRoom", "room") VALUES (
+          //     '${item.year}','${item.fullName}', '${item.userId}', '${item.email}', '${item.phone}', '${item.office}', '${item.role}', '${item.kingOfRoom}', '${item.room}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_checkCameras")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_checkCamera("userId", "channelId", "enableCamera", "createdTimestamp") VALUES (
+          //     '${item.userId}','${item.channelId}', '${item.enableCamera}', '${item.createdTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_channels")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_channel("name", "type", "nsfw", "rawPosition", "lastMessageId", "rateLimitPerUser", "parentId") VALUES (
+          //     '${item.name}','${item.type}', '${item.nsfw}', '${item.rawPosition}', '${item.lastMessageId}', '${item.rateLimitPerUser}', '${item.parentId})`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_joinCalls")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_joinCall("channelId", "userId", "status", "start_time", "end_time") VALUES (
+          //   '${item.channelId}','${item.userId}', '${item.status}', '${item.start_time}', '${item.end_time}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          // db.collection("komu_mentioneds")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         console.log(item);
+          //         await clientPg4.query(
+          //           `INSERT INTO komu_mentioned("messageId", "authorId", "channelId", "mentionUserId", "createdTimestamp", "noti", "confirm", "punish", "reactionTimestamp") VALUES (
+          // '${item.messageId}','${item.authorId}', '${item.channelId}', '${item.mentionUserId}', '${item.createdTimestamp}','${item.noti}', '${item.confirm}','${item.punish}', '${item.reactionTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //     client.close();
+          //   });
+
+          //   db.collection("komu_orders")
+          //     .find()
+          //     .toArray(async function (err, result) {
+          //       if (err) {
+          //         console.log(err);
+          //       } else if (result.length) {
+          //         result.map(async (item) => {
+          //           console.log(item);
+          //           await clientPg4.query(
+          //             `INSERT INTO komu_order("userId", "channelId", "menu", "username", "isCancel", "createdTimestamp") VALUES (
+          // '${item.userId}', '${item.channelId}', '${item.menu}', '${item.username}','${item.isCancel}', '${item.createdTimestamp}')`
+          //           );
+          //         });
+          //       } else {
+          //         console.log(
+          //           'No document(s) found with defined "find" criteria!'
+          //         );
+          //       }
+          //       client.close();
+          //     });
+
+          //     db.collection("komu_orders")
+          //     .find()
+          //     .toArray(async function (err, result) {
+          //       if (err) {
+          //         console.log(err);
+          //       } else if (result.length) {
+          //         result.map(async (item) => {
+          //           console.log(item);
+          //           await clientPg4.query(
+          //             `INSERT INTO komu_order("userId", "channelId", "menu", "username", "isCancel", "createdTimestamp") VALUES (
+          // '${item.userId}', '${item.channelId}', '${item.menu}', '${item.username}','${item.isCancel}', '${item.createdTimestamp}')`
+          //           );
+          //         });
+          //       } else {
+          //         console.log(
+          //           'No document(s) found with defined "find" criteria!'
+          //         );
+          //       }
+          //       client.close();
+          //     });
+
+          //       db.collection("komu_penatlys")
+          //         .find()
+          //         .toArray(async function (err, result) {
+          //           if (err) {
+          //             console.log(err);
+          //           } else if (result.length) {
+          //             result.map(async (item) => {
+          //               console.log(item);
+          //               await clientPg4.query(
+          //                 `INSERT INTO komu_penatly("userId", "username", "ammount", "reason", "createdTimestamp", "isReject", "channelId", "delete") VALUES (
+          // '${item.userId}', '${item.username}','${item.ammount}', '${item.reason}', '${item.createdTimestamp}', '${item.isReject}', '${item.channelId}', '${item.delete}')`
+          //               );
+          //             });
+          //           } else {
+          //             console.log(
+          //               'No document(s) found with defined "find" criteria!'
+          //             );
+          //           }
+          //           client.close();
+          //         });
+          //       db.collection("komu_tickets")
+          //         .find()
+          //         .toArray(async function (err, result) {
+          //           if (err) {
+          //             console.log(err);
+          //           } else if (result.length) {
+          //             result.map(async (item) => {
+          //               console.log(item);
+          //               await clientPg4.query(
+          //                 `INSERT INTO komu_ticket("title", "desc", "asignee", "creator", "status", "createdate", "note") VALUES (
+          // '${item.title}', '${item.desc}','${item.asignee}', '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
+          //               );
+          //             });
+          //           } else {
+          //             console.log(
+          //               'No document(s) found with defined "find" criteria!'
+          //             );
+          //           }
+          //           client.close();
+          //         });
         }
       });
     } catch (err) {

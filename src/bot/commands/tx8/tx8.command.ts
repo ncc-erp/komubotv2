@@ -27,6 +27,7 @@ export class Tx8Command implements CommandLineClass {
     @InjectRepository(Channel)
     private readonly channelRepository: Repository<Channel>
   ) {}
+
   async execute(message: Message, args, client: Client, authorId) {
     try {
       const userId = message.author.id;
@@ -76,6 +77,7 @@ export class Tx8Command implements CommandLineClass {
             id: message.id,
           },
         });
+
         if (!msgData) {
           const msgInsert = await this.msgRepository.insert({
             channel: channelInsert,
