@@ -76,31 +76,6 @@ export class Tx8Command implements CommandLineClass {
             id: message.id,
           },
         });
-        if (!msgData) {
-          const msgInsert = await this.msgRepository.insert({
-            channel: channelInsert,
-            guildId: message.guildId,
-            deleted: message.deletable,
-            id: message.id,
-            createdTimestamp: message.createdTimestamp,
-            type: message.type as any,
-            system: message.system,
-            content: message.content,
-            author: userInsert,
-            pinned: message.pinned,
-            tts: message.tts,
-            nonce: message.nonce as string,
-            editedTimestamp: message.editedTimestamp,
-            webhookId: message.webhookId,
-            applicationId: message.applicationId,
-            flags: message.flags as any as number,
-          });
-          msgData = await this.msgRepository.findOne({
-            where: {
-              id: message.id,
-            },
-          });
-        }
 
         await this.tx8Repository.insert({
           message: msgData,
