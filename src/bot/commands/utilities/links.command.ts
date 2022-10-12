@@ -34,7 +34,7 @@ export class LinksCommand implements CommandLineClass {
                 size: 512,
               }),
             },
-            color: guildDB.color,
+            // color: guildDB.color,
             description: `Want to invite KOMU on your server? [Click here](${process.env.LINKS_INVITE})`,
             footer: {
               text: message.client.footer,
@@ -99,7 +99,7 @@ export class LinksCommand implements CommandLineClass {
                 this.clientConfigService.topgg_url +
                 "/vote)"
               : " You can upvote me by clicking [here](" +
-              this.clientConfigService.topgg_url +
+                this.clientConfigService.topgg_url +
                 "/vote)"
           }`
         )

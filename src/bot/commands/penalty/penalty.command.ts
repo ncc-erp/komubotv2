@@ -67,7 +67,7 @@ export default class PenaltyCommand implements CommandLineClass {
           mess = result
             .map(
               (item) =>
-                `<@${item.userId}>(${item.komu_penatly_username}) : ${item.ammount} vnd`
+                `<@${item.userId}>(${item.username}) : ${item.ammount} vnd`
             )
             .join("\n");
         }
@@ -98,8 +98,8 @@ export default class PenaltyCommand implements CommandLineClass {
         const mess = dataPen
           .map(
             (item, index) =>
-              `${index + 1} - ${item.komu_penatly_reason} (${
-                item.komu_penatly_ammount
+              `${index + 1} - ${item.reason} (${
+                item.ammount
               })`
           )
           .join("\n");
@@ -107,7 +107,7 @@ export default class PenaltyCommand implements CommandLineClass {
         return message.channel
           .send(
             "```" +
-              `Lý do ${dataPen[0].komu_penatly_username} bị phạt` +
+              `Lý do ${dataPen[0].username} bị phạt` +
               "\n" +
               mess +
               "```"
@@ -147,8 +147,8 @@ export default class PenaltyCommand implements CommandLineClass {
 
         if (!users) return message.channel.send("```" + "no result" + "```");
         const newPenatlyData = await this.penaltyService.addNewPenatly(
-          users[0].komu_user_userId,
-          users[0].komu_user_username,
+          users[0].userId,
+          users[0].username,
           ammount,
           reason,
           Date.now(),
@@ -167,7 +167,7 @@ export default class PenaltyCommand implements CommandLineClass {
           );
         const row = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
-            .setCustomId(`rejectpenalty${newPenatlyData[0].userId}`)
+            .setCustomId(`rejectpenalty${newPenatlyData[0].id}`)
             .setLabel("REJECT")
             .setStyle(4)
         );
@@ -177,10 +177,10 @@ export default class PenaltyCommand implements CommandLineClass {
             components: [row],
             embeds: [embed],
           },
-          users[0].komu_user_username
+          users[0].username
         );
         const filter = (interaction) =>
-          interaction.customId === `rejectpenalty${newPenatlyData[0].userId}`;
+          interaction.customId === `rejectpenalty${newPenatlyData[0].id}`;
 
         let interaction;
         try {
@@ -199,7 +199,7 @@ export default class PenaltyCommand implements CommandLineClass {
         if (interaction) {
           message.channel
             .send(
-              `<@!${users[0].komu_user_userId}>(${users[0].komu_user_username}) reject penalty`
+              `<@!${users[0].userId}>(${users[0].username}) reject penalty`
             )
             .catch(console.error);
           await interaction.reply("Rejection sent!!!").catch((err) => {

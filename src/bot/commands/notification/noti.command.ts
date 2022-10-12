@@ -34,7 +34,7 @@ export default class NotificationCommand implements CommandLineClass {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       }
-      if (checkRole.length > 0 || authorId === "922148445626716182") {
+      if (checkRole.length > 0 || authorId === "871713984670216273") {
         await firstValueFrom(
           this.http
             .post(
@@ -62,6 +62,7 @@ export default class NotificationCommand implements CommandLineClass {
           "969511102885019688",
           "921239541388554240",
           "990141662665777172",
+          "1022323179563270244",
         ];
 
         fetchChannel.map(async (channel) => {

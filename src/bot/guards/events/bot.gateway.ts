@@ -36,7 +36,7 @@ import * as queryString from "query-string";
 import { User } from "../../models/user.entity";
 import { QuizService } from "../../utils/quiz/quiz.service";
 import { KomubotrestService } from "../../utils/komubotrest/komubotrest.service";
-import { WfhUntil } from "src/bot/utils/wfh.until";
+import { WfhService } from "src/bot/utils/wfh/wfh.service";
 export type ChanneNotDM =
   | NewsChannel
   | TextChannel
@@ -57,7 +57,7 @@ export class BotGateway {
     @InjectRepository(User) private userRepository: Repository<User>,
     private quizService: QuizService,
     private komubotrestService: KomubotrestService,
-    private wfhUntil: WfhUntil
+    private wfhService: WfhService
   ) {}
   ID_KOMU = "1015574796567851039";
 
@@ -322,7 +322,7 @@ export class BotGateway {
     if (interaction.isButton()) {
       // handle wfh button
       if (interaction.customId.startsWith("komu_")) {
-        await this.wfhUntil.wfh(interaction, this.client).catch(console.error);
+        await this.wfhService.wfh(interaction, this.client).catch(console.error);
         return;
       }
       if (interaction.customId.startsWith("question_")) {
@@ -347,7 +347,7 @@ export class BotGateway {
           await this.quizService.saveQuestionCorrect(userid, id, key);
 
           const EmbedCorrect = new EmbedBuilder()
-            .setTitle(`Correct!!!, you have ${newUser.scores_quiz} points`)
+            .setTitle(`Correct!!!, you have ${newUser[0].scores_quiz} points`)
             .setColor("Green");
           const btnCorrect = new EmbedBuilder()
             .setColor("#e11919")

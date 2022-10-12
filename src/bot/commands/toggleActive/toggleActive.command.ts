@@ -28,16 +28,7 @@ export class ToggleActiveCommand implements CommandLineClass {
   async execute(message: Message, args, client: Client) {
     try {
       let authorId = args[0];
-      let userId = args[0].slice(2, -1);
-      const findUserId = await this.toggleActiveService.findAcc(
-        userId,
-        authorId
-      );
-      const allUsers = await this.userData.find();
-
-      const correctUrers = allUsers.find(
-        (item) => item.username === findUserId.username
-      );
+      const findUserId = await this.toggleActiveService.findAcc(authorId);
 
       if (findUserId === null)
         return message
@@ -47,7 +38,7 @@ export class ToggleActiveCommand implements CommandLineClass {
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
-      if (!correctUrers.deactive) {
+      if (!findUserId.deactive) {
         message
           .reply({
             content: "Disable account successfully",
@@ -56,9 +47,9 @@ export class ToggleActiveCommand implements CommandLineClass {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
 
-        await this.toggleActiveService.deactiveAcc(correctUrers.userId);
+        await this.toggleActiveService.deactiveAcc(findUserId.userId);
       } else {
-        await this.toggleActiveService.ActiveAcc(correctUrers.userId);
+        await this.toggleActiveService.ActiveAcc(findUserId.userId);
         message
           .reply({
             content: "Enable account successfully",

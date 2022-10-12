@@ -217,7 +217,7 @@ export class KomubotrestService {
         .select("users.*")
         .execute()
         .catch(console.error);
-      userDb.forEach((item) => console.log(item, "fdsfdsfssdfsdgjlsn"));
+      userDb.forEach((item) => {});
 
       const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
@@ -429,6 +429,7 @@ export class KomubotrestService {
     }
   };
   getWFHWarninghMessage = (content, userId, wfhId) => {
+    console.log(content, userId, wfhId);
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId("komu_wfh_complain#" + userId + "#" + wfhId)
@@ -622,18 +623,6 @@ export class KomubotrestService {
         );
         res.send({ message: "Send message to user successfully!" });
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  async deleteMessage(client, req, res) {
-    try {
-      const fetchMessage = await client.channels.fetch(req.body.channelId);
-      const msg = await fetchMessage.messages
-        .fetch(req.body.messageId)
-        .catch((err) => {});
-      if (msg) msg.delete();
-      res.status(200).send({ message: "Successfully!" });
     } catch (error) {
       console.log(error);
     }

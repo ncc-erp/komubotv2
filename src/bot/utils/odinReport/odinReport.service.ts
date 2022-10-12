@@ -58,7 +58,7 @@ export class OdinReportService {
     if (!options.reportName) {
       throw new Error("report name is not provided");
     }
-    const reportNameDir = path.join(__dirname, "../assets/odin-reports");
+    const reportNameDir = path.join(__dirname,"../../../..", "src/assets/odin-reports");
     if (!fs.existsSync(reportNameDir)) {
       fs.mkdirSync(reportNameDir);
     }

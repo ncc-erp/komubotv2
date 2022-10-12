@@ -132,11 +132,18 @@ import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
-import { WfhUntil } from "./utils/wfh.until";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
-import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
-import { getApiWfhModule } from "./utils/getApiWfh/getApiWfh.module";
+import HolidayCommand from "./commands/holiday/holiday.command";
+import { HolidayService } from "./commands/holiday/holiday.service";
+import { AvatarCommand } from "./commands/utilities/avatar.command";
 import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQuizToSingleUser.service";
+import { DatingSchedulerService } from "./scheduler/dating-scheduler/dating-scheduler.service";
+import { MentionSchedulerService } from "./scheduler/mention-scheduler/mention-scheduler.service";
+import { Mentioned } from "./models/mentioned.entity";
+import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.service";
+import { WfhService } from "./utils/wfh/wfh.service";
+import { getApiWfhModule } from "./utils/getApiWfh/getApiWfh.module";
+import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
 
 @Module({
   imports: [
@@ -180,6 +187,7 @@ import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQu
       Quiz,
       Keep,
       Wiki,
+      Mentioned,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -282,9 +290,15 @@ import { SendQuizToSingleUserService } from "./utils/sendQuizToSingleUser/sendQu
     SendQuizToSingleUserService,
     BackupCommand,
     Ncc8Command,
-    WfhUntil,
     ReportMsgCountService,
     getApiWfhModule,
+    HolidayCommand,
+    HolidayService,
+    AvatarCommand,
+    DatingSchedulerService,
+    MentionSchedulerService,
+    WfhSchedulerService,
+    WfhService,
   ],
   controllers: [KomubotrestController],
 })

@@ -1,20 +1,22 @@
+import { HttpService } from "@nestjs/axios";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   ActionRowBuilder,
   ButtonBuilder,
-  EmbedBuilder,
   ButtonStyle,
+  EmbedBuilder,
 } from "discord.js";
-import { Repository } from "typeorm";
-import { WorkFromHome } from "./../models/wfh.entity";
-import { TABLE } from "../constants/table";
-import { User } from "../models/user.entity";
-import { KomubotrestService } from "./komubotrest/komubotrest.service";
-import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { ClientConfigService } from "../config/client-config.service";
+import { ClientConfigService } from "src/bot/config/client-config.service";
+import { User } from "src/bot/models/user.entity";
+import { WorkFromHome } from "src/bot/models/wfh.entity";
+import { Repository } from "typeorm";
+import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
-export class WfhUntil {
+@Injectable()
+@Injectable()
+export class WfhService {
   constructor(
     @InjectRepository(WorkFromHome)
     private wfhRepository: Repository<WorkFromHome>,
@@ -46,14 +48,14 @@ export class WfhUntil {
         arrIds[0] == "komu_wfh_accept_but"
       ) {
         await this.wfhRepository
-          .createQueryBuilder("wfh")
+          .createQueryBuilder()
           .update(WorkFromHome)
           .set({
             pmconfirm: false,
             data: arrIds[0],
             status: "ACCEPT",
           })
-          .where(`"userid" = :userid`, { userid: labelImageId })
+          .where(`"userId" = :userId`, { userId: labelImageId })
           .execute();
 
         interaction
@@ -68,7 +70,8 @@ export class WfhUntil {
           .createQueryBuilder()
           .where(`"id" = :id`, { id: wfhid })
           .select("*")
-          .getOne();
+          .execute();
+        console.log(wfhdata);
         if (!wfhdata) {
           interaction
             .reply({ content: "No WFH found", ephemeral: true })
@@ -105,7 +108,7 @@ export class WfhUntil {
         // send message to PM
         const userdb = await this.userRepository
           .createQueryBuilder()
-          .where(`"id" = :id`, { id: labelImageId })
+          .where(`"userId" = :userId`, { userId: labelImageId })
           .andWhere('"deactive" IS NOT True')
           .select("*")
           .getOne();
@@ -215,7 +218,7 @@ export class WfhUntil {
           .catch(console.error);
 
         await this.wfhRepository
-          .createQueryBuilder(TABLE.WFH)
+          .createQueryBuilder()
           .update(WorkFromHome)
           .set({
             complain: true,
@@ -239,7 +242,7 @@ export class WfhUntil {
             const pmid = arrIds[4];
             const message = `<@${pmid}> just ${arrIds[3]}ed WFH complain from <@${labelImageId}>`;
             await this.wfhRepository
-              .createQueryBuilder(TABLE.WFH)
+              .createQueryBuilder()
               .update(WorkFromHome)
               .set({
                 pmconfirm: arrIds[3] == "confirm",

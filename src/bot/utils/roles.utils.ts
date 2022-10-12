@@ -80,7 +80,7 @@ export class UpdateRole {
       .execute();
     const userids = user.map((item) => item.userId);
 
-    let guild = await client.guilds.fetch("958646576627187732");
+    let guild = await client.guilds.fetch("921239248991055882");
 
     for (let userid of userids) {
       let member;

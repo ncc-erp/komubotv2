@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { TABLE } from "../constants/table";
 
 @Entity(TABLE.DATING)
 export class Dating {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ nullable: false })

@@ -19,25 +19,33 @@ export class ReportMentionService {
     const authorId = message.author.id;
     const mentionFullday = await this.wfhRepository
       .createQueryBuilder("wfh")
-      .where('"wfh.type" = :type', { type: "wfh" })
+      .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
       .andWhere(
-        `"wfh.createdAt" > ${this.utilsService.getTimeToDayMention().firstDay.getTime()}`
+        `"createdAt" > ${this.utilsService
+          .getTimeToDayMention()
+          .firstDay.getTime()}`
       )
       .andWhere(
-        `"wfh.createdAt" < ${this.utilsService.getTimeToDayMention().lastDay.getTime()}`
+        `"createdAt" < ${this.utilsService
+          .getTimeToDayMention()
+          .lastDay.getTime()}`
       )
-      .orWhere('"wfh.status" = :status', { status: "ACCEPT" })
-      .orWhere('"wfh.status" = :status', { status: "ACTIVE" })
-      .orWhere('"wfh.status" = :status', {
-        status: "APPROVED",
-        pmconfirm: false,
-      })
-      .groupBy("wfh.userId")
-      .having("count(1) = :number", { number: 1 })
-      .orderBy("COUNT(wfh.userId)", "DESC")
-      .leftJoinAndSelect("wfh.userId", "users")
+      .andWhere(
+        '("status" = :statusACCEPT AND "type" = :type) OR ("status" = :statusACTIVE AND "type" = :type) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type)',
+        {
+          type: "mention",
+          statusACCEPT: "ACCEPT",
+          statusACTIVE: "ACTIVE",
+          statusAPPROVED: "APPROVED",
+          pmconfirm: false,
+        }
+      )
+      .groupBy("m.username")
+      .addGroupBy("wfh.userId")
+      .select("wfh.userId, COUNT(wfh.userId) as total, m.username")
+      .orderBy("total", "DESC")
       .execute();
-      
+
     let mess;
     if (!mentionFullday) {
       return;

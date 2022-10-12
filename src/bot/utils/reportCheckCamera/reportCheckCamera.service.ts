@@ -39,26 +39,29 @@ export class ReportCheckCameraService {
       return;
     }
 
+    userCheckCameraId = ["922148445626716182"];
     const { userOffFullday, userOffMorning } = await getUserOffWork(null);
     const userOff = [...userOffFullday, ...userOffMorning];
-    console.log(userCheckCameraId);
 
     const checkCameraFullday = await this.userRepository
-      .createQueryBuilder("")
-      .where(`"userId" NOT IN (:...userCheckCameraId)`, {
-        userCheckCameraId: userCheckCameraId,
-      })
-      .andWhere(`"email" NOT IN (:...userOff)`, {
-        userOff: userOff,
-      })
+      .createQueryBuilder()
+      .where(
+        userCheckCameraId && userCheckCameraId.length > 0
+          ? `"userId" NOT IN (:...userCheckCameraId)`
+          : "true",
+        {
+          userCheckCameraId: userCheckCameraId,
+        }
+      )
+      .andWhere(
+        userOff && userOff.length > 0 ? `"email" NOT IN (:...userOff)` : "true",
+        {
+          userOff: userOff,
+        }
+      )
       .andWhere('"deactive" IS NOT True')
       .andWhere(
-        `"roles_discord" @> :CLIENT OR "roles_discord" @> :HR OR "roles_discord" @> :ADMIN`,
-        {
-          CLIENT: ["CLIENT"],
-          HR: ["HR"],
-          ADMIN: ["ADMIN"],
-        }
+        "NOT roles_discord @> array['CLIENT'] AND NOT roles_discord @> array['HR'] AND NOT roles_discord @> array['ADMIN']"
       )
       .select("*")
       .execute();

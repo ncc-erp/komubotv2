@@ -10,6 +10,7 @@ import { Mentioned } from "src/bot/models/mentioned.entity";
 import moment from "moment";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { User } from "src/bot/models/user.entity";
 
 @Injectable()
 export class MentionSchedulerService {
@@ -17,6 +18,8 @@ export class MentionSchedulerService {
     private utilsService: UtilsService,
     @InjectRepository(Mentioned)
     private mentionRepository: Repository<Mentioned>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(WorkFromHome)
     private wfhRepository: Repository<WorkFromHome>,
     private schedulerRegistry: SchedulerRegistry,
@@ -41,7 +44,7 @@ export class MentionSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("checkMention", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("checkMention", "*/1 9-11,13-17 * * 1-5", () =>
       this.checkMention(this.client)
     );
   }
@@ -60,7 +63,6 @@ export class MentionSchedulerService {
           now - item.createdTimestamp < 1800000 &&
           !item.noti
       );
-
       mentionedUsers = mentionedUsers.filter(
         (item) => now - item.createdTimestamp >= 1800000
       );
@@ -86,6 +88,7 @@ export class MentionSchedulerService {
         })
       );
 
+      console.log(mentionedUsers);
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
@@ -103,18 +106,22 @@ export class MentionSchedulerService {
             .format("YYYY-MM-DD HH:mm:ss")} tại channel ${
             mentionChannel.name
           }!\n`;
-          const data = await this.wfhRepository.insert({
-            // userid: user.mentionUserId,
+          const findUser = await this.userRepository.findOne({
+            where: { userId: user.mentionUserId },
+          });
+          const data = await this.wfhRepository.save({
+            user: findUser,
             wfhMsg: content,
             complain: false,
             pmconfirm: false,
             status: "ACTIVE",
             type: "mention",
+            createdAt: Date.now(),
           });
           const message = this.komubotrestService.getWFHWarninghMessage(
             content,
             user.mentionUserId,
-            "data.id.toString()"
+            data.id.toString()
           );
           const channel = await client.channels.fetch(
             process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID

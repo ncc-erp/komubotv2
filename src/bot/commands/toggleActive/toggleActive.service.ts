@@ -10,9 +10,9 @@ export class ToggleActiveService {
     private userData: Repository<User>
   ) {}
 
-  async findAcc(userId, authorId) {
+  async findAcc(authorId) {
     return await this.userData.findOne({
-      where: [{ userId: userId }, { username: authorId }],
+      where: [{ userId: authorId }, { username: authorId }],
     });
   }
 

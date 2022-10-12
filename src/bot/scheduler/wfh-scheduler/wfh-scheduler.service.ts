@@ -52,9 +52,12 @@ export class WfhSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("dating", CronExpression.EVERY_30_MINUTES, () =>
-    //   this.dating(this.client)
-    // );
+    this.addCronJob("pingWfh", "*/5 9-11,13-17 * * 1-5", () =>
+      this.pingWfh(this.client)
+    );
+    this.addCronJob("punish", "*/1 9-11,13-17 * * 1-5", () =>
+      this.punish(this.client)
+    );
   }
 
   async pingWfh(client) {
@@ -108,32 +111,30 @@ export class WfhSchedulerService {
 
       const userWfhWithSomeCodition = await this.userRepository
         .createQueryBuilder("user")
-        .innerJoinAndSelect("user.msg", "msg")
-        .where('"email" IN (:...userOff)', {
-          userOff: userOff,
-        })
-        .where('"userId" IN (:...useridJoining)', {
-          useridJoining: useridJoining,
-        })
-        .andWhere('"deactive" IS NOT True')
-        .orWhere("roles_discord = :roles_discord", {
-          roles_discord: ["INTERN"],
-        })
-        .orWhere("roles_discord = :roles_discord", {
-          roles_discord: ["STAFF"],
-        })
-        .andWhere('"last_message_id" IS Not Null And IS Not :last_message_id', {
-          last_message_id: "",
-        })
-        .andWhere(
-          '"last_bot_message_id" IS Not Null And IS Not :last_bot_message_id',
+        .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
+        .where(
+          userOff && userOff.length > 0 ? '"email" IN (:...userOff)' : "true",
           {
-            last_bot_message_id: "",
+            userOff: userOff,
           }
         )
-        .innerJoinAndSelect("user.msg", "msg")
+        .andWhere(
+          useridJoining && useridJoining.length > 0
+            ? '"email" NOT IN (:...useridJoining)'
+            : "true",
+          {
+            useridJoining: useridJoining,
+          }
+        )
+        .andWhere('"deactive" IS NOT True')
+        .andWhere('("roles_discord" @> :intern OR "roles_discord" @> :staff)', {
+          intern: ["INTERN"],
+          staff: ["STAFF"],
+        })
+        .andWhere('"last_message_id" IS Not Null')
+        .andWhere('"last_bot_message_id" IS Not Null')
         .select("*")
-        .getRawOne();
+        .execute();
 
       const coditionGetTimeStamp = (user) => {
         let result = false;
@@ -198,21 +199,23 @@ export class WfhSchedulerService {
 
     const users = await this.userRepository
       .createQueryBuilder("user")
-      .innerJoinAndSelect("user.msg", "msg")
-      .where('"email" IN (:...wfhUserEmail)', {
-        wfhUserEmail: wfhUserEmail,
-      })
+      .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
+      .where(
+        wfhUserEmail && wfhUserEmail.length > 0
+          ? '"email" IN (:...wfhUserEmail)'
+          : "true",
+        {
+          wfhUserEmail: wfhUserEmail,
+        }
+      )
       .andWhere('"deactive" IS NOT True')
-      .andWhere('"roles_discord" IS Not Null And IS Not :roles_discord', {
-        roles_discord: [],
-      })
-      .andWhere("botPing = :botPing", {
+      .andWhere('"roles_discord" IS Not Null')
+      .andWhere('"botPing" = :botPing', {
         botPing: true,
       })
       .andWhere('"last_bot_message_id" IS NOT Null')
-      .innerJoinAndSelect("user.msg", "msg")
       .select("*")
-      .getRawOne();
+      .execute();
 
     console.log("sendmachleo", users);
     users.map(async (user) => {
@@ -223,27 +226,31 @@ export class WfhSchedulerService {
         user.createdTimestamp >=
           this.utilsService.getTimeToDay(null).lastDay.getTime()
       ) {
-        const content = `<@${user.id}> không trả lời tin nhắn WFH lúc ${moment(
+        const content = `<@${
+          user.userId
+        }> không trả lời tin nhắn WFH lúc ${moment(
           parseInt(user.createdTimestamp.toString())
         )
           .utcOffset(420)
           .format("YYYY-MM-DD HH:mm:ss")} !\n`;
         const userInsert = await this.userRepository.findOne({
           where: {
-            userId: user.id,
+            userId: user.userId,
           },
         });
-        const data = await this.wfhRepository.insert({
+        const data = await this.wfhRepository.save({
           user: userInsert,
           wfhMsg: content,
           complain: false,
           pmconfirm: false,
           status: "ACTIVE",
+          type: "wfh",
+          createdAt: Date.now(),
         });
         const message = this.komubotrestService.getWFHWarninghMessage(
           content,
-          user.id,
-          data.raw
+          user.userId,
+          data.id
         );
         const channel = await client.channels.fetch(
           process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
@@ -254,10 +261,10 @@ export class WfhSchedulerService {
           .set({
             botPing: false,
           })
-          .where(`"userId" = :userId`, { userId: user.id })
+          .where(`"userId" = :userId`, { userId: user.userId })
           .andWhere(`"deactive" IS NOT TRUE`)
           .execute();
-        console.log("update botping punish", user.id);
+        console.log("update botping punish", user.userId);
         await channel.send(message).catch(console.error);
       }
     });

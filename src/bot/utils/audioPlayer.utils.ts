@@ -38,7 +38,7 @@ export class AudioPlayer {
 
   async audioPlayer(client: Client, message: Message, episode) {
     try {
-      const channel = await client.channels.fetch("1024993309296443483");
+      const channel = await client.channels.fetch("921323636491710504");
       const player = createAudioPlayer();
 
       joinVoiceChannel({
@@ -82,7 +82,7 @@ export class AudioPlayer {
 
       if (episode && message) {
         message.channel
-          .send(`@here go to <#1024993309296443483>`)
+          .send(`@here go to <#921323636491710504>`)
           .catch(console.error);
       }
     } catch (err) {

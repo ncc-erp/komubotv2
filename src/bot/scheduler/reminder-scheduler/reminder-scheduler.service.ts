@@ -44,21 +44,18 @@ export class ReminderSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("pingReminder", CronExpression.EVERY_MINUTE, () =>
-    //   this.pingReminder(this.client)
-    // );
-    this.addCronJob("sendMesageRemind", CronExpression.EVERY_MINUTE, () =>
-      this.sendMesageRemind(this.client)
+    this.addCronJob("pingReminder", "30 08 * * 0-6", () =>
+      this.pingReminder(this.client)
     );
-    // this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
-    //   this.sendOdinReport(this.client)
-    // );
-    // this.addCronJob("remindDailyMorning", "00 00 13 * * 1-5", () =>
-    //   this.remindDailyMorning(this.client)
-    // );
-    // this.addCronJob("remindDailyAfternoon", "00 00 09 * * 1-5", () =>
-    //   this.remindDailyAfternoon(this.client)
-    // );
+    this.addCronJob("sendMessageRemind", CronExpression.EVERY_MINUTE, () =>
+      this.sendMessageRemind(this.client)
+    );
+    this.addCronJob("remindDailyMorning", "00 9 * * 1-5", () =>
+      this.remindDailyMorning(this.client)
+    );
+    this.addCronJob("remindDailyAfternoon", "00 13 * * 1-5", () =>
+      this.remindDailyAfternoon(this.client)
+    );
   }
 
   async sendMessageReminder(client, channelId, task, dateTime, mentionUserId) {
@@ -92,21 +89,21 @@ export class ReminderSchedulerService {
   async pingReminder(client) {
     if (await this.utilsService.checkHoliday()) return;
     const remindLists = await this.remindRepository
-      .createQueryBuilder("remind")
+      .createQueryBuilder()
       .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
       })
       .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
-      .select("remind.*")
+      .select("*")
       .execute();
 
     const meetingLists = await this.meetingRepository
-      .createQueryBuilder("meeting")
+      .createQueryBuilder()
       .where(`"reminder" IS NOT TRUE`)
       .andWhere(`"cancel" IS NOT TRUE`)
-      .select("meeting.*")
+      .select("*")
       .execute();
 
     const listMeetingAndRemind = meetingLists.concat(remindLists);
@@ -192,7 +189,7 @@ export class ReminderSchedulerService {
     }
   }
 
-  async sendMesageRemind(client) {
+  async sendMessageRemind(client) {
     try {
       if (await this.utilsService.checkHoliday()) return;
       const data = await this.remindRepository.find({
@@ -241,43 +238,6 @@ export class ReminderSchedulerService {
           await this.remindRepository.update({ id: item.id }, { cancel: true });
         }
       });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async sendOdinReport(client) {
-    try {
-      const fetchChannel = await client.channels.fetch("1022413213062672445");
-      try {
-        const date = new Date();
-
-        if (isNaN(date.getTime())) {
-          throw Error("invalid date provided");
-        }
-
-        const report = await getKomuWeeklyReport({
-          reportName: "komu-weekly",
-          url: process.env.ODIN_URL,
-          username: process.env.ODIN_USERNAME,
-          password: process.env.ODIN_PASSWORD,
-          screenUrl: process.env.ODIN_KOMU_REPORT_WEEKLY_URL,
-          date,
-        });
-
-        if (!report || !report.filePath || !fs.existsSync(report.filePath)) {
-          throw new Error("requested report is not found");
-        }
-
-        const attachment = new AttachmentBuilder(report.filePath);
-        const embed = new EmbedBuilder().setTitle("Komu report weekly");
-        await fetchChannel
-          .send({ files: [attachment], embed: embed })
-          .catch(console.error);
-      } catch (error) {
-        console.error(error);
-        fetchChannel.send(`Sorry, ${error.message}`);
-      }
     } catch (error) {
       console.log(error);
     }

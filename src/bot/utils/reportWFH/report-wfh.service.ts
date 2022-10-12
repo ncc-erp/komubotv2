@@ -34,27 +34,32 @@ export class ReportWFHService {
     }
 
     const wfhFullday = await this.wfhRepository
-      .createQueryBuilder(TABLE.WFH)
-      .leftJoinAndSelect(`${TABLE.WFH}.user`, "user")
-      .where(`${TABLE.WFH}.type = :type`, { type: "wfh" })
+      .createQueryBuilder("wfh")
+      .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
       .andWhere(
-        `${TABLE.WFH}.createdAt > ${this.utilsService
+        `"createdAt" > ${this.utilsService
           .getTimeToDay(fomatDate)
           .firstDay.getTime()}`
       )
       .andWhere(
-        `${TABLE.WFH}.createdAt < ${this.utilsService
+        `"createdAt" < ${this.utilsService
           .getTimeToDay(fomatDate)
           .lastDay.getTime()}`
       )
-      .orWhere(`${TABLE.WFH}.status = :status`, { status: "ACCEPT" })
-      .orWhere(`${TABLE.WFH}.status = :status`, { status: "ACTIVE" })
-      .orWhere(`${TABLE.WFH}.status = :status`, {
-        status: "APPROVED",
-        pmconfirm: false,
-      })
-      .select(`SUM(${TABLE.USER}.userId)`, "sum")
-      .groupBy("userid")
+      .andWhere(
+        '("status" = :statusACCEPT AND "type" = :type) OR ("status" = :statusACTIVE AND "type" = :type) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type)',
+        {
+          type: "wfh",
+          statusACCEPT: "ACCEPT",
+          statusACTIVE: "ACTIVE",
+          statusAPPROVED: "APPROVED",
+          pmconfirm: false,
+        }
+      )
+      .groupBy("m.username")
+      .addGroupBy("wfh.userId")
+      .select("wfh.userId, COUNT(wfh.userId) as total, m.username")
+      .orderBy("total", "DESC")
       .execute();
 
     let mess;
@@ -70,7 +75,7 @@ export class ReportWFHService {
         if (wfhFullday.slice(i * 50, (i + 1) * 50).length === 0) break;
         mess = wfhFullday
           .slice(i * 50, (i + 1) * 50)
-          .map((wfh) => `<@${wfh._id}>(${wfh.username}) - (${wfh.total})`)
+          .map((wfh) => `${wfh.username} - (${wfh.total})`)
           .join("\n");
         const Embed = new EmbedBuilder()
           .setTitle(
@@ -103,20 +108,22 @@ export class ReportWFHService {
     }
 
     const wfhFullday = await this.wfhRepository
-      .createQueryBuilder(TABLE.WFH)
-      .where(`${TABLE.WFH}.status = :status`, { status: "APPROVED" })
-      .andWhere(`${TABLE.WFH}.complain = :complain`, { complain: true })
+      .createQueryBuilder()
+      .where(`"status" = :status`, { status: "APPROVED" })
+      .andWhere(`"complain" = :complain`, { complain: true })
       .andWhere(
-        `${TABLE.WFH}.createdAt > ${this.utilsService
+        `"createdAt" > ${this.utilsService
           .getTimeToDay(fomatDate)
           .firstDay.getTime()}`
       )
       .andWhere(
-        `${TABLE.WFH}.createdAt < ${this.utilsService
+        `"createdAt" < ${this.utilsService
           .getTimeToDay(fomatDate)
           .lastDay.getTime()}`
       )
+      .select("*")
       .execute();
+    console.log(wfhFullday);
 
     let mess;
     if (!wfhFullday) {
@@ -131,7 +138,7 @@ export class ReportWFHService {
         if (wfhFullday.slice(i * 50, (i + 1) * 50).length === 0) break;
         mess = wfhFullday
           .slice(i * 50, (i + 1) * 50)
-          .map((wfh) => `<@${wfh.userid}> `)
+          .map((wfh) => `<@${wfh.userId}>`)
           .join("\n");
         const Embed = new EmbedBuilder()
           .setTitle("Những người được approved trong ngày hôm nay")

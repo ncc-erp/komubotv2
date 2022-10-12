@@ -53,32 +53,32 @@ export class SendMessageSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("sendMessagePMs", CronExpression.EVERY_MINUTE, () =>
-    //   this.sendMessagePMs(this.client)
-    // );
-    // this.addCronJob("sendMessTurnOffPc", CronExpression.EVERY_MINUTE, () =>
-    //   this.sendMessTurnOffPc(this.client)
-    // );
-    // this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
-    //   this.sendSubmitTimesheet(this.client)
-    // );
-    // this.addCronJob("remindCheckout", CronExpression.EVERY_10_SECONDS, () =>
-    //   this.remindCheckout(this.client)
-    // );
-    // this.addCronJob("happyBirthday", "00 00 09 * * 0-6", () =>
-    //   this.happyBirthday(this.client)
-    // );
-    // this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
-    //   this.sendOdinReport(this.client)
-    // );
-    // this.addCronJob("topTracker", "00 45 08 * * 1-5", () =>
-    //   this.topTracker(this.client)
-    // );
+    this.addCronJob("sendMessagePMs", "00 15 * * 2", () =>
+      this.sendMessagePMs(this.client)
+    );
+    this.addCronJob("sendMessTurnOffPc", "30 17 * * 1-5", () =>
+      this.sendMessTurnOffPc(this.client)
+    );
+    this.addCronJob("sendSubmitTimesheet", "00 12 * * 0", () =>
+      this.sendSubmitTimesheet(this.client)
+    );
+    this.addCronJob("remindCheckout", "00 18 * * 1-5", () =>
+      this.remindCheckout(this.client)
+    );
+    this.addCronJob("happyBirthday", "00 09 * * 0-6", () =>
+      this.happyBirthday(this.client)
+    );
+    this.addCronJob("sendOdinReport", "14 00 * * 1", () =>
+      this.sendOdinReport(this.client)
+    );
+    this.addCronJob("topTracker", "45 08 * * 1-5", () =>
+      this.topTracker(this.client)
+    );
   }
 
   async sendMessagePMs(client) {
     if (await this.utilsService.checkHoliday()) return;
-    const userDiscord = await client.channels.fetch("1020251275796955236");
+    const userDiscord = await client.channels.fetch("921787088830103593");
     userDiscord
       .send(
         `Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report tuần này đi.`
@@ -134,8 +134,7 @@ export class SendMessageSchedulerService {
           email: list,
         })
         .andWhere(`"deactive" IS NOT TRUE`)
-        // .andWhere(`"roles_discord" IS NOT TRUE`)
-        // roles_discord: { $ne: [], $exists: true },
+        .andWhere(`"roles_discord" IS NOT NUll`)
         .select("*")
         .execute();
 
@@ -152,7 +151,7 @@ export class SendMessageSchedulerService {
     });
   }
 
-  async remindCheckout(client:Client) {
+  async remindCheckout(client: Client) {
     if (await this.utilsService.checkHoliday()) return;
     try {
       const listsUser = await firstValueFrom(
@@ -171,18 +170,24 @@ export class SendMessageSchedulerService {
       );
       const { userOffFullday } = await getUserOffWork(null);
 
+      console.log(userListNotCheckIn, "userListNotCheckIn");
       userListNotCheckIn.map(async (user) => {
         const checkUser = await this.userRepository
           .createQueryBuilder("users")
           .where("email = :email", {
             email: user.komuUserName,
           })
-          .orWhere("email = :email", {
-            email: user.komuUserName,
+          .orWhere("username = :username", {
+            username: user.komuUserName,
           })
-          .andWhere('"email" IN (:...userOffFullday)', {
-            userOffFullday: userOffFullday,
-          })
+          .andWhere(
+            userOffFullday && userOffFullday.length > 0
+              ? '"email" IN (:...userOffFullday)'
+              : "true",
+            {
+              userOffFullday: userOffFullday,
+            }
+          )
           .andWhere(`"deactive" IS NOT TRUE`)
           .select("users.*")
           .execute();
@@ -256,16 +261,15 @@ export class SendMessageSchedulerService {
   async topTracker(client) {
     if (await this.utilsService.checkHoliday()) return;
     const userTracker = [
-      // "922148445626716182",
-      // "922416220056199198",
-      // "921689631110602792",
-      // "922297847876034562",
-      // "922306295346921552",
-      // "921601073939116073",
-      // "921261168088190997",
-      // "921312679354834984",
-      // "665925240404181002",
-      "960372801880080504"
+      "856211913456877608",
+      "922416220056199198",
+      "921689631110602792",
+      "922297847876034562",
+      "922306295346921552",
+      "921601073939116073",
+      "921261168088190997",
+      "921312679354834984",
+      "665925240404181002",
     ];
     await Promise.all(
       userTracker.map(async (user) => {
