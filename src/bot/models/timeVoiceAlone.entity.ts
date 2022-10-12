@@ -9,7 +9,7 @@ export class TimeVoiceAlone {
   @Column({ type: "text", nullable: false })
   channelId: string;
 
-  @Column({ type: "text", nullable: false })
+  @Column({ nullable: false })
   status: boolean;
 
   @Column({ type: "decimal", nullable: false })

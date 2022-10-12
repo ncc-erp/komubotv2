@@ -44,14 +44,14 @@ export class MentionSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("checkMention", CronExpression.EVERY_10_SECONDS, () =>
+    this.addCronJob("checkMention", "*/1 9-11,13-17 * * 1-5", () =>
       this.checkMention(this.client)
     );
   }
 
   async checkMention(client) {
     if (await this.utilsService.checkHoliday()) return;
-    // if (this.utilsService.checkTime(new Date())) return;
+    if (this.utilsService.checkTime(new Date())) return;
     const now = Date.now();
     try {
       let mentionedUsers = await this.mentionRepository.find({
@@ -88,15 +88,15 @@ export class MentionSchedulerService {
         })
       );
 
-      console.log(mentionedUsers)
+      console.log(mentionedUsers);
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
-          // if (mentionChannel.type !== "GUILD_TEXT") {
-          //   mentionChannel = await client.channels.fetch(
-          //     mentionChannel.parentId
-          //   );
-          // }
+          if (mentionChannel.type !== "GUILD_TEXT") {
+            mentionChannel = await client.channels.fetch(
+              mentionChannel.parentId
+            );
+          }
           const content = `<@${
             user.mentionUserId
           }> không trả lời tin nhắn mention của <@${

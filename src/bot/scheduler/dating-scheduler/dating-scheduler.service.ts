@@ -44,12 +44,13 @@ export class DatingSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("dating", CronExpression.EVERY_HOUR, () =>
+    this.addCronJob("dating", "0-15/1 17 * * 5", () =>
       this.dating(this.client)
     );
   }
 
   async dating(client) {
+    console.log("run")
     if (await this.utilsService.checkHoliday()) return;
     const now = new Date();
     const minute = now.getMinutes();

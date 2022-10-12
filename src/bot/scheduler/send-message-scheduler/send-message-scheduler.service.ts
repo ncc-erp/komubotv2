@@ -46,25 +46,25 @@ export class SendMessageSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("sendMessagePMs", "00 00 15 * * 2", () =>
+    this.addCronJob("sendMessagePMs", "00 15 * * 2", () =>
       this.sendMessagePMs(this.client)
     );
-    this.addCronJob("sendMessTurnOffPc", "00 30 17 * * 1-5", () =>
+    this.addCronJob("sendMessTurnOffPc", "30 17 * * 1-5", () =>
       this.sendMessTurnOffPc(this.client)
     );
-    this.addCronJob("sendSubmitTimesheet", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("sendSubmitTimesheet", "00 12 * * 0", () =>
       this.sendSubmitTimesheet(this.client)
     );
-    this.addCronJob("remindCheckout", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("remindCheckout", "00 18 * * 1-5", () =>
       this.remindCheckout(this.client)
     );
-    this.addCronJob("happyBirthday", "00 00 09 * * 0-6", () =>
+    this.addCronJob("happyBirthday", "00 09 * * 0-6", () =>
       this.happyBirthday(this.client)
     );
-    this.addCronJob("sendOdinReport", "00 00 14 * * 1", () =>
+    this.addCronJob("sendOdinReport", "14 00 * * 1", () =>
       this.sendOdinReport(this.client)
     );
-    this.addCronJob("topTracker", "00 45 08 * * 1-5", () =>
+    this.addCronJob("topTracker", "45 08 * * 1-5", () =>
       this.topTracker(this.client)
     );
   }
