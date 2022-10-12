@@ -2,7 +2,7 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 import * as mongodb from "mongodb";
 import { Client } from "pg";
 import { Message } from "discord.js";
-import { ConfigService } from "nestjs/config"
+import { ConfigService } from "@nestjs/config"
 
 const MongoClient = mongodb.MongoClient;
 const url = "mongodb://172.16.100.196:27017";
@@ -27,7 +27,7 @@ export class BackupCommand implements CommandLineClass {
   async execute(message: Message, args) {
     try {
       await this.clientPg4.connect();
-      MongoClient.connect(url, function (err, client) {
+      MongoClient.connect(url, (err, client) => {
         if (err) {
           console.log("Unable to connect to the mongoDB server. Error:", err);
         } else {
@@ -37,7 +37,7 @@ export class BackupCommand implements CommandLineClass {
           if (args[0] === "user") {
             db.collection("komu_users")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -146,12 +146,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
           } else {
             db.collection("komu_birthdays")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -165,12 +165,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_checklists")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -194,12 +194,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_subcategorys")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -213,12 +213,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_meetings")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -238,12 +238,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_women_days")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -257,12 +257,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_reminds")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -279,12 +279,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_wikis")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -300,12 +300,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_datings")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -321,12 +321,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_opentalks")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -342,12 +342,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("suggs")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -363,12 +363,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_wfhs")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -384,12 +384,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("guilds")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -405,12 +405,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_keeps")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -426,12 +426,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_dailys")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -447,12 +447,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_holidays")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -468,12 +468,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_companytrips")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -489,12 +489,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_checkCameras")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -510,12 +510,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_channels")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -531,12 +531,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             db.collection("komu_joinCalls")
               .find()
-              .toArray(async function (err, result) {
+              .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
@@ -552,12 +552,12 @@ export class BackupCommand implements CommandLineClass {
                     'No document(s) found with defined "find" criteria!'
                   );
                 }
-                client.close();
+                
               });
 
             //   db.collection("komu_mentioneds")
             //     .find()
-            //     .toArray(async function (err, result) {
+            //     .toArray(async (err, result) => {
             //       if (err) {
             //         console.log(err);
             //       } else if (result.length) {
@@ -573,12 +573,12 @@ export class BackupCommand implements CommandLineClass {
             //           'No document(s) found with defined "find" criteria!'
             //         );
             //       }
-            //       client.close();
+            //       
             //     });
 
             //   db.collection("komu_orders")
             //     .find()
-            //     .toArray(async function (err, result) {
+            //     .toArray(async (err, result) => {
             //       if (err) {
             //         console.log(err);
             //       } else if (result.length) {
@@ -594,12 +594,12 @@ export class BackupCommand implements CommandLineClass {
             //           'No document(s) found with defined "find" criteria!'
             //         );
             //       }
-            //       client.close();
+            //       
             //     });
 
             //   db.collection("komu_penatlys")
             //     .find()
-            //     .toArray(async function (err, result) {
+            //     .toArray(async (err, result) => {
             //       if (err) {
             //         console.log(err);
             //       } else if (result.length) {
@@ -615,11 +615,11 @@ export class BackupCommand implements CommandLineClass {
             //           'No document(s) found with defined "find" criteria!'
             //         );
             //       }
-            //       client.close();
+            //       
             //     });
               db.collection("komu_tickets")
                 .find()
-                .toArray(async function (err, result) {
+                .toArray(async (err, result) => {
                   if (err) {
                     console.log(err);
                   } else if (result.length) {
@@ -635,12 +635,13 @@ export class BackupCommand implements CommandLineClass {
                       'No document(s) found with defined "find" criteria!'
                     );
                   }
-                  client.close();
+                  
                 });
           }
         }
       });
     } catch (err) {
+      console.log('131232')
       console.log(err);
     }
   }
