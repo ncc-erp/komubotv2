@@ -13,8 +13,8 @@ export class UpdateRoleSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     private updateRole: UpdateRole,
     @InjectDiscordClient()
-    private client: Client,
-    ) {}
+    private client: Client
+  ) {}
 
   private readonly logger = new Logger(UpdateRoleSchedulerService.name);
 
@@ -32,10 +32,10 @@ export class UpdateRoleSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("updateRoleProject", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("updateRoleProject", "0 0 * * 1", () =>
       this.updateRole.updateRoleProject(this.client)
     );
-    this.addCronJob("updateRoleDiscord", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("updateRoleDiscord", "0 * * * *", () =>
       this.updateRole.updateRoleDiscord(this.client)
     );
   }

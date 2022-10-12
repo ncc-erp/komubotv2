@@ -38,10 +38,10 @@ export class SendquizSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("sendQuiz", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("sendQuiz", "0 9,11,13,15 * * 1-5", () =>
       this.sendQuiz(this.client)
     );
-    this.addCronJob("sendQuizEnglish", CronExpression.EVERY_MINUTE, () =>
+    this.addCronJob("sendQuizEnglish", "0 9,11,14,16 * * 1-5", () =>
       this.sendQuizEnglish(this.client)
     );
   }
@@ -73,8 +73,7 @@ export class SendquizSchedulerService {
 
       let arrayUser = userSendQuiz.filter(
         (user) =>
-          !user.last_message_time ||
-          Date.now() - user.last_message_time >= 1
+          !user.last_message_time || Date.now() - user.last_message_time >= 1
       );
       await Promise.all(
         arrayUser.map((user) =>

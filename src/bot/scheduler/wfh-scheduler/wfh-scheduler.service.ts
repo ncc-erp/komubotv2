@@ -52,10 +52,10 @@ export class WfhSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("pingWfh", CronExpression.EVERY_30_MINUTES, () =>
+    this.addCronJob("pingWfh", "*/5 9-11,13-17 * * 1-5", () =>
       this.pingWfh(this.client)
     );
-    this.addCronJob("punish", CronExpression.EVERY_10_SECONDS, () =>
+    this.addCronJob("punish", "*/1 9-11,13-17 * * 1-5", () =>
       this.punish(this.client)
     );
   }
@@ -171,7 +171,7 @@ export class WfhSchedulerService {
 
   async punish(client) {
     if (await this.utilsService.checkHoliday()) return;
-    // if (this.utilsService.checkTime(new Date())) return;
+    if (this.utilsService.checkTime(new Date())) return;
     let wfhGetApi;
     try {
       wfhGetApi = await firstValueFrom(
@@ -190,10 +190,9 @@ export class WfhSchedulerService {
     if (!wfhGetApi || wfhGetApi.data == undefined) {
       return;
     }
-    // const wfhUserEmail = wfhGetApi.data.result.map((item) =>
-    //   this.utilsService.getUserNameByEmail(item.emailAddress)
-    // );
-    const wfhUserEmail = ["hai.nguyensinh"];
+    const wfhUserEmail = wfhGetApi.data.result.map((item) =>
+      this.utilsService.getUserNameByEmail(item.emailAddress)
+    );
 
     const users = await this.userRepository
       .createQueryBuilder("user")
@@ -213,12 +212,11 @@ export class WfhSchedulerService {
     console.log("sendmachleo", users);
     users.map(async (user) => {
       if (
-        Date.now() - user.createdTimestamp >=
-        1800000
-        // user.createdTimestamp <=
-        //   this.utilsService.getTimeToDay(null).firstDay.getTime() &&
-        // user.createdTimestamp >=
-        //   this.utilsService.getTimeToDay(null).lastDay.getTime()
+        Date.now() - user.createdTimestamp >= 1800000 &&
+        user.createdTimestamp <=
+          this.utilsService.getTimeToDay(null).firstDay.getTime() &&
+        user.createdTimestamp >=
+          this.utilsService.getTimeToDay(null).lastDay.getTime()
       ) {
         const content = `<@${
           user.userId
