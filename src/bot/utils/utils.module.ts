@@ -19,6 +19,7 @@ import { TX8 } from "../models/tx8.entity";
 import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
 import { WomenDay } from "../models/womenDay.entity";
+import { getApiWfhModule } from "./getApiWfh/getApiWfh.module";
 import { UserNotDailyService } from "./getUserNotDaily/getUserNotDaily.service";
 import { KomubotrestService } from "./komubotrest/komubotrest.service";
 import { OdinReportService } from "./odinReport/odinReport.service";
@@ -72,6 +73,7 @@ import { UtilsService } from "./utils.service";
     ReportMentionModule,
     ReportWomenDayModule,
     HttpModule,
+    getApiWfhModule,
   ],
   providers: [
     ReportCommand,
@@ -93,6 +95,7 @@ import { UtilsService } from "./utils.service";
     ReportTrackerService,
     UserNotDailyService,
     ReportMsgCountService,
+    getApiWfhModule,
   ],
 })
 export class UtilsModule {}

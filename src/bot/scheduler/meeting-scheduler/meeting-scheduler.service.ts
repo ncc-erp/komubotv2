@@ -48,10 +48,10 @@ export class MeetingSchedulerService {
 
   async tagMeeting(client: any) {
     if (await this.utilsService.checkHoliday()) return;
-    let guild = client.guilds.fetch("958646576627187732");
+    let guild = client.guilds.fetch("921239248991055882");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
-        guild.type === "GUILD_VOICE" && guild.parentId === "958646576627187734"
+        guild.type === ("2" as any) && guild.parentId === "921239248991055884"
     );
     const repeatMeet = await this.meetingRepository
       .createQueryBuilder("meeting")

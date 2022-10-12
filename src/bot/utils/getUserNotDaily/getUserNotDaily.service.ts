@@ -64,9 +64,12 @@ export class UserNotDailyService {
       const userOff = [...wfhUserEmail, ...userOffFullday];
       const userNotWFH = await this.userRepository
         .createQueryBuilder("user")
-        .where('"email" NOT IN (:...userOff)', {
-          userOff: userOff,
-        })
+        .where(
+          userOff && userOff.length ? '"email" NOT IN (:...userOff)' : "true",
+          {
+            userOff: userOff,
+          }
+        )
         .andWhere('("roles_discord" @> :intern OR "roles_discord" @> :staff)', {
           intern: ["INTERN"],
           staff: ["STAFF"],
@@ -135,7 +138,7 @@ export class UserNotDailyService {
           notDailyFullday.push(userNotWFHData);
         }
       }
-      
+
       const spreadNotDaily = [
         ...notDailyMorning,
         ...notDailyAfternoon,

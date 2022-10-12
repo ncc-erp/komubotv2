@@ -11,7 +11,10 @@ import { BWLService } from "./bwl.service";
   cat: "komu",
 })
 export class BWLCommand implements CommandLineClass {
-  constructor(private utilsService: UtilsService,    private bwlService : BWLService,) {}
+  constructor(
+    private utilsService: UtilsService,
+    private bwlService: BWLService
+  ) {}
 
   async execute(message: Message, args) {
     try {
@@ -36,32 +39,38 @@ export class BWLCommand implements CommandLineClass {
       if (!channelId || !this.utilsService.getTimeWeek(time)) {
         return message.channel.send("```invalid channel or time```");
       }
-       await this.bwlService.findBwlReactData(channelId, this.utilsService.getTimeWeek(time).firstday.timestamp,this.utilsService.getTimeWeek(time).lastday.timestamp, top )
-      .then((docs) => {
-            let name = [];
-            if (docs.length) {
-              name = docs.map((doc, index) => {
-                return `Top ${index + 1} ${doc.author_username}: ${
-                  doc.totalReaction
-                } votes`;
-              });
-            }
-            if (Array.isArray(name) && name.length === 0) {
-              message.channel.send("```no result```");
-            } else {
-              message.channel
-                .send(
-                  "```" +
-                    this.utilsService.getTimeWeek(time).firstday.date +
-                    " - " +
-                    this.utilsService.getTimeWeek(time).lastday.date +
-                    "\n" +
-                    name.join("\n") +
-                    "```"
-                )
-                .catch(console.error);
-            }
-          });
+      await this.bwlService
+        .findBwlReactData(
+          channelId,
+          this.utilsService.getTimeWeek(time).firstday.timestamp,
+          this.utilsService.getTimeWeek(time).lastday.timestamp,
+          top
+        )
+        .then((docs) => {
+          let name = [];
+          if (docs.length) {
+            name = docs.map((doc, index) => {
+              return `Top ${index + 1} ${doc.author_username}: ${
+                doc.totalReaction
+              } votes`;
+            });
+          }
+          if (Array.isArray(name) && name.length === 0) {
+            message.channel.send("```no result```");
+          } else {
+            message.channel
+              .send(
+                "```" +
+                  this.utilsService.getTimeWeek(time).firstday.date +
+                  " - " +
+                  this.utilsService.getTimeWeek(time).lastday.date +
+                  "\n" +
+                  name.join("\n") +
+                  "```"
+              )
+              .catch(console.error);
+          }
+        });
     } catch (e) {
       console.log(e);
     }

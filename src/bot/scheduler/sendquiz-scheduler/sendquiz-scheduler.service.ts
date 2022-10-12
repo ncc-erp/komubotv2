@@ -59,9 +59,14 @@ export class SendquizSchedulerService {
 
       const userSendQuiz = await this.userRepository
         .createQueryBuilder("user")
-        .where('"email" NOT IN (:...userOff)', {
-          userOff: userOff,
-        })
+        .where(
+          userOff && userOff.length > 0
+            ? '"email" NOT IN (:...userOff)'
+            : "true",
+          {
+            userOff: userOff,
+          }
+        )
         .andWhere('"deactive" IS NOT True')
         .andWhere('("roles_discord" @> :intern OR "roles_discord" @> :staff)', {
           intern: ["INTERN"],
@@ -103,9 +108,12 @@ export class SendquizSchedulerService {
 
       const userSendQuiz = await this.userRepository
         .createQueryBuilder("users")
-        .where('"email" NOT IN (:...userOff)', {
-          userOff: userOff,
-        })
+        .where(
+          userOff && userOff.length ? '"email" NOT IN (:...userOff)' : "true",
+          {
+            userOff: userOff,
+          }
+        )
         .andWhere(`"deactive" IS NOT TRUE`)
         .select("users.*")
         .execute();

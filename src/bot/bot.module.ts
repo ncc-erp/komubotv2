@@ -132,7 +132,6 @@ import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
-import { GetApiWfh } from "./utils/getApiWfh.untils";
 import { ReportMsgCountService } from "./utils/reportMsgCount/reportMsgCount.service";
 import HolidayCommand from "./commands/holiday/holiday.command";
 import { HolidayService } from "./commands/holiday/holiday.service";
@@ -143,6 +142,8 @@ import { MentionSchedulerService } from "./scheduler/mention-scheduler/mention-s
 import { Mentioned } from "./models/mentioned.entity";
 import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.service";
 import { WfhService } from "./utils/wfh/wfh.service";
+import { getApiWfhModule } from "./utils/getApiWfh/getApiWfh.module";
+import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
 
 @Module({
   imports: [
@@ -193,6 +194,7 @@ import { WfhService } from "./utils/wfh/wfh.service";
     HttpModule,
     UtilsModule,
     ReportWFHModule,
+    getApiWfhModule,
   ],
   providers: [
     CompantripCommand,
@@ -208,7 +210,7 @@ import { WfhService } from "./utils/wfh/wfh.service";
     UserStatusService,
     KomubotrestController,
     UtilsService,
-    GetApiWfh,
+    GetApiWfhService,
     TimeSheetCommand,
     OpenTalkService,
     MeetingSchedulerService,
@@ -289,6 +291,7 @@ import { WfhService } from "./utils/wfh/wfh.service";
     BackupCommand,
     Ncc8Command,
     ReportMsgCountService,
+    getApiWfhModule,
     HolidayCommand,
     HolidayService,
     AvatarCommand,

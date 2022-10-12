@@ -1,6 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
-import { AttachmentBuilder, Client, EmbedBuilder } from "discord.js";
+import {
+  AttachmentBuilder,
+  Client,
+  EmbedBuilder,
+  TextChannel,
+} from "discord.js";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { CronJob } from "cron";
@@ -14,6 +19,7 @@ import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 import { BirthdayService } from "src/bot/utils/birthday/birthdayservice";
 import { OdinReportService } from "src/bot/utils/odinReport/odinReport.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @Injectable()
 export class SendMessageSchedulerService {
@@ -27,7 +33,8 @@ export class SendMessageSchedulerService {
     private client: Client,
     private birthdayService: BirthdayService,
     private komubotrestService: KomubotrestService,
-    private odinReportService: OdinReportService
+    private odinReportService: OdinReportService,
+    private clientConfigService: ClientConfigService
   ) {}
 
   private readonly logger = new Logger(SendMessageSchedulerService.name);
@@ -79,14 +86,21 @@ export class SendMessageSchedulerService {
       .catch(console.error);
   }
 
-  async sendMessTurnOffPc(client) {
+  async sendMessTurnOffPc(client: Client) {
     if (await this.utilsService.checkHoliday()) return;
-    const staffRoleId = "921328149927690251";
-    const channel = await client.channels.fetch("921239541388554240");
-    const roles = await channel.guild.roles.fetch(staffRoleId);
-    roles.members.map((member) => {
+    const users = await this.userRepository
+      .createQueryBuilder("users")
+      .where('"roles" @> :staff OR "roles" @> :hr', {
+        staff: ["STAFF"],
+        hr: ["HR"],
+      })
+      .select("users.*")
+      .execute();
+
+    users.map(async (user) => {
       try {
-        member
+        const channel = await client.users.fetch(user.userId);
+        return channel
           .send("Nhớ tắt máy trước khi ra về nếu không dùng nữa nhé!!!")
           .catch((err) => {
             console.log(err);
@@ -137,18 +151,20 @@ export class SendMessageSchedulerService {
     });
   }
 
-  async remindCheckout(client) {
+  async remindCheckout(client: Client) {
     if (await this.utilsService.checkHoliday()) return;
     try {
       const listsUser = await firstValueFrom(
         this.http
-          .get(`${process.env.CHECKIN_API}/v1/employees/report-checkin`, {
+          .get(this.clientConfigService.checkout.api_url, {
             headers: {
-              "X-Secret-Key": `${process.env.CHECKIN_API_KEY_SECRET}`,
+              "X-Secret-Key": `${process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY}`,
             },
           })
           .pipe((res) => res)
       );
+      console.log(listsUser, "aaa");
+
       const userListNotCheckIn = listsUser.data.filter(
         (user) => user.checkout === null
       );
@@ -164,13 +180,18 @@ export class SendMessageSchedulerService {
           .orWhere("username = :username", {
             username: user.komuUserName,
           })
-          .andWhere('"email" IN (:...userOffFullday)', {
-            userOffFullday: userOffFullday,
-          })
+          .andWhere(
+            userOffFullday && userOffFullday.length > 0
+              ? '"email" IN (:...userOffFullday)'
+              : "true",
+            {
+              userOffFullday: userOffFullday,
+            }
+          )
           .andWhere(`"deactive" IS NOT TRUE`)
           .select("users.*")
           .execute();
-
+        console.log(checkUser, "ssss");
         if (checkUser && checkUser !== null) {
           const userDiscord = await client.users.fetch(checkUser.id);
           userDiscord
@@ -240,7 +261,7 @@ export class SendMessageSchedulerService {
   async topTracker(client) {
     if (await this.utilsService.checkHoliday()) return;
     const userTracker = [
-      "922148445626716182",
+      "856211913456877608",
       "922416220056199198",
       "921689631110602792",
       "922297847876034562",

@@ -299,7 +299,7 @@ export class ExtendersService {
   async errorOccurredMessage(err, guildDB, Message) {
     const content = await this.translateMessage("ERROR", guildDB.lang);
     const r = new EmbedBuilder()
-      // .setColor("#F0B02F")
+      .setColor("#F0B02F")
       .setTitle(content.title)
       .setDescription(content.desc)
       .setFooter(("Error code: " + err) as any);

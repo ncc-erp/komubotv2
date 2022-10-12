@@ -45,12 +45,20 @@ export class ReportCheckCameraService {
 
     const checkCameraFullday = await this.userRepository
       .createQueryBuilder()
-      .where(`"userId" NOT IN (:...userCheckCameraId)`, {
-        userCheckCameraId: userCheckCameraId,
-      })
-      .andWhere(`"email" NOT IN (:...userOff)`, {
-        userOff: userOff,
-      })
+      .where(
+        userCheckCameraId && userCheckCameraId.length > 0
+          ? `"userId" NOT IN (:...userCheckCameraId)`
+          : "true",
+        {
+          userCheckCameraId: userCheckCameraId,
+        }
+      )
+      .andWhere(
+        userOff && userOff.length > 0 ? `"email" NOT IN (:...userOff)` : "true",
+        {
+          userOff: userOff,
+        }
+      )
       .andWhere('"deactive" IS NOT True')
       .andWhere(
         "NOT roles_discord @> array['CLIENT'] AND NOT roles_discord @> array['HR'] AND NOT roles_discord @> array['ADMIN']"

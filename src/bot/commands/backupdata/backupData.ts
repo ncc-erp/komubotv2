@@ -12,7 +12,7 @@ const clientPg4 = new Client({
   host: "localhost",
   user: "postgres",
   database: "komubot",
-  password: "123456",
+  password: "ahihi123a",
   port: 5432,
 });
 
@@ -25,7 +25,7 @@ export class BackupCommand implements CommandLineClass {
   constructor() {}
   async execute() {
     try {
-      await clientPg4.connect();
+      // await clientPg4.connect();
       MongoClient.connect(url, function (err, client) {
         if (err) {
           console.log("Unable to connect to the mongoDB server. Error:", err);
@@ -276,6 +276,10 @@ export class BackupCommand implements CommandLineClass {
           //     }
           //     client.close();
           //   });
+          // db.collection("komu_companytrips")
+          //   .find()
+          //   .toArray(async function (err, result) {
+          //     await clientPg4.connect();
 
           // db.collection("komu_questions")
           //   .find()

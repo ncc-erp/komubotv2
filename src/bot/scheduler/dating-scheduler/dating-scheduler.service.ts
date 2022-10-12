@@ -44,13 +44,12 @@ export class DatingSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("dating", "0-15/1 17 * * 5", () =>
+    this.addCronJob("dating", CronExpression.EVERY_30_MINUTES, () =>
       this.dating(this.client)
     );
   }
 
   async dating(client) {
-    console.log("run")
     if (await this.utilsService.checkHoliday()) return;
     const now = new Date();
     const minute = now.getMinutes();
@@ -79,12 +78,12 @@ export class DatingSchedulerService {
         if (item.sex === 0)
           userMan.push({
             email: this.utilsService.getUserNameByEmail(item.emailAddress),
-            branch: item.branchId,
+            branch: item.branch,
           });
         if (item.sex === 1)
           userWomen.push({
             email: this.utilsService.getUserNameByEmail(item.emailAddress),
-            branch: item.branchId,
+            branch: item.branch,
           });
       });
 
@@ -115,7 +114,7 @@ export class DatingSchedulerService {
       });
 
       const checkUserMan = await this.userRepository
-        .createQueryBuilder()
+        .createQueryBuilder("users")
         .where(
           emailUserMan && emailUserMan.length > 0
             ? '"email" IN (:...emailUserMan)'
@@ -124,7 +123,6 @@ export class DatingSchedulerService {
             emailUserMan: emailUserMan,
           }
         )
-        .andWhere(`"deactive" IS NOT TRUE`)
         .andWhere(
           result && result.length > 0 ? '"email" NOT IN (:...result)' : "true",
           {
@@ -139,11 +137,13 @@ export class DatingSchedulerService {
             listJoinCall: listJoinCall,
           }
         )
-        .select("*")
+        .andWhere(`"deactive" IS NOT TRUE`)
+        .select("users.*")
         .execute();
+      console.log(checkUserMan);
 
       const checkUserWoman = await this.userRepository
-        .createQueryBuilder()
+        .createQueryBuilder("users")
         .where(
           emailUserWomen && emailUserWomen.length > 0
             ? '"email" IN (:...emailUserWomen)'
@@ -152,7 +152,6 @@ export class DatingSchedulerService {
             emailUserWomen: emailUserWomen,
           }
         )
-        .andWhere(`"deactive" IS NOT TRUE`)
         .andWhere(
           result && result.length > 0 ? '"email" NOT IN (:...result)' : "true",
           {
@@ -167,19 +166,16 @@ export class DatingSchedulerService {
             listJoinCall: listJoinCall,
           }
         )
-        .select("*")
+        .andWhere(`"deactive" IS NOT TRUE`)
+        .select("users.*")
         .execute();
-
-      console.log(checkUserMan, "checkUserMan");
-      console.log(checkUserWoman, "checkUserWoman");
 
       if (!checkUserMan || !checkUserWoman) return;
 
-      let guild = client.guilds.fetch("958646576627187732");
+      let guild = client.guilds.fetch("921239248991055882");
       const getAllVoice = client.channels.cache.filter(
         (guild) =>
-          // guild.type === "GUILD_VOICE" &&
-          guild.parentId === "958646576627187734"
+          guild.type === ("2" as any) && guild.parentId === "921239248991055884"
       );
       const voiceChannel = getAllVoice.map((item) => item.id);
       let roomMap = [];
@@ -230,16 +226,16 @@ export class DatingSchedulerService {
 
           checkUserMan.map((item) => {
             dating.map((dt) => {
-              if (item.email === dt && !datingIdMan.includes(item.userId)) {
-                datingIdMan.push(item.userId);
+              if (item.email === dt && !datingIdMan.includes(item.id)) {
+                datingIdMan.push(item.id);
                 datingEmailMAn.push(item.email);
               }
             });
           });
           checkUserWoman.map((item) => {
             dating.map((dt) => {
-              if (item.email === dt && !datingIdWoman.includes(item.userId)) {
-                datingIdWoman.push(item.userId);
+              if (item.email === dt && !datingIdWoman.includes(item.id)) {
+                datingIdWoman.push(item.id);
                 datingEmailWoman.push(item.email);
               }
             });
@@ -260,13 +256,13 @@ export class DatingSchedulerService {
           if (countVoice === voiceChannel.length) {
             {
               const fetchChannelFull = await client.channels.fetch(
-                "1027140645111996476"
+                "956782882226073610"
               );
               fetchChannelFull.send(`Voice channel full`);
             }
           } else {
             const nowFetchChannel = await client.channels.fetch(
-              "1027140645111996476"
+              "956782882226073610"
             );
             for (let i = 0; i < datingIdWoman.length; i++) {
               if (roomMap.length !== 0) {

@@ -123,7 +123,9 @@ export class MentionSchedulerService {
             user.mentionUserId,
             data.id.toString()
           );
-          const channel = await client.channels.fetch("1022413213062672445");
+          const channel = await client.channels.fetch(
+            process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
+          );
           await channel.send(message).catch(console.error);
           await this.mentionRepository.update(
             { id: user.id },

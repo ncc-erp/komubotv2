@@ -50,6 +50,11 @@ export class ClientConfigService {
         "TIMESHEET_API"
       )}Public/GetTimesheetAndCheckInOutAllUser`,
     };
+    this.checkout = {
+      api_url: `${configService.get<string>(
+        "KOMUBOTREST_CHECK_IN_URL"
+      )}v1/employees/report-checkin`,
+    };
     this.wiki = {
       api_url: `${configService.get<string>(
         "PROJECT_API"
@@ -138,6 +143,10 @@ export class ClientConfigService {
     this.checkConfig = null;
     //The number of shards. Leave blank for auto
     this.shards = 1;
+  }
+
+  checkout:{
+    api_url:string
   }
 
   wfh: {

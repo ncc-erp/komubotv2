@@ -1,7 +1,7 @@
 import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { GetApiWfhService } from "src/bot/utils/getApiWfh/getApiWfh.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
-import { GetApiWfh } from "src/bot/utils/getApiWfh.untils";
 
 const messHelp =
   "```" +
@@ -18,7 +18,7 @@ const messHelp =
 })
 export class WFHCommand implements CommandLineClass {
   constructor(
-    private readonly getApiWfh: GetApiWfh,
+    private getApiWfh: GetApiWfhService,
     private komubotrestService: KomubotrestService
   ) {}
   async execute(message: Message, args, client: Client, authorId) {

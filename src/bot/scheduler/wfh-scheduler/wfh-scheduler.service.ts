@@ -112,9 +112,12 @@ export class WfhSchedulerService {
       const userWfhWithSomeCodition = await this.userRepository
         .createQueryBuilder("user")
         .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
-        .where('"email" IN (:...userOff)', {
-          userOff: userOff,
-        })
+        .where(
+          userOff && userOff.length > 0 ? '"email" IN (:...userOff)' : "true",
+          {
+            userOff: userOff,
+          }
+        )
         .andWhere(
           useridJoining && useridJoining.length > 0
             ? '"email" NOT IN (:...useridJoining)'
@@ -197,9 +200,14 @@ export class WfhSchedulerService {
     const users = await this.userRepository
       .createQueryBuilder("user")
       .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
-      .where('"email" IN (:...wfhUserEmail)', {
-        wfhUserEmail: wfhUserEmail,
-      })
+      .where(
+        wfhUserEmail && wfhUserEmail.length > 0
+          ? '"email" IN (:...wfhUserEmail)'
+          : "true",
+        {
+          wfhUserEmail: wfhUserEmail,
+        }
+      )
       .andWhere('"deactive" IS NOT True')
       .andWhere('"roles_discord" IS Not Null')
       .andWhere('"botPing" = :botPing', {

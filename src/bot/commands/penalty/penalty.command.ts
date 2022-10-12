@@ -122,7 +122,7 @@ export default class PenaltyCommand implements CommandLineClass {
             content: "Clear penatly successfully",
           })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       } else {
         const channel_id = message.channel.id;
@@ -157,7 +157,7 @@ export default class PenaltyCommand implements CommandLineClass {
           false
         );
         message.reply({ content: "`✅` Penalty saved." }).catch((err) => {
-          this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+          this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
         const embed = new EmbedBuilder()
           .setColor("#0099ff")
@@ -203,7 +203,7 @@ export default class PenaltyCommand implements CommandLineClass {
             )
             .catch(console.error);
           await interaction.reply("Rejection sent!!!").catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(message, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
           await this.penaltyService.updateIsReject(newPenatlyData[0].id);
         }

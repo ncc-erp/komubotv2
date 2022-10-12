@@ -1,8 +1,10 @@
 import { HttpService } from "@nestjs/axios";
+import { Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
-import { ClientConfigService } from "../config/client-config.service";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
-export class GetApiWfh {
+@Injectable()
+export class GetApiWfhService {
   constructor(
     private readonly clientConfigService: ClientConfigService,
     private readonly http: HttpService
@@ -14,7 +16,7 @@ export class GetApiWfh {
     }
   }
 
-  getApiWfh = async (client, date) => {
+  async getApiWfh(client, date) {
     let wfhGetApi;
     let dataWfh = [];
     try {
@@ -25,7 +27,7 @@ export class GetApiWfh {
               securitycode: process.env.WFH_API_KEY_SECRET,
             },
           })
-          .pipe((res) => res)
+          .pipe((res) => res as any)
       );
     } catch (error) {
       console.log(error);
@@ -41,5 +43,5 @@ export class GetApiWfh {
       })
     );
     return dataWfh;
-  };
+  }
 }
