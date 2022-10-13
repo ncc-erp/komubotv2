@@ -28,6 +28,6 @@ export class TX8 {
   @Column({ type: "text", nullable: true })
   status: string;
 
-  @Column({ type: "decimal" })
+  @Column({ type: "decimal", nullable: true })
   createdTimestamp: number;
 }

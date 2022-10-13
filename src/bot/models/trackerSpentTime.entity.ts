@@ -6,18 +6,18 @@ export class TrackerSpentTime {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: true })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "numeric", precision: 30, scale: 3, nullable: true })
   spent_time: number;
 
   @Column({ type: "text", nullable: true })
   date: string;
 
-  @Column({ nullable: false })
+  @Column({ type: "numeric", precision: 30, scale: 3, nullable: true })
   call_time: number;
 
-  @Column({ type: "boolean", nullable: false })
+  @Column({ type: "boolean", nullable: true })
   wfh: boolean;
 }
