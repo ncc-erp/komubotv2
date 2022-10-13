@@ -32,23 +32,19 @@ export class KomubotrestService {
   private data;
   async findUserData(_pramams) {
     return await this.userRepository
-      .createQueryBuilder(TABLE.USER)
+      .createQueryBuilder()
       .where(
         new Brackets((qb) => {
-          qb.where(`${TABLE.USER}.email = :email`, {
+          qb.where(`"email" = :email`, {
             email: _pramams,
-          }).andWhere(`${TABLE.USER}.deactive = :deactive`, {
-            deactive: false,
-          });
+          }).andWhere(`"deactive" IS NOT true`);
         })
       )
       .orWhere(
         new Brackets((qb) => {
-          qb.where(`${TABLE.USER}.username = :username`, {
+          qb.where(`"username" = :username`, {
             username: _pramams,
-          }).andWhere(`${TABLE.USER}.deactive = :deactive`, {
-            deactive: false,
-          });
+          }).andWhere(`"deactive" IS NOT true`);
         })
       )
       .getOne();
@@ -88,11 +84,11 @@ export class KomubotrestService {
       })
       .execute();
   }
-  async findUserOne(_id) {
+  async findUserOne(userId) {
     return await this.userRepository
-      .createQueryBuilder(TABLE.USER)
-      .where(`${TABLE.USER}.id = :id`, {
-        id: _id,
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, {
+        userId: userId,
       })
       .getOne();
   }
@@ -153,7 +149,6 @@ export class KomubotrestService {
       if (msg == null) {
         return user;
       }
-      console.log("user komuserviece : ", user);
       if (!user) {
         // notify to machleo channel
         const message = `<@${process.env.KOMUBOTREST_ADMIN_USER_ID}> ơi, đồng chí ${username} không đúng format rồi!!!`;
@@ -626,5 +621,5 @@ export class KomubotrestService {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 }
