@@ -19,16 +19,16 @@ export class Mentioned {
   @Column({ type: "text", nullable: true })
   mentionUserId: string;
 
-  @Column({ type: "decimal", nullable: true })
+  @Column({ type: "decimal" })
   createdTimestamp: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   noti: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   confirm: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   punish: boolean;
 
   @Column({ type: "decimal", default: null })

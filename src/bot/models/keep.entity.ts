@@ -12,7 +12,7 @@ export class Keep {
   @Column({ nullable: true })
   note: string;
 
-  @Column({ type: "decimal" })
+  @Column({ type: "decimal", nullable: true })
   start_time: number;
 
   @Column({ nullable: true })

@@ -6,16 +6,16 @@ export class Quiz {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   title: string;
 
   @Column("text", { array: true, nullable: true })
   options: string[];
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   correct: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   role: string;
 
   @Column()
@@ -24,9 +24,9 @@ export class Quiz {
   @Column()
   accept: boolean;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   author_email: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   topic: string;
 }

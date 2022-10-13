@@ -1,6 +1,7 @@
 import { date } from "@hapi/joi";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import console from "console";
 import { Message } from "discord.js";
 import { TABLE } from "src/bot/constants/table";
 import { BirthDay } from "src/bot/models/birthday.entity";
@@ -16,12 +17,23 @@ import { TrackerSpentTime } from "src/bot/models/trackerSpentTime.entity";
 import { TX8 } from "src/bot/models/tx8.entity";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
+import { Leave } from "src/bot/models/leave.entity";
+import { Meeting } from "src/bot/models/meeting.entity";
+import { Mentioned } from "src/bot/models/mentioned.entity";
+import { Order } from "src/bot/models/order.entity";
+import { Penalty } from "src/bot/models/penatly.entity";
+import { Quiz } from "src/bot/models/quiz.entity";
+import { Remind } from "src/bot/models/remind.entity";
 import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Wiki } from "src/bot/models/wiki.entity";
 import { WomenDay } from "src/bot/models/womenDay.entity";
 import { Workout } from "src/bot/models/workout.entity";
 import { Repository } from "typeorm";
+import { Keep } from "src/bot/models/keep.entity";
+import { JoinCall } from "src/bot/models/joinCall.entity";
+import { Holiday } from "src/bot/models/holiday.entity";
+import { GuildData } from "src/bot/models/guildData.entity";
 @Injectable()
 export class BackupService {
   constructor(
@@ -59,7 +71,25 @@ export class BackupService {
     @InjectRepository(Msg)
     private msgRepository: Repository<Msg>,
     @InjectRepository(WorkFromHome)
-    private workFromHomeRepository: Repository<WorkFromHome>
+    private workFromHomeRepository: Repository<WorkFromHome>,
+    @InjectRepository(Remind) private remindRepository: Repository<Remind>,
+    @InjectRepository(Quiz) private quizRepository: Repository<Quiz>,
+    @InjectRepository(Penalty) private penaltyRepository: Repository<Penalty>,
+    @InjectRepository(Order) private orderRepository: Repository<Order>,
+    @InjectRepository(Mentioned)
+    private mentionedRepository: Repository<Mentioned>,
+    @InjectRepository(Meeting)
+    private meetingRepository: Repository<Meeting>,
+    @InjectRepository(Leave)
+    private leaveRepository: Repository<Leave>,
+    @InjectRepository(Keep)
+    private keepRepository: Repository<Keep>,
+    @InjectRepository(JoinCall)
+    private joinCallRepository: Repository<JoinCall>,
+    @InjectRepository(Holiday)
+    private holidayRepository: Repository<Holiday>,
+    @InjectRepository(GuildData)
+    private guildDataRepository: Repository<GuildData>
   ) {}
 
   async saveVoiechannel(item) {
@@ -262,5 +292,161 @@ export class BackupService {
       botPing: item.botPing,
     });
     console.log("done");
+  }
+
+  async saveRemind(item) {
+    await this.remindRepository.insert({
+      channelId: item.channelId,
+      mentionUserId: item.mentionUserId,
+      authorId: item.authorId,
+      content: item.content,
+      cancel: item.cancel,
+      createdTimestamp: +item.createdTimestamp,
+    });
+  }
+
+  async saveQuiz(item) {
+    await this.quizRepository.insert({
+      title: item.title,
+      options: item.options,
+      correct: item.correct,
+      role: item.role,
+      isVerify: item.isVerify,
+      accept: item.accept,
+      author_email: item.author_email,
+      topic: item.topic,
+    });
+  }
+
+  async savePenatly(item) {
+    await this.penaltyRepository.insert({
+      userId: item.user_id,
+      username: item.username,
+      ammount: item.ammount,
+      reason: item.reason,
+      createdTimestamp: +item.createdTimestamp,
+      isReject: item.is_reject,
+      channelId: item.channel_id,
+      delete: item.delete,
+    });
+  }
+
+  async saveOrder(item) {
+    await this.orderRepository.insert({
+      userId: item.userId,
+      username: item.username,
+      createdTimestamp: +item.createdTimestamp,
+      channelId: item.channelId,
+      menu: item.menu,
+      isCancel: item.isCancel,
+    });
+  }
+
+  async saveMsg(item) {
+    const channelInsert = await this.channelRepository.findOne({
+      where: {
+        id: item.channel_id,
+      },
+    });
+    const authorInsert = await this.userRepository.findOne({
+      where: { userId: item.author_Id },
+    });
+
+    const tx8Insert = await this.tx8Repository.findOne({
+      where: { id: item.tx8 },
+    });
+
+    await this.msgRepository.insert({
+      guildId: item.guild_id,
+      deleted: item.deleted,
+      author: authorInsert,
+      channel: channelInsert,
+      tx8: tx8Insert as any,
+      createdTimestamp: +item.createdTimestamp,
+      type: item.type,
+      system: item.system,
+      content: item.content,
+      pinned: item.pinned,
+      tts: item.tts,
+      nonce: item.nonce,
+      embeds: item.embeds,
+      components: item.components,
+      attachments: item.attachments,
+      stickers: item.stickers,
+      editedTimestamp: item.editedTimestamp,
+      reactions: item.reactions,
+      mentions: item.mentions,
+      webhookId: item.webhookId,
+      groupActivityApplication: item.groupActivityApplication,
+      applicationId: item.applicationId,
+      activity: item.activity,
+      flags: item.flags,
+      reference: item.reference,
+      interaction: item.interaction,
+    });
+  }
+
+  async saveMention(item) {
+    await this.mentionedRepository.insert({
+      messageId: item.messageId,
+      authorId: item.authorId,
+      channelId: item.channelId,
+      mentionUserId: item.mentionUserId,
+      createdTimestamp: +item.createdTimestamp,
+      noti: item.noti,
+      confirm: item.confirm,
+      punish: item.punish,
+      reactionTimestamp: +item.reactionTimestamp,
+    });
+  }
+
+  async saveMeeting(item) {
+    await this.meetingRepository.insert({
+      channelId: item.channelId,
+      createdTimestamp: +item.createdTimestamp,
+      task: item.task,
+      repeat: item.repeat,
+      cancel: item.cancel,
+      reminder: item.reminder,
+      repeatTime: item.repeatTime,
+    });
+  }
+
+  async saveLeave(item) {
+    const timestamp = new Date(item.createdAt);
+    await this.leaveRepository.insert({
+      channelId: item.channelId,
+      userId: item.userId,
+      reason: item.reason,
+      minute: item.minute,
+      createdAt: timestamp.getTime(),
+    });
+  }
+
+  async saveKeep(item) {
+    const timestamp = new Date(item.createdAt);
+    await this.keepRepository.insert({
+      userId: item.userid,
+      note: item.note,
+      status: item.status,
+      start_time: timestamp.getTime(),
+    });
+  }
+
+  async saveJoinCall(item) {
+    await this.joinCallRepository.insert({
+      userId: item.userid,
+      channelId: item.channelId,
+      status: item.status,
+      start_time: +item.start_time,
+      end_time: +item.end_time,
+    });
+  }
+
+  async saveHoliday(item) {
+    await this.holidayRepository.insert({
+      dateTime: item.dateTime,
+      content: item.content,
+    });
   }
 }
