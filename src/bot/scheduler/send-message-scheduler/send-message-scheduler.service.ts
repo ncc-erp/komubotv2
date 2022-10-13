@@ -20,6 +20,7 @@ import { BirthdayService } from "src/bot/utils/birthday/birthdayservice";
 import { OdinReportService } from "src/bot/utils/odinReport/odinReport.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { Workout } from "src/bot/models/workout.entity";
 
 @Injectable()
 export class SendMessageSchedulerService {
@@ -28,6 +29,8 @@ export class SendMessageSchedulerService {
     private readonly http: HttpService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Workout)
+    private workoutRepository: Repository<Workout>,
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
@@ -73,6 +76,9 @@ export class SendMessageSchedulerService {
     );
     this.addCronJob("topTracker", "45 08 * * 1-5", () =>
       this.topTracker(this.client)
+    );
+    this.addCronJob("sendReportWorkout", "0 0 1 * *", () =>
+      this.sendReportWorkout(this.client)
     );
   }
 
@@ -279,5 +285,47 @@ export class SendMessageSchedulerService {
           .catch(console.error);
       })
     );
+  }
+
+  async sendReportWorkout(client) {
+    const date = new Date();
+    const y = date.getFullYear();
+    const m = date.getMonth();
+    const firstDay = new Date(y, m - 1, 1);
+    const lastDay = new Date(y, m, 0);
+
+    const userCheckWorkout = await this.workoutRepository
+      .createQueryBuilder("workout")
+      .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
+        gtecreatedTimestamp: firstDay.getTime(),
+      })
+      .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
+        ltecreatedTimestamp: lastDay.getTime(),
+      })
+      .andWhere('"status" = :status', { status: "approve" })
+      .groupBy("workout.userId")
+      .addGroupBy("workout.email")
+      .select("workout.email, COUNT(workout.userId) as total")
+      .orderBy("total", "DESC")
+      .execute();
+
+    let mess;
+    for (let i = 0; i <= Math.ceil(userCheckWorkout.length / 50); i += 1) {
+      if (userCheckWorkout.slice(i * 50, (i + 1) * 50).length === 0) {
+        break;
+      }
+      mess = userCheckWorkout
+        .slice(i * 50, (i + 1) * 50)
+        .map((list) => `${list.email} (${list.total})`)
+        .join("\n");
+      const Embed = new EmbedBuilder()
+        .setTitle("Top workout")
+        .setColor("Red")
+        .setDescription(`${mess}`);
+      const userDiscord = await client.channels.fetch(
+        process.env.KOMUBOTREST_WORKOUT_CHANNEL_ID
+      );
+      userDiscord.send({ embeds: [Embed] }).catch(console.error);
+    }
   }
 }

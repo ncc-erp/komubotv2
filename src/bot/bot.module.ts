@@ -113,7 +113,6 @@ import { TicketSlashCommand } from "./slash-commands/ticket.slashcommand";
 import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
 import { WikiSlashCommand } from "./slash-commands/wiki.slashcommand";
 import { BirthdayService } from "./utils/birthday/birthdayservice";
-import { DmMessageUntil } from "./utils/dmmessage/dmmessage.until";
 import { ExtendersService } from "./utils/extenders/extenders.service";
 import { UserNotDailyService } from "./utils/getUserNotDaily/getUserNotDaily.service";
 import { KomubotrestController } from "./utils/komubotrest/komubotrest.controller";
@@ -144,6 +143,10 @@ import { WfhSchedulerService } from "./scheduler/wfh-scheduler/wfh-scheduler.ser
 import { WfhService } from "./utils/wfh/wfh.service";
 import { getApiWfhModule } from "./utils/getApiWfh/getApiWfh.module";
 import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
+import { DmmessageService } from "./utils/dmmessage/dmmessage.service";
+import { WorkoutService } from "./utils/workout/workout.service";
+import { Workout } from "./models/workout.entity";
+import { WorkoutCommand } from "./commands/workout/workout.command";
 
 @Module({
   imports: [
@@ -187,6 +190,7 @@ import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
       Quiz,
       Keep,
       Wiki,
+      Workout,
       Mentioned,
     ]),
     CheckListModule,
@@ -249,13 +253,13 @@ import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
     KickbotCommand,
     AntCommand,
     WolCommand,
+    WorkoutCommand,
     ReportTrackerService,
     UpdateRoleSchedulerService,
     ReloadCommand,
     EvalCommand,
     BotInfo,
     HelpCommand,
-    DmMessageUntil,
     VoiceChannelSchedulerService,
     GemrankCommand,
     OpenTalkCommand,
@@ -299,6 +303,8 @@ import { GetApiWfhService } from "./utils/getApiWfh/getApiWfh.service";
     MentionSchedulerService,
     WfhSchedulerService,
     WfhService,
+    DmmessageService,
+    WorkoutService,
   ],
   controllers: [KomubotrestController],
 })

@@ -12,8 +12,6 @@ import { Repository } from "typeorm";
 })
 export class Sync_roleDiscord implements CommandLineClass {
   constructor(
-    @InjectRepository(User)
-    private remindRepository: Repository<User>,
     private updateRole: UpdateRole
   ) {}
   async execute(message: Message, args, client: Client) {
