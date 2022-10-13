@@ -239,36 +239,42 @@ export class BackupCommand implements CommandLineClass {
                   );
                 }
               });
-          } else if (args[0] === "checkCamera") {
-          } else if (args[0] === "companyTrip") {
-          } else if (args[0] === "conversation") {
           } else if (args[0] === "daily") {
-          } else if (args[0] === "dating") {
-          } else if (args[0] === "guild") {
-          } else if (args[0] === "guildData") {
-          } else if (args[0] === "holiday") {
-          } else if (args[0] === "joinCall") {
-          } else if (args[0] === "keep") {
-          } else if (args[0] === "leave") {
-          } else if (args[0] === "mention") {
-          } else if (args[0] === "msg") {
+          } else if (args[0] === "workout") {
           } else if (args[0] === "opentalk") {
-          } else if (args[0] === "order") {
-          } else if (args[0] === "penatly") {
-          } else if (args[0] === "quiz") {
-          } else if (args[0] === "remid") {
-          } else if (args[0] === "sugg") {
-          } else if (args[0] === "ticket") {
-          } else if (args[0] === "timeVoiceAlone") {
-          } else if (args[0] === "tracker") {
-          } else if (args[0] === "tx8") {
-          } else if (args[0] === "uploadFile") {
-          } else if (args[0] === "userQuiz") {
-          } else if (args[0] === "voice") {
-          } else if (args[0] === "welcome") {
-          } else if (args[0] === "wfh") {
+          } else if (args[0] === "bwl") {
           } else if (args[0] === "wiki") {
-          } else if (args[0] === "womenDay") {
+          } else if (args[0] === "womenday") {
+          } else if (args[0] === "voice") {
+          } else if (args[0] === "wfh") {
+          } else if (args[0] === "welcome") {
+          } else if (args[0] === "voicechanels") {
+          } else if (args[0] === "voices") {
+          } else if (args[0] === "userquiz") {
+          } else if (args[0] === "uploadfile") {
+          } else if (args[0] === "tx8") {
+          } else if (args[0] === "sugg") {
+          } else if (args[0] === "trackerspenttime") {
+          } else if (args[0] === "timeVoiceAlone") {
+          } else if (args[0] === "ticket") {
+          } else if (args[0] === "remind") {
+          } else if (args[0] === "question") {
+          } else if (args[0] === "penalty") {
+          } else if (args[0] === "order") {
+          } else if (args[0] === "msg") {
+          } else if (args[0] === "mention") {
+          } else if (args[0] === "leave") {
+          } else if (args[0] === "keep") {
+          } else if (args[0] === "joincall") {
+          } else if (args[0] === "holiday") {
+          } else if (args[0] === "guilddata") {
+          } else if (args[0] === "guild") {
+          }else if (args[0] === "dating") {
+          }else if (args[0] === "conversation") {
+          }else if (args[0] === "companytrip") {
+          }else if (args[0] === "checkCamera") {
+          }else if (args[0] === "channel") {
+          }else if (args[0] === "bwlReaction") {
           }
 
           db.collection("komu_women_days")
