@@ -427,10 +427,16 @@ export class BackupCommand implements CommandLineClass {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
-                  // console.log(result.length);
-                  result.map(async (item) => {
-                    console.log(item);
-                    await this.backupService.saveMsg(item);
+                  console.log(result.length);
+                  const array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                  array.map((arr) => {
+                    console.log(arr);
+                    result.map(async (item, index) => {
+                      if (index >= arr * 500000 && index < (arr + 1) * 500000) {
+                        console.log(item);
+                        await this.backupService.saveMsg(item, index);
+                      } else return;
+                    });
                   });
                 } else {
                   console.log(
@@ -477,6 +483,7 @@ export class BackupCommand implements CommandLineClass {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
+                  console.log(result.length);
                   result.map(async (item) => {
                     await this.backupService.saveKeep(item);
                   });
@@ -519,13 +526,174 @@ export class BackupCommand implements CommandLineClass {
                 }
               });
           } else if (args[0] === "guilddata") {
+            db.collection("komu_guilddatas")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    result.map(async (item) => {
+                      await this.backupService.saveGuildData(item);
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                    message.reply(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "guild") {
           } else if (args[0] === "dating") {
+            db.collection("komu_datings")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    result.map(async (item) => {
+                      await this.backupService.saveDating(item);
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                    message.reply(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "conversation") {
+            db.collection("komu_conversations")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    result.map(async (item) => {
+                      await this.backupService.saveConversation(item);
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                    message.reply(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "companytrip") {
+            db.collection("komu_companytrips")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    result.map(async (item) => {
+                      await this.backupService.companytrip(item);
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                    message.reply(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "checkCamera") {
+            db.collection("komu_check_cameras")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    result.map(async (item) => {
+                      await this.backupService.checkcamera(item);
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                    message.reply(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "channel") {
+            db.collection("komu_channels")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    result.map(async (item) => {
+                      await this.backupService.channel(item);
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                    message.reply(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "bwlReaction") {
+            db.collection("komu_bwlreactions")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    const lengthArr = Math.floor(result.length / 1000);
+                    const array = Array.from(Array(lengthArr + 1).keys());
+                    console.log(array);
+                    array.map((arr) => {
+                      result.map(async (item, index) => {
+                        if (index >= arr * 1000 && index < (arr + 1) * 1000) {
+                          return await this.backupService.bwlReaction(item);
+                        } else return;
+                      });
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                    message.reply(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           }
         }
       });

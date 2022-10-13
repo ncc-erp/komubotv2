@@ -7,10 +7,10 @@ export class Dating {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   channelId: string;
 
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: true })
   userId: string;
 
   @Column({ type: "text", nullable: false })

@@ -24,6 +24,11 @@ import { Order } from "src/bot/models/order.entity";
 import { Penalty } from "src/bot/models/penatly.entity";
 import { Quiz } from "src/bot/models/quiz.entity";
 import { Remind } from "src/bot/models/remind.entity";
+import { CheckCamera } from "src/bot/models/checkCamera.entity";
+import { CheckList } from "src/bot/models/checklist.entity";
+import { CompanyTrip } from "src/bot/models/companyTrip.entity";
+import { Conversation } from "src/bot/models/conversation.entity";
+import { Dating } from "src/bot/models/dating.entity";
 import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Wiki } from "src/bot/models/wiki.entity";
@@ -89,7 +94,23 @@ export class BackupService {
     @InjectRepository(Holiday)
     private holidayRepository: Repository<Holiday>,
     @InjectRepository(GuildData)
-    private guildDataRepository: Repository<GuildData>
+    private guildDataRepository: Repository<GuildData>,
+    @InjectRepository(GuildData)
+    private guildReposistory: Repository<GuildData>,
+    @InjectRepository(Dating)
+    private datingReposistory: Repository<Dating>,
+    @InjectRepository(Conversation)
+    private conversationReposistory: Repository<Conversation>,
+    @InjectRepository(CompanyTrip)
+    private companytripReposistory: Repository<CompanyTrip>,
+    @InjectRepository(CheckList)
+    private checkListReposistory: Repository<CheckList>,
+    @InjectRepository(CheckCamera)
+    private checkCameraReposistory: Repository<CheckCamera>,
+    @InjectRepository(BwlReaction)
+    private bwlReactionReposistory: Repository<BwlReaction>,
+    @InjectRepository(Channel)
+    private channelReposistory: Repository<Channel>
   ) {}
 
   async saveVoiechannel(item) {
@@ -342,7 +363,7 @@ export class BackupService {
     });
   }
 
-  async saveMsg(item) {
+  async saveMsg(item, index) {
     const channelInsert = await this.channelRepository.findOne({
       where: {
         id: item.channel_id,
@@ -448,5 +469,143 @@ export class BackupService {
       dateTime: item.dateTime,
       content: item.content,
     });
+  }
+  async saveGuildData(item) {
+    await this.guildReposistory.insert({
+      serverID: item.serverID,
+      prefix: item.prefix,
+      lang: item.lang,
+      premium: item.premium,
+      premiumUserID: item.premiumUserID,
+      chatbot: item.chatbot,
+      ignored_channel: item.ignored_channel,
+      admin_role: item.admin_role,
+      goodPremium: item.goodPremium,
+      requestChannel: item.requestChannel,
+      requestMessage: item.requestMessage,
+      defaultVolume: item.defaultVolume,
+      vc: item.vc,
+      clearing: item.clearing,
+      auto_shuffle: item.auto_shuffle,
+      games_enabled: item.games_enabled,
+      util_enabled: item.util_enabled,
+      autorole: item.autorole,
+      autorole_bot: item.autorole_bot,
+      dj_role: item.dj_role,
+      count: item.count,
+      autopost: item.autopost,
+      suggestions: item.suggestions,
+      color: item.color,
+      backlist: item.backlist,
+      autonick: item.autonick,
+      autonick_bot: item.autonick_bot,
+      autoplay: item.autoplay,
+      song: item.song,
+      h24: item.h24,
+      announce: item.announce,
+      plugins: item.plugins,
+      protections: item.protections,
+    });
+    console.log("done");
+  }
+  async saveDating(item) {
+    await this.datingReposistory.insert({
+      channelId: item.channelId,
+      userId: item.userId,
+      email: item.email,
+      sex: item.sex,
+      loop: item.loop,
+      createdTimestamp: +item.createdTimestamp,
+    });
+    console.log("done");
+  }
+  async saveConversation(item) {
+    await this.conversationReposistory.insert({
+      channelId: item.channelId,
+      authorId: item.authorId,
+      generated_responses: item.generated_responses,
+      past_user_inputs: item.past_user_inputs,
+      createdTimestamp: +item.createdTimestamp,
+      updatedTimestamp: +item.updatedTimestamp,
+    });
+    console.log("done");
+  }
+  async companytrip(item) {
+    await this.companytripReposistory.insert({
+      year: item.year,
+      fullName: item.fullName,
+      userId: item.userId,
+      email: item.email,
+      phone: item.phone,
+      office: item.office,
+      role: item.role,
+      kingOfRoom: item.kingOfRoom,
+      room: item.room,
+    });
+    console.log("done");
+  }
+  async checklist(item) {
+    await this.checkListReposistory.insert({
+      subcategory: item.subcategory,
+      category: item.category,
+    });
+    console.log("done");
+  }
+  async checkcamera(item) {
+    await this.checkCameraReposistory.insert({
+      userId: item.userId,
+      channelId: item.channelId,
+      enableCamera: item.enableCamera,
+      createdTimestamp: +item.createdTimestamp,
+    });
+    console.log("done");
+  }
+  async bwlReaction(item) {
+    const channelInsert = await this.channelRepository.findOne({
+      where: {
+        id: item.channelId,
+      },
+    });
+    const bwlInsert = await this.bwlRepository.findOne({
+      where: {
+        messageId: item.messageId,
+      },
+    });
+    const authorInsert = await this.userRepository.findOne({
+      where: {
+        userId: item.authorId,
+      },
+    });
+    await this.bwlReactionReposistory
+      .insert({
+        guildId: item.guildId,
+        emoji: item.emoji,
+        count: item.count,
+        createdTimestamp: +item.createdTimestamp,
+        bwl: bwlInsert,
+        channel: channelInsert,
+        author: authorInsert,
+      })
+      .catch((err) => {
+        return;
+      });
+    console.log("done");
+  }
+  async channel(item) {
+    await this.channelReposistory
+      .insert({
+        name: item.name,
+        type: item.type,
+        nsfw: item.nsfw,
+        rawPosition: item.rawPosition,
+        lastMessageId: item.lastMessageId,
+        rateLimitPerUser: item.rateLimitPerUser,
+        parentId: item.parentId,
+        id: item.id,
+      })
+      .catch((err) => {
+        return;
+      });
+    console.log("done");
   }
 }
