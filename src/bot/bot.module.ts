@@ -147,6 +147,7 @@ import { DmmessageService } from "./utils/dmmessage/dmmessage.service";
 import { WorkoutService } from "./utils/workout/workout.service";
 import { Workout } from "./models/workout.entity";
 import { WorkoutCommand } from "./commands/workout/workout.command";
+import { BackupService } from "./commands/backupdata/backupData.service";
 
 @Module({
   imports: [
@@ -305,6 +306,7 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
     WfhService,
     DmmessageService,
     WorkoutService,
+    BackupService,
   ],
   controllers: [KomubotrestController],
 })
