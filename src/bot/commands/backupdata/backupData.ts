@@ -81,8 +81,6 @@ export class BackupCommand implements CommandLineClass {
                   console.log(err);
                 } else if (result.length) {
                   result.map(async (item) => {
-                    console.log(item);
-
                     const sumWithInitial = item.category.reduce(
                       (previousValue, currentValue) =>
                         previousValue + "'" + currentValue + "',",
@@ -127,17 +125,7 @@ export class BackupCommand implements CommandLineClass {
                   console.log(err);
                 } else if (result.length) {
                   result.map(async (item) => {
-                    console.log(item);
-
-                    if (
-                      item.cancel === undefined ||
-                      item.reminder === undefined
-                    )
-                      return;
-                    if (item.repeatTime === undefined) item.repeatTime = null;
-                    await this.clientPg4.query(
-                      `INSERT INTO komu_meeting("channelId", "task", "repeat", "cancel", "reminder", "repeatTime", "createdTimestamp") VALUES ('${item.channelId}','${item.task}','${item.repeat}','${item.cancel}','${item.reminder}','${item.repeatTime}','${item.createdTimestamp}')`
-                    );
+                    await this.backupService.saveMeeting(item);
                   });
                 } else {
                   console.log(
@@ -367,15 +355,169 @@ export class BackupCommand implements CommandLineClass {
                 }
               });
           } else if (args[0] === "remind") {
+            db.collection("komu_reminds")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.saveRemind(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "question") {
+            db.collection("komu_questions")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    console.log(item);
+
+                    await this.backupService.saveQuiz(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "penalty") {
+            db.collection("komu_penatlies")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.savePenatly(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "order") {
+            db.collection("komu_orders")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.saveOrder(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "msg") {
+            db.collection("komu_msgs")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  // console.log(result.length);
+                  result.map(async (item) => {
+                    console.log(item);
+                    await this.backupService.saveMsg(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "mention") {
+            db.collection("komu_mentioneds")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.saveMention(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "leave") {
+            db.collection("komu_leaves")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.saveLeave(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "keep") {
+            db.collection("komu_keeps")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.saveKeep(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "joincall") {
+            db.collection("komu_joincalls")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.saveJoinCall(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "holiday") {
+            db.collection("komu_holidays")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  result.map(async (item) => {
+                    await this.backupService.saveHoliday(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "guilddata") {
           } else if (args[0] === "guild") {
           } else if (args[0] === "dating") {
