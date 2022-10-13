@@ -10,6 +10,10 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
 
+function delay(time) {
+  return new Promise((res) => setTimeout(res, time));
+}
+
 @CommandLine({
   name: "tx8",
   description: "YEP lucky draw",
@@ -61,48 +65,19 @@ export class Tx8Command implements CommandLineClass {
           return;
         }
 
+        await delay(1000);
         const userInsert = await this.userRepository.findOne({
           where: {
             userId: userId,
           },
         });
-        const channelInsert = await this.channelRepository.findOne({
-          where: {
-            id: message.channelId,
-          },
-        });
+
         let msgData;
         msgData = await this.msgRepository.findOne({
           where: {
             id: message.id,
           },
         });
-
-        if (!msgData) {
-          const msgInsert = await this.msgRepository.insert({
-            channel: channelInsert,
-            guildId: message.guildId,
-            deleted: message.deletable,
-            id: message.id,
-            createdTimestamp: message.createdTimestamp,
-            type: message.type as any,
-            system: message.system,
-            content: message.content,
-            author: userInsert,
-            pinned: message.pinned,
-            tts: message.tts,
-            nonce: message.nonce as string,
-            editedTimestamp: message.editedTimestamp,
-            webhookId: message.webhookId,
-            applicationId: message.applicationId,
-            flags: message.flags as any as number,
-          });
-          msgData = await this.msgRepository.findOne({
-            where: {
-              id: message.id,
-            },
-          });
-        }
 
         await this.tx8Repository.insert({
           message: msgData,
