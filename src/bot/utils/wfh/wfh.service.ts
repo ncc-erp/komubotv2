@@ -61,7 +61,7 @@ export class WfhService {
         interaction
           .reply({ content: "Thanks!!!", ephemeral: true })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+            this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
           });
         return;
       }
@@ -76,7 +76,7 @@ export class WfhService {
           interaction
             .reply({ content: "No WFH found", ephemeral: true })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+              this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
             });
           return;
         }
@@ -88,7 +88,7 @@ export class WfhService {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+              this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
             });
           return;
         }
@@ -100,7 +100,7 @@ export class WfhService {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+              this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
             });
           return;
         }

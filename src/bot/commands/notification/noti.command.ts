@@ -23,7 +23,7 @@ export default class NotificationCommand implements CommandLineClass {
   async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
-      const noti = args.join(" ");
+      const noti = message.content.slice(10, message.content.length);
       const checkRole = await this.notifiService.checkrole(authorId);
       if (!noti || noti == undefined) {
         return message

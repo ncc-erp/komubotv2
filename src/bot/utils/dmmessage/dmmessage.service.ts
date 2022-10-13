@@ -1,15 +1,16 @@
-import { HttpService } from "@nestjs/axios";
-
 import { InjectRepository } from "@nestjs/typeorm";
-import { Client, Message } from "discord.js";
-import { firstValueFrom } from "rxjs";
-import { TABLE } from "src/bot/constants/table";
-import { Conversation } from "src/bot/models/conversation.entity";
 import { Repository } from "typeorm";
-import { Sync_role } from "../../commands/sync_roles/sync_role.command";
-import { ToggleActiveCommand } from "../../commands/toggleActive/toggleActive.command";
-import { UserStatusCommand } from "../../commands/user_status/user_status.command";
-export class DmMessageUntil {
+import { Injectable } from "@nestjs/common";
+import { UserStatusCommand } from "src/bot/commands/user_status/user_status.command";
+import { ToggleActiveCommand } from "src/bot/commands/toggleActive/toggleActive.command";
+import { Sync_role } from "src/bot/commands/sync_roles/sync_role.command";
+import { Conversation } from "src/bot/models/conversation.entity";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+import { Client, Message } from "discord.js";
+
+@Injectable()
+export class DmmessageService {
   constructor(
     private userStatusCommand: UserStatusCommand,
     private toggleActiveCommand: ToggleActiveCommand,
@@ -70,17 +71,16 @@ export class DmMessageUntil {
       const content = message.content;
 
       const data = await this.dmMessageRepository
-        .createQueryBuilder(TABLE.CONVERSATION)
-        .where(`${TABLE.CONVERSATION}.channelId = :channelId`, {
+        .createQueryBuilder()
+        .where(`"channelId" = :channelId`, {
           channelId: channelId,
         })
-        .andWhere(`${TABLE.CONVERSATION}.authorId = :authorId`, {
+        .andWhere(`"authorId" = :authorId`, {
           authorId: authorId,
         })
-        .andWhere(
-          `${TABLE.CONVERSATION}.createdTimestamp > ${Date.now() - 20000}`,
-          { createdTimestamp: createdTimestamp }
-        )
+        .andWhere(`"createdTimestamp" > ${Date.now() - 20000}`, {
+          createdTimestamp: createdTimestamp,
+        })
         .execute();
 
       if (!authorId || !content) return;

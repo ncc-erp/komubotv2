@@ -29,7 +29,6 @@ import { MessageToUpperPipe } from "../../pipes/message-to-upper.pipe";
 import { DECORATOR_COMMAND_LINE } from "../../base/command.constans";
 import { ClientConfigService } from "../../config/client-config.service";
 import DBL from "dblapi.js";
-import { DmMessageUntil } from "../../utils/dmmessage/dmmessage.until";
 import { ExtendersService } from "../../utils/extenders/extenders.service";
 import permes from "../../constants/permes.json";
 import * as queryString from "query-string";
@@ -37,6 +36,8 @@ import { User } from "../../models/user.entity";
 import { QuizService } from "../../utils/quiz/quiz.service";
 import { KomubotrestService } from "../../utils/komubotrest/komubotrest.service";
 import { WfhService } from "src/bot/utils/wfh/wfh.service";
+import { DmmessageService } from "src/bot/utils/dmmessage/dmmessage.service";
+import { WorkoutService } from "src/bot/utils/workout/workout.service";
 export type ChanneNotDM =
   | NewsChannel
   | TextChannel
@@ -53,11 +54,12 @@ export class BotGateway {
     private discoveryService: DiscoveryService,
     private clientConfigService: ClientConfigService,
     private extendersService: ExtendersService,
-    private dmMessageUntil: DmMessageUntil,
+    private dmmessageService: DmmessageService,
     @InjectRepository(User) private userRepository: Repository<User>,
     private quizService: QuizService,
     private komubotrestService: KomubotrestService,
-    private wfhService: WfhService
+    private wfhService: WfhService,
+    private workoutService: WorkoutService
   ) {}
   ID_KOMU = "1015574796567851039";
 
@@ -99,7 +101,7 @@ export class BotGateway {
       message.channel.type === ChannelType.DM &&
       message.author.id != client.user.id
     ) {
-      this.dmMessageUntil.dmmessage(message, client);
+      this.dmmessageService.dmmessage(message, client);
       return;
     }
     if (message.author.bot || !message.guild) return;
@@ -115,11 +117,11 @@ export class BotGateway {
       let message_include_content;
       if (content.trim().startsWith("<@!")) {
         message_include_content = content.slice(22, content.length).trim();
-        const res = await this.dmMessageUntil.getMessageAI(
-          this.dmMessageUntil.API_URL,
+        const res = await this.dmmessageService.getMessageAI(
+          this.dmmessageService.API_URL,
           user_mention,
           message_include_content,
-          this.dmMessageUntil.API_TOKEN
+          this.dmmessageService.API_TOKEN
         );
         if (res && res.data && res.data.length) {
           res.data.map((item) => {
@@ -322,7 +324,13 @@ export class BotGateway {
     if (interaction.isButton()) {
       // handle wfh button
       if (interaction.customId.startsWith("komu_")) {
-        await this.wfhService.wfh(interaction, this.client).catch(console.error);
+        await this.wfhService
+          .wfh(interaction, this.client)
+          .catch(console.error);
+        return;
+      }
+      if (interaction.customId.startsWith('workout_')) {
+        await this.workoutService.workout(interaction, this.client).catch(console.error);
         return;
       }
       if (interaction.customId.startsWith("question_")) {
