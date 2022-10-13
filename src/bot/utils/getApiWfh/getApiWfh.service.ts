@@ -24,7 +24,8 @@ export class GetApiWfhService {
         this.http
           .get(`${this.clientConfigService.wfh.api_url}?date=${date}`, {
             headers: {
-              securitycode: process.env.WFH_API_KEY_SECRET,
+              // WFH_API_KEY_SECRET
+              securitycode: this.clientConfigService.wfhApiKey,
             },
           })
           .pipe((res) => res as any)

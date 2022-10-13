@@ -46,7 +46,7 @@ export class TicketSlashCommand
 
             {
               headers: {
-                "X-Secret-Key": process.env.TICKET_API_KEY_SECRET,
+                "X-Secret-Key": this.clientConfigService.ticketApiKey,
                 "Content-Type": "application/json",
               },
             }
@@ -65,7 +65,7 @@ export class TicketSlashCommand
             `${this.clientConfigService.ticket.api_url_get}?email=${topicAssignee}@ncc.asia`,
             {
               headers: {
-                "X-Secret-Key": process.env.TICKET_API_KEY_SECRET,
+                "X-Secret-Key": this.clientConfigService.ticketApiKey,
               },
             }
           )

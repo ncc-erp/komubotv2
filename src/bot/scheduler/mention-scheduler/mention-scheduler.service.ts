@@ -11,6 +11,7 @@ import moment from "moment";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { User } from "src/bot/models/user.entity";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @Injectable()
 export class MentionSchedulerService {
@@ -25,7 +26,8 @@ export class MentionSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
-    private komubotrestService: KomubotrestService
+    private komubotrestService: KomubotrestService,
+    private clientConfig: ClientConfigService
   ) {}
 
   private readonly logger = new Logger(MentionSchedulerService.name);
@@ -124,7 +126,7 @@ export class MentionSchedulerService {
             data.id.toString()
           );
           const channel = await client.channels.fetch(
-            process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
+            this.clientConfig.machleoChannelId
           );
           await channel.send(message).catch(console.error);
           await this.mentionRepository.update(

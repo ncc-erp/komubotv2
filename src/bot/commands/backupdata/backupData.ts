@@ -44,6 +44,7 @@ export class BackupCommand implements CommandLineClass {
               .toArray(async (err, result) => {
                 if (err) {
                   console.log(err);
+                  return message.reply(err as any);
                 } else if (result.length) {
                   result.map(async (item) => {
                     if (!item.roles || !item.roles_discord) {
@@ -145,6 +146,7 @@ export class BackupCommand implements CommandLineClass {
                       }
                     }
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'

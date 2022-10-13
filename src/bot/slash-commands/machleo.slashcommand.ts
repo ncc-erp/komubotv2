@@ -11,6 +11,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Client, Message, TextChannel } from "discord.js";
 import { send } from "process";
 import { Repository } from "typeorm";
+import { ClientConfigService } from "../config/client-config.service";
 import { MachleoDto } from "./dto/machleo.dto";
 
 @Command({
@@ -23,7 +24,8 @@ export class MachleoSlashCommand
 {
   constructor(
     @InjectDiscordClient()
-    private client: Client
+    private client: Client,
+    private clientConfig: ClientConfigService
   ) {}
   async handler(
     @Payload() dto: MachleoDto,
@@ -33,7 +35,7 @@ export class MachleoSlashCommand
       const machleomsg = interaction.options.get("message").value as string;
       (
         (await this.client.channels.cache.get(
-          process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
+          this.clientConfig.machleoChannelId
         )) as TextChannel
       )
         .send(machleomsg)

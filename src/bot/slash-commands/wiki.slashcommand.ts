@@ -115,7 +115,9 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           this.httpService.get(
             `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`,
             {
-              headers: { "X-Secret-Key": process.env.WIKI_API_KEY_SECRET },
+              headers: {
+                "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
+              },
             }
           )
         ).catch((err) => {

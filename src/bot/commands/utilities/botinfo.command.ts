@@ -30,7 +30,7 @@ export class BotInfo implements CommandLineClass {
       .setAuthor({
         name: `${message.client.user.tag}`,
         iconURL: message.client.user.displayAvatarURL(),
-        url: process.env.LINKS_INVITE,
+        url: this.clientConfigService.linkinvite,
       })
       .addFields({
         name: "__Informations__",
@@ -49,7 +49,10 @@ export class BotInfo implements CommandLineClass {
           size: 512,
         })
       )
-      .addFields({ name: "Website", value: process.env.LINKS_WEBSITE })
+      .addFields({
+        name: "Website",
+        value: this.clientConfigService.linkinvite,
+      })
       // .addFields({
       //   name: "Vote",
       //   value: "" + this.clientConfigService.links.topgg + "/vote",

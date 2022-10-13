@@ -61,7 +61,11 @@ export class WfhService {
         interaction
           .reply({ content: "Thanks!!!", ephemeral: true })
           .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
+            this.komubotrestService.sendErrorToDevTest(
+              client,
+              interaction.user.id,
+              err
+            );
           });
         return;
       }
@@ -76,7 +80,11 @@ export class WfhService {
           interaction
             .reply({ content: "No WFH found", ephemeral: true })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
+              this.komubotrestService.sendErrorToDevTest(
+                client,
+                interaction.user.id,
+                err
+              );
             });
           return;
         }
@@ -88,7 +96,11 @@ export class WfhService {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
+              this.komubotrestService.sendErrorToDevTest(
+                client,
+                interaction.user.id,
+                err
+              );
             });
           return;
         }
@@ -100,7 +112,11 @@ export class WfhService {
               ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, interaction.user.id, err);
+              this.komubotrestService.sendErrorToDevTest(
+                client,
+                interaction.user.id,
+                err
+              );
             });
           return;
         }
@@ -122,7 +138,7 @@ export class WfhService {
             .get(
               `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`,
               {
-                headers: { "X-Secret-Key": process.env.WIKI_API_KEY_SECRET },
+                headers: { "X-Secret-Key": this.clientConfigService.wfhApiKey },
               }
             )
             .pipe((res) => res)
@@ -253,7 +269,7 @@ export class WfhService {
                 id: wfhid,
               });
             await client.channels.cache
-              .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
+              .get(this.clientConfigService.machleoChannelId)
               .send(message)
               .catch(console.error);
             await interaction
@@ -307,7 +323,7 @@ export class WfhService {
             },
             {
               headers: {
-                "X-Secret-Key": process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY,
+                "X-Secret-Key": this.clientConfigService.komubotRestSecretKey,
               },
             }
           )

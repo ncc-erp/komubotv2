@@ -5,6 +5,7 @@ import { DECORATOR_COMMAND_LINE } from "src/bot/base/command.constans";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import { resolveCategory } from "src/bot/utils/function";
 import { Logger } from "@nestjs/common";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 @CommandLine({
   name: "help",
   description:
@@ -15,7 +16,8 @@ export class HelpCommand implements CommandLineClass {
   private readonly logger = new Logger(HelpCommand.name);
   constructor(
     private extendersService: ExtendersService,
-    private discoveryService: DiscoveryService
+    private discoveryService: DiscoveryService,
+    private clientConfig: ClientConfigService
   ) {}
 
   async execute(e, s, client, guildDB) {
@@ -73,9 +75,9 @@ export class HelpCommand implements CommandLineClass {
               },
               description:
                 "A detailed list of commands can be found here: [" +
-                process.env.LINKS_WEBSITE +
+                this.clientConfig.linkwebsite +
                 "/commands](https://komu.vn/commands)\nWant to listen rich quality music with me? [Invite me](" +
-                process.env.LINKS_INVITE +
+                this.clientConfig.linkinvite +
                 ")",
               fields: [
                 {
@@ -140,17 +142,17 @@ export class HelpCommand implements CommandLineClass {
                 fields: [
                   {
                     name: `• ${r[0]}`,
-                    value: `[${l}](${process.env.LINKS_WEBSITE})`,
+                    value: `[${l}](${this.clientConfig.linkwebsite})`,
                     inline: !0,
                   },
                   {
                     name: `• ${r[1]}`,
-                    value: `[${l}](${process.env.LINKS_SUPPORT})`,
+                    value: `[${l}](${this.clientConfig.linksupport})`,
                     inline: !0,
                   },
                   {
                     name: `• ${r[2]}`,
-                    value: `[${l}](${process.env.LINKS_INVITE})`,
+                    value: `[${l}](${this.clientConfig.linkinvite})`,
                     inline: !0,
                   },
                 ],

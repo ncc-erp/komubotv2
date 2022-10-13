@@ -44,7 +44,7 @@ export default class NotificationCommand implements CommandLineClass {
               },
               {
                 headers: {
-                  securityCode: process.env.IMS_KEY_SECRET,
+                  securityCode: this.clientConfigService.imsKeySecret,
                 },
               }
             )

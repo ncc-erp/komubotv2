@@ -24,7 +24,7 @@ export class BirthdayService {
         this.http
           .get(`${this.clientConfigService.wiki.api_url}${email}@ncc.asia`, {
             headers: {
-              "X-Secret-Key": process.env.WIKI_API_KEY_SECRET,
+              "X-Secret-Key": this.clientConfigService.wfhApiKey,
             },
           })
           .pipe((res) => res)

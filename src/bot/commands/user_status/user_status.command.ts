@@ -5,6 +5,7 @@ import { UserStatusService } from "./user_status.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @CommandLine({
   name: "userstatus",
@@ -15,7 +16,8 @@ export class UserStatusCommand implements CommandLineClass {
   constructor(
     private readonly userStatusService: UserStatusService,
     private readonly http: HttpService,
-    private komubotrestService: KomubotrestService
+    private komubotrestService: KomubotrestService,
+    private clientConfig: ClientConfigService
   ) {}
   async execute(message: Message, args, client: Client) {
     try {
@@ -43,7 +45,7 @@ export class UserStatusCommand implements CommandLineClass {
       const getUserStatus = await firstValueFrom(
         this.http
           .get(
-            `${process.env.TIMESHEET_API}Public/GetWorkingStatusByUser?emailAddress=${email}@ncc.asia`
+            `${this.clientConfig.user_status}?emailAddress=${email}@ncc.asia`
           )
           .pipe((res) => res)
       );

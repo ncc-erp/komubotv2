@@ -1,5 +1,7 @@
 import { Global, Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 import { Channel } from "src/bot/models/channel.entity";
 import { CheckList } from "src/bot/models/checklist.entity";
 import { Msg } from "src/bot/models/msg.entity";
@@ -22,12 +24,14 @@ import { CheckListService } from "./checklist.service";
       User,
     ]),
   ],
-  exports: [CheckListController, KomubotrestService],
+  exports: [CheckListController, KomubotrestService, ClientConfigService],
   providers: [
     CheckListService,
     CheckListController,
     KomubotrestService,
     KomubotrestService,
+    ClientConfigService,
+    ConfigService,
   ],
 })
 export class CheckListModule {}

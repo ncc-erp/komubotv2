@@ -118,6 +118,60 @@ export class ClientConfigService {
       },
     };
 
+    this.wfhApiKey = `${configService.get<string>("WFH_API_KEY_SECRET")}`;
+
+    this.komubotrestpass = `${configService.get<string>(
+      "KOMUBOTREST_PASSWORD"
+    )}`;
+
+    this.komubotrestgmail = `${configService.get<string>("KOMUBOTREST_GMAIL")}`;
+
+    this.linkinvite = `${configService.get<string>("LINK_INVITE")}`;
+
+    this.linkwebsite = `${configService.get<string>("LINKS_WEBSITE")}`;
+
+    this.linksupport = `${configService.get<string>("LINKS_SUPPORT")}`;
+
+    this.imsKeySecret = `${configService.get<string>("IMS_KEY_SECRET")}`;
+
+    this.wikiApiKeySecret = `${configService.get<string>(
+      "WIKI_API_KEY_SECRET"
+    )}`;
+
+    this.workoutChannelId = `${configService.get<string>(
+      "KOMUBOTREST_WORKOUT_CHANNEL_ID"
+    )}`;
+
+    this.machleoChannelId = `${configService.get<string>(
+      "KOMUBOTREST_MACHLEO_CHANNEL_ID"
+    )}`;
+
+    this.komubotRestSecretKey = `${configService.get<string>(
+      "KOMUBOTREST_KOMU_BOT_SECRET_KEY"
+    )}`;
+
+    this.ticketApiKey = `${configService.get<string>("TICKET_API_KEY_SECRET")}`;
+
+    this.komubotrestAdminId = `${configService.get<string>(
+      "KOMUBOTREST_ADMIN_USER_ID"
+    )}`;
+
+    this.komubotRestThongBaoPmChannelId = `${configService.get<string>(
+      "KOMUBOTREST_THONGBAO_PM_CHANNEL_ID"
+    )}`;
+
+    this.komubotRestFinanceChannelId = `${configService.get<string>(
+      "KOMUBOTREST_FINANCE_CHANNEL_ID"
+    )}`;
+
+    this.komubotRestNhacuachungChannelId = `${configService.get<string>(
+      "KOMUBOTREST_NHACUACHUNG_CHANNEL_ID"
+    )}`;
+
+    this.komubotRestDevtestChannelId = `${configService.get<string>(
+      "KOMUBOTREST_DEVTEST_CHANNEL_ID"
+    )}`;
+
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
     this.footer = "KOMU ";
@@ -145,9 +199,43 @@ export class ClientConfigService {
     this.shards = 1;
   }
 
-  checkout:{
-    api_url:string
-  }
+  //KOMUBOTREST_DEVTEST_CHANNEL_ID
+
+  komubotRestDevtestChannelId: string;
+
+  // KOMUBOTREST_NHACUACHUNG_CHANNEL_ID
+
+  komubotRestNhacuachungChannelId: string;
+
+  // KOMUBOTREST_FINANCE_CHANNEL_ID
+
+  komubotRestFinanceChannelId: string;
+
+  // KOMUBOTREST_THONGBAO_PM_CHANNEL_ID
+
+  komubotRestThongBaoPmChannelId: string;
+
+  // KOMUBOTREST_ADMIN_USER_ID
+
+  komubotrestAdminId: string;
+
+  komubotRestSecretKey: string;
+
+  machleoChannelId: string;
+
+  workoutChannelId: string;
+
+  wikiApiKeySecret: string;
+
+  imsKeySecret: string;
+
+  linksupport: string;
+
+  linkwebsite: string;
+
+  checkout: {
+    api_url: string;
+  };
 
   wfh: {
     api_url: string;
@@ -186,6 +274,16 @@ export class ClientConfigService {
   noti: {
     api_url_quickNews: string;
   };
+
+  ticketApiKey: string;
+
+  linkinvite: string;
+
+  komubotrestgmail: string;
+
+  komubotrestpass: string;
+
+  wfhApiKey: string;
 
   prefix: string;
   // Your ID
