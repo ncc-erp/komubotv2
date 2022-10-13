@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, JoinTable, OneToMany, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 
 import { TABLE } from "../constants/table";
 import { Bwl } from "./bwl.entity";
@@ -25,7 +32,7 @@ export class Channel {
   @Column({ type: "text", nullable: true })
   type: string;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   nsfw: boolean;
 
   @Column({ type: "text", nullable: true })
