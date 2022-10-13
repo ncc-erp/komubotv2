@@ -47,7 +47,9 @@ export class UserInfoCommand implements CommandLineClass {
         .get(
           `${this.clientConfigService.wiki.api_url}${member.user.username}@ncc.asia`,
           {
-            headers: { "X-Secret-Key": process.env.WIKI_API_KEY_SECRET },
+            headers: {
+              "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
+            },
           }
         )
         .pipe((res) => res)

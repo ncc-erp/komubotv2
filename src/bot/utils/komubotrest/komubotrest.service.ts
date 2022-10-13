@@ -27,7 +27,8 @@ export class KomubotrestService {
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
     @InjectRepository(WorkFromHome)
-    private wfhRepository: Repository<WorkFromHome>
+    private wfhRepository: Repository<WorkFromHome>,
+    private clientConfig: ClientConfigService
   ) {}
   private data;
   async findUserData(_pramams) {
@@ -98,7 +99,7 @@ export class KomubotrestService {
   getUserIdByUsername = async (client, req, res) => {
     if (
       !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY
+      req.get("X-Secret-Key") !== this.clientConfig.machleoChannelId
     ) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
@@ -151,9 +152,9 @@ export class KomubotrestService {
       }
       if (!user) {
         // notify to machleo channel
-        const message = `<@${process.env.KOMUBOTREST_ADMIN_USER_ID}> ơi, đồng chí ${username} không đúng format rồi!!!`;
+        const message = `<@${this.clientConfig.komubotrestAdminId}> ơi, đồng chí ${username} không đúng format rồi!!!`;
         await (client.channels.cache as any)
-          .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
+          .get(this.clientConfig.machleoChannelId)
           .send(message)
           .catch(console.error);
         return null;
@@ -164,7 +165,7 @@ export class KomubotrestService {
       const channelInsert = await this.channelRepository
         .createQueryBuilder(TABLE.CHANNEL)
         .where(`${TABLE.CHANNEL}.id = :id`, {
-          id: process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID,
+          id: this.clientConfig.machleoChannelId,
         })
         .execute();
 
@@ -214,14 +215,14 @@ export class KomubotrestService {
         .catch(console.error);
       userDb.forEach((item) => {});
 
-      const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> để được hỗ trợ nhé!!!`;
+      const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${this.clientConfig.komubotrestAdminId}> để được hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
-        .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
+        .get(this.clientConfig.machleoChannelId)
         .send(message)
         .catch(console.error);
-      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}(${userDb[0].email})>. <@${process.env.KOMUBOTREST_ADMIN_USER_ID}> hỗ trợ nhé!!!`;
+      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}(${userDb[0].email})>. <@${this.clientConfig.komubotrestAdminId}> hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
-        .get(process.env.KOMUBOTREST_ITADMIN_CHANNEL_ID)
+        .get(this.clientConfig.machleoChannelId)
         .send(messageItAdmin)
         .catch(console.error);
       return null;
@@ -230,7 +231,7 @@ export class KomubotrestService {
   sendMessageToUser = async (client, req, res) => {
     if (
       !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY
+      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
     ) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
@@ -264,7 +265,7 @@ export class KomubotrestService {
     // Validate request
     if (
       !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY
+      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
     ) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
@@ -320,7 +321,7 @@ export class KomubotrestService {
   sendImageLabelToUser = async (client, req, res) => {
     if (
       !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY
+      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
     ) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
@@ -388,7 +389,7 @@ export class KomubotrestService {
   sendMessageToChannel = async (client, req, res) => {
     if (
       !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY
+      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
     ) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
@@ -440,7 +441,7 @@ export class KomubotrestService {
     return { content, components: [row] };
   };
   sendMessageToMachLeo = async (client, req, res) => {
-    req.body.channelid = process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID;
+    req.body.channelid = this.clientConfig.machleoChannelId;
     if (!req.body.username) {
       res.status(400).send({ message: "username can not be empty!" });
       return;
@@ -455,7 +456,7 @@ export class KomubotrestService {
 
     if (!userdb) {
       console.log("User not found in DB!", req.body.username);
-      req.body.message += `<@${process.env.KOMUBOTREST_ADMIN_USER_ID}> ơi, đồng chí ${req.body.username} không đúng format rồi!!!`;
+      req.body.message += `<@${this.clientConfig.komubotrestAdminId}> ơi, đồng chí ${req.body.username} không đúng format rồi!!!`;
       userid = req.body.username;
     } else {
       req.body.machleo_userid = userdb.userId;
@@ -482,20 +483,20 @@ export class KomubotrestService {
     await this.sendMessageToChannel(client, req, res);
   };
   sendMessageToThongBaoPM = async (client, req, res) => {
-    req.body.channelid = process.env.KOMUBOTREST_THONGBAO_PM_CHANNEL_ID;
+    req.body.channelid = this.clientConfig.komubotRestThongBaoPmChannelId;
     await this.sendMessageToChannel(client, req, res);
   };
   sendMessageToThongBao = async (client, req, res) => {
-    req.body.channelid = process.env.KOMUBOTREST_THONGBAO_CHANNEL_ID;
+    req.body.channelid = this.clientConfig.komubotRestThongBaoPmChannelId;
     await this.sendMessageToChannel(client, req, res);
   };
   sendMessageToFinance = async (client, req, res) => {
-    req.body.channelid = process.env.KOMUBOTREST_FINANCE_CHANNEL_ID;
+    req.body.channelid = this.clientConfig.komubotRestFinanceChannelId;
     await this.sendMessageToChannel(client, req, res);
   };
   sendMessageKomuToUserOrNull = async (client, msg) => {
     await client.channels.cache
-      .get(process.env.KOMUBOTREST_NHACUACHUNG_CHANNEL_ID)
+      .get(this.clientConfig.komubotRestNhacuachungChannelId)
       .send(msg)
       .catch(console.error);
     return null;
@@ -503,7 +504,7 @@ export class KomubotrestService {
   sendErrorToMachLeo = async (client, userid, err) => {
     const msg = `KOMU không gửi được tin nhắn cho <@${userid}> message: ${err.message} httpStatus: ${err.httpStatus} code: ${err.code}.`;
     await client.channels.cache
-      .get(process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID)
+      .get(this.clientConfig.machleoChannelId)
       .send(msg)
       .catch(console.error);
     return null;
@@ -511,7 +512,7 @@ export class KomubotrestService {
   sendErrorToDevTest = async (client, authorId, err) => {
     const msg = `KOMU không gửi được tin nhắn cho <@${authorId}> message: ${err.message} httpStatus: ${err.httpStatus} code: ${err.code}.`;
     await client.channels.cache
-      .get(process.env.KOMUBOTREST_DEVTEST_CHANNEL_ID)
+      .get(this.clientConfig.komubotRestDevtestChannelId)
       .send(msg)
       .catch(console.error);
     return null;
@@ -526,7 +527,7 @@ export class KomubotrestService {
   };
   sendMessageToNhaCuaChung = async (client, msg) => {
     await client.channels.cache
-      .get(process.env.KOMUBOTREST_NHACUACHUNG_CHANNEL_ID)
+      .get(this.clientConfig.komubotRestNhacuachungChannelId)
       .send(msg)
       .catch(console.error);
     return null;
@@ -534,8 +535,9 @@ export class KomubotrestService {
   sendEmbedMessage = async (client, req, res) => {
     try {
       if (
+        // KOMUBOTREST_KOMU_BOT_SECRET_KEY
         !req.get("X-Secret-Key") ||
-        req.get("X-Secret-Key") !== process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY
+        req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
       ) {
         res.status(403).send({ message: "Missing secret key!" });
         return;

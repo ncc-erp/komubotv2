@@ -164,7 +164,7 @@ export class SendMessageSchedulerService {
         this.http
           .get(this.clientConfigService.checkout.api_url, {
             headers: {
-              "X-Secret-Key": `${process.env.KOMUBOTREST_KOMU_BOT_SECRET_KEY}`,
+              "X-Secret-Key": `${this.clientConfigService.komubotRestSecretKey}`,
             },
           })
           .pipe((res) => res)
@@ -323,7 +323,7 @@ export class SendMessageSchedulerService {
         .setColor("Red")
         .setDescription(`${mess}`);
       const userDiscord = await client.channels.fetch(
-        process.env.KOMUBOTREST_WORKOUT_CHANNEL_ID
+        this.clientConfigService.workoutChannelId
       );
       userDiscord.send({ embeds: [Embed] }).catch(console.error);
     }

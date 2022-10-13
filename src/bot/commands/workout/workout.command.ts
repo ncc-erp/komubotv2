@@ -8,6 +8,7 @@ import {
   Message,
 } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 import { User } from "src/bot/models/user.entity";
 import { Workout } from "src/bot/models/workout.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
@@ -53,7 +54,8 @@ export class WorkoutCommand implements CommandLineClass {
     @InjectRepository(Workout)
     private workoutRepository: Repository<Workout>,
     private komubotrestService: KomubotrestService,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private configService: ClientConfigService
   ) {}
   async execute(message: Message, args, client: Client) {
     try {
@@ -137,8 +139,8 @@ export class WorkoutCommand implements CommandLineClass {
         const links = [];
         if (
           (message as any).channel.parentId !=
-            process.env.KOMUBOTREST_WORKOUT_CHANNEL_ID &&
-          message.channel.id != process.env.KOMUBOTREST_WORKOUT_CHANNEL_ID
+            this.configService.workoutChannelId &&
+          message.channel.id != this.configService.workoutChannelId
         ) {
           return message.reply("Workout failed").catch(console.error);
         }
@@ -181,7 +183,7 @@ export class WorkoutCommand implements CommandLineClass {
               createdTimestamp: Date.now(),
               attachment: true,
               status: "approve",
-              channelId: process.env.KOMUBOTREST_WORKOUT_CHANNEL_ID,
+              channelId: this.configService.workoutChannelId,
             });
 
             const row = new ActionRowBuilder().addComponents(

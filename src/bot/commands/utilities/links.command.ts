@@ -35,7 +35,7 @@ export class LinksCommand implements CommandLineClass {
               }),
             },
             // color: guildDB.color,
-            description: `Want to invite KOMU on your server? [Click here](${process.env.LINKS_INVITE})`,
+            description: `Want to invite KOMU on your server? [Click here](${this.clientConfigService.linksupport})`,
             footer: {
               text: message.client.footer,
               icon_url: message.client.user.displayAvatarURL({
@@ -64,10 +64,10 @@ export class LinksCommand implements CommandLineClass {
           `${
             guildDB.lang === "fr"
               ? " Vous pouvez rejoindre le discord de support en cliquant [ici](" +
-                process.env.LINKS_SUPPORT +
+                this.clientConfigService.linksupport +
                 ")"
               : " You can join our support discord by clicking [`here`](" +
-                process.env.LINKS_SUPPORT +
+                this.clientConfigService.linksupport +
                 ")"
           }`
         )
@@ -126,17 +126,17 @@ export class LinksCommand implements CommandLineClass {
         .setColor(guildDB.color)
         .addFields({
           name: " Support:",
-          value: "[" + here + "](" + process.env.LINKS_SUPPORT + ")",
+          value: "[" + here + "](" + this.clientConfigService.linksupport + ")",
           inline: true,
         })
         .addFields({
           name: "Invite:",
-          value: "[" + here + "](" + process.env.LINKS_INVITE + ")",
+          value: "[" + here + "](" + this.clientConfigService.linkinvite + ")",
           inline: true,
         })
         .addFields({
           name: "Dashboard:",
-          value: "[" + here + "](" + process.env.LINKS_WEBSITE + ")",
+          value: "[" + here + "](" + this.clientConfigService.linkwebsite + ")",
           inline: true,
         })
         .addFields({

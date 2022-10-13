@@ -1,4 +1,5 @@
 import { Client, Message } from "discord.js";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 
@@ -9,7 +10,10 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
   cat: "utilities",
 })
 export class AvatarCommand implements CommandLineClass {
-  constructor(private extendersService: ExtendersService) {}
+  constructor(
+    private extendersService: ExtendersService,
+    private clientConfig: ClientConfigService
+  ) {}
 
   async execute(message, args, client, guildDB) {
     let member;
@@ -52,7 +56,7 @@ export class AvatarCommand implements CommandLineClass {
               dynamic: true,
               size: 512,
             }),
-            url: process.env.LINKS_INVITE,
+            url: this.clientConfig.linkinvite,
           },
           // color: guildDB.color,
           image: {

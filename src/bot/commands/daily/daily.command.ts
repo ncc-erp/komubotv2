@@ -118,10 +118,13 @@ export class DailyCommand implements CommandLineClass {
     private readonly utilsService: UtilsService,
     private komubotrestService: KomubotrestService,
     private readonly clientConfigService: ClientConfigService,
-    private readonly http: HttpService
+    private readonly http: HttpService,
+    private configService: ClientConfigService
   ) {}
 
   async execute(message: Message, args, client: Client) {
+    console.log(this.clientConfigService);
+
     try {
       const authorId = message.author.id;
       const authorUsername = message.author.username;
@@ -202,7 +205,7 @@ export class DailyCommand implements CommandLineClass {
             this.http
               .get(url, {
                 headers: {
-                  securitycode: process.env.WFH_API_KEY_SECRET,
+                  securitycode: this.configService.wfhApiKey,
                 },
               })
               .pipe((res) => res)

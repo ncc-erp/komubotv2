@@ -8,6 +8,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { Repository } from "typeorm";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 const messHelp =
   "```" +
@@ -38,7 +39,8 @@ export class MeetingCommand implements CommandLineClass {
     private readonly utilsService: UtilsService,
     @InjectRepository(Meeting)
     private readonly meetingRepository: Repository<Meeting>,
-    private komubotrestService: KomubotrestService
+    private komubotrestService: KomubotrestService,
+    private clientConfig: ClientConfigService
   ) {}
 
   async execute(message: Message, args, client: Client) {
@@ -285,7 +287,7 @@ export class MeetingCommand implements CommandLineClass {
             await page.waitForSelector('input[type="email"]');
             await page.click('input[type="email"]');
             await navigationPromise;
-            await page.keyboard.type(`${process.env.KOMUBOTREST_GMAIL}`, {
+            await page.keyboard.type(`${this.clientConfig.komubotrestgmail}`, {
               delay: 200,
             });
             await page.waitForTimeout(15000);
@@ -295,7 +297,7 @@ export class MeetingCommand implements CommandLineClass {
 
             // typing out password
             await page.waitForTimeout(10000);
-            await page.keyboard.type(`${process.env.KOMUBOTREST_PASSWORD}`, {
+            await page.keyboard.type(`${this.clientConfig.komubotrestpass}`, {
               delay: 200,
             });
             await page.waitForTimeout(800);

@@ -86,7 +86,7 @@ export class WfhSchedulerService {
           this.http
             .get(this.clientConfigService.wfh.api_url, {
               headers: {
-                securitycode: process.env.WFH_API_KEY_SECRET,
+                securitycode: this.clientConfigService.wfhApiKey,
               },
             })
             .pipe((res) => res)
@@ -181,7 +181,7 @@ export class WfhSchedulerService {
         this.http
           .get(this.clientConfigService.wfh.api_url, {
             headers: {
-              securitycode: process.env.WFH_API_KEY_SECRET,
+              securitycode: this.clientConfigService.wfhApiKey,
             },
           })
           .pipe((res) => res)
@@ -253,7 +253,7 @@ export class WfhSchedulerService {
           data.id
         );
         const channel = await client.channels.fetch(
-          process.env.KOMUBOTREST_MACHLEO_CHANNEL_ID
+          this.clientConfigService.machleoChannelId
         );
         await this.userRepository
           .createQueryBuilder("user")

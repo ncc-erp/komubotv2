@@ -31,7 +31,7 @@ export class UpdateRole {
           this.http
             .get(url, {
               headers: {
-                "X-Secret-Key": process.env.WIKI_API_KEY_SECRET,
+                "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
               },
             })
             .pipe((res) => res)

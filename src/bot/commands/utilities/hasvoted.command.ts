@@ -26,7 +26,7 @@ export class HasvotedCommand implements CommandLineClass {
               // dynamic: true,
               size: 512,
             }),
-            url: process.env.LINKS_INVITE,
+            url: this.clientConfigService.linkinvite,
           },
           description: `${
             voted
