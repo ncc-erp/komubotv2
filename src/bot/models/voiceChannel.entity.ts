@@ -7,16 +7,16 @@ export class VoiceChannels {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: "text" })
   voiceChannelId: string;
-  
+
   @Column({ nullable: true, type: "text" })
   originalName: string;
 
   @Column({ nullable: true, type: "text" })
   newRoomName: string;
 
-  @Column({ nullable: true, type: "decimal" })
+  @Column({ nullable: true })
   people: number;
 
   @Column({ nullable: true, type: "text", default: "start" })

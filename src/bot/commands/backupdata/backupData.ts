@@ -3,6 +3,7 @@ import * as mongodb from "mongodb";
 import { Client } from "pg";
 import { Message } from "discord.js";
 import { ConfigService } from "@nestjs/config";
+import { BackupService } from "./backupData.service";
 
 const MongoClient = mongodb.MongoClient;
 const url = "mongodb://172.16.100.196:27017";
@@ -14,7 +15,10 @@ const url = "mongodb://172.16.100.196:27017";
 })
 export class BackupCommand implements CommandLineClass {
   clientPg4: Client;
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private backupService: BackupService
+  ) {
     this.clientPg4 = new Client({
       host: this.configService.get("POSTGRES_HOST"),
       user: this.configService.get("POSTGRES_USER"),
@@ -26,7 +30,7 @@ export class BackupCommand implements CommandLineClass {
 
   async execute(message: Message, args) {
     try {
-      await this.clientPg4.connect();
+      if (args[1]) await this.clientPg4.connect();
       MongoClient.connect(url, (err, client) => {
         if (err) {
           console.log("Unable to connect to the mongoDB server. Error:", err);
@@ -240,15 +244,138 @@ export class BackupCommand implements CommandLineClass {
                 }
               });
           } else if (args[0] === "daily") {
+            db.collection("komu_dailies")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  console.log(result.length);
+                  result.map(async (item) => {
+                    console.log(item);
+                    // const createdTimestamp = Date.now(item.createdAt);
+                    await this.clientPg4.query(
+                      `INSERT INTO komu_daily("userid", "email", "daily", "createdAt", "channelid") VALUES (
+                '${item.userid}','${item.email}', '${item.daily}', '${item.createdAt}', '${item.channelid}')`
+                    );
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "workout") {
+            db.collection("komu_workoutdailies")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    console.log(result.length);
+                    result.map(async (item) => {
+                      await this.clientPg4.query(
+                        `INSERT INTO komu_workout("userId", "email", "attachment", "status", "channelId", "createdTimestamp") VALUES (
+              '${item.userId}','${item.email}', '${item.attachment}', '${item.status}', '${item.channelId}', '${item.createdTimestamp}')`
+                      );
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "opentalk") {
+            db.collection("komu_opentalks")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    console.log(result.length);
+                    result.map(async (item) => {
+                      await this.clientPg4.query(
+                        `INSERT INTO komu_opentalk("userId", "username", "createdTimestamp") VALUES (
+              '${item.userId}','${item.username}', '${item.date}')`
+                      );
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "bwl") {
           } else if (args[0] === "wiki") {
+            db.collection("komu_wikis")
+              .find()
+              .toArray(async (err, result) => {
+                try {
+                  if (err) {
+                    console.log(err);
+                  } else if (result.length) {
+                    console.log(result.length);
+                    result.map(async (item) => {
+                      await this.clientPg4.query(
+                        `INSERT INTO komu_wiki("name", "value", "creator", "type") VALUES (
+              '${item.name}','${item.value}', '${item.creator}', '${item.type}')`
+                      );
+                    });
+                  } else {
+                    console.log(
+                      'No document(s) found with defined "find" criteria!'
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+              });
           } else if (args[0] === "womenday") {
-          } else if (args[0] === "voice") {
+            db.collection("komu_women_days")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  console.log(result.length);
+                  result.map(async (item) => {
+                    await this.clientPg4.query(
+                      `INSERT INTO komu_womenday("userId", "win", "gift") VALUES ('${item.userid}','${item.win}','${item.gift}')`
+                    );
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "wfh") {
           } else if (args[0] === "welcome") {
           } else if (args[0] === "voicechanels") {
+            db.collection("komu_voicechannels")
+              .find()
+              .toArray(async (err, result) => {
+                if (err) {
+                  console.log(err);
+                } else if (result.length) {
+                  console.log(result.length);
+                  result.map(async (item) => {
+                    await this.backupService.saveVoiechannel(item);
+                  });
+                } else {
+                  console.log(
+                    'No document(s) found with defined "find" criteria!'
+                  );
+                }
+              });
           } else if (args[0] === "voices") {
           } else if (args[0] === "userquiz") {
           } else if (args[0] === "uploadfile") {
@@ -269,398 +396,397 @@ export class BackupCommand implements CommandLineClass {
           } else if (args[0] === "holiday") {
           } else if (args[0] === "guilddata") {
           } else if (args[0] === "guild") {
-          }else if (args[0] === "dating") {
-          }else if (args[0] === "conversation") {
-          }else if (args[0] === "companytrip") {
-          }else if (args[0] === "checkCamera") {
-          }else if (args[0] === "channel") {
-          }else if (args[0] === "bwlReaction") {
+          } else if (args[0] === "dating") {
+          } else if (args[0] === "conversation") {
+          } else if (args[0] === "companytrip") {
+          } else if (args[0] === "checkCamera") {
+          } else if (args[0] === "channel") {
+          } else if (args[0] === "bwlReaction") {
           }
 
-          db.collection("komu_women_days")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_womenday("userId", "win", "gift") VALUES ('${item.userid}','${item.win}','${item.gift}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_reminds")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_remind("channelId", "mentionUserId", "authorId", "content", "cancel", "createdTimestamp") VALUES (
-                      '${item.channelId}','${item.mentionUserId}','${item.authorId}, '${item.content}', '${item.cancel}', '${item.createdTimestamp}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_wikis")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_wiki("name", "value", "type", "creator", "status", "createdate", "note") VALUES (
-                    '${item.name}','${item.value}','${item.type}, '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_datings")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_dating("channelId", "userId", "email", "sex", "loop", "createdTimestamp") VALUES (
-                  '${item.channelId}','${item.userId}','${item.email}, '${item.sex}', '${item.loop}', '${item.createdTimestamp}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_opentalks")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_opentalk("userId", "username", "createdTimestamp") VALUES (
-                    '${item.userId}','${item.username}, '${item.createdTimestamp}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("suggs")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO sugg("autorID", "messageID", "serverID", "content", "Date") VALUES (
-                  '${item.autorID}','${item.messageID}, '${item.serverID}', '${item.Date}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_wfhs")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_wfh("user", "wfhMsg", "createdAt", "complain", "pmconfirm", "status", "data", "type") VALUES (
-                    '${item.user}','${item.wfhMsg}, '${item.createdAt}', '${item.complain}', '${item.pmconfirm}', '${item.status}', '${item.data}', '${item.type})`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("guilds")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO guild("serverID", "description", "content", "reason") VALUES (
-                  '${item.serverID}','${item.description}, '${item.content}', '${item.reason}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_keeps")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_keep("userId", "note", "start_time", "status") VALUES (
-                  '${item.userId}','${item.note}, '${item.start_time}', '${item.status}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_dailys")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_daily("userId", "email", "daily", "createdAt", "channelid") VALUES (
-                '${item.userId}','${item.email}, '${item.daily}', '${item.createdAt}', '${item.channelid}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_holidays")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_holiday("dateTime", "content") VALUES (
-              '${item.dateTime}','${item.content}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_companytrips")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_companytrip("year", "fullName", "userId", "email", "phone", "office", "role", "kingOfRoom", "room") VALUES (
-              '${item.year}','${item.fullName}', '${item.userId}', '${item.email}', '${item.phone}', '${item.office}', '${item.role}', '${item.kingOfRoom}', '${item.room}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_checkCameras")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_checkCamera("userId", "channelId", "enableCamera", "createdTimestamp") VALUES (
-              '${item.userId}','${item.channelId}', '${item.enableCamera}', '${item.createdTimestamp}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_channels")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_channel("name", "type", "nsfw", "rawPosition", "lastMessageId", "rateLimitPerUser", "parentId") VALUES (
-              '${item.name}','${item.type}', '${item.nsfw}', '${item.rawPosition}', '${item.lastMessageId}', '${item.rateLimitPerUser}', '${item.parentId})`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          db.collection("komu_joinCalls")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_joinCall("channelId", "userId", "status", "start_time", "end_time") VALUES (
-            '${item.channelId}','${item.userId}', '${item.status}', '${item.start_time}', '${item.end_time}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
-
-          //   db.collection("komu_mentioneds")
-          //     .find()
-          //     .toArray(async (err, result) => {
-          //       if (err) {
-          //         console.log(err);
-          //       } else if (result.length) {
-          //         result.map(async (item) => {
-          //           console.log(item);
-          //           await clientPg4.query(
-          //             `INSERT INTO komu_mentioned("messageId", "authorId", "channelId", "mentionUserId", "createdTimestamp", "noti", "confirm", "punish", "reactionTimestamp") VALUES (
-          // '${item.messageId}','${item.authorId}', '${item.channelId}', '${item.mentionUserId}', '${item.createdTimestamp}','${item.noti}', '${item.confirm}','${item.punish}', '${item.reactionTimestamp}')`
-          //           );
-          //         });
-          //       } else {
-          //         console.log(
-          //           'No document(s) found with defined "find" criteria!'
+          // db.collection("komu_women_days")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_womenday("userId", "win", "gift") VALUES ('${item.userid}','${item.win}','${item.gift}')`
           //         );
-          //       }
-          //
-          //     });
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
 
-          //   db.collection("komu_orders")
-          //     .find()
-          //     .toArray(async (err, result) => {
-          //       if (err) {
-          //         console.log(err);
-          //       } else if (result.length) {
-          //         result.map(async (item) => {
-          //           console.log(item);
-          //           await clientPg4.query(
-          //             `INSERT INTO komu_order("userId", "channelId", "menu", "username", "isCancel", "createdTimestamp") VALUES (
-          // '${item.userId}', '${item.channelId}', '${item.menu}', '${item.username}','${item.isCancel}', '${item.createdTimestamp}')`
-          //           );
-          //         });
-          //       } else {
-          //         console.log(
-          //           'No document(s) found with defined "find" criteria!'
-          //         );
-          //       }
-          //
-          //     });
+          // db.collection("komu_reminds")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
 
-          //   db.collection("komu_penatlys")
-          //     .find()
-          //     .toArray(async (err, result) => {
-          //       if (err) {
-          //         console.log(err);
-          //       } else if (result.length) {
-          //         result.map(async (item) => {
-          //           console.log(item);
-          //           await clientPg4.query(
-          //             `INSERT INTO komu_penatly("userId", "username", "ammount", "reason", "createdTimestamp", "isReject", "channelId", "delete") VALUES (
-          // '${item.userId}', '${item.username}','${item.ammount}', '${item.reason}', '${item.createdTimestamp}', '${item.isReject}', '${item.channelId}', '${item.delete}')`
-          //           );
-          //         });
-          //       } else {
-          //         console.log(
-          //           'No document(s) found with defined "find" criteria!'
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_remind("channelId", "mentionUserId", "authorId", "content", "cancel", "createdTimestamp") VALUES (
+          //             '${item.channelId}','${item.mentionUserId}','${item.authorId}, '${item.content}', '${item.cancel}', '${item.createdTimestamp}')`
           //         );
-          //       }
-          //
-          //     });
-          db.collection("komu_tickets")
-            .find()
-            .toArray(async (err, result) => {
-              if (err) {
-                console.log(err);
-              } else if (result.length) {
-                result.map(async (item) => {
-                  // console.log(item);
-                  await this.clientPg4.query(
-                    `INSERT INTO komu_ticket("title", "desc", "asignee", "creator", "status", "createdate", "note") VALUES (
-            '${item.title}', '${item.desc}','${item.asignee}', '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
-                  );
-                });
-              } else {
-                console.log(
-                  'No document(s) found with defined "find" criteria!'
-                );
-              }
-            });
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_wikis")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_wiki("name", "value", "type", "creator", "status", "createdate", "note") VALUES (
+          //           '${item.name}','${item.value}','${item.type}, '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_datings")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_dating("channelId", "userId", "email", "sex", "loop", "createdTimestamp") VALUES (
+          //         '${item.channelId}','${item.userId}','${item.email}, '${item.sex}', '${item.loop}', '${item.createdTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_opentalks")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_opentalk("userId", "username", "createdTimestamp") VALUES (
+          //           '${item.userId}','${item.username}, '${item.createdTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("suggs")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO sugg("autorID", "messageID", "serverID", "content", "Date") VALUES (
+          //         '${item.autorID}','${item.messageID}, '${item.serverID}', '${item.Date}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_wfhs")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_wfh("user", "wfhMsg", "createdAt", "complain", "pmconfirm", "status", "data", "type") VALUES (
+          //           '${item.user}','${item.wfhMsg}, '${item.createdAt}', '${item.complain}', '${item.pmconfirm}', '${item.status}', '${item.data}', '${item.type})`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("guilds")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO guild("serverID", "description", "content", "reason") VALUES (
+          //         '${item.serverID}','${item.description}, '${item.content}', '${item.reason}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_keeps")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_keep("userId", "note", "start_time", "status") VALUES (
+          //         '${item.userId}','${item.note}, '${item.start_time}', '${item.status}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_dailys")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_daily("userId", "email", "daily", "createdAt", "channelid") VALUES (
+          //       '${item.userId}','${item.email}, '${item.daily}', '${item.createdAt}', '${item.channelid}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_holidays")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_holiday("dateTime", "content") VALUES (
+          //     '${item.dateTime}','${item.content}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_companytrips")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_companytrip("year", "fullName", "userId", "email", "phone", "office", "role", "kingOfRoom", "room") VALUES (
+          //     '${item.year}','${item.fullName}', '${item.userId}', '${item.email}', '${item.phone}', '${item.office}', '${item.role}', '${item.kingOfRoom}', '${item.room}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_checkCameras")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_checkCamera("userId", "channelId", "enableCamera", "createdTimestamp") VALUES (
+          //     '${item.userId}','${item.channelId}', '${item.enableCamera}', '${item.createdTimestamp}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_channels")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_channel("name", "type", "nsfw", "rawPosition", "lastMessageId", "rateLimitPerUser", "parentId") VALUES (
+          //     '${item.name}','${item.type}', '${item.nsfw}', '${item.rawPosition}', '${item.lastMessageId}', '${item.rateLimitPerUser}', '${item.parentId})`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // db.collection("komu_joinCalls")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_joinCall("channelId", "userId", "status", "start_time", "end_time") VALUES (
+          //   '${item.channelId}','${item.userId}', '${item.status}', '${item.start_time}', '${item.end_time}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
+
+          // //   db.collection("komu_mentioneds")
+          // //     .find()
+          // //     .toArray(async (err, result) => {
+          // //       if (err) {
+          // //         console.log(err);
+          // //       } else if (result.length) {
+          // //         result.map(async (item) => {
+          // //           console.log(item);
+          // //           await clientPg4.query(
+          // //             `INSERT INTO komu_mentioned("messageId", "authorId", "channelId", "mentionUserId", "createdTimestamp", "noti", "confirm", "punish", "reactionTimestamp") VALUES (
+          // // '${item.messageId}','${item.authorId}', '${item.channelId}', '${item.mentionUserId}', '${item.createdTimestamp}','${item.noti}', '${item.confirm}','${item.punish}', '${item.reactionTimestamp}')`
+          // //           );
+          // //         });
+          // //       } else {
+          // //         console.log(
+          // //           'No document(s) found with defined "find" criteria!'
+          // //         );
+          // //       }
+          // //
+          // //     });
+
+          // //   db.collection("komu_orders")
+          // //     .find()
+          // //     .toArray(async (err, result) => {
+          // //       if (err) {
+          // //         console.log(err);
+          // //       } else if (result.length) {
+          // //         result.map(async (item) => {
+          // //           console.log(item);
+          // //           await clientPg4.query(
+          // //             `INSERT INTO komu_order("userId", "channelId", "menu", "username", "isCancel", "createdTimestamp") VALUES (
+          // // '${item.userId}', '${item.channelId}', '${item.menu}', '${item.username}','${item.isCancel}', '${item.createdTimestamp}')`
+          // //           );
+          // //         });
+          // //       } else {
+          // //         console.log(
+          // //           'No document(s) found with defined "find" criteria!'
+          // //         );
+          // //       }
+          // //
+          // //     });
+
+          // //   db.collection("komu_penatlys")
+          // //     .find()
+          // //     .toArray(async (err, result) => {
+          // //       if (err) {
+          // //         console.log(err);
+          // //       } else if (result.length) {
+          // //         result.map(async (item) => {
+          // //           console.log(item);
+          // //           await clientPg4.query(
+          // //             `INSERT INTO komu_penatly("userId", "username", "ammount", "reason", "createdTimestamp", "isReject", "channelId", "delete") VALUES (
+          // // '${item.userId}', '${item.username}','${item.ammount}', '${item.reason}', '${item.createdTimestamp}', '${item.isReject}', '${item.channelId}', '${item.delete}')`
+          // //           );
+          // //         });
+          // //       } else {
+          // //         console.log(
+          // //           'No document(s) found with defined "find" criteria!'
+          // //         );
+          // //       }
+          // //
+          // //     });
+          // db.collection("komu_tickets")
+          //   .find()
+          //   .toArray(async (err, result) => {
+          //     if (err) {
+          //       console.log(err);
+          //     } else if (result.length) {
+          //       result.map(async (item) => {
+          //         // console.log(item);
+          //         await this.clientPg4.query(
+          //           `INSERT INTO komu_ticket("title", "desc", "asignee", "creator", "status", "createdate", "note") VALUES (
+          //   '${item.title}', '${item.desc}','${item.asignee}', '${item.creator}', '${item.status}', '${item.createdate}', '${item.note}')`
+          //         );
+          //       });
+          //     } else {
+          //       console.log(
+          //         'No document(s) found with defined "find" criteria!'
+          //       );
+          //     }
+          //   });
         }
       });
     } catch (err) {
-      console.log("131232");
       console.log(err);
     }
   }
