@@ -427,14 +427,13 @@ export class BackupCommand implements CommandLineClass {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
-                  console.log(result.length);
-                  const array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                  const lengthArr = Math.floor(result.length / 1000);
+                  const array = Array.from(Array(lengthArr + 1).keys());
+                  console.log(array);
                   array.map((arr) => {
-                    console.log(arr);
                     result.map(async (item, index) => {
-                      if (index >= arr * 500000 && index < (arr + 1) * 500000) {
-                        console.log(item);
-                        await this.backupService.saveMsg(item, index);
+                      if (index >= arr * 1000 && index < (arr + 1) * 1000) {
+                        return await this.backupService.saveMsg(item);
                       } else return;
                     });
                   });
