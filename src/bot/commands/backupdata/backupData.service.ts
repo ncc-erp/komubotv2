@@ -363,7 +363,7 @@ export class BackupService {
     });
   }
 
-  async saveMsg(item, index) {
+  async saveMsg(item) {
     const channelInsert = await this.channelRepository.findOne({
       where: {
         id: item.channel_id,
@@ -373,16 +373,11 @@ export class BackupService {
       where: { userId: item.author_Id },
     });
 
-    const tx8Insert = await this.tx8Repository.findOne({
-      where: { id: item.tx8 },
-    });
-
     await this.msgRepository.insert({
-      guildId: item.guild_id,
+      guildId: item.guildId,
       deleted: item.deleted,
       author: authorInsert,
       channel: channelInsert,
-      tx8: tx8Insert as any,
       createdTimestamp: +item.createdTimestamp,
       type: item.type,
       system: item.system,
