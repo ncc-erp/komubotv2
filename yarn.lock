@@ -1243,12 +1243,12 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aw-client@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/aw-client/-/aw-client-0.3.3.tgz#831ed3f17dfddb45095ad442860bc205b819fc1a"
-  integrity sha512-t6gtmRxB92KaeetaCOLK++wsKLcJy6hoF4S+41ZsS8wJ3sQlaW++R3FtMbEMVA6QG2knJFH/QEx7I1UqSS3Hfg==
+"aw-client@github:nccasia/aw-client-js":
+  version "0.3.2"
+  resolved "https://codeload.github.com/nccasia/aw-client-js/tar.gz/b4c5dbbdb0e80b4d2f2e8c5b7b32511a49d91990"
   dependencies:
     axios "*"
+    js-base64 "^3.7.2"
 
 aws-sign2@~0.7.0:
   version "0.7.0"
@@ -3418,6 +3418,11 @@ jest-worker@^27.4.5:
     "@types/node" "*"
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
+
+js-base64@^3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-3.7.2.tgz#816d11d81a8aff241603d19ce5761e13e41d7745"
+  integrity sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==
 
 js-tokens@^4.0.0:
   version "4.0.0"

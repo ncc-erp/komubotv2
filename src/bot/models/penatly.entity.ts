@@ -14,7 +14,7 @@ export class Penalty {
   @Column({ type: "text", nullable: true })
   username: string;
 
-  @Column({ type: "int", nullable: true })
+  @Column({ type: "numeric", nullable: true, precision: 30 })
   ammount: number;
 
   @Column({ type: "text", nullable: true })

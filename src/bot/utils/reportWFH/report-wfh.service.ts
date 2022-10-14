@@ -36,24 +36,16 @@ export class ReportWFHService {
     const wfhFullday = await this.wfhRepository
       .createQueryBuilder("wfh")
       .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
-      .andWhere(
-        `"createdAt" > ${this.utilsService
-          .getTimeToDay(fomatDate)
-          .firstDay.getTime()}`
-      )
-      .andWhere(
-        `"createdAt" < ${this.utilsService
-          .getTimeToDay(fomatDate)
-          .lastDay.getTime()}`
-      )
-      .andWhere(
-        '("status" = :statusACCEPT AND "type" = :type) OR ("status" = :statusACTIVE AND "type" = :type) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type)',
+      .where(
+        '("status" = :statusACCEPT AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusACTIVE AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay)',
         {
           type: "wfh",
           statusACCEPT: "ACCEPT",
           statusACTIVE: "ACTIVE",
           statusAPPROVED: "APPROVED",
           pmconfirm: false,
+          firstDay: this.utilsService.getTimeToDayMention(fomatDate).firstDay.getTime(),
+          lastDay: this.utilsService.getTimeToDayMention(fomatDate).lastDay.getTime(),
         }
       )
       .groupBy("m.username")
@@ -123,7 +115,6 @@ export class ReportWFHService {
       )
       .select("*")
       .execute();
-    console.log(wfhFullday);
 
     let mess;
     if (!wfhFullday) {

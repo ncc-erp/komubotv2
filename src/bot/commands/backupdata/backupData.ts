@@ -67,6 +67,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveBirthday(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -80,21 +81,11 @@ export class BackupCommand implements CommandLineClass {
                 if (err) {
                   console.log(err);
                 } else if (result.length) {
+                  console.log(result.length);
                   result.map(async (item) => {
-                    const sumWithInitial = item.category.reduce(
-                      (previousValue, currentValue) =>
-                        previousValue + "'" + currentValue + "',",
-                      ""
-                    );
-                    await this.clientPg4.query(
-                      `INSERT INTO komu_checklist("subcategory", "category") VALUES ('${
-                        item.subcategory
-                      }', ARRAY[${sumWithInitial.slice(
-                        0,
-                        sumWithInitial.length - 1
-                      )}])`
-                    );
+                    await this.backupService.checklist(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -111,6 +102,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveSubcategory(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -127,6 +119,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveMeeting(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -144,6 +137,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveDaily(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -162,6 +156,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.saveWorkout(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -183,6 +178,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.saveOpentalk(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -201,9 +197,14 @@ export class BackupCommand implements CommandLineClass {
                     console.log(err);
                   } else if (result.length) {
                     console.log(result.length);
-                    result.map(async (item) => {
-                      await this.backupService.saveBwls(item);
-                    });
+                    for (let item of result) {
+                      try {
+                        await this.backupService.saveBwls(item);
+                      } catch (error) {
+                        continue;
+                      }
+                    }
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -225,6 +226,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.saveWiki(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -245,6 +247,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveWomenday(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -262,6 +265,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveWfh(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -279,6 +283,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveVoiechannel(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -297,6 +302,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveUploadFile(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -314,6 +320,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveTx8(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -331,6 +338,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveTrackerSpent(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -348,6 +356,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveTimevoicealones(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -364,6 +373,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveRemind(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -378,10 +388,9 @@ export class BackupCommand implements CommandLineClass {
                   console.log(err);
                 } else if (result.length) {
                   result.map(async (item) => {
-                    console.log(item);
-
                     await this.backupService.saveQuiz(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -398,6 +407,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.savePenatly(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -414,6 +424,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveOrder(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -437,6 +448,7 @@ export class BackupCommand implements CommandLineClass {
                       } else return;
                     });
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -453,6 +465,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveMention(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -469,6 +482,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveLeave(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -486,6 +500,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveKeep(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -502,6 +517,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveJoinCall(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -518,6 +534,7 @@ export class BackupCommand implements CommandLineClass {
                   result.map(async (item) => {
                     await this.backupService.saveHoliday(item);
                   });
+                  message.reply("saved");
                 } else {
                   console.log(
                     'No document(s) found with defined "find" criteria!'
@@ -535,6 +552,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.saveGuildData(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -559,6 +577,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.saveDating(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -582,6 +601,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.saveConversation(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -605,6 +625,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.companytrip(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -628,6 +649,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.checkcamera(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -651,6 +673,7 @@ export class BackupCommand implements CommandLineClass {
                     result.map(async (item) => {
                       await this.backupService.channel(item);
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -681,11 +704,9 @@ export class BackupCommand implements CommandLineClass {
                         } else return;
                       });
                     });
+                    message.reply("saved");
                   } else {
                     console.log(
-                      'No document(s) found with defined "find" criteria!'
-                    );
-                    message.reply(
                       'No document(s) found with defined "find" criteria!'
                     );
                   }

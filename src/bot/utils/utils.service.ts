@@ -347,9 +347,16 @@ export class UtilsService {
     return date;
   }
 
-  getTimeToDayMention() {
-    const today = new Date();
-    const tomorrows = new Date();
+  getTimeToDayMention(fomatDate) {
+    let today;
+    let tomorrows;
+    if (fomatDate) {
+      today = new Date(fomatDate);
+      tomorrows = new Date(fomatDate);
+    } else {
+      today = new Date();
+      tomorrows = new Date();
+    }
     const tomorrowsDate = tomorrows.setDate(tomorrows.getDate() + 1);
 
     return {

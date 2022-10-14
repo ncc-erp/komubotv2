@@ -94,8 +94,6 @@ export class BackupService {
     @InjectRepository(Holiday)
     private holidayRepository: Repository<Holiday>,
     @InjectRepository(GuildData)
-    private guildDataRepository: Repository<GuildData>,
-    @InjectRepository(GuildData)
     private guildReposistory: Repository<GuildData>,
     @InjectRepository(Dating)
     private datingReposistory: Repository<Dating>,
@@ -110,7 +108,7 @@ export class BackupService {
     @InjectRepository(BwlReaction)
     private bwlReactionReposistory: Repository<BwlReaction>,
     @InjectRepository(Channel)
-    private channelReposistory: Repository<Channel>
+    private channelReposistory: Repository<Channel>,
   ) {}
 
   async saveVoiechannel(item) {
@@ -122,14 +120,12 @@ export class BackupService {
       status: item.status,
       createdTimestamp: +item.createdTimestamp,
     });
-    console.log("done");
   }
 
   async saveBirthday(item) {
     await this.birthDayRepository.insert({
       title: item.title,
     });
-    console.log("done");
   }
 
   async saveDaily(item) {
@@ -141,7 +137,6 @@ export class BackupService {
       createdAt: timestamp.getTime(),
       channelid: item.channelid,
     });
-    console.log("done");
   }
 
   async saveWorkout(item) {
@@ -154,7 +149,6 @@ export class BackupService {
       channelId: item.channelId,
       createdTimestamp: timestamp.getTime(),
     });
-    console.log("done");
   }
 
   async saveOpentalk(item) {
@@ -163,7 +157,6 @@ export class BackupService {
       username: item.username,
       createdTimestamp: +item.date,
     });
-    console.log("done");
   }
 
   async saveWiki(item) {
@@ -173,7 +166,6 @@ export class BackupService {
       creator: item.creator,
       type: item.type,
     });
-    console.log("done");
   }
 
   async saveWomenday(item) {
@@ -182,7 +174,6 @@ export class BackupService {
       win: item.win,
       gift: item.gift,
     });
-    console.log("done");
   }
 
   async saveUploadFile(item) {
@@ -192,7 +183,6 @@ export class BackupService {
       episode: item.episode,
       createTimestamp: +item.createTimestamp,
     });
-    console.log("done");
   }
 
   async saveTx8(item) {
@@ -213,7 +203,6 @@ export class BackupService {
       status: item.status,
       createdTimestamp: +item.createdTimestamp,
     });
-    console.log("done");
   }
 
   async saveTrackerSpent(item) {
@@ -224,7 +213,6 @@ export class BackupService {
       call_time: item.call_time,
       wfh: item.wfh,
     });
-    console.log("done");
   }
 
   async saveTimevoicealones(item) {
@@ -233,14 +221,12 @@ export class BackupService {
       status: item.status,
       start_time: +item.start_time,
     });
-    console.log("done");
   }
 
   async saveSubcategory(item) {
     await this.subcategorysRepository.insert({
       title: item.title,
     });
-    console.log("done");
   }
 
   async saveBwls(item) {
@@ -261,15 +247,16 @@ export class BackupService {
       createdTimestamp: +item.createdTimestamp,
       channel: channelInsert,
       author: authorInsert,
+    }).catch((err) => {
+      return;
     });
-    console.log("done");
   }
 
   async saveWfh(item) {
     const timestamp = new Date(item.createdAt);
     const authorInsert = await this.userRepository.findOne({
       where: {
-        userId: item.authorId,
+        userId: item.userid,
       },
     });
     await this.workFromHomeRepository.insert({
@@ -282,7 +269,6 @@ export class BackupService {
       data: item.data,
       type: item.type,
     });
-    console.log("done");
   }
 
   async saveUser(item) {
@@ -312,7 +298,6 @@ export class BackupService {
       roles_discord: item.roles_discord,
       botPing: item.botPing,
     });
-    console.log("done");
   }
 
   async saveRemind(item) {
@@ -501,7 +486,6 @@ export class BackupService {
       plugins: item.plugins,
       protections: item.protections,
     });
-    console.log("done");
   }
   async saveDating(item) {
     await this.datingReposistory.insert({
@@ -512,7 +496,6 @@ export class BackupService {
       loop: item.loop,
       createdTimestamp: +item.createdTimestamp,
     });
-    console.log("done");
   }
   async saveConversation(item) {
     await this.conversationReposistory.insert({
@@ -523,7 +506,6 @@ export class BackupService {
       createdTimestamp: +item.createdTimestamp,
       updatedTimestamp: +item.updatedTimestamp,
     });
-    console.log("done");
   }
   async companytrip(item) {
     await this.companytripReposistory.insert({
@@ -537,14 +519,12 @@ export class BackupService {
       kingOfRoom: item.kingOfRoom,
       room: item.room,
     });
-    console.log("done");
   }
   async checklist(item) {
     await this.checkListReposistory.insert({
       subcategory: item.subcategory,
       category: item.category,
     });
-    console.log("done");
   }
   async checkcamera(item) {
     await this.checkCameraReposistory.insert({
@@ -553,7 +533,6 @@ export class BackupService {
       enableCamera: item.enableCamera,
       createdTimestamp: +item.createdTimestamp,
     });
-    console.log("done");
   }
   async bwlReaction(item) {
     const channelInsert = await this.channelRepository.findOne({
@@ -584,7 +563,6 @@ export class BackupService {
       .catch((err) => {
         return;
       });
-    console.log("done");
   }
   async channel(item) {
     await this.channelReposistory
@@ -601,6 +579,5 @@ export class BackupService {
       .catch((err) => {
         return;
       });
-    console.log("done");
   }
 }
