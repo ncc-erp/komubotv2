@@ -84,10 +84,10 @@ export class UserNotDailyService {
       const dailyMorning = await this.dailyRepository
         .createQueryBuilder()
         .where(`"createdAt" >= :gtecreatedAt`, {
-          gtecreatedAt: this.utilsService.getDateDay(date).morning.lastime,
+          gtecreatedAt: this.utilsService.getDateDay(date).morning.fisttime,
         })
         .andWhere(`"createdAt" <= :ltecreatedAt`, {
-          ltecreatedAt: this.utilsService.getDateDay(date).morning.fisttime,
+          ltecreatedAt: this.utilsService.getDateDay(date).morning.lastime,
         })
         .select("*")
         .execute();
@@ -95,10 +95,10 @@ export class UserNotDailyService {
       const dailyAfternoon = await this.dailyRepository
         .createQueryBuilder()
         .where(`"createdAt" >= :gtecreatedAt`, {
-          gtecreatedAt: this.utilsService.getDateDay(date).afternoon.lastime,
+          gtecreatedAt: this.utilsService.getDateDay(date).afternoon.fisttime,
         })
         .andWhere(`"createdAt" <= :ltecreatedAt`, {
-          ltecreatedAt: this.utilsService.getDateDay(date).afternoon.fisttime,
+          ltecreatedAt: this.utilsService.getDateDay(date).afternoon.lastime,
         })
         .select("*")
         .execute();
@@ -106,10 +106,10 @@ export class UserNotDailyService {
       const dailyFullday = await this.dailyRepository
         .createQueryBuilder()
         .where(`"createdAt" >= :gtecreatedAt`, {
-          gtecreatedAt: this.utilsService.getDateDay(date).fullday.lastime,
+          gtecreatedAt: this.utilsService.getDateDay(date).fullday.fisttime,
         })
         .andWhere(`"createdAt" <= :ltecreatedAt`, {
-          ltecreatedAt: this.utilsService.getDateDay(date).fullday.fisttime,
+          ltecreatedAt: this.utilsService.getDateDay(date).fullday.lastime,
         })
         .select("*")
         .execute();
@@ -177,7 +177,7 @@ export class UserNotDailyService {
               })
               .andWhere(`"deactive" IS NOT TRUE`)
               .select("*")
-              .execute()
+              .getRawOne()
           )
         );
       } catch (error) {

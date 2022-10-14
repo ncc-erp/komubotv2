@@ -1,15 +1,6 @@
-import { getUserOffWork } from "../getUserOffWork";
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { EmbedBuilder } from "discord.js";
-import { TABLE } from "src/bot/constants/table";
-import { Daily } from "src/bot/models/daily.entity";
-import { User } from "src/bot/models/user.entity";
-import { Repository } from "typeorm";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
-import { ClientConfigService } from "src/bot/config/client-config.service";
-import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
 import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
 @Injectable()
 export class ReportDailyService {
@@ -19,8 +10,8 @@ export class ReportDailyService {
   ) {}
 
   findCountNotDaily(arr, email) {
-    const users = arr.filter((item) => item.email === email);
-    return users[0] ? users[0].countnotdaily : 1;
+    const users = arr.find((item) => item.email === email);
+    return users ? users.countnotdaily : 1;
   }
   async reportDaily(date, message, args, client, guildDB) {
     try {
@@ -51,13 +42,13 @@ export class ReportDailyService {
           mess = userNotDaily
             .slice(i * 50, (i + 1) * 50)
             .map((user) => {
-              if (user.id) {
-                return `${user[0].email} (${this.findCountNotDaily(
+              if (user.userId) {
+                return `${user.email} (${this.findCountNotDaily(
                   notDaily,
                   user.username
                 )})`;
               } else {
-                return `${user[0].email} (${this.findCountNotDaily(
+                return `${user.email} (${this.findCountNotDaily(
                   notDaily,
                   user.username
                 )})`;
