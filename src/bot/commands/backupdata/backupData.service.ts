@@ -230,24 +230,19 @@ export class BackupService {
   }
 
   async saveBwls(item) {
-    const channelInsert = await this.channelRepository.findOne({
-      where: {
-        id: item.channelId,
-      },
-    });
-    const authorInsert = await this.userRepository.findOne({
-      where: {
-        userId: item.authorId,
-      },
-    });
-    await this.bwlRepository.insert({
+    return this.bwlRepository.createQueryBuilder().insert()
+    .into(Bwl)
+    .values({
       messageId: item.messageId,
       guildId: item.guildId,
       link: item.link,
       createdTimestamp: +item.createdTimestamp,
-      channel: channelInsert,
-      author: authorInsert,
-    }).catch((err) => {
+      channel: item.channelId,
+      author: item.authorId
+    })
+    .execute()
+    .catch((err) => {
+      console.log(err)
       return;
     });
   }
@@ -535,32 +530,17 @@ export class BackupService {
     });
   }
   async bwlReaction(item) {
-    const channelInsert = await this.channelRepository.findOne({
-      where: {
-        id: item.channelId,
-      },
-    });
-    const bwlInsert = await this.bwlRepository.findOne({
-      where: {
-        messageId: item.messageId,
-      },
-    });
-    const authorInsert = await this.userRepository.findOne({
-      where: {
-        userId: item.authorId,
-      },
-    });
-    await this.bwlReactionReposistory
-      .insert({
-        guildId: item.guildId,
-        emoji: item.emoji,
-        count: item.count,
-        createdTimestamp: +item.createdTimestamp,
-        bwl: bwlInsert,
-        channel: channelInsert,
-        author: authorInsert,
-      })
+    return this.bwlReactionReposistory.createQueryBuilder().insert().into(BwlReaction).values({
+      guildId: item.guildId,
+      emoji: item.emoji,
+      count: item.count,
+      createdTimestamp: +item.createdTimestamp,
+      bwl: item.messageId,
+      channel: item.channelId,
+      author: item.authorId
+    }).execute()
       .catch((err) => {
+        console.log(err)
         return;
       });
   }

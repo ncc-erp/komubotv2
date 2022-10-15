@@ -22,8 +22,8 @@ export class ReportMsgCountService {
 
       const messageData = await this.msgRepository
         .createQueryBuilder("msg")
-        .innerJoinAndSelect("komu_user", "m", "msg.authorId = m.userId")
-        .where('"authorId" NOT IN (:...authorId)', {
+        .innerJoinAndSelect("komu_user", "m", 'msg."authorId" = m."userId"')
+        .where('msg."authorId" NOT IN (:...authorId)', {
           authorId: ["922003239887581205", "931377010616451122"],
         })
         .andWhere('"createdTimestamp" >= :gtecreatedTimestamp', {
@@ -37,8 +37,8 @@ export class ReportMsgCountService {
             .lastDay.getTime(),
         })
         .groupBy("m.username")
-        .addGroupBy("msg.authorId")
-        .select("msg.authorId, COUNT(msg.authorId) as total, m.username")
+        .addGroupBy('msg."authorId"')
+        .select('msg."authorId", COUNT(msg."authorId") as total, m.username')
         .orderBy("total", "DESC")
         .limit(20)
         .execute();

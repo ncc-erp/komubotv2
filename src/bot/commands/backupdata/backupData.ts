@@ -197,14 +197,20 @@ export class BackupCommand implements CommandLineClass {
                     console.log(err);
                   } else if (result.length) {
                     console.log(result.length);
+                    const promises = []
                     for (let item of result) {
                       try {
-                        await this.backupService.saveBwls(item);
+                        promises.push(this.backupService.saveBwls(item))
                       } catch (error) {
                         continue;
                       }
                     }
-                    message.reply("saved");
+                    try {
+                      await Promise.all(promises)
+                      message.reply("saved");
+                    } catch (error) {
+                      console.log(error)
+                    }
                   } else {
                     console.log(
                       'No document(s) found with defined "find" criteria!'
@@ -694,16 +700,12 @@ export class BackupCommand implements CommandLineClass {
                   if (err) {
                     console.log(err);
                   } else if (result.length) {
-                    const lengthArr = Math.floor(result.length / 1000);
-                    const array = Array.from(Array(lengthArr + 1).keys());
-                    console.log(array);
-                    array.map((arr) => {
-                      result.map(async (item, index) => {
-                        if (index >= arr * 1000 && index < (arr + 1) * 1000) {
-                          return await this.backupService.bwlReaction(item);
-                        } else return;
-                      });
+                    const promises = []
+                    result.forEach((item) => {
+                      promises.push(this.backupService.bwlReaction(item))
                     });
+
+                    await Promise.all(promises)
                     message.reply("saved");
                   } else {
                     console.log(
