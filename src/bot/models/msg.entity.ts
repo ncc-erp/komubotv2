@@ -40,19 +40,19 @@ export class Msg {
   @Column({ type: "decimal", nullable: true })
   createdTimestamp: number;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   type: string;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   system: boolean;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   content: string;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   pinned: boolean;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", nullable: true })
   tts: boolean;
 
   @Column({ type: "text", nullable: true })
