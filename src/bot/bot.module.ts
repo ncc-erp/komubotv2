@@ -127,7 +127,6 @@ import { ReportTrackerService } from "./utils/reportTracker/reportTracker.servic
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
 import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
-import { BackupCommand } from "./commands/backupdata/backupData";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
 import { AudioPlayer } from "./utils/audioPlayer.utils";
@@ -147,7 +146,6 @@ import { DmmessageService } from "./utils/dmmessage/dmmessage.service";
 import { WorkoutService } from "./utils/workout/workout.service";
 import { Workout } from "./models/workout.entity";
 import { WorkoutCommand } from "./commands/workout/workout.command";
-import { BackupService } from "./commands/backupdata/backupData.service";
 
 @Module({
   imports: [
@@ -293,7 +291,6 @@ import { BackupService } from "./commands/backupdata/backupData.service";
     VocabSlashCommand,
     SendquizSchedulerService,
     SendQuizToSingleUserService,
-    BackupCommand,
     Ncc8Command,
     ReportMsgCountService,
     getApiWfhModule,
@@ -306,7 +303,6 @@ import { BackupService } from "./commands/backupdata/backupData.service";
     WfhService,
     DmmessageService,
     WorkoutService,
-    BackupService,
   ],
   controllers: [KomubotrestController],
 })
