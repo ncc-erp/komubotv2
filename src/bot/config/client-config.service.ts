@@ -171,6 +171,9 @@ export class ClientConfigService {
     this.komubotRestDevtestChannelId = `${configService.get<string>(
       "KOMUBOTREST_DEVTEST_CHANNEL_ID"
     )}`;
+    this.topCategoryId = `${configService.get<string>(
+      "TOP_CATEGORY_ID"
+    )}`;
 
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
@@ -198,6 +201,8 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
   }
+  
+  topCategoryId:string;
 
   //KOMUBOTREST_DEVTEST_CHANNEL_ID
 
