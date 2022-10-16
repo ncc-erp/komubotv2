@@ -25,10 +25,16 @@ export class SendquizSchedulerService {
   private readonly logger = new Logger(SendquizSchedulerService.name);
 
   addCronJob(name: string, time: string, callback: () => void): void {
-    const job = new CronJob(time, () => {
-      this.logger.warn(`time (${time}) for job ${name} to run!`);
-      callback();
-    });
+    const job = new CronJob(
+      time,
+      () => {
+        this.logger.warn(`time (${time}) for job ${name} to run!`);
+        callback();
+      },
+      null,
+      true,
+      "Asia/Ho_Chi_Minh"
+    );
 
     this.schedulerRegistry.addCronJob(name, job);
     job.start();

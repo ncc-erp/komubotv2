@@ -30,10 +30,16 @@ export class VoiceChannelSchedulerService {
   private readonly logger = new Logger(VoiceChannelSchedulerService.name);
 
   addCronJob(name: string, time: string, callback: () => void): void {
-    const job = new CronJob(time, () => {
-      this.logger.warn(`time (${time}) for job ${name} to run!`);
-      callback();
-    });
+    const job = new CronJob(
+      time,
+      () => {
+        this.logger.warn(`time (${time}) for job ${name} to run!`);
+        callback();
+      },
+      null,
+      true,
+      "Asia/Ho_Chi_Minh"
+    );
 
     this.schedulerRegistry.addCronJob(name, job);
     job.start();
@@ -64,8 +70,7 @@ export class VoiceChannelSchedulerService {
     if (await this.utilsService.checkHoliday()) return;
     let guild = client.guilds.fetch("921239248991055882");
     const getAllVoice = client.channels.cache.filter(
-      (guild) =>
-        guild.type === 2 && guild.parentId === "921239248991055884"
+      (guild) => guild.type === 2 && guild.parentId === "921239248991055884"
     );
     const voiceChannel = getAllVoice.map((item) => item.id);
 

@@ -27,16 +27,22 @@ export class DatingSchedulerService {
     @InjectDiscordClient()
     private client: Client,
     private readonly http: HttpService,
-    private configClient:ClientConfigService
+    private configClient: ClientConfigService
   ) {}
 
   private readonly logger = new Logger(DatingSchedulerService.name);
 
   addCronJob(name: string, time: string, callback: () => void): void {
-    const job = new CronJob(time, () => {
-      this.logger.warn(`time (${time}) for job ${name} to run!`);
-      callback();
-    });
+    const job = new CronJob(
+      time,
+      () => {
+        this.logger.warn(`time (${time}) for job ${name} to run!`);
+        callback();
+      },
+      null,
+      true,
+      "Asia/Ho_Chi_Minh"
+    );
 
     this.schedulerRegistry.addCronJob(name, job);
     job.start();
@@ -176,8 +182,7 @@ export class DatingSchedulerService {
 
       let guild = client.guilds.fetch("921239248991055882");
       const getAllVoice = client.channels.cache.filter(
-        (guild) =>
-          guild.type === 2 && guild.parentId === "921239248991055884"
+        (guild) => guild.type === 2 && guild.parentId === "921239248991055884"
       );
       const voiceChannel = getAllVoice.map((item) => item.id);
       let roomMap = [];
@@ -331,8 +336,7 @@ export class DatingSchedulerService {
       let fetchGuild = client.guilds.fetch("921239248991055882");
       const getAllVoicePrivate = client.channels.cache.filter(
         (guild) =>
-          guild.type === 2 &&
-          guild.parentId === this.configClient.topCategoryId
+          guild.type === 2 && guild.parentId === this.configClient.topCategoryId
       );
       const voiceChannelPrivate = getAllVoicePrivate.map((item) => item.id);
       let roomMapPrivate = [];

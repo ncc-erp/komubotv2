@@ -25,10 +25,16 @@ export class MeetingSchedulerService {
   private readonly logger = new Logger(MeetingSchedulerService.name);
 
   addCronJob(name: string, time: string, callback: () => void): void {
-    const job = new CronJob(time, () => {
-      this.logger.warn(`time (${time}) for job ${name} to run!`);
-      callback();
-    });
+    const job = new CronJob(
+      time,
+      () => {
+        this.logger.warn(`time (${time}) for job ${name} to run!`);
+        callback();
+      },
+      null,
+      true,
+      "Asia/Ho_Chi_Minh"
+    );
 
     this.schedulerRegistry.addCronJob(name, job);
     job.start();
@@ -45,13 +51,11 @@ export class MeetingSchedulerService {
       this.updateReminderMeeting()
     );
   }
-
   async tagMeeting(client: any) {
     if (await this.utilsService.checkHoliday()) return;
     let guild = client.guilds.fetch("921239248991055882");
     const getAllVoice = client.channels.cache.filter(
-      (guild) =>
-        guild.type === 2 && guild.parentId === "921239248991055884"
+      (guild) => guild.type === 2 && guild.parentId === "921239248991055884"
     );
     const repeatMeet = await this.meetingRepository
       .createQueryBuilder("meeting")
