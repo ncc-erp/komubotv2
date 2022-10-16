@@ -11,6 +11,7 @@ import { JoinCall } from "src/bot/models/joinCall.entity";
 import { User } from "src/bot/models/user.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @Injectable()
 export class DatingSchedulerService {
@@ -25,7 +26,8 @@ export class DatingSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
-    private readonly http: HttpService
+    private readonly http: HttpService,
+    private configClient:ClientConfigService
   ) {}
 
   private readonly logger = new Logger(DatingSchedulerService.name);
@@ -330,7 +332,7 @@ export class DatingSchedulerService {
       const getAllVoicePrivate = client.channels.cache.filter(
         (guild) =>
           guild.type === 2 &&
-          guild.parentId === "1011450445044121600"
+          guild.parentId === this.configClient.topCategoryId
       );
       const voiceChannelPrivate = getAllVoicePrivate.map((item) => item.id);
       let roomMapPrivate = [];
