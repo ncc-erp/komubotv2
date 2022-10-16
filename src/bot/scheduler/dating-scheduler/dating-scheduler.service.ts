@@ -330,7 +330,7 @@ export class DatingSchedulerService {
       const getAllVoicePrivate = client.channels.cache.filter(
         (guild) =>
           guild.type === 2 &&
-          guild.parentId === "1011450445044121600"
+          guild.parentId === "1024971003580928000"
       );
       const voiceChannelPrivate = getAllVoicePrivate.map((item) => item.id);
       let roomMapPrivate = [];
