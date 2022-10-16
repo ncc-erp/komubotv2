@@ -71,7 +71,7 @@ export class UtilsService {
 
   checkTimeMeeting() {
     const dateTimeNow = new Date();
-    dateTimeNow.setHours(dateTimeNow.getHours());
+    dateTimeNow.setHours(dateTimeNow.getHours() + 7);
     let day = dateTimeNow.getDay();
     const hourDateNow = dateTimeNow.getHours();
     const dateNow = dateTimeNow.toLocaleDateString("en-US");

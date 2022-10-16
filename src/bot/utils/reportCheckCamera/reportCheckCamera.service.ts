@@ -39,7 +39,6 @@ export class ReportCheckCameraService {
       return;
     }
 
-    userCheckCameraId = ["922148445626716182"];
     const { userOffFullday, userOffMorning } = await getUserOffWork(null);
     const userOff = [...userOffFullday, ...userOffMorning];
 

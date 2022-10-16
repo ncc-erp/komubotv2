@@ -65,7 +65,7 @@ export class VoiceChannelSchedulerService {
     let guild = client.guilds.fetch("921239248991055882");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
-        guild.type === "GUILD_VOICE" && guild.parentId === "921239248991055884"
+        guild.type === 2 && guild.parentId === "921239248991055884"
     );
     const voiceChannel = getAllVoice.map((item) => item.id);
 
@@ -153,7 +153,7 @@ export class VoiceChannelSchedulerService {
   }
 
   async turnOffBot(client) {
-    const fetchVoiceNcc8 = await client.channels.fetch("921323636491710504");
+    const fetchVoiceNcc8 = await client.channels.fetch("921239248991055882");
     const target = await fetchVoiceNcc8.guild.members.fetch(
       "922003239887581205"
     );

@@ -51,7 +51,7 @@ export class MeetingSchedulerService {
     let guild = client.guilds.fetch("921239248991055882");
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
-        guild.type === ("2" as any) && guild.parentId === "921239248991055884"
+        guild.type === 2 && guild.parentId === "921239248991055884"
     );
     const repeatMeet = await this.meetingRepository
       .createQueryBuilder("meeting")

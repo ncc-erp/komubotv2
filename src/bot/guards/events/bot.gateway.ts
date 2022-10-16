@@ -61,7 +61,7 @@ export class BotGateway {
     private wfhService: WfhService,
     private workoutService: WorkoutService
   ) {}
-  ID_KOMU = "1015574796567851039";
+  ID_KOMU = "922003239887581205";
 
   @Once("ready")
   onReady(client: Client) {

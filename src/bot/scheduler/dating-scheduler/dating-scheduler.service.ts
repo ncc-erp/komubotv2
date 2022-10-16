@@ -175,7 +175,7 @@ export class DatingSchedulerService {
       let guild = client.guilds.fetch("921239248991055882");
       const getAllVoice = client.channels.cache.filter(
         (guild) =>
-          guild.type === ("2" as any) && guild.parentId === "921239248991055884"
+          guild.type === 2 && guild.parentId === "921239248991055884"
       );
       const voiceChannel = getAllVoice.map((item) => item.id);
       let roomMap = [];
@@ -329,8 +329,8 @@ export class DatingSchedulerService {
       let fetchGuild = client.guilds.fetch("921239248991055882");
       const getAllVoicePrivate = client.channels.cache.filter(
         (guild) =>
-          guild.type === "GUILD_VOICE" &&
-          guild.parentId === "956767420377346088"
+          guild.type === 2 &&
+          guild.parentId === "1024971003580928000"
       );
       const voiceChannelPrivate = getAllVoicePrivate.map((item) => item.id);
       let roomMapPrivate = [];

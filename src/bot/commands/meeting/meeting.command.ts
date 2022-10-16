@@ -135,12 +135,10 @@ export class MeetingCommand implements CommandLineClass {
                 );
               });
           } else {
-            // 921239248991055882
             let guild = await client.guilds.fetch("921239248991055882");
             const getAllVoice = client.channels.cache.filter(
               (guild) =>
-                guild.type == ("2" as any) &&
-                // 921239248991055884
+                guild.type == 2 &&
                 (guild as VoiceChannel).parentId === "921239248991055884"
             );
             const voiceChannel = getAllVoice.map((item) => item.id);
