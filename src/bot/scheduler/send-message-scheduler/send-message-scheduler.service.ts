@@ -100,12 +100,12 @@ export class SendMessageSchedulerService {
   async sendMessTurnOffPc(client: Client) {
     if (await this.utilsService.checkHoliday()) return;
     const users = await this.userRepository
-      .createQueryBuilder("users")
-      .where('"roles" @> :staff OR "roles" @> :hr', {
-        staff: ["STAFF"],
+      .createQueryBuilder()
+      .where('("roles_discord" @> :hr OR "roles_discord" @> :staff)', {
         hr: ["HR"],
+        staff: ["STAFF"],
       })
-      .select("users.*")
+      .select("*")
       .execute();
 
     users.map(async (user) => {
@@ -185,7 +185,7 @@ export class SendMessageSchedulerService {
 
       userListNotCheckIn.map(async (user) => {
         const checkUser = await this.userRepository
-          .createQueryBuilder("users")
+          .createQueryBuilder()
           .where("email = :email", {
             email: user.komuUserName,
           })
@@ -194,17 +194,17 @@ export class SendMessageSchedulerService {
           })
           .andWhere(
             userOffFullday && userOffFullday.length > 0
-              ? '"email" IN (:...userOffFullday)'
+              ? '"email" NOT IN (:...userOffFullday)'
               : "true",
             {
               userOffFullday: userOffFullday,
             }
           )
           .andWhere(`"deactive" IS NOT TRUE`)
-          .select("users.*")
-          .execute();
+          .select("*")
+          .getRawOne();
         if (checkUser && checkUser !== null) {
-          const userDiscord = await client.users.fetch(checkUser.id);
+          const userDiscord = await client.users.fetch(checkUser.userId);
           userDiscord
             .send(`Đừng quên checkout trước khi ra về nhé!!!`)
             .catch(console.error);
