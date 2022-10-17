@@ -72,7 +72,7 @@ export class ReminderSchedulerService {
         .send(`${fetchChannel.name}: ${task} - deadline: ${dateTime}`)
         .catch((err) => {});
     } else {
-      if (fetchChannel.type === "GUILD_PUBLIC_THREAD") {
+      if (fetchChannel.type === 11) {
         fetchChannel.members.fetch().then((members) => {
           members.forEach(async (member) => {
             const fetchUser = await client.users.fetch(member.user.id);
@@ -251,7 +251,6 @@ export class ReminderSchedulerService {
 
   async remindDailyMorning(client) {
     if (await this.utilsService.checkHoliday()) return;
-    console.log("[Scheduler] Run");
     try {
       const { notDailyMorning, notDailyFullday } =
         await this.userNotDailyService.getUserNotDaily(
@@ -279,7 +278,6 @@ export class ReminderSchedulerService {
 
   async remindDailyAfternoon(client) {
     if (await this.utilsService.checkHoliday()) return;
-    console.log("[Scheduler] Run");
     try {
       const { notDailyAfternoon, notDailyFullday } =
         await this.userNotDailyService.getUserNotDaily(

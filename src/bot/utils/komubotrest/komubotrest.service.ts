@@ -166,8 +166,6 @@ export class KomubotrestService {
         },
       });
 
-      console.log("import success", channelInsert);
-      console.log("sent : ", sent);
       try {
         await this.messageRepository.insert({
           id: sent.id,
@@ -184,7 +182,6 @@ export class KomubotrestService {
       } catch (error) {
         console.log("Error : ", error);
       }
-      console.log("user of send : ", sent.author);
       // botPing : work when bot send quiz wfh user
       //* isSendQuiz : work when bot send quiz
       if (botPing && isSendQuiz) {
@@ -426,7 +423,6 @@ export class KomubotrestService {
     }
   };
   getWFHWarninghMessage = (content, userId, wfhId) => {
-    console.log(content, userId, wfhId);
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId("komu_wfh_complain#" + userId + "#" + wfhId)

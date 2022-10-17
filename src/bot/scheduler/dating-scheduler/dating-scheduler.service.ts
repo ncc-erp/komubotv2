@@ -148,7 +148,6 @@ export class DatingSchedulerService {
         .andWhere(`"deactive" IS NOT TRUE`)
         .select("users.*")
         .execute();
-      console.log(checkUserMan);
 
       const checkUserWoman = await this.userRepository
         .createQueryBuilder("users")
@@ -197,8 +196,6 @@ export class DatingSchedulerService {
         arr.splice(arrMan, 1);
         let randomTwo = Math.floor(Math.random() * arr.length);
         let arrWoman = arr[randomTwo];
-        console.log(arrMan);
-        console.log(arrWoman);
 
         userMan.map((man) => {
           if (man.branch === arrMan && man.email) checkCaseMan.push(man.email);

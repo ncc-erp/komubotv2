@@ -23,7 +23,6 @@ export class WomanDayCommand implements CommandLineClass {
   }
   async execute(message: Message, args, client: Client) {
     try {
-      console.log("womanday happy");
       if (args[0] !== "women's" || args[1] !== "day") return;
       const response = await axios.get(
         "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"

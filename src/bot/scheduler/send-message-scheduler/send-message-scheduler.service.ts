@@ -175,14 +175,12 @@ export class SendMessageSchedulerService {
           })
           .pipe((res) => res)
       );
-      console.log(listsUser, "aaa");
 
       const userListNotCheckIn = listsUser.data.filter(
         (user) => user.checkout === null
       );
       const { userOffFullday } = await getUserOffWork(null);
 
-      console.log(userListNotCheckIn, "userListNotCheckIn");
       userListNotCheckIn.map(async (user) => {
         const checkUser = await this.userRepository
           .createQueryBuilder("users")
@@ -203,7 +201,6 @@ export class SendMessageSchedulerService {
           .andWhere(`"deactive" IS NOT TRUE`)
           .select("users.*")
           .execute();
-        console.log(checkUser, "ssss");
         if (checkUser && checkUser !== null) {
           const userDiscord = await client.users.fetch(checkUser.id);
           userDiscord

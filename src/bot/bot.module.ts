@@ -125,7 +125,6 @@ import { ReportHolidayService } from "./utils/reportHoliday/reportHoliday.servic
 import { ReportOpenTalkService } from "./utils/reportOpentalk/reportOpentalk.service";
 import { ReportTrackerService } from "./utils/reportTracker/reportTracker.service";
 import { ReportWomenDayService } from "./utils/reportWomenDay/reportWomenDay.service";
-import { RequestOrder } from "./utils/requestorder.utils";
 import { UpdateRole } from "./utils/roles.utils";
 import { Channel } from "./models/channel.entity";
 import Ncc8Command from "./commands/ncc8/ncc8.command";
@@ -264,7 +263,6 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
     OpenTalkCommand,
     WomanDayCommand,
     WomanDayService,
-    RequestOrder,
     KomubotrestService,
     Uploadfile,
     HeyboyCommand,

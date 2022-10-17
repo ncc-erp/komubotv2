@@ -167,7 +167,6 @@ export class VoiceChannelSchedulerService {
 
   async checkJoinCall(client) {
     if (await this.utilsService.checkHoliday()) return;
-    console.log(["Schulder run"]);
     const now = new Date();
     const HOURS = 2;
     const beforeHours = new Date(now.getTime() - 1000 * 60 * 60 * HOURS);

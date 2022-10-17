@@ -78,7 +78,7 @@ export class MentionSchedulerService {
       await Promise.all(
         notiUser.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
-          if (mentionChannel.type !== "GUILD_TEXT") {
+          if (mentionChannel.type !== 0) {
             mentionChannel = await client.channels.fetch(
               mentionChannel.parentId
             );
@@ -100,7 +100,7 @@ export class MentionSchedulerService {
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
-          if (mentionChannel.type !== "GUILD_TEXT") {
+          if (mentionChannel.type !== 0) {
             mentionChannel = await client.channels.fetch(
               mentionChannel.parentId
             );

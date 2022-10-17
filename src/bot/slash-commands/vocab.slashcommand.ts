@@ -39,7 +39,7 @@ export class VocabSlashCommand implements DiscordTransformedCommand<VocabDto> {
           `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
         )
       ).catch((err) => {
-        console.log("WTF WTF WTF", err);
+        console.log("error", err);
         interaction.reply({
           content: `Nothing match... **${word}**.`,
           ephemeral: true,
@@ -109,7 +109,7 @@ export class VocabSlashCommand implements DiscordTransformedCommand<VocabDto> {
         .reply({ embeds: [embed], ephemeral: true })
         .catch((err) => console.log(err));
     } catch (error) {
-      console.log(error, "hyh");
+      console.log(error, "error");
     }
   }
 }
