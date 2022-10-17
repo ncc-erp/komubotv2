@@ -123,8 +123,6 @@ export class DailyCommand implements CommandLineClass {
   ) {}
 
   async execute(message: Message, args, client: Client) {
-    console.log(this.clientConfigService);
-
     try {
       const authorId = message.author.id;
       const authorUsername = message.author.username;

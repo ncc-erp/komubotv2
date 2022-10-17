@@ -364,7 +364,7 @@ export class BotGateway {
           await interaction
             .reply({ embeds: [EmbedCorrect, btnCorrect] })
             .catch((err) => {
-              this.komubotrestService.sendErrorToMachLeo(
+              this.komubotrestService.sendErrorToDevTest(
                 this.client,
                 userid,
                 err
@@ -383,7 +383,7 @@ export class BotGateway {
           await interaction
             .reply({ embeds: [EmbedInCorrect, btnInCorrect] })
             .catch((err) => {
-              this.komubotrestService.sendErrorToMachLeo(
+              this.komubotrestService.sendErrorToDevTest(
                 this.client,
                 userid,
                 err
