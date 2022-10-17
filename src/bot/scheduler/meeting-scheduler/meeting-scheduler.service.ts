@@ -6,7 +6,7 @@ import { VoiceChannels } from "../../models/voiceChannel.entity";
 import { UtilsService } from "../../utils/utils.service";
 import { CronJob } from "cron";
 import { SchedulerRegistry, CronExpression } from "@nestjs/schedule";
-import { Client } from "discord.js";
+import { ChannelType, Client } from "discord.js";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 
@@ -58,7 +58,7 @@ export class MeetingSchedulerService {
     let guild = client.guilds.fetch(this.configClient.guild_komu_id);
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
-        guild.type === 2 &&
+        guild.type === ChannelType.GuildVoice &&
         guild.parentId === this.configClient.guildvoice_parent_id
     );
     const repeatMeet = await this.meetingRepository

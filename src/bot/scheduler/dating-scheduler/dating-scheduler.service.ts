@@ -4,7 +4,7 @@ import { Not, Repository } from "typeorm";
 import { UtilsService } from "../../utils/utils.service";
 import { CronJob } from "cron";
 import { SchedulerRegistry, CronExpression } from "@nestjs/schedule";
-import { Client } from "discord.js";
+import { ChannelType, Client } from "discord.js";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Dating } from "src/bot/models/dating.entity";
 import { JoinCall } from "src/bot/models/joinCall.entity";
@@ -182,7 +182,7 @@ export class DatingSchedulerService {
       let guild = client.guilds.fetch(this.configClient.guild_komu_id);
       const getAllVoice = client.channels.cache.filter(
         (guild) =>
-          guild.type === 2 &&
+          guild.type === ChannelType.GuildVoice &&
           guild.parentId === this.configClient.guildvoice_parent_id
       );
       const voiceChannel = getAllVoice.map((item) => item.id);
@@ -335,7 +335,7 @@ export class DatingSchedulerService {
       let fetchGuild = client.guilds.fetch(this.configClient.guild_komu_id);
       const getAllVoicePrivate = client.channels.cache.filter(
         (guild) =>
-          guild.type === 2 && guild.parentId === this.configClient.topCategoryId
+          guild.type === ChannelType.GuildVoice && guild.parentId === this.configClient.topCategoryId
       );
       const voiceChannelPrivate = getAllVoicePrivate.map((item) => item.id);
       let roomMapPrivate = [];

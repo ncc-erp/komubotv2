@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
-import { Client } from "discord.js";
+import { ChannelType, Client } from "discord.js";
 import { CronJob } from "cron";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -73,7 +73,7 @@ export class VoiceChannelSchedulerService {
     let guild = client.guilds.fetch(this.configClient.guild_komu_id);
     const getAllVoice = client.channels.cache.filter(
       (guild) =>
-        guild.type === 2 &&
+        guild.type === ChannelType.GuildVoice &&
         guild.parentId === this.configClient.guildvoice_parent_id
     );
     const voiceChannel = getAllVoice.map((item) => item.id);

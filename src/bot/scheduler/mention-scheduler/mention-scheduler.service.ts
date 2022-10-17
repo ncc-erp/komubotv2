@@ -1,7 +1,7 @@
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
-import { Client } from "discord.js";
+import { ChannelType, Client } from "discord.js";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { CronJob } from "cron";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -78,7 +78,7 @@ export class MentionSchedulerService {
       await Promise.all(
         notiUser.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
-          if (mentionChannel.type !== 0) {
+          if (mentionChannel.type !== ChannelType.GuildText) {
             mentionChannel = await client.channels.fetch(
               mentionChannel.parentId
             );
@@ -100,7 +100,7 @@ export class MentionSchedulerService {
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);
-          if (mentionChannel.type !== 0) {
+          if (mentionChannel.type !== ChannelType.GuildText) {
             mentionChannel = await client.channels.fetch(
               mentionChannel.parentId
             );

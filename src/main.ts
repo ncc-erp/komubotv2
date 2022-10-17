@@ -10,12 +10,14 @@ import { SendquizSchedulerService } from "./bot/scheduler/sendquiz-scheduler/sen
 import { UpdateRoleSchedulerService } from "./bot/scheduler/updateRole-scheduler/updateRole-scheduler.service";
 import { VoiceChannelSchedulerService } from "./bot/scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
 import { WfhSchedulerService } from "./bot/scheduler/wfh-scheduler/wfh-scheduler.service";
+import { setupSwagger } from "./setup-swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.listen(3000, () => {
     console.log('App listen on port 3000')
   });
+  setupSwagger(app);
 
   const meetingSchedulerService = app.get(MeetingSchedulerService);
   await meetingSchedulerService.startCronJobs();

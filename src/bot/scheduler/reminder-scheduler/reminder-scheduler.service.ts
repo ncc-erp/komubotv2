@@ -1,7 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { InjectDiscordClient } from "@discord-nestjs/core";
-import { AttachmentBuilder, Client, EmbedBuilder } from "discord.js";
+import {
+  AttachmentBuilder,
+  ChannelType,
+  Client,
+  EmbedBuilder,
+} from "discord.js";
 import { CronJob } from "cron";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Meeting } from "src/bot/models/meeting.entity";
@@ -72,7 +77,7 @@ export class ReminderSchedulerService {
         .send(`${fetchChannel.name}: ${task} - deadline: ${dateTime}`)
         .catch((err) => {});
     } else {
-      if (fetchChannel.type === 11) {
+      if (fetchChannel.type === ChannelType.GuildPublicThread) {
         fetchChannel.members.fetch().then((members) => {
           members.forEach(async (member) => {
             const fetchUser = await client.users.fetch(member.user.id);

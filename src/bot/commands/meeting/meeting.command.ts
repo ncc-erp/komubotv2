@@ -1,4 +1,4 @@
-import { Client, Message, VoiceChannel } from "discord.js";
+import { ChannelType, Client, Message, VoiceChannel } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { MeetingService } from "./meeting.service";
 import { UtilsService } from "src/bot/utils/utils.service";
@@ -119,7 +119,7 @@ export class MeetingCommand implements CommandLineClass {
         if (args[0] === "now") {
           if (
             message.member.voice.channel &&
-            message.member.voice.channel.type === 2
+            message.member.voice.channel.type === ChannelType.GuildVoice
           ) {
             const voiceCheck = message.member.voice.channel;
             return message
@@ -140,7 +140,7 @@ export class MeetingCommand implements CommandLineClass {
             );
             const getAllVoice = client.channels.cache.filter(
               (guild) =>
-                guild.type == 2 &&
+                guild.type == ChannelType.GuildVoice &&
                 (guild as VoiceChannel).parentId ===
                   this.clientConfig.guildvoice_parent_id
             );
