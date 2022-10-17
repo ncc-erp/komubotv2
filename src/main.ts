@@ -13,7 +13,9 @@ import { WfhSchedulerService } from "./bot/scheduler/wfh-scheduler/wfh-scheduler
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.listen(5001);
+  app.listen(3000, () => {
+    console.log('App listen on port 3000')
+  });
 
   const meetingSchedulerService = app.get(MeetingSchedulerService);
   await meetingSchedulerService.startCronJobs();
