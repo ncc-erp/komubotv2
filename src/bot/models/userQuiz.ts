@@ -12,6 +12,9 @@ import { WorkFromHome } from "./wfh.entity";
 @Entity(TABLE.USERQUIZ)
 export class UserQuiz {
   @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: "text", nullable: true })
   quizId: number;
 
   @Column({ type: "text", nullable: true })
