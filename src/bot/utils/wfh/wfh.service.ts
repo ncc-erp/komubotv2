@@ -75,7 +75,6 @@ export class WfhService {
           .where(`"id" = :id`, { id: wfhid })
           .select("*")
           .execute();
-        console.log(wfhdata);
         if (!wfhdata) {
           interaction
             .reply({ content: "No WFH found", ephemeral: true })

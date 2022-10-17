@@ -19,7 +19,7 @@ export class Mentioned {
   @Column({ type: "text", nullable: true })
   mentionUserId: string;
 
-  @Column({ type: "decimal" })
+  @Column({ type: "decimal", nullable: true })
   createdTimestamp: number;
 
   @Column({ nullable: true, default: false })
