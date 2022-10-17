@@ -160,12 +160,11 @@ export class KomubotrestService {
       }
       const sent = await user.send(msg);
 
-      const channelInsert = await this.channelRepository
-        .createQueryBuilder()
-        .where(`"id" = :id`, {
+      const channelInsert = await this.channelRepository.findOne({
+        where: {
           id: this.clientConfig.machleoChannelId,
-        })
-        .execute();
+        },
+      });
 
       console.log("import success", channelInsert);
       console.log("sent : ", sent);
@@ -309,7 +308,11 @@ export class KomubotrestService {
         .setImage("attachment://checkin.jpg")
         .setDescription("Đây có phải là bạn không?");
 
-      //    await user.send({ embeds: [embed], files: [path], components: [row] });
+      await user.send({
+        embeds: [embed],
+        files: [path],
+        components: [row as any],
+      });
       res.status(200).send({ message: "Successfully!" });
     } catch (error) {
       console.log("ERROR: " + error);
