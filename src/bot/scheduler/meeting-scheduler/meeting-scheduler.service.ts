@@ -8,6 +8,7 @@ import { CronJob } from "cron";
 import { SchedulerRegistry, CronExpression } from "@nestjs/schedule";
 import { Client } from "discord.js";
 import { InjectDiscordClient } from "@discord-nestjs/core";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @Injectable()
 export class MeetingSchedulerService {
@@ -18,6 +19,7 @@ export class MeetingSchedulerService {
     @InjectRepository(VoiceChannels)
     private voiceChannelRepository: Repository<VoiceChannels>,
     private schedulerRegistry: SchedulerRegistry,
+    private configClient: ClientConfigService,
     @InjectDiscordClient()
     private client: Client
   ) {}
@@ -53,9 +55,11 @@ export class MeetingSchedulerService {
   }
   async tagMeeting(client: any) {
     if (await this.utilsService.checkHoliday()) return;
-    let guild = client.guilds.fetch("921239248991055882");
+    let guild = client.guilds.fetch(this.configClient.guild_komu_id);
     const getAllVoice = client.channels.cache.filter(
-      (guild) => guild.type === 2 && guild.parentId === "921239248991055884"
+      (guild) =>
+        guild.type === 2 &&
+        guild.parentId === this.configClient.guildvoice_parent_id
     );
     const repeatMeet = await this.meetingRepository
       .createQueryBuilder("meeting")

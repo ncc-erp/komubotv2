@@ -126,7 +126,7 @@ export class ClientConfigService {
 
     this.komubotrestgmail = `${configService.get<string>("KOMUBOTREST_GMAIL")}`;
 
-    this.linkinvite = `${configService.get<string>("LINK_INVITE")}`;
+    this.linkinvite = `${configService.get<string>("LINKS_INVITE")}`;
 
     this.linkwebsite = `${configService.get<string>("LINKS_WEBSITE")}`;
 
@@ -160,6 +160,10 @@ export class ClientConfigService {
       "KOMUBOTREST_THONGBAO_PM_CHANNEL_ID"
     )}`;
 
+    this.komubotRestThongBaoChannelId = `${configService.get<string>(
+      "KOMUBOTREST_THONGBAO_CHANNEL_ID"
+    )}`;
+
     this.komubotRestFinanceChannelId = `${configService.get<string>(
       "KOMUBOTREST_FINANCE_CHANNEL_ID"
     )}`;
@@ -171,8 +175,34 @@ export class ClientConfigService {
     this.komubotRestDevtestChannelId = `${configService.get<string>(
       "KOMUBOTREST_DEVTEST_CHANNEL_ID"
     )}`;
-    this.topCategoryId = `${configService.get<string>(
-      "TOP_CATEGORY_ID"
+    this.topCategoryId = `${configService.get<string>("TOP_CATEGORY_ID")}`;
+    this.itAdminChannelId = `${configService.get<string>(
+      "KOMUBOTREST_ITADMIN_CHANNEL_ID"
+    )}`;
+    this.hanoi3corner = `${configService.get<string>(
+      "HANOI3CORNER_CHANNEL_ID"
+    )}`;
+    this.quynhoncorner = `${configService.get<string>(
+      "QUYNHONCORNER_CHANNEL_ID"
+    )}`;
+    this.saigon2corner = `${configService.get<string>(
+      "SAIGON2CORNER_CHANNEL_ID"
+    )}`;
+    this.saigoncorner = `${configService.get<string>(
+      "SAIGONCORNER_CHANNEL_ID"
+    )}`;
+    this.danangcorner = `${configService.get<string>(
+      "DANANGCORNER_CHANNEL_ID"
+    )}`;
+    this.vinhcorner = `${configService.get<string>("VINHCORNER_CHANNEL_ID")}`;
+    this.hanoi2corner = `${configService.get<string>(
+      "HANOI2CORNER_CHANNEL_ID"
+    )}`;
+    this.hanoicorner = `${configService.get<string>("HANOICORNER_CHANNEL_ID")}`;
+    this.chuyenphiem_id = `${configService.get<string>("CHUYENPHIEM_CHANNEL_ID")}`;
+    this.guild_komu_id = `${configService.get<string>("GUILD_KOMU_ID")}`;
+    this.guildvoice_parent_id = `${configService.get<string>(
+      "GUILDVOICE_PARENT_ID"
     )}`;
 
     this.owners = ["KOMU#0139"];
@@ -201,8 +231,41 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
   }
-  
-  topCategoryId:string;
+
+  topCategoryId: string;
+
+  //hanoi3
+  hanoi3corner: string;
+
+  //quynhoncorner
+  quynhoncorner: string;
+
+  //saigon2corner
+  saigon2corner: string;
+
+  //saigoncorner
+  saigoncorner: string;
+
+  //danangcorner
+  danangcorner: string;
+
+  //vinhcorner
+  vinhcorner: string;
+
+  //hanoi2corner
+  hanoi2corner: string;
+
+  //hanoicorner
+  hanoicorner: string;
+
+  //guild_komu_id
+  guild_komu_id: string;
+
+  //chuyenphiem_id
+  chuyenphiem_id: string;
+
+  //guildvoice_parent_id
+  guildvoice_parent_id: string;
 
   //KOMUBOTREST_DEVTEST_CHANNEL_ID
 
@@ -220,6 +283,10 @@ export class ClientConfigService {
 
   komubotRestThongBaoPmChannelId: string;
 
+  // KOMUBOTREST_THONGBAO_CHANNEL_ID
+
+  komubotRestThongBaoChannelId: string;
+
   // KOMUBOTREST_ADMIN_USER_ID
 
   komubotrestAdminId: string;
@@ -227,6 +294,8 @@ export class ClientConfigService {
   komubotRestSecretKey: string;
 
   machleoChannelId: string;
+
+  itAdminChannelId: string;
 
   workoutChannelId: string;
 

@@ -179,9 +179,11 @@ export class DatingSchedulerService {
 
       if (!checkUserMan || !checkUserWoman) return;
 
-      let guild = client.guilds.fetch("921239248991055882");
+      let guild = client.guilds.fetch(this.configClient.guild_komu_id);
       const getAllVoice = client.channels.cache.filter(
-        (guild) => guild.type === 2 && guild.parentId === "921239248991055884"
+        (guild) =>
+          guild.type === 2 &&
+          guild.parentId === this.configClient.guildvoice_parent_id
       );
       const voiceChannel = getAllVoice.map((item) => item.id);
       let roomMap = [];
@@ -260,13 +262,13 @@ export class DatingSchedulerService {
           if (countVoice === voiceChannel.length) {
             {
               const fetchChannelFull = await client.channels.fetch(
-                "956782882226073610"
+                this.configClient.chuyenphiem_id
               );
               fetchChannelFull.send(`Voice channel full`);
             }
           } else {
             const nowFetchChannel = await client.channels.fetch(
-              "956782882226073610"
+              this.configClient.chuyenphiem_id
             );
             for (let i = 0; i < datingIdWoman.length; i++) {
               if (roomMap.length !== 0) {
@@ -330,7 +332,7 @@ export class DatingSchedulerService {
         } else idWomanPrivate.push(item.userId);
       });
 
-      let fetchGuild = client.guilds.fetch("921239248991055882");
+      let fetchGuild = client.guilds.fetch(this.configClient.guild_komu_id);
       const getAllVoicePrivate = client.channels.cache.filter(
         (guild) =>
           guild.type === 2 && guild.parentId === this.configClient.topCategoryId

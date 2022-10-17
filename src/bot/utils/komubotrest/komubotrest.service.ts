@@ -216,7 +216,7 @@ export class KomubotrestService {
         .catch(console.error);
       const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb.userId}(${userDb.email})>. <@${this.clientConfig.komubotrestAdminId}> hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
-        .get(this.clientConfig.machleoChannelId)
+        .get(this.clientConfig.itAdminChannelId)
         .send(messageItAdmin)
         .catch(console.error);
       return null;
@@ -484,7 +484,7 @@ export class KomubotrestService {
     await this.sendMessageToChannel(client, req, res);
   };
   sendMessageToThongBao = async (client, req, res) => {
-    req.body.channelid = this.clientConfig.komubotRestThongBaoPmChannelId;
+    req.body.channelid = this.clientConfig.komubotRestThongBaoChannelId;
     await this.sendMessageToChannel(client, req, res);
   };
   sendMessageToFinance = async (client, req, res) => {
