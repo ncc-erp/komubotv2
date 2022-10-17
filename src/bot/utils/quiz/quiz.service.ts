@@ -142,17 +142,15 @@ export class QuizService {
 
   async saveQuestionCorrect(userId, questionid, answerkey) {
     try {
-      await this.userQuizRepository.update(
-        {
-          userId,
+      await this.userQuizRepository
+        .createQueryBuilder()
+        .update(UserQuiz)
+        .set({ correct: true, answer: answerkey, updateAt: Date.now() })
+        .where(`"userId" = :userId`, { userId: userId })
+        .andWhere(`"quizId" = :quizId`, {
           quizId: questionid,
-        },
-        {
-          correct: true,
-          answer: answerkey,
-          updateAt: Date.now(),
-        }
-      );
+        })
+        .execute();
     } catch (error) {
       console.log(error);
     }
@@ -160,17 +158,15 @@ export class QuizService {
 
   async saveQuestionInCorrect(userId, questionid, answerkey) {
     try {
-      await this.userQuizRepository.update(
-        {
-          userId,
+      await this.userQuizRepository
+        .createQueryBuilder()
+        .update(UserQuiz)
+        .set({ correct: false, answer: answerkey, updateAt: Date.now() })
+        .where(`"userId" = :userId`, { userId: userId })
+        .andWhere(`"quizId" = :quizId`, {
           quizId: questionid,
-        },
-        {
-          correct: false,
-          answer: answerkey,
-          updateAt: Date.now(),
-        }
-      );
+        })
+        .execute();
     } catch (error) {
       console.log(error);
     }

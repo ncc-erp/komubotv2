@@ -329,8 +329,10 @@ export class BotGateway {
           .catch(console.error);
         return;
       }
-      if (interaction.customId.startsWith('workout_')) {
-        await this.workoutService.workout(interaction, this.client).catch(console.error);
+      if (interaction.customId.startsWith("workout_")) {
+        await this.workoutService
+          .workout(interaction, this.client)
+          .catch(console.error);
         return;
       }
       if (interaction.customId.startsWith("question_")) {
