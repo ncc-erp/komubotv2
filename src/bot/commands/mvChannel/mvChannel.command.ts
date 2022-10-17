@@ -35,7 +35,6 @@ export class MvChannelCommand implements CommandLineClass {
         .select("*")
         .execute();
 
-      console.log(checkRole);
       if (checkRole.length === 0) {
         return message
           .reply({

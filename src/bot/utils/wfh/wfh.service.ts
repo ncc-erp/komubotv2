@@ -284,13 +284,11 @@ export class WfhService {
       return;
     }
     if (customId == "komu_checkin_yes" || customId == "komu_checkin_no") {
-      console.log(interaction.user.username + " check in! " + customId);
       msg = "👍 Have a good day!!!";
       if (customId == "komu_checkin_no") {
         msg = "👎 Let me check!";
       }
     } else if (customId == "komu_wfh_lbl1" || customId == "komu_wfh_lbl2") {
-      console.log(interaction.user.username + " wfh in! " + customId);
       msg = "👍 Let's rock!!!";
       if (customId == "komu_wfh_lbl2") {
         msg = "`👎 Thanks!`";

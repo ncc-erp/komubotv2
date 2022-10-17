@@ -102,13 +102,11 @@ function sendCMDToPfsense(branch, identity, ipAddress) {
       },
       () => {
         // 'connect' listener
-        console.log("connected to server!", ipAddress, identity);
         client.write(`${ipAddress} ${identity}`);
       }
     );
 
     client.on("data", (data) => {
-      console.log(data.toString());
       client.end();
     });
   } catch (err) {

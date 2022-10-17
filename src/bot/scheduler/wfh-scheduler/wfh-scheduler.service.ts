@@ -69,7 +69,6 @@ export class WfhSchedulerService {
   async pingWfh(client) {
     try {
       if (await this.utilsService.checkHoliday()) return;
-      console.log("[Scheduler run]");
       if (this.utilsService.checkTime(new Date())) return;
       let userOff = [];
       try {
@@ -223,7 +222,6 @@ export class WfhSchedulerService {
       .select("*")
       .execute();
 
-    console.log("sendmachleo", users);
     users.map(async (user) => {
       if (
         Date.now() - user.createdTimestamp >= 1800000 &&
@@ -270,7 +268,6 @@ export class WfhSchedulerService {
           .where(`"userId" = :userId`, { userId: user.userId })
           .andWhere(`"deactive" IS NOT TRUE`)
           .execute();
-        console.log("update botping punish", user.userId);
         await channel.send(message).catch(console.error);
       }
     });

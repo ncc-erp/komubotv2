@@ -48,7 +48,6 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
       supportTypes = supportTypes.concat(this.clientConfigService.wiki.options);
       supportTypes = [...new Set(supportTypes)];
       topic = topic.replace(/!/g, "");
-      console.log("wiki", topic);
       if (
         topic == "help" ||
         (topic.substring(0, 2) != "<@" &&
@@ -102,7 +101,6 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           .andWhere("email IS NOT NULL")
           .andWhere("deactive IS NOT TRUE")
           .getOne();
-        console.log("userdb", userdb);
 
         if (userdb == null) {
           interaction

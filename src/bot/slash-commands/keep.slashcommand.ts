@@ -41,7 +41,7 @@ export class KeepSlashCommand implements DiscordTransformedCommand<KeepDto> {
         ephemeral: true,
       });
     } catch (error) {
-      console.log(error, "hyh");
+      console.log(error);
     }
   }
 }

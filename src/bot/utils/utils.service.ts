@@ -382,7 +382,6 @@ export class UtilsService {
         new Date(firstweek).setDate(firstweek.getDate() + rank - 2)
       );
     }
-    console.log("lengthArray day : ", arrayDay);
     return arrayDay.map((item) => getDayofWeek(item));
   }
 }

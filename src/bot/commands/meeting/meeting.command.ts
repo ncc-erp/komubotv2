@@ -119,7 +119,7 @@ export class MeetingCommand implements CommandLineClass {
         if (args[0] === "now") {
           if (
             message.member.voice.channel &&
-            message.member.voice.channel.type === ("GUILD_VOICE" as any)
+            message.member.voice.channel.type === 2
           ) {
             const voiceCheck = message.member.voice.channel;
             return message
