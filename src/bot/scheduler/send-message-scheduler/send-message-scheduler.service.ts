@@ -14,7 +14,6 @@ import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { config } from "src/bot/constants/config";
 import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 import { BirthdayService } from "src/bot/utils/birthday/birthdayservice";
 import { OdinReportService } from "src/bot/utils/odinReport/odinReport.service";
@@ -128,7 +127,10 @@ export class SendMessageSchedulerService {
     try {
       getListUserLogTimesheet = await firstValueFrom(
         this.http
-          .get(config.submitTimesheet.api_url_getListUserLogTimesheet)
+          .get(
+            this.clientConfigService.submitTimesheet
+              .api_url_getListUserLogTimesheet
+          )
           .pipe((res) => res)
       );
     } catch (error) {

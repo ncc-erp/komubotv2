@@ -84,7 +84,8 @@ export class SendquizSchedulerService {
 
       let arrayUser = userSendQuiz.filter(
         (user) =>
-          !user.last_message_time || Date.now() - user.last_message_time >= 1
+          !user.last_message_time ||
+          Date.now() - user.last_message_time >= 1000 * 60 * 60 * 2
       );
       await Promise.all(
         arrayUser.map((user) =>

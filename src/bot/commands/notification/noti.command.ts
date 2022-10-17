@@ -54,15 +54,15 @@ export default class NotificationCommand implements CommandLineClass {
           this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
         const fetchChannel = [
-          "922135616962068520",
-          "922402247260909569",
-          "935151571581423626",
-          "921686261943635988",
-          "921652536933499002",
-          "969511102885019688",
-          "921239541388554240",
-          "990141662665777172",
-          "1022323179563270244",
+          this.clientConfigService.hanoicorner,
+          this.clientConfigService.hanoi2corner,
+          this.clientConfigService.vinhcorner,
+          this.clientConfigService.danangcorner,
+          this.clientConfigService.saigoncorner,
+          this.clientConfigService.saigon2corner,
+          this.clientConfigService.komubotRestNhacuachungChannelId,
+          this.clientConfigService.quynhoncorner,
+          this.clientConfigService.hanoi3corner,
         ];
 
         fetchChannel.map(async (channel) => {

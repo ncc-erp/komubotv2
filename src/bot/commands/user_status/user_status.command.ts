@@ -45,7 +45,7 @@ export class UserStatusCommand implements CommandLineClass {
       const getUserStatus = await firstValueFrom(
         this.http
           .get(
-            `${this.clientConfig.user_status}?emailAddress=${email}@ncc.asia`
+            `${this.clientConfig.user_status.api_url_userstatus}?emailAddress=${email}@ncc.asia`
           )
           .pipe((res) => res)
       );

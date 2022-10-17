@@ -80,7 +80,9 @@ export class UpdateRole {
       .execute();
     const userids = user.map((item) => item.userId);
 
-    let guild = await client.guilds.fetch("921239248991055882");
+    let guild = await client.guilds.fetch(
+      this.clientConfigService.guild_komu_id
+    );
 
     for (let userid of userids) {
       let member;

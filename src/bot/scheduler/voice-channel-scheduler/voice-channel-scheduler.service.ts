@@ -10,6 +10,7 @@ import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { JoinCall } from "src/bot/models/joinCall.entity";
 import { AudioPlayer } from "src/bot/utils/audioPlayer.utils";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @Injectable()
 export class VoiceChannelSchedulerService {
@@ -24,6 +25,7 @@ export class VoiceChannelSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     @InjectDiscordClient()
     private client: Client,
+    private configClient: ClientConfigService,
     private audioPlayerService: AudioPlayer
   ) {}
 
@@ -68,9 +70,11 @@ export class VoiceChannelSchedulerService {
 
   async kickMemberVoiceChannel(client) {
     if (await this.utilsService.checkHoliday()) return;
-    let guild = client.guilds.fetch("921239248991055882");
+    let guild = client.guilds.fetch(this.configClient.guild_komu_id);
     const getAllVoice = client.channels.cache.filter(
-      (guild) => guild.type === 2 && guild.parentId === "921239248991055884"
+      (guild) =>
+        guild.type === 2 &&
+        guild.parentId === this.configClient.guildvoice_parent_id
     );
     const voiceChannel = getAllVoice.map((item) => item.id);
 
@@ -158,7 +162,9 @@ export class VoiceChannelSchedulerService {
   }
 
   async turnOffBot(client) {
-    const fetchVoiceNcc8 = await client.channels.fetch("921239248991055882");
+    const fetchVoiceNcc8 = await client.channels.fetch(
+      this.configClient.guild_komu_id
+    );
     const target = await fetchVoiceNcc8.guild.members.fetch(
       "922003239887581205"
     );
