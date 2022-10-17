@@ -139,14 +139,12 @@ export class KomubotrestService {
           username: username,
         })
         .select("users.*")
-        .execute()
+        .getRawOne()
         .catch(console.error);
       if (!userdb) {
         return null;
       }
-      let user = await client.users
-        .fetch(userdb[0].userId)
-        .catch(console.error);
+      let user = await client.users.fetch(userdb.userId).catch(console.error);
       if (msg == null) {
         return user;
       }
@@ -163,8 +161,8 @@ export class KomubotrestService {
       const sent = await user.send(msg);
 
       const channelInsert = await this.channelRepository
-        .createQueryBuilder(TABLE.CHANNEL)
-        .where(`${TABLE.CHANNEL}.id = :id`, {
+        .createQueryBuilder()
+        .where(`"id" = :id`, {
           id: this.clientConfig.machleoChannelId,
         })
         .execute();
@@ -211,16 +209,16 @@ export class KomubotrestService {
           username: username,
         })
         .select("users.*")
-        .execute()
+        .getRawOne()
         .catch(console.error);
       userDb.forEach((item) => {});
 
-      const message = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}>(${userDb[0].email}). Hãy ping <@${this.clientConfig.komubotrestAdminId}> để được hỗ trợ nhé!!!`;
+      const message = `KOMU không gửi được tin nhắn cho <@${userDb.userId}>(${userDb.email}). Hãy ping <@${this.clientConfig.komubotrestAdminId}> để được hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
         .get(this.clientConfig.machleoChannelId)
         .send(message)
         .catch(console.error);
-      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb[0].userId}(${userDb[0].email})>. <@${this.clientConfig.komubotrestAdminId}> hỗ trợ nhé!!!`;
+      const messageItAdmin = `KOMU không gửi được tin nhắn cho <@${userDb.userId}(${userDb.email})>. <@${this.clientConfig.komubotrestAdminId}> hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
         .get(this.clientConfig.machleoChannelId)
         .send(messageItAdmin)
