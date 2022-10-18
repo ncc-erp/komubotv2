@@ -15,7 +15,6 @@ export class SendQuizToSingleUserService {
     botPing = false,
     roleSelect = null
   ) {
-
     try {
       // random userid
       if (!userInput) return;

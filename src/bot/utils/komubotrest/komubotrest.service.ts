@@ -57,18 +57,21 @@ export class KomubotrestService {
       .into(TABLE.MSG)
       .values([
         {
-          //? unknown props of sent
           sent,
         },
       ])
       .returning("*");
   }
-  async replaceDataUser() {
-    return await this.messageRepository
+  async replaceDataUser(userdb) {
+    console.log(userdb);
+    return await this.userRepository
       .createQueryBuilder()
-      .insert()
-      .into(TABLE.USER)
-      .values([])
+      .update(User)
+      .set({
+        last_bot_message_id: userdb.last_bot_message_id,
+        botPing: true,
+      })
+      .where(`"userId" = :userId`, { userId: userdb.userId })
       .execute();
   }
   async insertDataToWFH(_userid, _wfhMsg, _complain, _pmconfirm, _status) {
@@ -131,14 +134,14 @@ export class KomubotrestService {
   ) => {
     try {
       const userdb = await this.userRepository
-        .createQueryBuilder("users")
+        .createQueryBuilder()
         .where('"email" = :username and deactive IS NOT True ', {
           username: username,
         })
-        .where('"username" = :username and deactive IS NOT True ', {
+        .orWhere('"username" = :username and deactive IS NOT True ', {
           username: username,
         })
-        .select("users.*")
+        .select("*")
         .getRawOne()
         .catch(console.error);
       if (!userdb) {
@@ -192,22 +195,21 @@ export class KomubotrestService {
         userdb.last_bot_message_id = sent.id;
       }
 
-      await this.replaceDataUser();
+      await this.replaceDataUser(userdb);
       return user;
     } catch (error) {
       console.log("error", error);
       const userDb = await this.userRepository
-        .createQueryBuilder("users")
+        .createQueryBuilder()
         .where('"email" = :username and deactive IS NOT True ', {
           username: username,
         })
-        .where('"username" = :username and deactive IS NOT True ', {
+        .orWhere('"username" = :username and deactive IS NOT True ', {
           username: username,
         })
-        .select("users.*")
+        .select("*")
         .getRawOne()
         .catch(console.error);
-      userDb.forEach((item) => {});
 
       const message = `KOMU không gửi được tin nhắn cho <@${userDb.userId}>(${userDb.email}). Hãy ping <@${this.clientConfig.komubotrestAdminId}> để được hỗ trợ nhé!!!`;
       await (client.channels.cache as any)
