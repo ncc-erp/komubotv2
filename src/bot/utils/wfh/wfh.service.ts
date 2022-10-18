@@ -59,7 +59,7 @@ export class WfhService {
           .execute();
 
         interaction
-          .reply({ content: "Thanks!!!", ephemeral: true })
+          .reply({ content: "Thanks!!!", ephemeral: true, fetchReply: true })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(
               client,
@@ -77,7 +77,11 @@ export class WfhService {
           .execute();
         if (!wfhdata) {
           interaction
-            .reply({ content: "No WFH found", ephemeral: true })
+            .reply({
+              content: "No WFH found",
+              ephemeral: true,
+              fetchReply: true,
+            })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(
                 client,
@@ -93,6 +97,7 @@ export class WfhService {
             .reply({
               content: "WFH complain is expired. You have an hour to request.",
               ephemeral: true,
+              fetchReply: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(
@@ -109,6 +114,7 @@ export class WfhService {
             .reply({
               content: "You have already complained.",
               ephemeral: true,
+              fetchReply: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(
@@ -126,64 +132,71 @@ export class WfhService {
           .where(`"userId" = :userId`, { userId: labelImageId })
           .andWhere('"deactive" IS NOT True')
           .select("*")
-          .getOne();
+          .getRawOne();
         if (!userdb) {
           return interaction
-            .reply({ content: "`User is not valid`", ephemeral: true })
+            .reply({
+              content: "`User is not valid`",
+              ephemeral: true,
+              fetchReply: true,
+            })
             .catch(console.error);
         }
-        const { data } = await firstValueFrom(
+        const url = encodeURI(
+          `${this.clientConfigService.wiki.api_url}${userdb.username}@ncc.asia`
+        );
+        const response = await firstValueFrom(
           this.http
-            .get(
-              `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`,
-              {
-                headers: { "X-Secret-Key": this.clientConfigService.wfhApiKey },
-              }
-            )
+            .get(url, {
+              headers: {
+                "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
+              },
+            })
             .pipe((res) => res)
         ).catch(() => {
           interaction
             .reply({
               content: `Error while looking up for **${userdb.email}**.`,
               ephemeral: true,
+              fetchReply: true,
             })
             .catch(console.error);
           return { data: "There was an error!" };
         });
         if (
-          data == null ||
-          data == undefined ||
-          data.length == 0 ||
-          data.result == null ||
-          data.result == undefined ||
-          data.result.length == 0 ||
-          data.result.projectDtos == undefined ||
-          data.result.projectDtos.length == 0
+          response.data == null ||
+          response.data == undefined ||
+          response.data.length == 0 ||
+          response.data.result == null ||
+          response.data.result == undefined ||
+          response.data.result.length == 0 ||
+          response.data.result.projectDtos == undefined ||
+          response.data.result.projectDtos.length == 0
         ) {
           msg = `There is no PM to confirm for **${userdb.email}**. Please contact to your PM`;
-          console.log(msg);
-          interaction
-            .reply({ content: msg, ephemeral: true })
+          return interaction
+            .reply({ content: msg, ephemeral: true, fetchReply: true })
             .catch(console.error);
-          return;
         }
 
         const pmdb = await this.userRepository
           .createQueryBuilder()
           .where(`"username" = :username`, {
-            username: data.result.projectDtos[0].pmUsername,
+            username: response.data.result.projectDtos[0].pmUsername,
           })
           .orWhere(`"email" = :email`, {
-            email: data.result.projectDtos[0].pmUsername,
+            email: response.data.result.projectDtos[0].pmUsername,
           })
           .andWhere(`"deactive" IS NOT true`)
-          .getOne();
+          .select("*")
+          .getRawOne();
 
         if (!pmdb) {
           interaction
             .reply({
-              content: `Cannot fetch data for PM ${data.result.projectDtos[0].pmUsername}`,
+              content: `Cannot fetch data for PM ${response.data.result.projectDtos[0].pmUsername}`,
               ephemeral: true,
+              fetchReply: true,
             })
             .catch(console.error);
           return;
@@ -224,6 +237,7 @@ export class WfhService {
             .reply({
               content: `Cannot fetch username: ${pmdb.username}, with id: ${pmdb.userId}`,
               ephemeral: true,
+              fetchReply: true,
             })
             .catch(console.error);
           return;
@@ -245,6 +259,7 @@ export class WfhService {
           .reply({
             content: `<@${labelImageId}> your WFH complain is sent to <@${pmdb.userId}>.`,
             ephemeral: true,
+            fetchReply: true,
           })
           .catch(console.error);
       } else if (arrIds.length >= 3) {
@@ -275,6 +290,7 @@ export class WfhService {
               .reply({
                 content: `You just ${arrIds[3]}ed WFH complain for <@${labelImageId}>`,
                 ephemeral: true,
+                fetchReply: true,
               })
               .catch(console.error);
           }
@@ -298,6 +314,7 @@ export class WfhService {
         .reply({
           content: "You are not the right people to complain:)",
           ephemeral: true,
+          fetchReply: true,
         })
         .catch(console.error);
       return;
@@ -332,7 +349,7 @@ export class WfhService {
       console.log("Update update message WFH successfully!");
       // end process wfh command
       interaction
-        .reply({ content: msg, ephemeral: false })
+        .reply({ content: msg, ephemeral: false, fetchReply: true })
         .catch(console.error);
     } catch (error) {
       console.log("Update update message WFH! - ERROR: " + error);

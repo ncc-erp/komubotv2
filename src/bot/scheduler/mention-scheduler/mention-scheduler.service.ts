@@ -96,7 +96,6 @@ export class MentionSchedulerService {
         })
       );
 
-      console.log(mentionedUsers);
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let mentionChannel = await client.channels.fetch(user.channelId);

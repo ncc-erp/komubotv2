@@ -31,12 +31,12 @@ async function bootstrap() {
   await updateRoleSchedulerService.startCronJobs();
   const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
   await voiceChannelSchedulerService.startCronJobs();
-  // const sendquizSchedulerService = app.get(SendquizSchedulerService);
-  // await sendquizSchedulerService.startCronJobs();
+  const sendquizSchedulerService = app.get(SendquizSchedulerService);
+  await sendquizSchedulerService.startCronJobs();
   const mentionSchedulerService = app.get(MentionSchedulerService);
   await mentionSchedulerService.startCronJobs();
-  // const wfhSchedulerService = app.get(WfhSchedulerService);
-  // await wfhSchedulerService.startCronJobs();
+  const wfhSchedulerService = app.get(WfhSchedulerService);
+  await wfhSchedulerService.startCronJobs();
 }
 
 bootstrap();
