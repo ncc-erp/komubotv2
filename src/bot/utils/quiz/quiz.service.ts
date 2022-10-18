@@ -46,7 +46,7 @@ export class QuizService {
         },
       });
 
-      let questionAnsweredId = questionAnswered.map((item) => item.quizId);
+      let questionAnsweredId = questionAnswered.map((item) => item.id);
 
       const questions = await this.quizRepository
         .createQueryBuilder("questions")

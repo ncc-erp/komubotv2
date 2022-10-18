@@ -118,7 +118,9 @@ export class WfhSchedulerService {
         .createQueryBuilder("user")
         .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
         .where(
-          userOff && userOff.length > 0 ? '"email" NOT IN (:...userOff)' : "true",
+          userOff && userOff.length > 0
+            ? '"email" NOT IN (:...userOff)'
+            : "true",
           {
             userOff: userOff,
           }
