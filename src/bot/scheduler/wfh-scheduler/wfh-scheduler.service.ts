@@ -58,11 +58,14 @@ export class WfhSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("pingWfh", "*/5 9-11,13-17 * * 1-5", () =>
+    // this.addCronJob("pingWfh", "*/5 9-11,13-17 * * 1-5", () =>
+    //   this.pingWfh(this.client)
+    // );
+    // this.addCronJob("punish", "*/1 9-11,13-17 * * 1-5", () =>
+    //   this.punish(this.client)
+    // );
+    this.addCronJob("pingWfh", CronExpression.EVERY_30_SECONDS, () =>
       this.pingWfh(this.client)
-    );
-    this.addCronJob("punish", "*/1 9-11,13-17 * * 1-5", () =>
-      this.punish(this.client)
     );
   }
 
@@ -116,10 +119,10 @@ export class WfhSchedulerService {
 
       const userWfhWithSomeCodition = await this.userRepository
         .createQueryBuilder("user")
-        .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
+        .innerJoin("komu_msg", "m_bot", "user.last_bot_message_id = m_bot.id")
         .where(
           userOff && userOff.length > 0
-            ? '"email" NOT IN (:...userOff)'
+            ? '"username" NOT IN (:...userOff)'
             : "true",
           {
             userOff: userOff,
@@ -127,7 +130,7 @@ export class WfhSchedulerService {
         )
         .andWhere(
           useridJoining && useridJoining.length > 0
-            ? '"email" NOT IN (:...useridJoining)'
+            ? '"username" NOT IN (:...useridJoining)'
             : "true",
           {
             useridJoining: useridJoining,
@@ -143,22 +146,48 @@ export class WfhSchedulerService {
         .select("*")
         .execute();
 
-      const coditionGetTimeStamp = (user) => {
+      const coditionGetMessageBotTimeStamp = (user) => {
         let result = false;
-        if (!user.message_bot_timestamp || !user.message_timestamp) {
+        if (!user.createdTimestamp) {
           result = true;
         } else {
-          if (
-            Date.now() - user.message_bot_timestamp >= 1800000 &&
-            Date.now() - user.message_timestamp >= 1800000
-          ) {
+          if (Date.now() - user.createdTimestamp >= 1800000) {
             result = true;
           }
         }
         return result;
       };
-      const arrayUser = userWfhWithSomeCodition.filter((user) =>
-        coditionGetTimeStamp(user)
+      const arrayMessageBotUser = userWfhWithSomeCodition.filter((user) =>
+        coditionGetMessageBotTimeStamp(user)
+      );
+
+      const messageBotUserEmail = arrayMessageBotUser.map(
+        (item) => item.username
+      );
+
+      if (messageBotUserEmail.length === 0) return;
+      const message_timestampUser = await this.userRepository
+        .createQueryBuilder("user")
+        .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
+        .where('"username" IN (:...messageBotUserEmail)', {
+          messageBotUserEmail: messageBotUserEmail,
+        })
+        .select("*")
+        .execute();
+
+      const coditionGetMessageTimeStamp = (user) => {
+        let result = false;
+        if (!user.createdTimestamp) {
+          result = true;
+        } else {
+          if (Date.now() - user.createdTimestamp >= 1800000) {
+            result = true;
+          }
+        }
+        return result;
+      };
+      const arrayUser = message_timestampUser.filter((user) =>
+        coditionGetMessageTimeStamp(user)
       );
       try {
         await Promise.all(

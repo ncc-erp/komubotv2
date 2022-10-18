@@ -100,7 +100,7 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           .where("id = :id", { id: topic })
           .andWhere("email IS NOT NULL")
           .andWhere("deactive IS NOT TRUE")
-          .getOne();
+          .getRawOne();
 
         if (userdb == null) {
           interaction

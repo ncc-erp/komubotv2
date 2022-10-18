@@ -94,7 +94,7 @@ export class KomubotrestService {
       .where(`"userId" = :userId`, {
         userId: userId,
       })
-      .getOne();
+      .getRawOne();
   }
   async findAllUser() {
     return await this.userRepository.createQueryBuilder(TABLE.USER).getMany();
@@ -175,12 +175,18 @@ export class KomubotrestService {
           author: userdb,
           guildId: sent.guildId,
           type: sent.type.toString(),
+          createdTimestamp: sent.createdTimestamp,
           system: sent.system,
           content: sent.content,
           pinned: sent.pinned,
           tts: sent.tts,
           channel: channelInsert,
+          nonce: sent.nonce as any,
+          editedTimestamp: sent.editedTimestamp,
           deleted: false,
+          webhookId: sent.webhookId,
+          applicationId: sent.applicationId,
+          flags: sent.flags as any,
         });
       } catch (error) {
         console.log("Error : ", error);

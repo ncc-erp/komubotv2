@@ -65,9 +65,10 @@ export class SendquizSchedulerService {
 
       const userSendQuiz = await this.userRepository
         .createQueryBuilder("user")
+        .innerJoin("komu_msg", "m", "user.last_bot_message_id = m.id")
         .where(
           userOff && userOff.length > 0
-            ? '"email" NOT IN (:...userOff)'
+            ? '"username" NOT IN (:...userOff)'
             : "true",
           {
             userOff: userOff,
@@ -84,8 +85,8 @@ export class SendquizSchedulerService {
 
       let arrayUser = userSendQuiz.filter(
         (user) =>
-          !user.last_message_time ||
-          Date.now() - user.last_message_time >= 1000 * 60 * 60 * 2
+          !user.createdTimestamp ||
+          Date.now() - user.createdTimestamp >= 1000 * 60 * 60 * 2
       );
       await Promise.all(
         arrayUser.map((user) =>
@@ -116,7 +117,7 @@ export class SendquizSchedulerService {
       const userSendQuiz = await this.userRepository
         .createQueryBuilder("users")
         .where(
-          userOff && userOff.length ? '"email" NOT IN (:...userOff)' : "true",
+          userOff && userOff.length ? '"username" NOT IN (:...userOff)' : "true",
           {
             userOff: userOff,
           }
