@@ -27,36 +27,79 @@ export class ToggleActiveCommand implements CommandLineClass {
 
   async execute(message: Message, args, client: Client) {
     try {
-      let authorId = args[0];
-      const findUserId = await this.toggleActiveService.findAcc(authorId);
-
-      if (findUserId === null)
-        return message
-          .reply({
-            content: `${this.messHelp}`,
-          })
-          .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
-          });
-      if (!findUserId.deactive) {
-        message
-          .reply({
-            content: "Disable account successfully",
-          })
-          .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
-          });
-
-        await this.toggleActiveService.deactiveAcc(findUserId.userId);
+      if (args[0] === "check") {
+        const findUser = await this.userData.find({
+          where: [{ userId: args[1] }, { username: args[1] }],
+        });
+        if (findUser.length === 0) {
+          return message
+            .reply({
+              content: `${this.messHelp}`,
+            })
+            .catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(
+                client,
+                message.author.id,
+                err
+              );
+            });
+        }
+        let i = 0;
+        let mess = findUser
+          .slice(i * 50, (i + 1) * 50)
+          .map(
+            (user) => `${user.email}(${user.userId}) toggle: ${user.deactive}`
+          )
+          .join("\n");
+        const Embed = new EmbedBuilder()
+          .setTitle(`User`)
+          .setColor("Red")
+          .setDescription(`${mess}`);
+        await message.reply({ embeds: [Embed] }).catch(console.error);
       } else {
-        await this.toggleActiveService.ActiveAcc(findUserId.userId);
-        message
-          .reply({
-            content: "Enable account successfully",
-          })
-          .catch((err) => {
-            this.komubotrestService.sendErrorToDevTest(client, authorId, err);
-          });
+        let authorId = args[0];
+        const findUserId = await this.toggleActiveService.findAcc(authorId);
+
+        if (findUserId === null)
+          return message
+            .reply({
+              content: `${this.messHelp}`,
+            })
+            .catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(
+                client,
+                message.author.id,
+                err
+              );
+            });
+        if (!findUserId.deactive) {
+          message
+            .reply({
+              content: "Disable account successfully",
+            })
+            .catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(
+                client,
+                message.author.id,
+                err
+              );
+            });
+
+          await this.toggleActiveService.deactiveAcc(findUserId.userId);
+        } else {
+          await this.toggleActiveService.ActiveAcc(findUserId.userId);
+          message
+            .reply({
+              content: "Enable account successfully",
+            })
+            .catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(
+                client,
+                message.author.id,
+                err
+              );
+            });
+        }
       }
     } catch (error) {
       console.log(error);
