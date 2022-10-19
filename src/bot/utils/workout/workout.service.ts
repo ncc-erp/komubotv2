@@ -89,7 +89,7 @@ export class WorkoutService {
           .send(message)
           .catch(console.error);
         await this.workoutRepository
-          .createQueryBuilder("meeting")
+          .createQueryBuilder()
           .update(Workout)
           .set({
             status: "reject",

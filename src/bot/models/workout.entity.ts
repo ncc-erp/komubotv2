@@ -24,4 +24,13 @@ export class Workout {
 
   @Column({ type: "decimal", nullable: true })
   createdTimestamp: number;
+
+  @Column({
+    type: "numeric",
+    precision: 30,
+    scale: 1,
+    nullable: true,
+    default: 0,
+  })
+  point: number;
 }
