@@ -58,14 +58,11 @@ export class WfhSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    // this.addCronJob("pingWfh", "*/5 9-11,13-17 * * 1-5", () =>
-    //   this.pingWfh(this.client)
-    // );
-    // this.addCronJob("punish", "*/1 9-11,13-17 * * 1-5", () =>
-    //   this.punish(this.client)
-    // );
-    this.addCronJob("pingWfh", CronExpression.EVERY_30_SECONDS, () =>
+    this.addCronJob("pingWfh", "*/5 9-11,13-17 * * 1-5", () =>
       this.pingWfh(this.client)
+    );
+    this.addCronJob("punish", "*/1 9-11,13-17 * * 1-5", () =>
+      this.punish(this.client)
     );
   }
 
