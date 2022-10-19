@@ -30,7 +30,6 @@ export class KomubotrestService {
     private wfhRepository: Repository<WorkFromHome>,
     private clientConfig: ClientConfigService
   ) {}
-  private data;
   async findUserData(_pramams) {
     return await this.userRepository
       .createQueryBuilder()
@@ -75,18 +74,13 @@ export class KomubotrestService {
       .execute();
   }
   async insertDataToWFH(_userid, _wfhMsg, _complain, _pmconfirm, _status) {
-    return await this.wfhRepository
-      .createQueryBuilder()
-      .insert()
-      .into(TABLE.WFH)
-      .values({
-        userid: _userid,
-        wfhMsg: _wfhMsg,
-        complain: _complain,
-        pmconfirm: _pmconfirm,
-        status: _status,
-      })
-      .execute();
+    return await this.wfhRepository.save({
+      userid: _userid,
+      wfhMsg: _wfhMsg,
+      complain: _complain,
+      pmconfirm: _pmconfirm,
+      status: _status,
+    });
   }
   async findUserOne(userId) {
     return await this.userRepository
@@ -472,19 +466,14 @@ export class KomubotrestService {
     req.body.machleo = true;
 
     // store to db
-    try {
-      this.data = this.insertDataToWFH(
-        userid,
-        req.body.message,
-        false,
-        false,
-        "ACTIVE"
-      );
-    } catch (err) {
-      console.log("Error: ", err);
-      res.status(400).send({ message: err });
-    }
-    req.body.wfhid = this.data._id.toString();
+    const data = await this.insertDataToWFH(
+      userid,
+      req.body.message,
+      false,
+      false,
+      "ACTIVE"
+    );
+    req.body.wfhid = data.id.toString();
     await this.sendMessageToChannel(client, req, res);
   };
   sendMessageToThongBaoPM = async (client, req, res) => {
