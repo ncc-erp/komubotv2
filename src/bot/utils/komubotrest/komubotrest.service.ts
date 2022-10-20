@@ -11,6 +11,11 @@ import {
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { TABLE } from "src/bot/constants/table";
 import { GetUserIdByUsernameDTO } from "src/bot/dto/getUserIdByUsername";
+import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
+import {
+  SendImageCheckInToUserDTO,
+  SendImageLabelToUserDTO,
+} from "src/bot/dto/sendImageCheckInToUser";
 import { SendMessageToChannelDTO } from "src/bot/dto/sendMessageToChannel";
 import { SendMessageToUserDTO } from "src/bot/dto/sendMessageToUser";
 import { Channel } from "src/bot/models/channel.entity";
@@ -267,25 +272,30 @@ export class KomubotrestService {
       res.status(400).send({ message: error });
     }
   };
-  sendImageCheckInToUser = async (client, req, res) => {
+  sendImageCheckInToUser = async (
+    client,
+    sendImageCheckInToUserDTO: SendImageCheckInToUserDTO,
+    header,
+    res
+  ) => {
     // Validate request
-    if (
-      !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
-    ) {
+    if (!header || header !== this.clientConfig.komubotRestSecretKey) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
     }
-    if (!req.body.username) {
+    if (!sendImageCheckInToUserDTO.username) {
       res.status(400).send({ message: "username can not be empty!" });
       return;
     }
-    if (!req.body.verifiedImageId) {
+    if (!sendImageCheckInToUserDTO.verifiedImageId) {
       res.status(400).send({ message: "VerifiedImageId can not be empty!" });
       return;
     }
-    const verifiedImageId = req.body.verifiedImageId.replace(/ /g, "");
-    const username = req.body.username;
+    const verifiedImageId = sendImageCheckInToUserDTO.verifiedImageId.replace(
+      / /g,
+      ""
+    );
+    const username = sendImageCheckInToUserDTO.username;
     try {
       const user = await this.sendMessageKomuToUser(client, null, username);
       if (!user) {
@@ -293,7 +303,7 @@ export class KomubotrestService {
         return;
       }
 
-      const path = req.body.pathImage.replace(/\\/g, "/");
+      const path = sendImageCheckInToUserDTO.pathImage.replace(/\\/g, "/");
       if (!path) {
         res.status(400).send({ message: "Path can not be empty!" });
         return;
@@ -328,24 +338,26 @@ export class KomubotrestService {
       res.status(400).send({ message: error });
     }
   };
-  sendImageLabelToUser = async (client, req, res) => {
-    if (
-      !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
-    ) {
+  sendImageLabelToUser = async (
+    client,
+    sendImageLabelToUserDTO: SendImageLabelToUserDTO,
+    header,
+    res
+  ) => {
+    if (!header || header !== this.clientConfig.komubotRestSecretKey) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
     }
-    if (!req.body.username) {
+    if (!sendImageLabelToUserDTO.username) {
       res.status(400).send({ message: "Content can not be empty!" });
       return;
     }
-    if (!req.body.imageLabelId) {
+    if (!sendImageLabelToUserDTO.imageLabelId) {
       res.status(400).send({ message: "ImageLabelId can not be empty!" });
       return;
     }
-    const imagelabel = req.body.imageLabelId.replace(/ /g, "");
-    const username = req.body.username;
+    const imagelabel = sendImageLabelToUserDTO.imageLabelId.replace(/ /g, "");
+    const username = sendImageLabelToUserDTO.username;
     try {
       const user = await this.sendMessageKomuToUser(client, null, username);
       if (!user) {
@@ -353,11 +365,11 @@ export class KomubotrestService {
         return;
       }
 
-      const path = req.body.pathImage.replace(/\\/g, "/");
+      const path = sendImageLabelToUserDTO.pathImage.replace(/\\/g, "/");
       let messages = "";
       let label1 = "";
       let label2 = "";
-      if (req.body.questionType == "VERIFY_EMOTION") {
+      if (sendImageLabelToUserDTO.questionType == "VERIFY_EMOTION") {
         messages = "Cảm xúc của người trong ảnh là gì?";
         label1 = "Good";
         label2 = "Bad";
@@ -590,25 +602,30 @@ export class KomubotrestService {
       .catch(console.error);
     return null;
   };
-  sendEmbedMessage = async (client, req, res) => {
+  sendEmbedMessage = async (
+    client,
+    sendEmbedMessageDTO: SendEmbedMessageDTO,
+    header,
+    res
+  ) => {
     try {
       if (
         // KOMUBOTREST_KOMU_BOT_SECRET_KEY
-        !req.get("X-Secret-Key") ||
-        req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
+        !header ||
+        header !== this.clientConfig.komubotRestSecretKey
       ) {
         res.status(403).send({ message: "Missing secret key!" });
         return;
       }
-      if (!req.body.title) {
+      if (!sendEmbedMessageDTO.title) {
         res.status(400).send({ message: "title can not be empty!" });
         return;
       }
-      if (!req.body.description) {
+      if (!sendEmbedMessageDTO.description) {
         res.status(400).send({ message: "decription can not be empty!" });
         return;
       }
-      if (!req.body.image) {
+      if (!sendEmbedMessageDTO.image) {
         res.status(400).send({ message: "image can not be empty!" });
         return;
       }
@@ -619,23 +636,23 @@ export class KomubotrestService {
           .setColor(0xed4245)
           .setImage(image);
 
-      const { title, description, image } = req.body;
+      const { title, description, image } = sendEmbedMessageDTO;
       let isSendChannel = false;
       let isSendAllUser = false;
       let isSendUserAndChannel = false;
       let isSendUser = false;
-      if (!req.body.channelId && !req.body.userId) {
+      if (!sendEmbedMessageDTO.channelId && !sendEmbedMessageDTO.userId) {
         isSendAllUser = true;
-      } else if (req.body.channelId && req.body.userId) {
+      } else if (sendEmbedMessageDTO.channelId && sendEmbedMessageDTO.userId) {
         isSendUserAndChannel = true;
-      } else if (!req.body.channelId) {
+      } else if (!sendEmbedMessageDTO.channelId) {
         isSendUser = true;
-      } else if (!req.body.userId) {
+      } else if (!sendEmbedMessageDTO.userId) {
         isSendChannel = true;
       }
       if (isSendUserAndChannel) {
-        const channelId = req.body.channelId;
-        const userId = req.body.userId;
+        const channelId = sendEmbedMessageDTO.channelId;
+        const userId = sendEmbedMessageDTO.userId;
         await this.sendMessageToChannelById(client, channelId, {
           embeds: [embed(title, description, image)],
         });
@@ -647,7 +664,7 @@ export class KomubotrestService {
         );
         res.send({ message: "Send message to user and channel successfully!" });
       } else if (isSendChannel) {
-        const channelId = req.body.channelId;
+        const channelId = sendEmbedMessageDTO.channelId;
         await this.sendMessageToChannelById(client, channelId, {
           embeds: [embed(title, description, image)],
         });
@@ -666,7 +683,7 @@ export class KomubotrestService {
         );
         res.send({ message: "Send message to all user successfully!" });
       } else if (isSendUser) {
-        const userId = req.body.userId;
+        const userId = sendEmbedMessageDTO.userId;
         const { ...user } = await this.findUserOne(userId);
         // const user = await userData
         //   .findOne({ id: userId })

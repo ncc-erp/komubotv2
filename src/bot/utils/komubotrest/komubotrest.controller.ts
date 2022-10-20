@@ -26,6 +26,11 @@ import { GetUserIdByUsernameDTO } from "src/bot/dto/getUserIdByUsername";
 import { SendMessageToUserDTO } from "src/bot/dto/sendMessageToUser";
 import { SendMessageToChannelDTO } from "src/bot/dto/sendMessageToChannel";
 import { DeleteMessageDTO } from "src/bot/dto/deleteMessage";
+import {
+  SendImageCheckInToUserDTO,
+  SendImageLabelToUserDTO,
+} from "src/bot/dto/sendImageCheckInToUser";
+import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -80,16 +85,30 @@ export class KomubotrestController {
   }
 
   @Post("/sendImageCheckInToUser")
-  async sendImageCheckInToUser(@Req() req: Request, @Res() res: Response) {
+  async sendImageCheckInToUser(
+    @Body() sendImageCheckInToUserDTO: SendImageCheckInToUserDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
     return this.komubotrestService.sendImageCheckInToUser(
       this.client,
-      req,
+      sendImageCheckInToUserDTO,
+      header,
       res
     );
   }
   @Post("/sendImageLabelToUser")
-  async sendImageLabelToUser(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendImageLabelToUser(this.client, req, res);
+  async sendImageLabelToUser(
+    @Body() sendImageLabelToUserDTO: SendImageLabelToUserDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.sendImageLabelToUser(
+      this.client,
+      sendImageLabelToUserDTO,
+      header,
+      res
+    );
   }
 
   @Post("/sendMessageToMachLeo")
@@ -148,8 +167,17 @@ export class KomubotrestController {
   }
 
   @Post("/sendEmbedMessage")
-  async sendEmbedMessage(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendEmbedMessage(this.client, req, res);
+  async sendEmbedMessage(
+    @Body() sendEmbedMessageDTO: SendEmbedMessageDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.sendEmbedMessage(
+      this.client,
+      sendEmbedMessageDTO,
+      header,
+      res
+    );
   }
   //xong
   @Post("/deleteMessage")
