@@ -1,5 +1,7 @@
 import {
+  Body,
   Controller,
+  Headers,
   HttpException,
   HttpStatus,
   Injectable,
@@ -20,6 +22,10 @@ import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { deleteMessage } from "../deleteMessage.utils";
+import { GetUserIdByUsernameDTO } from "src/bot/dto/getUserIdByUsername";
+import { SendMessageToUserDTO } from "src/bot/dto/sendMessageToUser";
+import { SendMessageToChannelDTO } from "src/bot/dto/sendMessageToChannel";
+import { DeleteMessageDTO } from "src/bot/dto/deleteMessage";
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -32,18 +38,45 @@ export class KomubotrestController {
   ) {}
   //xong
   @Post("/getUserIdByUsername")
-  async getUserIdByUsername(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.getUserIdByUsername(this.client, req, res);
+  async getUserIdByUsername(
+    @Body() getUserIdByUsernameDTO: GetUserIdByUsernameDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.getUserIdByUsername(
+      this.client,
+      getUserIdByUsernameDTO,
+      header,
+      res
+    );
   }
 
   @Post("/sendMessageToUser")
-  async sendMessageToUser(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendMessageToUser(this.client, req, res);
+  async sendMessageToUser(
+    @Body() sendMessageToUserDTO: SendMessageToUserDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.sendMessageToUser(
+      this.client,
+      sendMessageToUserDTO,
+      header,
+      res
+    );
   }
 
   @Post("/sendMessageToChannel")
-  async sendMessageToChannel(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendMessageToChannel(this.client, req, res);
+  async sendMessageToChannel(
+    @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.sendMessageToChannel(
+      this.client,
+      sendMessageToChannelDTO,
+      header,
+      res
+    );
   }
 
   @Post("/sendImageCheckInToUser")
@@ -60,38 +93,73 @@ export class KomubotrestController {
   }
 
   @Post("/sendMessageToMachLeo")
-  async sendMessageToMachLeo(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendMessageToMachLeo(this.client, req, res);
+  async sendMessageToMachLeo(
+    @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.sendMessageToMachLeo(
+      this.client,
+      sendMessageToChannelDTO,
+      header,
+      res
+    );
   }
 
   @Post("/sendMessageToThongBao")
-  async sendMessageToThongBao(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendMessageToThongBao(this.client, req, res);
+  async sendMessageToThongBao(
+    @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.sendMessageToThongBao(
+      this.client,
+      sendMessageToChannelDTO,
+      header,
+      res
+    );
   }
 
   @Post("/sendMessageToThongBaoPM")
-  async sendMessageToThongBaoPM(@Req() req: Request, @Res() res: Response) {
+  async sendMessageToThongBaoPM(
+    @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
     return this.komubotrestService.sendMessageToThongBaoPM(
       this.client,
-      req,
+      sendMessageToChannelDTO,
+      header,
       res
     );
   }
   @Post("/sendMessageToFinance")
-  async sendMessageToFinance(@Req() req: Request, @Res() res: Response) {
-    return this.komubotrestService.sendMessageToFinance(this.client, req, res);
+  async sendMessageToFinance(
+    @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
+    @Headers("X-Secret-Key") header,
+    @Res() res: Response
+  ) {
+    return this.komubotrestService.sendMessageToFinance(
+      this.client,
+      sendMessageToChannelDTO,
+      header,
+      res
+    );
   }
 
   @Post("/sendEmbedMessage")
   async sendEmbedMessage(@Req() req: Request, @Res() res: Response) {
     return this.komubotrestService.sendEmbedMessage(this.client, req, res);
   }
-//xong
+  //xong
   @Post("/deleteMessage")
-  async deleteMessage(@Req() req: Request, @Res() res: Response) {
-   deleteMessage(this.client, req, res);
+  async deleteMessage(
+    @Body() deleteMessageDTO: DeleteMessageDTO,
+    @Res() res: Response
+  ) {
+    deleteMessage(this.client, deleteMessageDTO, res);
   }
-//xong
+  //xong
   @Post("/uploadFile")
   @UseInterceptors(
     FileInterceptor("file", {

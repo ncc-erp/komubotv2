@@ -10,6 +10,9 @@ import {
 } from "discord.js";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { TABLE } from "src/bot/constants/table";
+import { GetUserIdByUsernameDTO } from "src/bot/dto/getUserIdByUsername";
+import { SendMessageToChannelDTO } from "src/bot/dto/sendMessageToChannel";
+import { SendMessageToUserDTO } from "src/bot/dto/sendMessageToUser";
 import { Channel } from "src/bot/models/channel.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
@@ -30,6 +33,7 @@ export class KomubotrestService {
     private wfhRepository: Repository<WorkFromHome>,
     private clientConfig: ClientConfigService
   ) {}
+  private data;
   async findUserData(_pramams) {
     return await this.userRepository
       .createQueryBuilder()
@@ -80,6 +84,7 @@ export class KomubotrestService {
       complain: _complain,
       pmconfirm: _pmconfirm,
       status: _status,
+      createdAt: Date.now(),
     });
   }
   async findUserOne(userId) {
@@ -93,29 +98,32 @@ export class KomubotrestService {
   async findAllUser() {
     return await this.userRepository.createQueryBuilder(TABLE.USER).getMany();
   }
-  getUserIdByUsername = async (client, req, res) => {
-    if (
-      !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== this.clientConfig.machleoChannelId
-    ) {
+  getUserIdByUsername = async (
+    client,
+    getUserIdByUsernameDTO: GetUserIdByUsernameDTO,
+    header,
+    res
+  ) => {
+    if (!header || header !== this.clientConfig.machleoChannelId) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
     }
 
-    if (!req.body.username) {
+    if (!getUserIdByUsernameDTO.username) {
       res.status(400).send({ message: "username can not be empty!" });
       return;
     }
 
-    const userdb = await this.findUserData(req.body.username);
+    const userdb = await this.findUserData(getUserIdByUsernameDTO.username);
     if (!userdb) {
       res.status(400).send({ message: "User not found!" });
       return;
     }
 
-    res
-      .status(200)
-      .send({ username: req.body.username, userid: userdb.userId });
+    res.status(200).send({
+      username: getUserIdByUsernameDTO.username,
+      userid: userdb.userId,
+    });
   };
 
   //todo :
@@ -224,26 +232,28 @@ export class KomubotrestService {
       return null;
     }
   };
-  sendMessageToUser = async (client, req, res) => {
-    if (
-      !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
-    ) {
+  sendMessageToUser = async (
+    client,
+    sendMessageToUserDTO: SendMessageToUserDTO,
+    header,
+    res
+  ) => {
+    if (!header || header !== this.clientConfig.komubotRestSecretKey) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
     }
 
-    if (!req.body.username) {
+    if (!sendMessageToUserDTO.username) {
       res.status(400).send({ message: "username can not be empty!" });
       return;
     }
 
-    if (!req.body.message) {
+    if (!sendMessageToUserDTO.message) {
       res.status(400).send({ message: "Message can not be empty!" });
       return;
     }
-    const username = req.body.username;
-    const message = req.body.message;
+    const username = sendMessageToUserDTO.username;
+    const message = sendMessageToUserDTO.message;
 
     try {
       const user = await this.sendMessageKomuToUser(client, message, username);
@@ -386,33 +396,38 @@ export class KomubotrestService {
       res.status(400).send({ message: error });
     }
   };
-  sendMessageToChannel = async (client, req, res) => {
-    if (
-      !req.get("X-Secret-Key") ||
-      req.get("X-Secret-Key") !== this.clientConfig.komubotRestSecretKey
-    ) {
+  sendMessageToChannel = async (
+    client,
+    sendMessageToChannelDTO: SendMessageToChannelDTO,
+    header,
+    res
+  ) => {
+    if (!header || header !== this.clientConfig.komubotRestSecretKey) {
       res.status(403).send({ message: "Missing secret key!" });
       return;
     }
 
-    if (!req.body.channelid) {
+    if (!sendMessageToChannelDTO.channelid) {
       res.status(400).send({ message: "ChannelId can not be empty!" });
       return;
     }
 
-    if (!req.body.message) {
+    if (!sendMessageToChannelDTO.message) {
       res.status(400).send({ message: "Message can not be empty!" });
       return;
     }
-    let message = req.body.message;
-    const channelid = req.body.channelid;
+    let message = sendMessageToChannelDTO.message;
+    const channelid = sendMessageToChannelDTO.channelid;
 
-    if (req.body.machleo && req.body.machleo_userid != undefined) {
+    if (
+      sendMessageToChannelDTO.machleo &&
+      sendMessageToChannelDTO.machleo_userid != undefined
+    ) {
       message = this.getWFHWarninghMessage(
         message,
-        req.body.machleo_userid,
-        req.body.wfhid
-      );
+        sendMessageToChannelDTO.machleo_userid,
+        sendMessageToChannelDTO.wfhid
+      ) as any;
     }
 
     try {
@@ -439,54 +454,103 @@ export class KomubotrestService {
     );
     return { content, components: [row] };
   };
-  sendMessageToMachLeo = async (client, req, res) => {
-    req.body.channelid = this.clientConfig.machleoChannelId;
-    if (!req.body.username) {
+  sendMessageToMachLeo = async (
+    client,
+    sendMessageToChannelDTO: SendMessageToChannelDTO,
+    header,
+    res
+  ) => {
+    sendMessageToChannelDTO.channelid = this.clientConfig.machleoChannelId;
+    if (!sendMessageToChannelDTO.username) {
       res.status(400).send({ message: "username can not be empty!" });
       return;
     }
-    if (!req.body.createdate) {
+    if (!sendMessageToChannelDTO.createdate) {
       res.status(400).send({ message: "createdate can not be empty!" });
       return;
     }
-    const userdb = await this.findUserData(req.body.username);
+    const userdb = await this.findUserData(sendMessageToChannelDTO.username);
     let userid: number;
-    req.body.message = ` không trả lời tin nhắn WFH lúc ${req.body.createdate} !\n`;
+    sendMessageToChannelDTO.message = `không trả lời tin nhắn WFH lúc ${sendMessageToChannelDTO.createdate} !\n`;
 
     if (!userdb) {
-      console.log("User not found in DB!", req.body.username);
-      req.body.message += `<@${this.clientConfig.komubotrestAdminId}> ơi, đồng chí ${req.body.username} không đúng format rồi!!!`;
-      userid = req.body.username;
+      console.log("User not found in DB!", sendMessageToChannelDTO.username);
+      sendMessageToChannelDTO.message += `<@${this.clientConfig.komubotrestAdminId}> ơi, đồng chí ${sendMessageToChannelDTO.username} không đúng format rồi!!!`;
+      userid = sendMessageToChannelDTO.username as any;
     } else {
-      req.body.machleo_userid = userdb.userId;
-      // userid = userdb.id;
+      sendMessageToChannelDTO.machleo_userid = userdb.userId;
+      userid = userdb.userId as any;
     }
 
-    req.body.message = `<@${userid}>` + req.body.message;
-    req.body.machleo = true;
+    sendMessageToChannelDTO.message =
+      `<@${userid}>` + sendMessageToChannelDTO.message;
+    sendMessageToChannelDTO.machleo = true;
 
     // store to db
-    const data = await this.insertDataToWFH(
-      userid,
-      req.body.message,
-      false,
-      false,
-      "ACTIVE"
+    try {
+      this.data = await this.insertDataToWFH(
+        userid,
+        sendMessageToChannelDTO.message,
+        false,
+        false,
+        "ACTIVE"
+      );
+    } catch (err) {
+      console.log("Error: ", err);
+      res.status(400).send({ message: err });
+    }
+    sendMessageToChannelDTO.wfhid = this.data.id.toString();
+    await this.sendMessageToChannel(
+      client,
+      sendMessageToChannelDTO,
+      header,
+      res
     );
-    req.body.wfhid = data.id.toString();
-    await this.sendMessageToChannel(client, req, res);
   };
-  sendMessageToThongBaoPM = async (client, req, res) => {
-    req.body.channelid = this.clientConfig.komubotRestThongBaoPmChannelId;
-    await this.sendMessageToChannel(client, req, res);
+  sendMessageToThongBaoPM = async (
+    client,
+    sendMessageToChannelDTO: SendMessageToChannelDTO,
+    header,
+    res
+  ) => {
+    sendMessageToChannelDTO.channelid =
+      this.clientConfig.komubotRestThongBaoPmChannelId;
+    await this.sendMessageToChannel(
+      client,
+      sendMessageToChannelDTO,
+      header,
+      res
+    );
   };
-  sendMessageToThongBao = async (client, req, res) => {
-    req.body.channelid = this.clientConfig.komubotRestThongBaoChannelId;
-    await this.sendMessageToChannel(client, req, res);
+  sendMessageToThongBao = async (
+    client,
+    sendMessageToChannelDTO: SendMessageToChannelDTO,
+    header,
+    res
+  ) => {
+    sendMessageToChannelDTO.channelid =
+      this.clientConfig.komubotRestThongBaoChannelId;
+    await this.sendMessageToChannel(
+      client,
+      sendMessageToChannelDTO,
+      header,
+      res
+    );
   };
-  sendMessageToFinance = async (client, req, res) => {
-    req.body.channelid = this.clientConfig.komubotRestFinanceChannelId;
-    await this.sendMessageToChannel(client, req, res);
+  sendMessageToFinance = async (
+    client,
+    sendMessageToChannelDTO: SendMessageToChannelDTO,
+    header,
+    res
+  ) => {
+    sendMessageToChannelDTO.channelid =
+      this.clientConfig.komubotRestFinanceChannelId;
+    await this.sendMessageToChannel(
+      client,
+      sendMessageToChannelDTO,
+      header,
+      res
+    );
   };
   sendMessageKomuToUserOrNull = async (client, msg) => {
     await client.channels.cache
