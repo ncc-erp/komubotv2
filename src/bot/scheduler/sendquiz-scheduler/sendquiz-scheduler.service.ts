@@ -47,7 +47,7 @@ export class SendquizSchedulerService {
     this.addCronJob("sendQuiz", "0 9,11,13,15 * * 1-5", () =>
       this.sendQuiz(this.client)
     );
-    this.addCronJob("sendQuizEnglish", "0 9,11,14,16 * * 1-5", () =>
+    this.addCronJob("sendQuizEnglish", "0 10,11,14,16 * * 1-5", () =>
       this.sendQuizEnglish(this.client)
     );
   }

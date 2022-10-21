@@ -111,21 +111,20 @@ export class PenaltyService {
   }
   async findPenatly(_channelId) {
     return await this.penaltyRepository
-      .createQueryBuilder()
+      .createQueryBuilder("penalty")
       .where(`"channelId" =:channelId`, {
         channelId: _channelId,
       })
       .andWhere(`"isReject" IS NOT true`)
       .andWhere(`"delete" IS NOT true`)
-      .groupBy("Penalty.userId")
-      .addGroupBy("Penalty.id")
-      .select("SUM(ammount)", "ammount")
-      .addSelect("Penalty.username")
-      .addSelect("Penalty.userId")
+      .groupBy("penalty.userId")
+      .addGroupBy("penalty.username")
+      .select(
+        "penalty.userId, SUM(penalty.ammount) as ammount, penalty.username"
+      )
       .orderBy({
         ammount: "DESC",
       })
-      .select("*")
       .execute();
   }
 }
