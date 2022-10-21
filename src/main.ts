@@ -17,6 +17,7 @@ async function bootstrap() {
   app.listen(3000, () => {
     console.log('App listen on port 3000')
   });
+  app.enableCors();
   setupSwagger(app);
 
   const meetingSchedulerService = app.get(MeetingSchedulerService);
