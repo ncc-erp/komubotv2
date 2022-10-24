@@ -68,7 +68,7 @@ export class SendquizSchedulerService {
         .innerJoin("komu_msg", "m", "user.last_bot_message_id = m.id")
         .where(
           userOff && userOff.length > 0
-            ? '"username" NOT IN (:...userOff)'
+            ? '"email" NOT IN (:...userOff)'
             : "true",
           {
             userOff: userOff,
@@ -117,7 +117,7 @@ export class SendquizSchedulerService {
       const userSendQuiz = await this.userRepository
         .createQueryBuilder("users")
         .where(
-          userOff && userOff.length ? '"username" NOT IN (:...userOff)' : "true",
+          userOff && userOff.length ? '"email" NOT IN (:...userOff)' : "true",
           {
             userOff: userOff,
           }

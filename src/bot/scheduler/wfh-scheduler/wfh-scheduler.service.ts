@@ -127,7 +127,7 @@ export class WfhSchedulerService {
         )
         .andWhere(
           useridJoining && useridJoining.length > 0
-            ? '"username" NOT IN (:...useridJoining)'
+            ? '"email" NOT IN (:...useridJoining)'
             : "true",
           {
             useridJoining: useridJoining,
@@ -166,7 +166,7 @@ export class WfhSchedulerService {
       const message_timestampUser = await this.userRepository
         .createQueryBuilder("user")
         .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
-        .where('"username" IN (:...messageBotUserEmail)', {
+        .where('"email" IN (:...messageBotUserEmail)', {
           messageBotUserEmail: messageBotUserEmail,
         })
         .select("*")
