@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
+import { SchedulerRegistry } from "@nestjs/schedule";
 import {
   AttachmentBuilder,
   Client,
@@ -87,7 +87,7 @@ export class SendMessageSchedulerService {
     );
     this.addCronJob(
       "sendReportNotUploadFollowWeek",
-      CronExpression.EVERY_10_SECONDS,
+     "00 09 * * 0-6",
       () => this.sendReportNotUpload(this.client)
     );
   }
@@ -298,25 +298,10 @@ export class SendMessageSchedulerService {
   }
 
   async sendReportWorkout(client) {
-    // const userCheckWorkout = await this.workoutRepository
-    //   .createQueryBuilder("workout")
-    //   .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-    //     gtecreatedTimestamp: firstDay.getTime(),
-    //   })
-    //   .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-    //     ltecreatedTimestamp: lastDay.getTime(),
-    //   })
-    //   .andWhere('"status" = :status', { status: "approve" })
-    //   .groupBy("workout.userId")
-    //   .addGroupBy("workout.email")
-    //   .select("workout.email, COUNT(workout.userId) as total")
-    //   .orderBy("total", "DESC")
-    //   .execute();
 
     const getPointWorkOut = await this.userRepository
       .createQueryBuilder("user")
       .innerJoin("komu_workout", "w", "user.userId = w.userId")
-      // .where('"status" = :status', { status: "approve" })
       .groupBy("w.userId")
       .addGroupBy("w.email")
       .addGroupBy("scores_workout")
@@ -355,11 +340,12 @@ export class SendMessageSchedulerService {
 
       .groupBy("workout.userId")
       .addGroupBy("workout.email")
-      // .addGroupBy("scores_workout")
       .select("workout.userId, workout.email")
 
       .orderBy("workout.userId, workout.email", "DESC")
       .execute();
+      console.log(getUserNotUpload, 'fff');
+      
 
     getUserNotUpload.map(async (item) => {
       const getUserId = await this.userRepository.findOne({
@@ -373,36 +359,12 @@ export class SendMessageSchedulerService {
             userId: item.userId,
           },
           {
-            scores_workout: +getUserId.scores_workout / 2,
+            scores_workout: Math.round(+getUserId.scores_workout / 2),
           }
         )
         .catch((error) => {
           console.log(error);
         });
-
-      // .where('"w.userId" = :userId', { userId: [...abs] })
-      // .where(abs && abs.length ? '"userId" IN (:...abs)' : "true", {
-      //   abs: abs,
-      // })
-      // .select("user.scores_workout, user.email")
-      // .update(User)
-      // .set({
-      //   scores_workout: +test.scores_workout
-      //     ? +test.scores_workout / 2
-      //     : +test.scores_workout,
-      // })
-
-      // .where('"userId" > :userId', {
-      //   userId: item.userId,
-      // })
-      // .andWhere('"scores_workout" > :scores_workout', {
-      //   scores_workout: 0,
-      // })
-      // .groupBy("user.scores_workout")
-      // .addGroupBy("user.email")
-      // .orderBy("user.scores_workout", "DESC")
-      // .execute();
-      // console.log(getTotalUserNotUpload, "444");
     });
 
     const getTotalUser = await this.userRepository
