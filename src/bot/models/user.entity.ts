@@ -95,7 +95,7 @@ export class User {
   @Column({ type: "text", nullable: true })
   last_bot_message_id: string;
 
-  @Column({ nullable: true , default : false})
+  @Column({ nullable: true, default: false })
   deactive: boolean;
 
   @Column("text", { array: true, nullable: true })
@@ -103,4 +103,7 @@ export class User {
 
   @Column({ default: false })
   botPing: boolean;
+
+  @Column({ default: 0 })
+  scores_workout: number;
 }

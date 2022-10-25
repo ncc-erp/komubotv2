@@ -85,6 +85,9 @@ export class SendMessageSchedulerService {
     this.addCronJob("sendReportWorkout", "0 0 1 * *", () =>
       this.sendReportWorkout(this.client)
     );
+    this.addCronJob("sendReportWorkoutFollowWeek", "00 09 * * 0-6", () =>
+      this.sendReportWorkout(this.client)
+    );
   }
 
   async sendMessagePMs(client) {
@@ -293,38 +296,121 @@ export class SendMessageSchedulerService {
   }
 
   async sendReportWorkout(client) {
+    // const userCheckWorkout = await this.workoutRepository
+    //   .createQueryBuilder("workout")
+    //   .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
+    //     gtecreatedTimestamp: firstDay.getTime(),
+    //   })
+    //   .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
+    //     ltecreatedTimestamp: lastDay.getTime(),
+    //   })
+    //   .andWhere('"status" = :status', { status: "approve" })
+    //   .groupBy("workout.userId")
+    //   .addGroupBy("workout.email")
+    //   .select("workout.email, COUNT(workout.userId) as total")
+    //   .orderBy("total", "DESC")
+    //   .execute();
+
+    const getPointWorkOut = await this.userRepository
+      .createQueryBuilder("user")
+      .innerJoin("komu_workout", "w", "user.userId = w.userId")
+      // .where('"status" = :status', { status: "approve" })
+      .groupBy("w.userId")
+      .addGroupBy("w.email")
+      .addGroupBy("scores_workout")
+      .select("w.email, scores_workout")
+      .orderBy("scores_workout", "DESC")
+      .execute();
+
+    let mess;
+    for (let i = 0; i <= Math.ceil(getPointWorkOut.length / 50); i += 1) {
+      if (getPointWorkOut.slice(i * 50, (i + 1) * 50).length === 0) {
+        break;
+      }
+      mess = getPointWorkOut
+        .slice(i * 50, (i + 1) * 50)
+        .map((list) => `${list.email} - point: ${list.scores_workout}`)
+        .join("\n");
+      const Embed = new EmbedBuilder()
+        .setTitle("Top workout")
+        .setColor("Red")
+        .setDescription(`${mess}`);
+      const userDiscord = await client.channels.fetch(
+        this.clientConfigService.workoutChannelId
+      );
+      userDiscord.send({ embeds: [Embed] }).catch(console.error);
+    }
+  }
+
+  async sendReportNotUpload(client) {
+    // const getPointWorkOut = await this.userRepository
+    // .createQueryBuilder("user")
+    // .innerJoin("komu_workout", "w", "user.userId = w.userId")
+    // .groupBy("w.userId")
+    // .addGroupBy("w.email")
+    // .addGroupBy("scores_workout")
+    // .select("w.email, scores_workout")
+    // .orderBy("scores_workout", "DESC")
+    // .execute();
     const date = new Date();
     const y = date.getFullYear();
     const m = date.getMonth();
     const firstDay = new Date(y, m - 1, 1);
     const lastDay = new Date(y, m, 0);
 
-    const userCheckWorkout = await this.workoutRepository
-      .createQueryBuilder("workout")
+    const getUserHaveUpload = await this.userRepository
+      .createQueryBuilder()
+      .innerJoin("komu_workout", "w", "user.userId = w.userId")
+      // .where('"scores_workout" := scores_workout', {
+      //   scores_workout: 100
+      // })
+      // .groupBy("w.userId")
+      // .addGroupBy("w.email")
+      // .addGroupBy("scores_workout")
+      .select("w.email, scores_workout")
+      .orderBy("userId", "DESC")
+      .execute();
+
+    const getUserNotUpload = await this.userRepository
+      .createQueryBuilder()
+      .innerJoin("komu_workout", "w", "user.userId = w.userId")
       .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: firstDay.getTime(),
       })
       .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: lastDay.getTime(),
       })
-      .andWhere('"status" = :status', { status: "approve" })
-      .groupBy("workout.userId")
-      .addGroupBy("workout.email")
-      .select("workout.email, COUNT(workout.userId) as total")
-      .orderBy("total", "DESC")
+      // .where('"scores_workout" := scores_workout', {
+      //   scores_workout: 100
+      // })
+      // .groupBy("w.userId")
+      // .addGroupBy("w.email")
+      // .addGroupBy("scores_workout")
+      .select("w.email, scores_workout")
+      .orderBy("userId", "DESC")
+      .execute();
+
+    const getTotalUserNotUpload = await this.userRepository
+      .createQueryBuilder("user")
+      .innerJoin("komu_workout", "w", "user.userId = w.userId")
+      .update(User)
+      .set({
+        scores_workout: getUserHaveUpload / 2,
+      })
+      .select("w.email, scores_workout")
       .execute();
 
     let mess;
-    for (let i = 0; i <= Math.ceil(userCheckWorkout.length / 50); i += 1) {
-      if (userCheckWorkout.slice(i * 50, (i + 1) * 50).length === 0) {
+    for (let i = 0; i <= Math.ceil(getTotalUserNotUpload.length / 50); i += 1) {
+      if (getTotalUserNotUpload.slice(i * 50, (i + 1) * 50).length === 0) {
         break;
       }
-      mess = userCheckWorkout
+      mess = getTotalUserNotUpload
         .slice(i * 50, (i + 1) * 50)
-        .map((list) => `${list.email} (${list.total})`)
+        .map((list) => `${list.email} - point: ${list.scores_workout}`)
         .join("\n");
       const Embed = new EmbedBuilder()
-        .setTitle("Top workout")
+        .setTitle("Not workout")
         .setColor("Red")
         .setDescription(`${mess}`);
       const userDiscord = await client.channels.fetch(
