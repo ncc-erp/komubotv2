@@ -61,58 +61,9 @@ export class WorkoutCommand implements CommandLineClass {
     try {
       const authorId = message.author.id;
       if (args[0] === "summary") {
-        // if (!args[1]) {
-        //   args[1] = `${new Date().getMonth() + 1}`;
-        // }
-        // if (monthSupport.includes(args[1].toUpperCase())) {
-        //   const date = new Date();
-        //   let dateFormat;
-        //   const year = date.getFullYear();
-        //   if (args[1].length > 2) {
-        //     dateFormat = new Date(`${args[1]} ${year}`);
-        //   } else {
-        //     dateFormat = new Date(year, +args[1] - 1);
-        //   }
-        //   const y = dateFormat.getFullYear();
-        //   const m = dateFormat.getMonth();
-        //   const firstDay = new Date(y, m, 1);
-        //   const lastDay = new Date(y, m + 1, 0);
-
-        // const userCheckWorkout = await this.workoutRepository
-        //   .createQueryBuilder("workout")
-        //   .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-        //     gtecreatedTimestamp: firstDay.getTime(),
-        //   })
-        //   .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-        //     ltecreatedTimestamp: lastDay.getTime(),
-        //   })
-        //   .andWhere('"status" = :status', { status: "approve" })
-        //   .groupBy("workout.userId")
-        //   .addGroupBy("workout.email")
-        //   .addGroupBy("workout.createdTimestamp")
-        //   .addGroupBy("workout.point")
-        //   .select(
-        //     "workout.email, COUNT(workout.userId) as total, workout.createdTimestamp, workout.point"
-        //   )
-        //   .orderBy("total", "DESC")
-        //   .orderBy("workout.createdTimestamp", "DESC")
-        //   .execute();
-
-        // let result = userCheckWorkout.reduce((unique, o) => {
-        //   if (!unique.some((obj) => obj.email === o.email)) {
-        //     unique.push(o);
-        //   }
-        //   return unique;
-        // }, []);
-
-        // result.sort(function (a, b) {
-        //   return a.point - b.point;
-        // });
-        // result.reverse();
         const getPointWorkOut = await this.userRepository
           .createQueryBuilder("user")
           .innerJoin("komu_workout", "w", "user.userId = w.userId")
-          // .where('"status" = :status', { status: "approve" })
           .groupBy("w.userId")
           .addGroupBy("w.email")
           .addGroupBy("scores_workout")
@@ -208,56 +159,11 @@ export class WorkoutCommand implements CommandLineClass {
                 .catch(console.error);
             }
 
-            // const checkWorkoutYesterday = await this.workoutRepository
-            //   .createQueryBuilder()
-            //   .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-            //     gtecreatedTimestamp:
-            //       this.utilsService.getYesterdayDate() - 86400000,
-            //   })
-            //   .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-            //     ltecreatedTimestamp: this.utilsService.getYesterdayDate(),
-            //   })
-            //   .andWhere('"status" = :status', { status: "approve" })
-            //   .andWhere('"userId" = :userId', { userId: message.author.id })
-            //   .select("*")
-            //   .execute();
-
             const findWorkoutUser = await this.userRepository
               .createQueryBuilder()
               .where('"userId" = :userId', { userId: message.author.id })
               .select("*")
               .getRawOne();
-
-            // let pointWorkout;
-            // if (checkWorkoutYesterday.length === 0) {
-            //   if (findWorkoutUser === 0) {
-            //     pointWorkout = 1;
-            //   } else {
-            //     const checkPoint = await this.workoutRepository.findOne({
-            //       where: {
-            //         status: "approve",
-            //         userId: message.author.id,
-            //       },
-            //       order: {
-            //         createdTimestamp: "DESC",
-            //       },
-            //     });
-            //     console.log(checkPoint);
-            //     if (checkPoint.point && +checkPoint.point < 1) {
-            //       pointWorkout = 0;
-            //     } else if (checkPoint.point && +checkPoint.point >= 1) {
-            //       pointWorkout = (+checkPoint.point + 1) / 2;
-            //     } else {
-            //       pointWorkout = (findWorkoutUser + 1) / 2;
-            //     }
-            //   }
-            // } else {
-            //   if (!checkWorkoutYesterday[0].point) {
-            //     pointWorkout = +findWorkoutUser + 1;
-            //   } else {
-            //     pointWorkout = +checkWorkoutYesterday[0].point + 1;
-            //   }
-            // }
 
             const workout = await this.workoutRepository.save({
               userId: message.author.id,
@@ -282,7 +188,7 @@ export class WorkoutCommand implements CommandLineClass {
                 userId: findWorkoutUser.userId,
               })
               .execute();
-              
+
             const row = new ActionRowBuilder().addComponents(
               new ButtonBuilder()
                 .setCustomId(

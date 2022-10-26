@@ -85,11 +85,9 @@ export class SendMessageSchedulerService {
     this.addCronJob("sendReportWorkout", "0 0 1 * *", () =>
       this.sendReportWorkout(this.client)
     );
-    // this.addCronJob(
-    //   "sendReportNotUploadFollowWeek",
-    //   CronExpression.EVERY_10_SECONDS,
-    //   () => this.sendReportNotUpload(this.client)
-    // );
+    this.addCronJob("sendReportNotUploadFollowWeek", "00 09 * * 0-6", () =>
+      this.sendReportNotUpload(this.client)
+    );
   }
 
   async sendMessagePMs(client) {
@@ -331,8 +329,8 @@ export class SendMessageSchedulerService {
   async sendReportNotUpload(client) {
     const getUserNotUpload = await this.workoutRepository
       .createQueryBuilder("workout")
-      .andWhere(
-        `"createdTimestamp" NOT BETWEEN ${
+      .where(
+        `"createdTimestamp" BETWEEN ${
           this.utilsService.getYesterdayDate() - 86400000
         } AND ${this.utilsService.getYesterdayDate()}`
       )
@@ -340,45 +338,60 @@ export class SendMessageSchedulerService {
       .groupBy("workout.userId")
       .addGroupBy("workout.email")
       .select("workout.userId, workout.email")
-      .orderBy("workout.userId, workout.email", "DESC")
+      .orderBy("workout.email", "DESC")
       .execute();
-    console.log(getUserNotUpload, "ggg");
 
-    getUserNotUpload.map(async (item) => {
-      const getUserId = await this.userRepository.findOne({
-        where: { userId: item.userId },
-      });
-      if (!getUserId) return;
+    const getUserYesterday = await this.workoutRepository
+      .createQueryBuilder("workout")
+      .groupBy("workout.userId")
+      .addGroupBy("workout.email")
+      .select("workout.userId, workout.email")
+      .orderBy("workout.email", "DESC")
+      .execute();
 
-      await this.userRepository
-        .update(
+    const results = getUserYesterday.filter(
+      ({ email: id1 }) =>
+        !getUserNotUpload.some(({ email: id2 }) => id2 === id1)
+    );
+    await Promise.all(
+      results.map(async (item) => {
+        const getUserId = await this.userRepository.findOne({
+          where: { userId: item.userId },
+        });
+        if (!getUserId) return;
+
+        let scrores;
+        if (getUserId.scores_workout <= 1) {
+          scrores = 0;
+        } else {
+          scrores = Math.round(+getUserId.scores_workout / 2);
+        }
+
+        await this.userRepository.update(
           {
             userId: item.userId,
           },
           {
-            scores_workout: Math.round(+getUserId.scores_workout / 2),
+            scores_workout: scrores,
           }
-        )
-        .catch((error) => {
-          console.log(error);
-        });
-    });
+        );
+      })
+    );
 
+    const workoutUserEmail = results.map((item) => item.email);
     const getTotalUser = await this.userRepository
-      .createQueryBuilder("user")
-      .innerJoin("komu_workout", "w", "user.userId = w.userId")
+      .createQueryBuilder()
       .where(
-        `"createdTimestamp" NOT BETWEEN ${
-          this.utilsService.getYesterdayDate() - 86400000
-        } AND ${this.utilsService.getYesterdayDate()}`
+        workoutUserEmail && workoutUserEmail.length > 0
+          ? '"email" IN (:...workoutUserEmail)'
+          : "true",
+        {
+          workoutUserEmail: workoutUserEmail,
+        }
       )
-      .groupBy("w.userId")
-      .addGroupBy("w.email")
-      .addGroupBy("scores_workout")
-      .select("w.email, scores_workout")
       .orderBy("scores_workout", "DESC")
+      .select("*")
       .execute();
-    console.log(getTotalUser, "avc");
 
     let mess;
     for (let i = 0; i <= Math.ceil(getTotalUser.length / 50); i += 1) {
