@@ -403,7 +403,7 @@ export class SendMessageSchedulerService {
         .map((list) => `${list.email} - point: ${list.scores_workout}`)
         .join("\n");
       const Embed = new EmbedBuilder()
-        .setTitle("Not workout")
+        .setTitle("Danh sách không daily workout ngày hôm qua")
         .setColor("Red")
         .setDescription(`${mess}`);
       const userDiscord = await client.channels.fetch(
