@@ -253,9 +253,9 @@ export class WfhSchedulerService {
     users.map(async (user) => {
       if (
         Date.now() - user.createdTimestamp >= 1800000 &&
-        user.createdTimestamp <=
-          this.utilsService.getTimeToDay(null).firstDay.getTime() &&
         user.createdTimestamp >=
+          this.utilsService.getTimeToDay(null).firstDay.getTime() &&
+        user.createdTimestamp <=
           this.utilsService.getTimeToDay(null).lastDay.getTime()
       ) {
         const content = `<@${
