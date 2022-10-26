@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { SchedulerRegistry } from "@nestjs/schedule";
+import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import {
   AttachmentBuilder,
   Client,
@@ -85,11 +85,11 @@ export class SendMessageSchedulerService {
     this.addCronJob("sendReportWorkout", "0 0 1 * *", () =>
       this.sendReportWorkout(this.client)
     );
-    this.addCronJob(
-      "sendReportNotUploadFollowWeek",
-     "00 09 * * 0-6",
-      () => this.sendReportNotUpload(this.client)
-    );
+    // this.addCronJob(
+    //   "sendReportNotUploadFollowWeek",
+    //   CronExpression.EVERY_10_SECONDS,
+    //   () => this.sendReportNotUpload(this.client)
+    // );
   }
 
   async sendMessagePMs(client) {
@@ -298,7 +298,6 @@ export class SendMessageSchedulerService {
   }
 
   async sendReportWorkout(client) {
-
     const getPointWorkOut = await this.userRepository
       .createQueryBuilder("user")
       .innerJoin("komu_workout", "w", "user.userId = w.userId")
@@ -341,11 +340,9 @@ export class SendMessageSchedulerService {
       .groupBy("workout.userId")
       .addGroupBy("workout.email")
       .select("workout.userId, workout.email")
-
       .orderBy("workout.userId, workout.email", "DESC")
       .execute();
-      console.log(getUserNotUpload, 'fff');
-      
+    console.log(getUserNotUpload, "ggg");
 
     getUserNotUpload.map(async (item) => {
       const getUserId = await this.userRepository.findOne({
@@ -370,12 +367,18 @@ export class SendMessageSchedulerService {
     const getTotalUser = await this.userRepository
       .createQueryBuilder("user")
       .innerJoin("komu_workout", "w", "user.userId = w.userId")
+      .where(
+        `"createdTimestamp" NOT BETWEEN ${
+          this.utilsService.getYesterdayDate() - 86400000
+        } AND ${this.utilsService.getYesterdayDate()}`
+      )
       .groupBy("w.userId")
       .addGroupBy("w.email")
       .addGroupBy("scores_workout")
       .select("w.email, scores_workout")
       .orderBy("scores_workout", "DESC")
       .execute();
+    console.log(getTotalUser, "avc");
 
     let mess;
     for (let i = 0; i <= Math.ceil(getTotalUser.length / 50); i += 1) {
@@ -387,7 +390,7 @@ export class SendMessageSchedulerService {
         .map((list) => `${list.email} - point: ${list.scores_workout}`)
         .join("\n");
       const Embed = new EmbedBuilder()
-        .setTitle("Top workout")
+        .setTitle("Not workout")
         .setColor("Red")
         .setDescription(`${mess}`);
       const userDiscord = await client.channels.fetch(
