@@ -85,9 +85,11 @@ export class SendMessageSchedulerService {
     this.addCronJob("sendReportWorkout", "0 0 1 * *", () =>
       this.sendReportWorkout(this.client)
     );
-    this.addCronJob("sendReportWorkoutFollowWeek", "00 09 * * 0-6", () =>
-      this.sendReportWorkout(this.client)
-    );
+    // this.addCronJob(
+    //   "sendReportNotUploadFollowWeek",
+    //   CronExpression.EVERY_10_SECONDS,
+    //   () => this.sendReportNotUpload(this.client)
+    // );
   }
 
   async sendMessagePMs(client) {
@@ -296,25 +298,9 @@ export class SendMessageSchedulerService {
   }
 
   async sendReportWorkout(client) {
-    // const userCheckWorkout = await this.workoutRepository
-    //   .createQueryBuilder("workout")
-    //   .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-    //     gtecreatedTimestamp: firstDay.getTime(),
-    //   })
-    //   .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-    //     ltecreatedTimestamp: lastDay.getTime(),
-    //   })
-    //   .andWhere('"status" = :status', { status: "approve" })
-    //   .groupBy("workout.userId")
-    //   .addGroupBy("workout.email")
-    //   .select("workout.email, COUNT(workout.userId) as total")
-    //   .orderBy("total", "DESC")
-    //   .execute();
-
     const getPointWorkOut = await this.userRepository
       .createQueryBuilder("user")
       .innerJoin("komu_workout", "w", "user.userId = w.userId")
-      // .where('"status" = :status', { status: "approve" })
       .groupBy("w.userId")
       .addGroupBy("w.email")
       .addGroupBy("scores_workout")
@@ -343,69 +329,63 @@ export class SendMessageSchedulerService {
   }
 
   async sendReportNotUpload(client) {
-    // const getPointWorkOut = await this.userRepository
-    // .createQueryBuilder("user")
-    // .innerJoin("komu_workout", "w", "user.userId = w.userId")
-    // .groupBy("w.userId")
-    // .addGroupBy("w.email")
-    // .addGroupBy("scores_workout")
-    // .select("w.email, scores_workout")
-    // .orderBy("scores_workout", "DESC")
-    // .execute();
-    const date = new Date();
-    const y = date.getFullYear();
-    const m = date.getMonth();
-    const firstDay = new Date(y, m - 1, 1);
-    const lastDay = new Date(y, m, 0);
+    const getUserNotUpload = await this.workoutRepository
+      .createQueryBuilder("workout")
+      .andWhere(
+        `"createdTimestamp" NOT BETWEEN ${
+          this.utilsService.getYesterdayDate() - 86400000
+        } AND ${this.utilsService.getYesterdayDate()}`
+      )
 
-    const getUserHaveUpload = await this.userRepository
-      .createQueryBuilder()
-      .innerJoin("komu_workout", "w", "user.userId = w.userId")
-      // .where('"scores_workout" := scores_workout', {
-      //   scores_workout: 100
-      // })
-      // .groupBy("w.userId")
-      // .addGroupBy("w.email")
-      // .addGroupBy("scores_workout")
-      .select("w.email, scores_workout")
-      .orderBy("userId", "DESC")
+      .groupBy("workout.userId")
+      .addGroupBy("workout.email")
+      .select("workout.userId, workout.email")
+      .orderBy("workout.userId, workout.email", "DESC")
       .execute();
+    console.log(getUserNotUpload, "ggg");
 
-    const getUserNotUpload = await this.userRepository
-      .createQueryBuilder()
-      .innerJoin("komu_workout", "w", "user.userId = w.userId")
-      .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-        gtecreatedTimestamp: firstDay.getTime(),
-      })
-      .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-        ltecreatedTimestamp: lastDay.getTime(),
-      })
-      // .where('"scores_workout" := scores_workout', {
-      //   scores_workout: 100
-      // })
-      // .groupBy("w.userId")
-      // .addGroupBy("w.email")
-      // .addGroupBy("scores_workout")
-      .select("w.email, scores_workout")
-      .orderBy("userId", "DESC")
-      .execute();
+    getUserNotUpload.map(async (item) => {
+      const getUserId = await this.userRepository.findOne({
+        where: { userId: item.userId },
+      });
+      if (!getUserId) return;
 
-    const getTotalUserNotUpload = await this.userRepository
+      await this.userRepository
+        .update(
+          {
+            userId: item.userId,
+          },
+          {
+            scores_workout: Math.round(+getUserId.scores_workout / 2),
+          }
+        )
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+
+    const getTotalUser = await this.userRepository
       .createQueryBuilder("user")
       .innerJoin("komu_workout", "w", "user.userId = w.userId")
-      .update(User)
-      .set({
-        scores_workout: getUserHaveUpload / 2,
-      })
+      .where(
+        `"createdTimestamp" NOT BETWEEN ${
+          this.utilsService.getYesterdayDate() - 86400000
+        } AND ${this.utilsService.getYesterdayDate()}`
+      )
+      .groupBy("w.userId")
+      .addGroupBy("w.email")
+      .addGroupBy("scores_workout")
       .select("w.email, scores_workout")
+      .orderBy("scores_workout", "DESC")
       .execute();
+    console.log(getTotalUser, "avc");
 
     let mess;
-    for (let i = 0; i <= Math.ceil(getTotalUserNotUpload.length / 50); i += 1) {
-      if (getTotalUserNotUpload.slice(i * 50, (i + 1) * 50).length === 0) {
+    for (let i = 0; i <= Math.ceil(getTotalUser.length / 50); i += 1) {
+      if (getTotalUser.slice(i * 50, (i + 1) * 50).length === 0) {
         break;
       }
-      mess = getTotalUserNotUpload
+      mess = getTotalUser
         .slice(i * 50, (i + 1) * 50)
         .map((list) => `${list.email} - point: ${list.scores_workout}`)
         .join("\n");

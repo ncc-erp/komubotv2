@@ -104,6 +104,12 @@ export class User {
   @Column({ default: false })
   botPing: boolean;
 
-  @Column({ default: 0 })
+  @Column({
+    type: "numeric",
+    precision: 30,
+    scale: 1,
+    nullable: true,
+    default: 0,
+  })
   scores_workout: number;
 }

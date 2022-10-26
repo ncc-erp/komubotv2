@@ -269,19 +269,20 @@ export class WorkoutCommand implements CommandLineClass {
               attachment: true,
               status: "approve",
               channelId: this.configService.workoutChannelId,
-              point: findWorkoutUser.scores_workout + 1,
+              point: +findWorkoutUser.scores_workout + 1,
             });
 
             await this.userRepository
               .createQueryBuilder()
               .update(User)
               .set({
-                scores_workout: findWorkoutUser.scores_workout + 1,
+                scores_workout: +findWorkoutUser.scores_workout + 1,
               })
               .where(`"userId" = :userId`, {
                 userId: findWorkoutUser.userId,
               })
               .execute();
+              
             const row = new ActionRowBuilder().addComponents(
               new ButtonBuilder()
                 .setCustomId(
