@@ -31,6 +31,7 @@ export class WorkoutService {
       })
       .select("*")
       .execute();
+
     if (
       checkRole.length > 0 ||
       interaction.user.id === "921261168088190997" ||
@@ -45,6 +46,7 @@ export class WorkoutService {
         const workoutDb = await this.workoutRepository
           .findOne({ where: { id: workourid } })
           .catch(console.error);
+
         if (!workoutDb) {
           interaction
             .reply({
@@ -73,6 +75,7 @@ export class WorkoutService {
         const userdb = await this.userRepository
           .findOne({ where: { userId: labelImageId } })
           .catch(console.error);
+
         if (!userdb) {
           return interaction
             .reply({
@@ -97,6 +100,17 @@ export class WorkoutService {
           .where(`"id" = :id`, { id: workourid })
           .execute()
           .catch(console.error);
+
+        await this.userRepository
+          .createQueryBuilder()
+          .update(User)
+          .set({
+            scores_workout: userdb.scores_workout - 1,
+          })
+          .where('"userId" = :userId', {
+            userId: userdb.userId,
+          })
+          .execute();
         return;
       }
     } else {
