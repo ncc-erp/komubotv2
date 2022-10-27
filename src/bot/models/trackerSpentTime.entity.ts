@@ -20,4 +20,7 @@ export class TrackerSpentTime {
 
   @Column({ type: "boolean", nullable: true })
   wfh: boolean;
+
+  @Column({ nullable: true, type: "text" })
+  active_time: string;
 }
