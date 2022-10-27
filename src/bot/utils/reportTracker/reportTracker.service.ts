@@ -94,9 +94,7 @@ export class ReportTrackerService {
         { headers: { secret: "ScjP6mX2yA" } }
       );
 
-      const checkUserWfh = result.data.filter(async (item) => {
-        item.wfh == true;
-      });
+      const checkUserWfh = result.data.filter((item) => item.wfh == true);
 
       let mess: any;
       if (!checkUserWfh) {
@@ -109,13 +107,7 @@ export class ReportTrackerService {
           if (checkUserWfh.slice(i * 50, (i + 1) * 50).length === 0) break;
           mess = checkUserWfh
             .slice(i * 50, (i + 1) * 50)
-            .map(
-              (list) =>
-                `<${list.email}> time: ${(
-                  (list.spent_time + list.call_time) /
-                  3600
-                ).toFixed(2)}`
-            )
+            .map((list) => `<${list.email}> time: ${list.active_time}`)
             .join("\n");
           const Embed = new EmbedBuilder()
             .setTitle(
