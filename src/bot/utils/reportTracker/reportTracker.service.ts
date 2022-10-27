@@ -11,7 +11,7 @@ import { KomubotrestService } from "../komubotrest/komubotrest.service";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { ClientConfigService } from "src/bot/config/client-config.service";
-
+import axios from "axios";
 @Injectable()
 export class ReportTrackerService {
   constructor(
@@ -87,36 +87,44 @@ export class ReportTrackerService {
     return wfhUserEmail;
   }
 
-  async queryTracker(email) {
-    const query = [
-      `events = flood(query_bucket("aw-watcher-window_${email}"));`,
-      `not_afk = flood(query_bucket("aw-watcher-afk_${email}"));`,
-      'not_afk = filter_keyvals(not_afk, "status", ["not-afk"]);',
-      "browser_events = [];",
-      'audible_events = filter_keyvals(browser_events, "audible", [true]);',
-      "not_afk = period_union(not_afk, audible_events);",
-      "events = filter_period_intersect(events, not_afk);",
-      'events = categorize(events, [[["Work"],{"type":"regex","regex":"Google Docs|libreoffice|ReText|xlsx|docx|json|mstsc|Remote Desktop|Terminal"}],[["Work","Programming"],{"type":"regex","regex":"GitHub|Stack Overflow|BitBucket|Gitlab|vim|Spyder|kate|Ghidra|Scite|Jira|Visual Studio|Mongo|cmd"}],[["Work","Programming","IDEs"],{"type":"regex","regex":"deven|code|idea64","ignore_case":true}],[["Work","Programming","Others"],{"type":"regex","regex":"Bitbucket|gitlab|github|mintty|pgadmin","ignore_case":true}],[["Work","3D"],{"type":"regex","regex":"Blender"}],[["Media","Games"],{"type":"regex","regex":"Minecraft|RimWorld"}],[["Media","Video"],{"type":"regex","regex":"YouTube|Plex|VLC"}],[["Media","Social Media"],{"type":"regex","regex":"reddit|Facebook|Twitter|Instagram|devRant","ignore_case":true}],[["Media","Music"],{"type":"regex","regex":"Spotify|Deezer","ignore_case":true}],[["Comms","IM"],{"type":"regex","regex":"Messenger|Telegram|Signal|WhatsApp|Rambox|Slack|Riot|Discord|Nheko|Teams|Skype","ignore_case":true}],[["Comms","Email"],{"type":"regex","regex":"Gmail|Thunderbird|mutt|alpine"}]]);',
-      'title_events = sort_by_duration(merge_events_by_keys(events, ["app", "title"]));',
-      'app_events   = sort_by_duration(merge_events_by_keys(title_events, ["app"]));',
-      'cat_events   = sort_by_duration(merge_events_by_keys(events, ["$category"]));',
-      "app_events  = limit_events(app_events, 100);",
-      "title_events  = limit_events(title_events, 100);",
-      "duration = sum_durations(events);",
-      "browser_events = split_url_events(browser_events);",
-      'browser_urls = merge_events_by_keys(browser_events, ["url"]);',
-      "browser_urls = sort_by_duration(browser_urls);",
-      "browser_urls = limit_events(browser_urls, 100);",
-      'browser_domains = merge_events_by_keys(browser_events, ["$domain"]);',
-      "browser_domains = sort_by_duration(browser_domains);",
-      "browser_domains = limit_events(browser_domains, 100);",
-      "browser_duration = sum_durations(browser_events);",
-      'RETURN = {\n        "window": {\n            "app_events": app_events,\n            "title_events": title_events,\n            "cat_events": cat_events,\n            "active_events": not_afk,\n            "duration": duration\n        },\n        "browser": {\n            "domains": browser_domains,\n            "urls": browser_urls,\n            "duration": browser_duration\n        }\n    };',
-    ];
-    return query;
-  }
-
   async reportTracker(message: Message, args, client) {
+    try {
+      const result = await axios.get(
+        `http://tracker.komu.vn:5600/api/0/report?day=${args[1]}`,
+        { headers: { secret: "ScjP6mX2yA" } }
+      );
+
+      const checkUserWfh = result.data.filter((item) => item.wfh == true);
+
+      let mess: any;
+      if (!checkUserWfh) {
+        return;
+      } else if (Array.isArray(checkUserWfh) && checkUserWfh.length === 0) {
+        mess = "```" + "Không có ai vi phạm" + "```";
+        return message.reply(mess).catch(console.error);
+      } else {
+        for (let i = 0; i <= Math.ceil(checkUserWfh.length / 50); i += 1) {
+          if (checkUserWfh.slice(i * 50, (i + 1) * 50).length === 0) break;
+          mess = checkUserWfh
+            .slice(i * 50, (i + 1) * 50)
+            .map(
+              (list) =>
+                `<${list.email}> ${list.spent_time} ${list.call_time} ${list.active_time}`
+            )
+            .join("\n");
+          const Embed = new EmbedBuilder()
+            .setTitle(
+              `Danh sách tracker ngày hôm nay tổng là ${checkUserWfh.length} người`
+            )
+            .setColor("Red")
+            .setDescription(`${mess}`);
+          await message.reply({ embeds: [Embed] }).catch(console.error);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
     // let authorId = message.author.id;
 
     // let awc = new AWClient("komubot-client", {
@@ -942,9 +950,8 @@ export class ReportTrackerService {
     //   }
     // }
   }
-
-  showTrackerTime(spentTime) {
-    const duration = intervalToDuration({ start: 0, end: spentTime * 1000 });
-    return `${duration.hours}h ${duration.minutes}m ${duration.seconds}s`;
-  }
+  // showTrackerTime(spentTime) {
+  //   const duration = intervalToDuration({ start: 0, end: spentTime * 1000 });
+  //   return `${duration.hours}h ${duration.minutes}m ${duration.seconds}s`;
+  // }
 }

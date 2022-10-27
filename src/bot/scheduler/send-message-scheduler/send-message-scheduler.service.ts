@@ -85,6 +85,9 @@ export class SendMessageSchedulerService {
     this.addCronJob("sendReportWorkout", "0 0 1 * *", () =>
       this.sendReportWorkout(this.client)
     );
+    this.addCronJob("sendReportNotUploadFollowWeek", "00 09 * * 0-6", () =>
+      this.sendReportNotUpload(this.client)
+    );
   }
 
   async sendMessagePMs(client) {
@@ -293,38 +296,114 @@ export class SendMessageSchedulerService {
   }
 
   async sendReportWorkout(client) {
-    const date = new Date();
-    const y = date.getFullYear();
-    const m = date.getMonth();
-    const firstDay = new Date(y, m - 1, 1);
-    const lastDay = new Date(y, m, 0);
-
-    const userCheckWorkout = await this.workoutRepository
-      .createQueryBuilder("workout")
-      .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-        gtecreatedTimestamp: firstDay.getTime(),
-      })
-      .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-        ltecreatedTimestamp: lastDay.getTime(),
-      })
-      .andWhere('"status" = :status', { status: "approve" })
-      .groupBy("workout.userId")
-      .addGroupBy("workout.email")
-      .select("workout.email, COUNT(workout.userId) as total")
-      .orderBy("total", "DESC")
+    const getPointWorkOut = await this.userRepository
+      .createQueryBuilder("user")
+      .innerJoin("komu_workout", "w", "user.userId = w.userId")
+      .groupBy("w.userId")
+      .addGroupBy("w.email")
+      .addGroupBy("scores_workout")
+      .select("w.email, scores_workout")
+      .orderBy("scores_workout", "DESC")
       .execute();
 
     let mess;
-    for (let i = 0; i <= Math.ceil(userCheckWorkout.length / 50); i += 1) {
-      if (userCheckWorkout.slice(i * 50, (i + 1) * 50).length === 0) {
+    for (let i = 0; i <= Math.ceil(getPointWorkOut.length / 50); i += 1) {
+      if (getPointWorkOut.slice(i * 50, (i + 1) * 50).length === 0) {
         break;
       }
-      mess = userCheckWorkout
+      mess = getPointWorkOut
         .slice(i * 50, (i + 1) * 50)
-        .map((list) => `${list.email} (${list.total})`)
+        .map((list) => `${list.email} - point: ${list.scores_workout}`)
         .join("\n");
       const Embed = new EmbedBuilder()
         .setTitle("Top workout")
+        .setColor("Red")
+        .setDescription(`${mess}`);
+      const userDiscord = await client.channels.fetch(
+        this.clientConfigService.workoutChannelId
+      );
+      userDiscord.send({ embeds: [Embed] }).catch(console.error);
+    }
+  }
+
+  async sendReportNotUpload(client) {
+    const getUserNotUpload = await this.workoutRepository
+      .createQueryBuilder("workout")
+      .where(
+        `"createdTimestamp" BETWEEN ${
+          this.utilsService.getYesterdayDate() - 86400000
+        } AND ${this.utilsService.getYesterdayDate()}`
+      )
+
+      .groupBy("workout.userId")
+      .addGroupBy("workout.email")
+      .select("workout.userId, workout.email")
+      .orderBy("workout.email", "DESC")
+      .execute();
+
+    const getUserYesterday = await this.workoutRepository
+      .createQueryBuilder("workout")
+      .groupBy("workout.userId")
+      .addGroupBy("workout.email")
+      .select("workout.userId, workout.email")
+      .orderBy("workout.email", "DESC")
+      .execute();
+
+    const results = getUserYesterday.filter(
+      ({ email: id1 }) =>
+        !getUserNotUpload.some(({ email: id2 }) => id2 === id1)
+    );
+    await Promise.all(
+      results.map(async (item) => {
+        const getUserId = await this.userRepository.findOne({
+          where: { userId: item.userId },
+        });
+        if (!getUserId) return;
+
+        let scrores;
+        if (getUserId.scores_workout <= 1) {
+          scrores = 0;
+        } else {
+          scrores = Math.round(+getUserId.scores_workout / 2);
+        }
+
+        await this.userRepository.update(
+          {
+            userId: item.userId,
+          },
+          {
+            scores_workout: scrores,
+          }
+        );
+      })
+    );
+
+    const workoutUserEmail = results.map((item) => item.email);
+    const getTotalUser = await this.userRepository
+      .createQueryBuilder()
+      .where(
+        workoutUserEmail && workoutUserEmail.length > 0
+          ? '"email" IN (:...workoutUserEmail)'
+          : "true",
+        {
+          workoutUserEmail: workoutUserEmail,
+        }
+      )
+      .orderBy("scores_workout", "DESC")
+      .select("*")
+      .execute();
+
+    let mess;
+    for (let i = 0; i <= Math.ceil(getTotalUser.length / 50); i += 1) {
+      if (getTotalUser.slice(i * 50, (i + 1) * 50).length === 0) {
+        break;
+      }
+      mess = getTotalUser
+        .slice(i * 50, (i + 1) * 50)
+        .map((list) => `${list.email} - point: ${list.scores_workout}`)
+        .join("\n");
+      const Embed = new EmbedBuilder()
+        .setTitle("Danh sách không daily workout ngày hôm qua")
         .setColor("Red")
         .setDescription(`${mess}`);
       const userDiscord = await client.channels.fetch(

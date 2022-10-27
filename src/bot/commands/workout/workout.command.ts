@@ -61,95 +61,65 @@ export class WorkoutCommand implements CommandLineClass {
     try {
       const authorId = message.author.id;
       if (args[0] === "summary") {
-        if (!args[1]) {
-          args[1] = `${new Date().getMonth() + 1}`;
-        }
-        if (monthSupport.includes(args[1].toUpperCase())) {
-          const date = new Date();
-          let dateFormat;
-          const year = date.getFullYear();
-          if (args[1].length > 2) {
-            dateFormat = new Date(`${args[1]} ${year}`);
-          } else {
-            dateFormat = new Date(year, +args[1] - 1);
-          }
-          const y = dateFormat.getFullYear();
-          const m = dateFormat.getMonth();
-          const firstDay = new Date(y, m, 1);
-          const lastDay = new Date(y, m + 1, 0);
+        const getPointWorkOut = await this.userRepository
+          .createQueryBuilder("user")
+          .innerJoin("komu_workout", "w", "user.userId = w.userId")
+          .groupBy("w.userId")
+          .addGroupBy("w.email")
+          .addGroupBy("scores_workout")
+          .select("w.email, scores_workout")
+          .orderBy("scores_workout", "DESC")
+          .execute();
 
-          const userCheckWorkout = await this.workoutRepository
-            .createQueryBuilder("workout")
-            .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-              gtecreatedTimestamp: firstDay.getTime(),
-            })
-            .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-              ltecreatedTimestamp: lastDay.getTime(),
-            })
-            .andWhere('"status" = :status', { status: "approve" })
-            .groupBy("workout.userId")
-            .addGroupBy("workout.email")
-            .addGroupBy("workout.createdTimestamp")
-            .addGroupBy("workout.point")
-            .select(
-              "workout.email, COUNT(workout.userId) as total, workout.createdTimestamp, workout.point"
-            )
-            .orderBy("total", "DESC")
-            .orderBy("workout.createdTimestamp", "DESC")
-            .execute();
-
-          let result = userCheckWorkout.reduce((unique, o) => {
-            if (!unique.some((obj) => obj.email === o.email)) {
-              unique.push(o);
-            }
-            return unique;
-          }, []);
-
-          result.sort(function (a, b) {
-            return a.point - b.point;
+        let mess;
+        if (!getPointWorkOut) {
+          return;
+        } else if (
+          Array.isArray(getPointWorkOut) &&
+          getPointWorkOut.length === 0
+        ) {
+          mess = "```" + "No results" + "```";
+          return message.reply(mess).catch((err) => {
+            this.komubotrestService.sendErrorToDevTest(
+              client,
+              message.author.id,
+              err
+            );
           });
-          result.reverse();
-
-          let mess;
-          if (!result) {
-            return;
-          } else if (Array.isArray(result) && result.length === 0) {
-            mess = "```" + "No results" + "```";
-            return message.reply(mess).catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, m, err);
-            });
-          } else {
-            for (let i = 0; i <= Math.ceil(result.length / 50); i += 1) {
-              if (result.slice(i * 50, (i + 1) * 50).length === 0) {
-                break;
-              }
-              mess = result
-                .slice(i * 50, (i + 1) * 50)
-                .map(
-                  (item) =>
-                    `${item.email} (${item.total}) - point: ${
-                      item.point ? item.point : 0
-                    }`
-                )
-                .join("\n");
-              const Embed = new EmbedBuilder()
-                .setTitle("Top workout")
-                .setColor("Red")
-                .setDescription(`${mess}`);
-              await message.reply({ embeds: [Embed] }).catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(
-                  client,
-                  authorId,
-                  err
-                );
-              });
+        } else {
+          for (let i = 0; i <= Math.ceil(getPointWorkOut.length / 50); i += 1) {
+            if (getPointWorkOut.slice(i * 50, (i + 1) * 50).length === 0) {
+              break;
             }
+            mess = getPointWorkOut
+              .slice(i * 50, (i + 1) * 50)
+              .map((item) => `${item.email} - point: ${item.scores_workout}`)
+              .join("\n");
+            const Embed = new EmbedBuilder()
+              .setTitle("Top workout")
+              .setColor("Red")
+              .setDescription(`${mess}`);
+            await message.reply({ embeds: [Embed] }).catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+            });
           }
         }
+        // }
       } else if (args[0] === "help") {
         return (message as any).channel
           .reply("```" + "*workout month" + "\n" + "*workout" + "```")
           .catch(console.error);
+      } else if (args[0] === "reset" && args[1] === "point") {
+        await this.userRepository
+          .createQueryBuilder()
+          .update(User)
+          .set({
+            scores_workout: 0,
+          })
+          .where(`"scores_workout" > :scores_workout`, {
+            scores_workout: 0,
+          })
+          .execute();
       } else {
         const links = [];
         if (
@@ -189,57 +159,11 @@ export class WorkoutCommand implements CommandLineClass {
                 .catch(console.error);
             }
 
-            const checkWorkoutYesterday = await this.workoutRepository
+            const findWorkoutUser = await this.userRepository
               .createQueryBuilder()
-              .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
-                gtecreatedTimestamp:
-                  this.utilsService.getYesterdayDate() - 86400000,
-              })
-              .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
-                ltecreatedTimestamp: this.utilsService.getYesterdayDate(),
-              })
-              .andWhere('"status" = :status', { status: "approve" })
-              .andWhere('"userId" = :userId', { userId: message.author.id })
+              .where('"userId" = :userId', { userId: message.author.id })
               .select("*")
-              .execute();
-
-            const findWorkoutUser = await this.workoutRepository
-              .createQueryBuilder()
-              .where('"status" = :status', { status: "approve" })
-              .andWhere('"userId" = :userId', { userId: message.author.id })
-              .select("*")
-              .getCount();
-
-            let pointWorkout;
-            if (checkWorkoutYesterday.length === 0) {
-              if (findWorkoutUser === 0) {
-                pointWorkout = 1;
-              } else {
-                const checkPoint = await this.workoutRepository.findOne({
-                  where: {
-                    status: "approve",
-                    userId: message.author.id,
-                  },
-                  order: {
-                    createdTimestamp: "DESC",
-                  },
-                });
-                console.log(checkPoint);
-                if (checkPoint.point && +checkPoint.point < 1) {
-                  pointWorkout = 0;
-                } else if (checkPoint.point && +checkPoint.point >= 1) {
-                  pointWorkout = (+checkPoint.point + 1) / 2;
-                } else {
-                  pointWorkout = (findWorkoutUser + 1) / 2;
-                }
-              }
-            } else {
-              if (!checkWorkoutYesterday[0].point) {
-                pointWorkout = +findWorkoutUser + 1;
-              } else {
-                pointWorkout = +checkWorkoutYesterday[0].point + 1;
-              }
-            }
+              .getRawOne();
 
             const workout = await this.workoutRepository.save({
               userId: message.author.id,
@@ -251,8 +175,19 @@ export class WorkoutCommand implements CommandLineClass {
               attachment: true,
               status: "approve",
               channelId: this.configService.workoutChannelId,
-              point: pointWorkout,
+              point: +findWorkoutUser.scores_workout + 1,
             });
+
+            await this.userRepository
+              .createQueryBuilder()
+              .update(User)
+              .set({
+                scores_workout: +findWorkoutUser.scores_workout + 1,
+              })
+              .where(`"userId" = :userId`, {
+                userId: findWorkoutUser.userId,
+              })
+              .execute();
 
             const row = new ActionRowBuilder().addComponents(
               new ButtonBuilder()

@@ -3,6 +3,7 @@ import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { User } from "src/bot/models/user.entity";
 import { UserQuiz } from "src/bot/models/userQuiz";
+import { Workout } from "src/bot/models/workout.entity";
 import { Repository } from "typeorm";
 
 @CommandLine({
@@ -15,7 +16,9 @@ export class UpdateCommand implements CommandLineClass {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserQuiz)
-    private readonly userQuizRepository: Repository<UserQuiz>
+    private readonly userQuizRepository: Repository<UserQuiz>,
+    @InjectRepository(Workout)
+    private readonly workOutRepository: Repository<Workout>
   ) {}
 
   async execute(message: Message, args) {
@@ -36,6 +39,26 @@ export class UpdateCommand implements CommandLineClass {
             { scores_quiz: point }
           );
         }
+        message.channel.send("Update Point Successfully");
+      } else if (args[0] === "workout") {
+        const sendTotalScoreWorkout = await this.workOutRepository
+          .createQueryBuilder("workout")
+          .andWhere('"status" = :status', { status: "approve" })
+          .groupBy("workout.userId")
+          .addGroupBy("workout.email")
+          .select(
+            "workout.email, workout.userId, COUNT(workout.userId) as total"
+          )
+          .orderBy("total", "DESC")
+          .execute();
+
+        sendTotalScoreWorkout.map(async (item) => {
+          await this.userRepository.update(
+            { userId: item.userId },
+            { scores_workout: item.total }
+          );
+        });
+
         message.channel.send("Update Point Successfully");
       }
     } catch (err) {
