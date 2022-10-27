@@ -77,7 +77,7 @@ export class KomubotrestService {
       .update(User)
       .set({
         last_bot_message_id: userdb.last_bot_message_id,
-        botPing: true,
+        botPing: userdb.botPing,
       })
       .where(`"userId" = :userId`, { userId: userdb.userId })
       .execute();
