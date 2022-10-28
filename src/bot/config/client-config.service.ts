@@ -205,6 +205,10 @@ export class ClientConfigService {
       "GUILDVOICE_PARENT_ID"
     )}`;
 
+    this.ncc8Voice = `${configService.get<string>(
+      "KOMUBOTREST_NCC8_CHANNEL_ID"
+    )}`;
+
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
     this.footer = "KOMU ";
@@ -233,6 +237,8 @@ export class ClientConfigService {
   }
 
   topCategoryId: string;
+
+  ncc8Voice: string;
 
   //hanoi3
   hanoi3corner: string;
