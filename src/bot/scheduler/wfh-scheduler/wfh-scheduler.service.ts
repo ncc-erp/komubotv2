@@ -232,7 +232,7 @@ export class WfhSchedulerService {
 
     const users = await this.userRepository
       .createQueryBuilder("user")
-      .innerJoin("komu_msg", "m", "user.last_message_id = m.id")
+      .innerJoin("komu_msg", "m", "user.last_bot_message_id = m.id")
       .where(
         wfhUserEmail && wfhUserEmail.length > 0
           ? '"email" IN (:...wfhUserEmail)'
