@@ -94,33 +94,35 @@ export class ReportTrackerService {
         { headers: { secret: "ScjP6mX2yA" } }
       );
 
-      const checkUserWfh = result.data.filter((item) => item.wfh == true);
+      const { data } = result;
+      const userWfh = data.filter((e) => e.wfh);
+      if (!userWfh.length)
+        return message.reply(this.messHelpTime).catch(console.error);
 
-      let mess: any;
-      if (!checkUserWfh) {
-        return;
-      } else if (Array.isArray(checkUserWfh) && checkUserWfh.length === 0) {
-        mess = "```" + "Không có ai vi phạm" + "```";
-        return message.reply(mess).catch(console.error);
-      } else {
-        for (let i = 0; i <= Math.ceil(checkUserWfh.length / 50); i += 1) {
-          if (checkUserWfh.slice(i * 50, (i + 1) * 50).length === 0) break;
-          mess = checkUserWfh
-            .slice(i * 50, (i + 1) * 50)
-            .map(
-              (list) =>
-                `<${list.email}> ${list.spent_time} ${list.call_time} ${list.active_time}`
-            )
-            .join("\n");
-          const Embed = new EmbedBuilder()
-            .setTitle(
-              `Danh sách tracker ngày hôm nay tổng là ${checkUserWfh.length} người`
-            )
-            .setColor("Red")
-            .setDescription(`${mess}`);
-          await message.reply({ embeds: [Embed] }).catch(console.error);
-        }
-      }
+      const pad =
+        userWfh.reduce((a, b) => (a < b.email.length ? b.email.length : a), 0) +
+        2;
+      userWfh.unshift({
+        email: "[email]",
+        str_spent_time: "[spent]",
+        str_call_time: "[call]",
+        str_active_time: "[active]",
+      });
+      const messRep = userWfh
+        .map(
+          (e) =>
+            `${e.email.padEnd(pad)} ${e.str_spent_time.padEnd(
+              10
+            )} ${e.str_call_time.padEnd(10)} ${e.str_active_time.padEnd(10)}`
+        )
+        .join("\n");
+      const Embed = new EmbedBuilder()
+        .setTitle(
+          `Danh sách tracker ngày hôm nay tổng là ${userWfh.length} người`
+        )
+        .setColor("Green")
+        .setDescription("```" + `${messRep}` + "```");
+      await message.reply({ embeds: [Embed] }).catch(console.error);
     } catch (error) {
       console.log(error);
     }
