@@ -10,6 +10,7 @@ import {
 } from "discord.js";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { TABLE } from "src/bot/constants/table";
+import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
 import { GetUserIdByUsernameDTO } from "src/bot/dto/getUserIdByUsername";
 import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
 import {
@@ -699,4 +700,12 @@ export class KomubotrestService {
       console.log(error);
     }
   };
+
+  async getInfoUserByEmail(getUserIdByEmailDTO: GetUserIdByEmailDTO) {
+    return await this.userRepository.find({
+      where: {
+        email: getUserIdByEmailDTO.email,
+      },
+    });
+  }
 }

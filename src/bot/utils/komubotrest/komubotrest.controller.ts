@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   HttpException,
   HttpStatus,
   Injectable,
   Post,
+  Query,
   Req,
   Res,
   UseInterceptors,
@@ -31,6 +33,7 @@ import {
   SendImageLabelToUserDTO,
 } from "src/bot/dto/sendImageCheckInToUser";
 import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
+import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -221,5 +224,10 @@ export class KomubotrestController {
       episode,
     });
     res.send(file);
+  }
+
+  @Get("/getInfoUserByEmail")
+  async getInfoUser(@Query() getUserByEmailDto: GetUserIdByEmailDTO) {
+    return await this.komubotrestService.getInfoUserByEmail(getUserByEmailDto);
   }
 }
