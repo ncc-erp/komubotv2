@@ -52,7 +52,7 @@ export class DatingSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("dating", CronExpression.EVERY_30_MINUTES, () =>
+    this.addCronJob("dating", '0-15/1 17 * * 5', () =>
       this.dating(this.client)
     );
   }
@@ -86,12 +86,12 @@ export class DatingSchedulerService {
         if (item.sex === 0)
           userMan.push({
             email: this.utilsService.getUserNameByEmail(item.emailAddress),
-            branch: item.branch,
+            branch: item.branchId,
           });
         if (item.sex === 1)
           userWomen.push({
             email: this.utilsService.getUserNameByEmail(item.emailAddress),
-            branch: item.branch,
+            branch: item.branchId,
           });
       });
 
@@ -232,16 +232,16 @@ export class DatingSchedulerService {
 
           checkUserMan.map((item) => {
             dating.map((dt) => {
-              if (item.email === dt && !datingIdMan.includes(item.id)) {
-                datingIdMan.push(item.id);
+              if (item.email === dt && !datingIdMan.includes(item.userId)) {
+                datingIdMan.push(item.userId);
                 datingEmailMAn.push(item.email);
               }
             });
           });
           checkUserWoman.map((item) => {
             dating.map((dt) => {
-              if (item.email === dt && !datingIdWoman.includes(item.id)) {
-                datingIdWoman.push(item.id);
+              if (item.email === dt && !datingIdWoman.includes(item.userId)) {
+                datingIdWoman.push(item.userId);
                 datingEmailWoman.push(item.email);
               }
             });

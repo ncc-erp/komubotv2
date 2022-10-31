@@ -163,7 +163,7 @@ export class VoiceChannelSchedulerService {
 
   async turnOffBot(client) {
     const fetchVoiceNcc8 = await client.channels.fetch(
-      this.configClient.guild_komu_id
+      this.configClient.ncc8Voice
     );
     const target = await fetchVoiceNcc8.guild.members.fetch(
       "922003239887581205"
