@@ -201,7 +201,7 @@ export class KomubotrestController {
       fileFilter: fileFilter,
     })
   )
-  async uploadAvatar(@Req() req: Request, @Res() res: Response) {
+  async uploadFileNCC8(@Req() req: Request, @Res() res: Response) {
     const file = req.file;
     if (!file) {
       throw new HttpException("Please upload a file", HttpStatus.NOT_FOUND);
