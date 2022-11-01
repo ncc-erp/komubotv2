@@ -219,8 +219,7 @@ export class SendMessageSchedulerService {
   }
 
   async happyBirthday(client) {
-    const result = await this.birthdayService.birthdayUser(client);
-
+    const result = await this.birthdayService.birthdayUser();
     try {
       await Promise.all(
         await result.map((item) => {

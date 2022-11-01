@@ -82,6 +82,9 @@ export class ClientConfigService {
         "help",
       ],
     };
+    this.birthday = {
+      api_url: `${configService.get<string>("HRM_API")}GetEmployeesByBirthday`,
+    };
     this.gem = {
       api_url_getMyRank: `${configService.get<string>(
         "GEMSOFGOD_API"
@@ -199,7 +202,9 @@ export class ClientConfigService {
       "HANOI2CORNER_CHANNEL_ID"
     )}`;
     this.hanoicorner = `${configService.get<string>("HANOICORNER_CHANNEL_ID")}`;
-    this.chuyenphiem_id = `${configService.get<string>("CHUYENPHIEM_CHANNEL_ID")}`;
+    this.chuyenphiem_id = `${configService.get<string>(
+      "CHUYENPHIEM_CHANNEL_ID"
+    )}`;
     this.guild_komu_id = `${configService.get<string>("GUILD_KOMU_ID")}`;
     this.guildvoice_parent_id = `${configService.get<string>(
       "GUILDVOICE_PARENT_ID"
@@ -353,6 +358,9 @@ export class ClientConfigService {
   };
   noti: {
     api_url_quickNews: string;
+  };
+  birthday: {
+    api_url: string;
   };
 
   ticketApiKey: string;
