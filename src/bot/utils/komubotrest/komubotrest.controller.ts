@@ -230,4 +230,9 @@ export class KomubotrestController {
   async getInfoUser(@Query() getUserByEmailDto: GetUserIdByEmailDTO) {
     return await this.komubotrestService.getInfoUserByEmail(getUserByEmailDto);
   }
+
+  @Get("/getUserNotDaily")
+  async getUserNotDaily() {
+    return await this.komubotrestService.getUserNotDaily();
+  }
 }

@@ -24,7 +24,8 @@ import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Brackets, Repository } from "typeorm";
-
+import { Daily } from "src/bot/models/daily.entity";
+import { UtilsService } from "../utils.service";
 @Injectable()
 export class KomubotrestService {
   constructor(
@@ -37,6 +38,9 @@ export class KomubotrestService {
     private channelRepository: Repository<Channel>,
     @InjectRepository(WorkFromHome)
     private wfhRepository: Repository<WorkFromHome>,
+    private utilsService: UtilsService,
+    @InjectRepository(Daily)
+    private dailyRepository: Repository<Daily>,
     private clientConfig: ClientConfigService
   ) {}
   private data;
@@ -707,5 +711,18 @@ export class KomubotrestService {
         email: getUserIdByEmailDTO.email,
       },
     });
+  }
+
+  async getUserNotDaily() {
+    const fof = await this.dailyRepository
+      .createQueryBuilder("daily")
+      .where(
+        `"createdAt" BETWEEN ${
+          this.utilsService.getYesterdayDate() - 86400000
+        } AND ${this.utilsService.getYesterdayDate()}`
+      )
+      .select("daily.email")
+      .execute();
+    console.log(fof, "kjkk");
   }
 }

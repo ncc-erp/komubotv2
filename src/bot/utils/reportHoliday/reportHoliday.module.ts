@@ -3,6 +3,7 @@ import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Channel } from "src/bot/models/channel.entity";
+import { Daily } from "src/bot/models/daily.entity";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { Order } from "src/bot/models/order.entity";
@@ -14,7 +15,15 @@ import { ReportHolidayService } from "./reportHoliday.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, Holiday, User, Msg, WorkFromHome, Channel]),
+    TypeOrmModule.forFeature([
+      Order,
+      Holiday,
+      User,
+      Msg,
+      WorkFromHome,
+      Channel,
+      Daily,
+    ]),
     DiscordModule.forFeature(),
     DiscoveryModule,
   ],

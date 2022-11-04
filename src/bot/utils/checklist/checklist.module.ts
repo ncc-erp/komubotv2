@@ -4,11 +4,14 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { Channel } from "src/bot/models/channel.entity";
 import { CheckList } from "src/bot/models/checklist.entity";
+import { Daily } from "src/bot/models/daily.entity";
+import { Holiday } from "src/bot/models/holiday.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { Subcategorys } from "src/bot/models/subcategoryData.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
+import { UtilsService } from "../utils.service";
 import { CheckListController } from "./checklist.controller";
 import { CheckListService } from "./checklist.service";
 
@@ -22,6 +25,8 @@ import { CheckListService } from "./checklist.service";
       WorkFromHome,
       Channel,
       User,
+      Daily,
+      Holiday,
     ]),
   ],
   exports: [CheckListController, KomubotrestService, ClientConfigService],
@@ -31,6 +36,7 @@ import { CheckListService } from "./checklist.service";
     KomubotrestService,
     KomubotrestService,
     ClientConfigService,
+    UtilsService,
     ConfigService,
   ],
 })
