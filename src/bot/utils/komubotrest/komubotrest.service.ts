@@ -714,7 +714,7 @@ export class KomubotrestService {
   }
 
   async getUserNotDaily() {
-    const fof = await this.dailyRepository
+    return await this.dailyRepository
       .createQueryBuilder("daily")
       .where(
         `"createdAt" BETWEEN ${
@@ -723,6 +723,5 @@ export class KomubotrestService {
       )
       .select("daily.email")
       .execute();
-    console.log(fof, "kjkk");
   }
 }
