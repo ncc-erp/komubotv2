@@ -235,4 +235,9 @@ export class KomubotrestController {
   async getUserNotDaily() {
     return await this.komubotrestService.getUserNotDaily();
   }
+
+  @Get("/getUserNotPMComfirm")
+  async getUserNotPMComfirm() {
+    return await this.komubotrestService.getUserNotPMComfirm();
+  }
 }
