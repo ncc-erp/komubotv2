@@ -44,9 +44,7 @@ export class AudioPlayer {
       joinVoiceChannel({
         channelId: channel.id,
         guildId: (channel as VoiceChannel).guild.id,
-        adapterCreator: (channel as VoiceChannel).guild.voiceAdapterCreator,
-        selfDeaf: false,
-        selfMute: false,
+        adapterCreator: (channel as VoiceChannel).guild.voiceAdapterCreator
       }).subscribe(player);
       let dataMp3;
       if (!episode) {
