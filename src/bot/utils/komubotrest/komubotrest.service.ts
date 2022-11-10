@@ -434,6 +434,7 @@ export class KomubotrestService {
       return;
     }
     let message = sendMessageToChannelDTO.message;
+    let replaceMessage = sendMessageToChannelDTO.message;
     const channelid = sendMessageToChannelDTO.channelid;
 
     if (
@@ -447,9 +448,35 @@ export class KomubotrestService {
       ) as any;
     }
 
+    const getMessage = replaceMessage.split("\n");
+
+    getMessage.map(async (item) => {
+      if (!item.includes("@ncc.asia")) {
+        return;
+      }
+      const getIdUser = await this.userRepository
+        .createQueryBuilder("user")
+        .where('"email" = :email', { email: item.slice(0, item.length - 9) })
+        .select("*")
+        .getRawOne();
+
+      if (!getIdUser) {
+        return;
+      }
+      replaceMessage = replaceMessage.replace(
+        `${item}`,
+        `<@${getIdUser.userId}>`
+      );
+      // message.replace(
+      //   /[A-Za-z0-9|.]+.@ncc.asia/i,
+      //   `<@${getIdUser.userId}>`
+      // );
+    });
+
     try {
       const channel = await client.channels.fetch(channelid);
       await channel.send(message);
+      await channel.send(replaceMessage);
       res.status(200).send({ message: "Successfully!" });
     } catch (error) {
       console.log("error", error);
