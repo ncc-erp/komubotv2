@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional } from "class-validator";
-import { Column } from "typeorm";
+import { IsOptional} from "class-validator";
 
 export class SendMessageToChannelDTO {
   @ApiProperty({ required: true })

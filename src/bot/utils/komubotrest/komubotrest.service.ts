@@ -447,9 +447,21 @@ export class KomubotrestService {
       ) as any;
     }
 
+    const regex = new RegExp(/\${([^{}]+)}/g);
+    const emails = message.match(/(?<=\${)(.[^}]+)(?=})/g);
+    const users = await this.userRepository
+      .createQueryBuilder("user")
+      .where('"email" IN (:...emails)', { emails })
+      .select("*")
+      .getRawMany();
+
+    let result = message.replace(regex, (m, value) => {
+      const user = users.find((item) => item.email === value);
+      return `<@${user.userId}>`;
+    });
     try {
       const channel = await client.channels.fetch(channelid);
-      await channel.send(message);
+      await channel.send(result);
       res.status(200).send({ message: "Successfully!" });
     } catch (error) {
       console.log("error", error);
