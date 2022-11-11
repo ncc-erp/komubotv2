@@ -108,7 +108,7 @@ export class BackupService {
     @InjectRepository(BwlReaction)
     private bwlReactionReposistory: Repository<BwlReaction>,
     @InjectRepository(Channel)
-    private channelReposistory: Repository<Channel>,
+    private channelReposistory: Repository<Channel>
   ) {}
 
   async saveVoiechannel(item) {
@@ -140,7 +140,8 @@ export class BackupService {
   }
 
   async saveWorkout(item) {
-    const timestamp = new Date(item.createdTimestamp);
+    const timestamp = new Date(+item.createdTimestamp.toString());
+
     await this.workoutRepository.insert({
       userId: item.userId,
       email: item.email,
@@ -230,21 +231,23 @@ export class BackupService {
   }
 
   async saveBwls(item) {
-    return this.bwlRepository.createQueryBuilder().insert()
-    .into(Bwl)
-    .values({
-      messageId: item.messageId,
-      guildId: item.guildId,
-      link: item.link,
-      createdTimestamp: +item.createdTimestamp,
-      channel: item.channelId,
-      author: item.authorId
-    })
-    .execute()
-    .catch((err) => {
-      console.log(err)
-      return;
-    });
+    return this.bwlRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Bwl)
+      .values({
+        messageId: item.messageId,
+        guildId: item.guildId,
+        link: item.link,
+        createdTimestamp: +item.createdTimestamp,
+        channel: item.channelId,
+        author: item.authorId,
+      })
+      .execute()
+      .catch((err) => {
+        console.log(err);
+        return;
+      });
   }
 
   async saveWfh(item) {
@@ -530,17 +533,22 @@ export class BackupService {
     });
   }
   async bwlReaction(item) {
-    return this.bwlReactionReposistory.createQueryBuilder().insert().into(BwlReaction).values({
-      guildId: item.guildId,
-      emoji: item.emoji,
-      count: item.count,
-      createdTimestamp: +item.createdTimestamp,
-      bwl: item.messageId,
-      channel: item.channelId,
-      author: item.authorId
-    }).execute()
+    return this.bwlReactionReposistory
+      .createQueryBuilder()
+      .insert()
+      .into(BwlReaction)
+      .values({
+        guildId: item.guildId,
+        emoji: item.emoji,
+        count: item.count,
+        createdTimestamp: +item.createdTimestamp,
+        bwl: item.messageId,
+        channel: item.channelId,
+        author: item.authorId,
+      })
+      .execute()
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         return;
       });
   }
