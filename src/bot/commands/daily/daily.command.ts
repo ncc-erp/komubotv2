@@ -232,7 +232,7 @@ export class DailyCommand implements CommandLineClass {
             message
               .reply({
                 content:
-                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-14h. WFH not daily 20k/day.)```",
+                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-14h. WFH not daily 20k/time.)```",
                 // ephemeral: true,
               })
               .catch((err) => {
@@ -270,7 +270,7 @@ export class DailyCommand implements CommandLineClass {
             message
               .reply({
                 content:
-                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-17h. not daily 20k/day.)```",
+                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-17h. not daily 20k/time.)```",
                 // ephemeral: true,
               })
               .catch((err) => {

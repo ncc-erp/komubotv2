@@ -11,6 +11,7 @@ import {
   Req,
   Res,
   UseInterceptors,
+  UsePipes,
 } from "@nestjs/common";
 import { Client } from "discord.js";
 import { KomubotrestService } from "./komubotrest.service";
@@ -34,6 +35,7 @@ import {
 } from "src/bot/dto/sendImageCheckInToUser";
 import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
 import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
+import { RegexEmailPipe } from "src/bot/middleware/regex-email";
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -74,6 +76,7 @@ export class KomubotrestController {
   }
 
   @Post("/sendMessageToChannel")
+  @UsePipes(RegexEmailPipe)
   async sendMessageToChannel(
     @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
     @Headers("X-Secret-Key") header,
@@ -115,6 +118,7 @@ export class KomubotrestController {
   }
 
   @Post("/sendMessageToMachLeo")
+  @UsePipes(RegexEmailPipe)
   async sendMessageToMachLeo(
     @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
     @Headers("X-Secret-Key") header,
@@ -129,6 +133,7 @@ export class KomubotrestController {
   }
 
   @Post("/sendMessageToThongBao")
+  @UsePipes(RegexEmailPipe)
   async sendMessageToThongBao(
     @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
     @Headers("X-Secret-Key") header,
@@ -143,6 +148,7 @@ export class KomubotrestController {
   }
 
   @Post("/sendMessageToThongBaoPM")
+  @UsePipes(RegexEmailPipe)
   async sendMessageToThongBaoPM(
     @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
     @Headers("X-Secret-Key") header,
@@ -156,6 +162,7 @@ export class KomubotrestController {
     );
   }
   @Post("/sendMessageToFinance")
+  @UsePipes(RegexEmailPipe)
   async sendMessageToFinance(
     @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
     @Headers("X-Secret-Key") header,
@@ -234,10 +241,5 @@ export class KomubotrestController {
   @Get("/getUserNotDaily")
   async getUserNotDaily() {
     return await this.komubotrestService.getUserNotDaily();
-  }
-
-  @Get("/getUserNotPMComfirm")
-  async getUserNotPMComfirm() {
-    return await this.komubotrestService.getUserNotPMComfirm();
   }
 }

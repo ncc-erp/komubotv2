@@ -29,7 +29,7 @@ export class ToggleActiveCommand implements CommandLineClass {
     try {
       if (args[0] === "check") {
         const findUser = await this.userData.find({
-          where: [{ userId: args[1] }, { email: args[1] }],
+          where: [{ userId: args[1] }, { username: args[1] }],
         });
         if (findUser.length === 0) {
           return message

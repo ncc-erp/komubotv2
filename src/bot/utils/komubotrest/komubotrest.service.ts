@@ -724,31 +724,4 @@ export class KomubotrestService {
       .select("daily.email")
       .execute();
   }
-
-  async getUserNotPMComfirm() {
-    let fomatDate = new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return await this.wfhRepository
-      .createQueryBuilder()
-      .where(
-        '("status" = :statusACCEPT AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusACTIVE AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay)',
-        {
-          type: "wfh",
-          statusACCEPT: "ACCEPT",
-          statusACTIVE: "ACTIVE",
-          statusAPPROVED: "APPROVED",
-          pmconfirm: false,
-          firstDay: this.utilsService
-            .getTimeToDayMention(fomatDate)
-            .firstDay.getTime(),
-          lastDay: this.utilsService
-            .getTimeToDayMention(fomatDate)
-            .lastDay.getTime(),
-        }
-      )
-      .execute();
-  }
 }
