@@ -434,7 +434,6 @@ export class KomubotrestService {
       return;
     }
     let message = sendMessageToChannelDTO.message;
-    let replaceMessage = sendMessageToChannelDTO.message;
     const channelid = sendMessageToChannelDTO.channelid;
 
     if (
@@ -448,35 +447,21 @@ export class KomubotrestService {
       ) as any;
     }
 
-    const getMessage = replaceMessage.split("\n");
+    const regex = new RegExp(/\${([^{}]+)}/g);
+    const emails = message.match(/(?<=\${)(.[^}]+)(?=})/g);
+    const users = await this.userRepository
+      .createQueryBuilder("user")
+      .where('"email" IN (:...emails)', { emails })
+      .select("*")
+      .getRawMany();
 
-    getMessage.map(async (item) => {
-      if (!item.includes("@ncc.asia")) {
-        return;
-      }
-      const getIdUser = await this.userRepository
-        .createQueryBuilder("user")
-        .where('"email" = :email', { email: item.slice(0, item.length - 9) })
-        .select("*")
-        .getRawOne();
-
-      if (!getIdUser) {
-        return;
-      }
-      replaceMessage = replaceMessage.replace(
-        `${item}`,
-        `<@${getIdUser.userId}>`
-      );
-      // message.replace(
-      //   /[A-Za-z0-9|.]+.@ncc.asia/i,
-      //   `<@${getIdUser.userId}>`
-      // );
+    let result = message.replace(regex, (m, value) => {
+      const user = users.find((item) => item.email === value);
+      return `<@${user.userId}>`;
     });
-
     try {
       const channel = await client.channels.fetch(channelid);
-      await channel.send(message);
-      await channel.send(replaceMessage);
+      await channel.send(result);
       res.status(200).send({ message: "Successfully!" });
     } catch (error) {
       console.log("error", error);
@@ -749,33 +734,6 @@ export class KomubotrestService {
         } AND ${this.utilsService.getYesterdayDate()}`
       )
       .select("daily.email")
-      .execute();
-  }
-
-  async getUserNotPMComfirm() {
-    let fomatDate = new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return await this.wfhRepository
-      .createQueryBuilder()
-      .where(
-        '("status" = :statusACCEPT AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusACTIVE AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay)',
-        {
-          type: "wfh",
-          statusACCEPT: "ACCEPT",
-          statusACTIVE: "ACTIVE",
-          statusAPPROVED: "APPROVED",
-          pmconfirm: false,
-          firstDay: this.utilsService
-            .getTimeToDayMention(fomatDate)
-            .firstDay.getTime(),
-          lastDay: this.utilsService
-            .getTimeToDayMention(fomatDate)
-            .lastDay.getTime(),
-        }
-      )
       .execute();
   }
 }
