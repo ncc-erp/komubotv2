@@ -15,6 +15,9 @@ export class RegexEmailPipe implements PipeTransform {
     const emails = sendMessageToChannelDTO.message.match(
       /(?<=\${)(.[^}]+)(?=})/g
     );
+    if (!emails) {
+      return sendMessageToChannelDTO;
+    }
     const users = await this.userRepository
       .createQueryBuilder("user")
       .where('"email" IN (:...emails)', { emails })
