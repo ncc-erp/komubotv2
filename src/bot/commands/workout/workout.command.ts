@@ -167,10 +167,7 @@ export class WorkoutCommand implements CommandLineClass {
 
             const workout = await this.workoutRepository.save({
               userId: message.author.id,
-              email:
-                message.member != null || message.member != undefined
-                  ? message.member.displayName
-                  : message.author.username,
+              email: findWorkoutUser.email,
               createdTimestamp: Date.now(),
               attachment: true,
               status: "approve",
