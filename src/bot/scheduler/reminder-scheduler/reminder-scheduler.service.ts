@@ -208,7 +208,8 @@ export class ReminderSchedulerService {
       });
 
       const now = new Date();
-      now.setHours(now.getHours());
+      now.setHours(now.getHours() + 7);
+
       const hourDateNow = now.getHours();
       const dateNow = now.toLocaleDateString("en-US");
       const minuteDateNow = now.getMinutes();
@@ -233,7 +234,6 @@ export class ReminderSchedulerService {
         const dateCreatedTimestamp = new Date(
           +item.createdTimestamp.toString()
         ).toLocaleDateString("en-US");
-
         if (
           hourDateNow === hourTimestamp &&
           0 <= checkFiveMinute &&
@@ -241,6 +241,7 @@ export class ReminderSchedulerService {
           dateCreatedTimestamp === dateNow
         ) {
           const fetchChannel = await client.channels.fetch(item.channelId);
+
           fetchChannel
             .send(
               `<@${item.mentionUserId}>, due today ${item.content} of <@${item.authorId}>`

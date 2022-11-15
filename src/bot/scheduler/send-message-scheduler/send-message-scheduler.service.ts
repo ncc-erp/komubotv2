@@ -363,7 +363,7 @@ export class SendMessageSchedulerService {
         if (getUserId.scores_workout <= 1) {
           scrores = 0;
         } else {
-          scrores = Math.round(+getUserId.scores_workout / 2);
+          scrores = Math.round(+getUserId.scores_workout - 1);
         }
 
         await this.userRepository.update(
