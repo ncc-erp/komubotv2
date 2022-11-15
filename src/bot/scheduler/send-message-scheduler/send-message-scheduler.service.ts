@@ -85,7 +85,7 @@ export class SendMessageSchedulerService {
     this.addCronJob("sendReportWorkout", "0 0 1 * *", () =>
       this.sendReportWorkout(this.client)
     );
-    this.addCronJob("sendReportNotUploadFollowWeek", "00 09 * * 0-6", () =>
+    this.addCronJob("sendReportNotUploadFollowWeek", CronExpression.EVERY_10_SECONDS, () =>
       this.sendReportNotUpload(this.client)
     );
   }
@@ -328,17 +328,45 @@ export class SendMessageSchedulerService {
   async sendReportNotUpload(client) {
     const getUserNotUpload = await this.workoutRepository
       .createQueryBuilder("workout")
-      .where(
-        `"createdTimestamp" BETWEEN ${
-          this.utilsService.getYesterdayDate() - 86400000
-        } AND ${this.utilsService.getYesterdayDate()}`
-      )
-
+      // .where(
+      //   `"createdTimestamp" BETWEEN ${
+      //     this.utilsService.getYesterdayDate() - 86400000
+      //   } AND ${this.utilsService.getYesterdayDate()}`
+      // )
+      // .where(`"createdTimestamp" >= ${this.utilsService.getYesterdayDate()}`)
       .groupBy("workout.userId")
-      .addGroupBy("workout.email")
-      .select("workout.userId, workout.email")
-      .orderBy("workout.email", "DESC")
+      // .addGroupBy("workout.email")
+      // .addGroupBy()
+      .select("MAX(workout.createdTimestamp)")
+      // .addSelect("(DATE_PART('day', (to_timestamp(ROUND(MAX(workout.createdTimestamp)/1000)) at time zone 'UTC+07')::timestamp::date) - DATE_PART('day', (current_date - INTERVAL '1 day')::date)) as DateDiff")
+      // .addSelect("DATE_PART('day', (current_date - INTERVAL '1 day')::date - (to_timestamp(ROUND(MAX(workout.createdTimestamp)/1000)))::timestamp::date) as Diff")
+      .addSelect("workout.userId")
+      // .addSelect("(current_date - INTERVAL '1 day') as yesterday")
+      // .select("workout.userId,workout.email")
+      // .orderBy("workout.email", "DESC")
+      // .orderBy("workout.createdTimestamp", "DESC")
       .execute();
+
+      const pointCal = (days) => {
+        let sum = 0;
+        for(let i=0; i<=days; i++) sum += i
+        return sum
+      }
+
+      const abc= getUserNotUpload.map((item) => {
+        console.log(item)
+        const diff = (new Date()).valueOf() - (new Date(parseInt(item.max))).valueOf()
+        return {...item,time: new Date(parseInt(item.max)), 
+        dateDiff: Math.floor(diff/1000/3600/24),
+        pointCal: pointCal(Math.floor(diff/1000/3600/24))
+        }
+      })
+      console.log(abc, '6thth');
+      
+
+    // const abc = await this.notWorkoutRepository.createQueryBuilder()
+    // .where('"createdTimestamp" ')
+    // .execute()
 
     const getUserYesterday = await this.workoutRepository
       .createQueryBuilder("workout")
@@ -348,6 +376,7 @@ export class SendMessageSchedulerService {
       .orderBy("workout.email", "DESC")
       .execute();
 
+      
     const results = getUserYesterday.filter(
       ({ email: id1 }) =>
         !getUserNotUpload.some(({ email: id2 }) => id2 === id1)
