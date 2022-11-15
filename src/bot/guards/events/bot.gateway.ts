@@ -21,6 +21,7 @@ import {
   PrivateThreadChannel,
   VoiceChannel,
   EmbedBuilder,
+  ButtonInteraction,
 } from "discord.js";
 import { DataSource, Repository } from "typeorm";
 import { DiscoveryService } from "@nestjs/core";
@@ -322,6 +323,7 @@ export class BotGateway {
   @UsePipes(MessageToUpperPipe)
   async onInteractionCreate(interaction: Interaction): Promise<void> {
     if (interaction.isButton()) {
+      await (interaction as ButtonInteraction).deferReply();
       // handle wfh button
       if (interaction.customId.startsWith("komu_")) {
         await this.wfhService
@@ -364,7 +366,7 @@ export class BotGateway {
             .setTitle("Complain")
             .setURL(`http://quiz.nccsoft.vn/question/update/${id}`);
           await interaction
-            .reply({ embeds: [EmbedCorrect, btnCorrect] })
+            .editReply({ embeds: [EmbedCorrect, btnCorrect] })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(
                 this.client,
@@ -383,7 +385,7 @@ export class BotGateway {
             .setURL(`http://quiz.nccsoft.vn/question/update/${id}`);
 
           await interaction
-            .reply({ embeds: [EmbedInCorrect, btnInCorrect] })
+            .editReply({ embeds: [EmbedInCorrect, btnInCorrect] })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(
                 this.client,
