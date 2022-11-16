@@ -323,7 +323,6 @@ export class BotGateway {
   @UsePipes(MessageToUpperPipe)
   async onInteractionCreate(interaction: Interaction): Promise<void> {
     if (interaction.isButton()) {
-      await (interaction as ButtonInteraction).deferReply();
       // handle wfh button
       if (interaction.customId.startsWith("komu_")) {
         await this.wfhService
@@ -338,6 +337,9 @@ export class BotGateway {
         return;
       }
       if (interaction.customId.startsWith("question_")) {
+        
+        await (interaction as ButtonInteraction).deferReply();
+
         const { id, key, correct, userid } = queryString.parse(
           interaction.customId
         );
