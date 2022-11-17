@@ -61,7 +61,7 @@ export class BotGateway {
     private komubotrestService: KomubotrestService,
     private wfhService: WfhService,
     private workoutService: WorkoutService
-  ) {}
+  ) { }
   ID_KOMU = "922003239887581205";
 
   @Once("ready")
@@ -292,11 +292,10 @@ export class BotGateway {
             description: `${u.replace(
               "{command}",
               r
-            )}\n${read}\n\n**${langUsage}**\n${
-              i.usages
+            )}\n${read}\n\n**${langUsage}**\n${i.usages
                 ? i.usages.map((x) => guildDB.prefix + x).join("\n")
                 : guildDB.prefix + r + " " + i.usage
-            }`,
+              }`,
             footer: {
               text: this.clientConfigService.footer,
               icon_url: message.client.user.displayAvatarURL(),
@@ -315,151 +314,155 @@ export class BotGateway {
     try {
       i.execute(message, argument, client, guildDB, module, this.dataSource);
       return;
-    } catch (error) {}
+    } catch (error) { }
   }
 
   @On("interactionCreate")
   @UseGuards(MessageFromUserGuard)
   @UsePipes(MessageToUpperPipe)
   async onInteractionCreate(interaction: Interaction): Promise<void> {
-    if (interaction.isButton()) {
-      // handle wfh button
-      if (interaction.customId.startsWith("komu_")) {
-        await this.wfhService
-          .wfh(interaction, this.client)
-          .catch(console.error);
-        return;
-      }
-      if (interaction.customId.startsWith("workout_")) {
-        await this.workoutService
-          .workout(interaction, this.client)
-          .catch(console.error);
-        return;
-      }
-      if (interaction.customId.startsWith("question_")) {
-        
-        await (interaction as ButtonInteraction).deferReply();
-
-        const { id, key, correct, userid } = queryString.parse(
-          interaction.customId
-        );
-        // Clear Button
-        await interaction.message.edit({
-          components: [],
-        });
-
-        await this.userRepository.update(
-          { userId: userid as string },
-          {
-            botPing: false,
-          }
-        );
-
-        if (key == correct) {
-          const newUser = await this.quizService.addScores(userid);
-          if (!newUser) return;
-          await this.quizService.saveQuestionCorrect(userid, id, key);
-
-          const EmbedCorrect = new EmbedBuilder()
-            .setTitle(`Correct!!!, you have ${newUser[0].scores_quiz} points`)
-            .setColor("Green");
-          const btnCorrect = new EmbedBuilder()
-            .setColor("#e11919")
-            .setTitle("Complain")
-            .setURL(`http://quiz.nccsoft.vn/question/update/${id}`);
-          await interaction
-            .editReply({ embeds: [EmbedCorrect, btnCorrect] })
-            .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                this.client,
-                userid,
-                err
-              );
-            });
-        } else {
-          await this.quizService.saveQuestionInCorrect(userid, id, key);
-          const EmbedInCorrect = new EmbedBuilder()
-            .setTitle(`Incorrect!!!, The correct answer is ${correct}`)
-            .setColor("Red");
-          const btnInCorrect = new EmbedBuilder()
-            .setColor("#e11919")
-            .setTitle("Complain")
-            .setURL(`http://quiz.nccsoft.vn/question/update/${id}`);
-
-          await interaction
-            .editReply({ embeds: [EmbedInCorrect, btnInCorrect] })
-            .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                this.client,
-                userid,
-                err
-              );
-            });
+    try {
+      if (interaction.isButton()) {
+        // handle wfh button
+        if (interaction.customId.startsWith("komu_")) {
+          await this.wfhService
+            .wfh(interaction, this.client)
+            .catch(console.error);
+          return;
         }
+        if (interaction.customId.startsWith("workout_")) {
+          await this.workoutService
+            .workout(interaction, this.client)
+            .catch(console.error);
+          return;
+        }
+        if (interaction.customId.startsWith("question_")) {
+
+          await (interaction as ButtonInteraction).deferReply();
+
+          const { id, key, correct, userid } = queryString.parse(
+            interaction.customId
+          );
+          // Clear Button
+          await interaction.message.edit({
+            components: [],
+          });
+
+          await this.userRepository.update(
+            { userId: userid as string },
+            {
+              botPing: false,
+            }
+          );
+
+          if (key == correct) {
+            const newUser = await this.quizService.addScores(userid);
+            if (!newUser) return;
+            await this.quizService.saveQuestionCorrect(userid, id, key);
+
+            const EmbedCorrect = new EmbedBuilder()
+              .setTitle(`Correct!!!, you have ${newUser[0].scores_quiz} points`)
+              .setColor("Green");
+            const btnCorrect = new EmbedBuilder()
+              .setColor("#e11919")
+              .setTitle("Complain")
+              .setURL(`http://quiz.nccsoft.vn/question/update/${id}`);
+            await interaction
+              .editReply({ embeds: [EmbedCorrect, btnCorrect] })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  this.client,
+                  userid,
+                  err
+                );
+              });
+          } else {
+            await this.quizService.saveQuestionInCorrect(userid, id, key);
+            const EmbedInCorrect = new EmbedBuilder()
+              .setTitle(`Incorrect!!!, The correct answer is ${correct}`)
+              .setColor("Red");
+            const btnInCorrect = new EmbedBuilder()
+              .setColor("#e11919")
+              .setTitle("Complain")
+              .setURL(`http://quiz.nccsoft.vn/question/update/${id}`);
+
+            await interaction
+              .editReply({ embeds: [EmbedInCorrect, btnInCorrect] })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  this.client,
+                  userid,
+                  err
+                );
+              });
+          }
+        }
+        //   if (interaction.customId.startsWith("8/3_")) {
+        //     await interaction.message.edit({
+        //       components: [],
+        //     });
+
+        //     const { userid } = queryString.parse(interaction.customId);
+
+        //     const randomIndex = () => {
+        //       const min = 0;
+        //       const max = 5;
+        //       const intNumber = Math.floor(Math.random() * (max - min)) + min;
+        //       return intNumber;
+        //     };
+
+        //     const gift = [
+        //       "tà tưa fun tốp ping trị giá 4.38$",
+        //       "một bé gấu bông sô ciu giá 8.76$",
+        //       "cái nịt",
+        //       "cái nịt",
+        //       "cái nịt",
+        //     ];
+
+        //     let giftRandom = gift[randomIndex()];
+
+        //     if (
+        //       giftRandom === "tà tưa fun tốp ping trị giá 4.38$" ||
+        //       giftRandom === "một bé gấu bông sô ciu giá 8.76$"
+        //     ) {
+        //       const newGift = new womenDayData({
+        //         userid: userid,
+        //         win: true,
+        //         gift: giftRandom,
+        //       });
+        //       await newGift.save();
+        //     } else {
+        //       const newGift = new womenDayData({
+        //         userid: userid,
+        //         win: false,
+        //         gift: giftRandom,
+        //       });
+        //       await newGift.save();
+        //     }
+
+        //     interaction.reply(`Chúc mừng bạn nhận được ${giftRandom}`);
+
+        //     await sendMessageToNhaCuaChung(
+        //       client,
+        //       `Chúc mừng <@!${userid}> đã nhận được món quà 8/3 siêu to khổng lồ đó là ${giftRandom}`
+        //     );
+        //   }
+        // }
+        // if (!interaction.isCommand()) return;
+        // const slashcmdexec = this.client.slashexeccommands.get(interaction.commandName);
+        // // await interaction.deferReply();
+        // if (slashcmdexec != null && slashcmdexec != undefined) {
+        //   slashcmdexec(interaction, client).catch(console.error);
+        // } else {
+        //   await interaction.reply({
+        //     content: "`❌` Slash commands are under construction.\n",
+        //     ephemeral: true,
+        //   });
       }
-      //   if (interaction.customId.startsWith("8/3_")) {
-      //     await interaction.message.edit({
-      //       components: [],
-      //     });
-
-      //     const { userid } = queryString.parse(interaction.customId);
-
-      //     const randomIndex = () => {
-      //       const min = 0;
-      //       const max = 5;
-      //       const intNumber = Math.floor(Math.random() * (max - min)) + min;
-      //       return intNumber;
-      //     };
-
-      //     const gift = [
-      //       "tà tưa fun tốp ping trị giá 4.38$",
-      //       "một bé gấu bông sô ciu giá 8.76$",
-      //       "cái nịt",
-      //       "cái nịt",
-      //       "cái nịt",
-      //     ];
-
-      //     let giftRandom = gift[randomIndex()];
-
-      //     if (
-      //       giftRandom === "tà tưa fun tốp ping trị giá 4.38$" ||
-      //       giftRandom === "một bé gấu bông sô ciu giá 8.76$"
-      //     ) {
-      //       const newGift = new womenDayData({
-      //         userid: userid,
-      //         win: true,
-      //         gift: giftRandom,
-      //       });
-      //       await newGift.save();
-      //     } else {
-      //       const newGift = new womenDayData({
-      //         userid: userid,
-      //         win: false,
-      //         gift: giftRandom,
-      //       });
-      //       await newGift.save();
-      //     }
-
-      //     interaction.reply(`Chúc mừng bạn nhận được ${giftRandom}`);
-
-      //     await sendMessageToNhaCuaChung(
-      //       client,
-      //       `Chúc mừng <@!${userid}> đã nhận được món quà 8/3 siêu to khổng lồ đó là ${giftRandom}`
-      //     );
-      //   }
-      // }
-      // if (!interaction.isCommand()) return;
-      // const slashcmdexec = this.client.slashexeccommands.get(interaction.commandName);
-      // // await interaction.deferReply();
-      // if (slashcmdexec != null && slashcmdexec != undefined) {
-      //   slashcmdexec(interaction, client).catch(console.error);
-      // } else {
-      //   await interaction.reply({
-      //     content: "`❌` Slash commands are under construction.\n",
-      //     ephemeral: true,
-      //   });
+      // await interaction.editReply("Done");
+    } catch (e) {
+      console.log(e);
     }
-    // await interaction.editReply("Done");
   }
 
   @On("guildCreate")
@@ -470,8 +473,7 @@ export class BotGateway {
       "[32m%s[0m",
       "NEW GUILD ",
       "[0m",
-      `${guild.name} [${guild.memberCount.toLocaleString()} Members]\nID: ${
-        guild.id
+      `${guild.name} [${guild.memberCount.toLocaleString()} Members]\nID: ${guild.id
       }`
     );
     const channel = guild.channels.cache.find(
