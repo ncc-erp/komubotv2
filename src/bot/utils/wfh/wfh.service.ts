@@ -29,7 +29,6 @@ export class WfhService {
   async wfh(interaction, client) {
     const arrIds = interaction.customId.split("#");
     const customId = arrIds[0];
-    const authorId = interaction.message.author.id;
     const labelImageId = arrIds.length > 1 ? arrIds[1] : "";
     let isCheckin = true;
     let msg = "";
@@ -37,8 +36,7 @@ export class WfhService {
     if (
       arrIds.length > 2 &&
       (arrIds[0] == "komu_wfh_complain" || arrIds[0] == "komu_wfh_accept") &&
-      // labelImageId == interaction.user.id &&
-      interaction.message.author.id == client.user.id
+      labelImageId == interaction.user.id
     ) {
       console.log("wfh complain from", interaction.user.id);
 
@@ -166,10 +164,8 @@ export class WfhService {
         if (
           response.data == null ||
           response.data == undefined ||
-          response.data.length == 0 ||
           response.data.result == null ||
           response.data.result == undefined ||
-          response.data.result.length == 0 ||
           response.data.result.projectDtos == undefined ||
           response.data.result.projectDtos.length == 0
         ) {
