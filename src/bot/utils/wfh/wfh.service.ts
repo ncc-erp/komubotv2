@@ -143,7 +143,7 @@ export class WfhService {
             .catch(console.error);
         }
         const url = encodeURI(
-          `${this.clientConfigService.wiki.api_url}${userdb.username}@ncc.asia`
+          `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`
         );
         const response = await firstValueFrom(
           this.http
