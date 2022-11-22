@@ -35,7 +35,7 @@ export class WfhService {
 
     if (
       arrIds.length > 2 &&
-      ((labelImageId == interaction.user.id && arrIds[0] == "komu_wfh_complain") || arrIds[0] == "komu_wfh_accept")
+      ((labelImageId == interaction.user.id && arrIds[0] == "komu_wfh_complain" && arrIds.length === 3) || (arrIds[0] == "komu_wfh_complain" && arrIds.length > 3) || arrIds[0] == "komu_wfh_accept")
     ) {
       console.log("wfh complain from", interaction.user.id);
 
