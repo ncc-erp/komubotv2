@@ -44,7 +44,6 @@ export class UserNotDailyService {
       } catch (error) {
         console.log(error);
       }
-      console.log(wfhGetApi, "wfhGetApi");
       if (!wfhGetApi || wfhGetApi.data == undefined) {
         return;
       }
@@ -71,7 +70,7 @@ export class UserNotDailyService {
             userOff: userOff,
           }
         )
-        .andWhere('"createdAt" < :today OR "createdAt" = NULL', {
+        .andWhere('("createdAt" < :today OR "createdAt" is NULL)', {
           today: Date.now() - 86400 * 1000,
         })
         .andWhere('("roles_discord" @> :intern OR "roles_discord" @> :staff)', {
