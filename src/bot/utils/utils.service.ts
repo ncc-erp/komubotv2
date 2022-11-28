@@ -312,7 +312,7 @@ export class UtilsService {
       },
       afternoon: {
         fisttime: new Date(this.setTime(date, 5 + timezone, 0, 0, 0)).getTime(),
-        lastime: new Date(this.setTime(date, 7 + timezone, 1, 0, 0)).getTime(),
+        lastime: new Date(this.setTime(date, 11 + timezone, 1, 0, 0)).getTime(),
       },
       fullday: {
         fisttime: new Date(this.setTime(date, 0 + timezone, 0, 0, 0)).getTime(),

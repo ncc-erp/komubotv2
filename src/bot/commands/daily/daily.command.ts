@@ -78,7 +78,7 @@ function checkTimeSheet() {
     setTime(time, 5 + timezone, 0, 0, 0)
   ).getTime();
   const lastTimeAfternoon = new Date(
-    setTime(time, 7 + timezone, 1, 0, 0)
+    setTime(time, 11 + timezone, 1, 0, 0)
   ).getTime();
 
   if (
@@ -232,7 +232,7 @@ export class DailyCommand implements CommandLineClass {
             message
               .reply({
                 content:
-                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-14h. WFH not daily 20k/time.)```",
+                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-18h. WFH not daily 20k/time.)```",
                 // ephemeral: true,
               })
               .catch((err) => {
