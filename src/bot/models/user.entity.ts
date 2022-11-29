@@ -113,6 +113,9 @@ export class User {
   })
   scores_workout: number;
 
+  @Column({ default: 0, nullable: true })
+  not_workout: number;
+
   @Column({ type: "numeric", nullable: true })
   createdAt: number;
 }
