@@ -63,6 +63,9 @@ export class WorkoutCommand implements CommandLineClass {
       if (args[0] === "summary") {
         const getPointWorkOut = await this.userRepository
           .createQueryBuilder("user")
+          .where(`"scores_workout" >= :gtescores_workout`, {
+            gtescores_workout: 1,
+          })
           .innerJoin("komu_workout", "w", "user.userId = w.userId")
           .groupBy("w.userId")
           .addGroupBy("w.email")

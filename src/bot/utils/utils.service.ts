@@ -4,6 +4,7 @@ import { subDays } from "date-fns";
 import { Repository } from "typeorm";
 import { Holiday } from "../models/holiday.entity";
 
+const timeUTC = 60000 * 60 * 7;
 @Injectable()
 export class UtilsService {
   constructor(
@@ -12,11 +13,11 @@ export class UtilsService {
   ) {}
 
   getYesterdayDate() {
-    return subDays(new Date().setHours(23, 59, 59, 999), 1).getTime();
+    return subDays(new Date().setHours(23, 59, 59, 999), 1).getTime() - timeUTC;
   }
 
   getTomorrowDate() {
-    return subDays(new Date().setHours(0, 0, 0, 0), -1).getTime();
+    return subDays(new Date().setHours(0, 0, 0, 0), -1).getTime() - timeUTC;
   }
   setTime(date, hours, minute, second, msValue) {
     return date.setHours(hours, minute, second, msValue);
