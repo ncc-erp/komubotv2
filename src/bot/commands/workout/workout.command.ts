@@ -109,9 +109,50 @@ export class WorkoutCommand implements CommandLineClass {
         }
         // }
       } else if (args[0] === "help") {
-        return (message as any).channel
-          .reply("```" + "*workout month" + "\n" + "*workout" + "```")
+        return (message as any)
+          .reply(
+            "```" +
+              "*workout summary" +
+              "\n" +
+              "*workout update email point" +
+              "\n" +
+              "*workout reset point" +
+              "\n" +
+              "*workout" +
+              "```"
+          )
           .catch(console.error);
+      } else if (args[0] === "update") {
+        if (args[1] && args[2]) {
+          const checkRole = await this.userRepository
+            .createQueryBuilder("user")
+            .where('"userId" = :userId', { userId: authorId })
+            .andWhere('"deactive" IS NOT True')
+            .andWhere('("roles_discord" @> :hr)', {
+              hr: ["HR"],
+            })
+            .select("*")
+            .execute();
+
+          if (
+            checkRole.length > 0 ||
+            authorId === "921261168088190997" ||
+            authorId === "871666965293445171"
+          ) {
+            const point = +args[2];
+            if (!point) return;
+            await this.userRepository
+              .createQueryBuilder()
+              .update(User)
+              .set({
+                scores_workout: args[2],
+              })
+              .where('"email" = :email', { email: args[1] })
+              .execute()
+              .catch(console.error);
+            return message.reply("Update point success").catch(console.error);
+          }
+        }
       } else if (args[0] === "reset" && args[1] === "point") {
         await this.userRepository
           .createQueryBuilder()
@@ -123,6 +164,7 @@ export class WorkoutCommand implements CommandLineClass {
             scores_workout: 0,
           })
           .execute();
+        return message.reply("Update point success").catch(console.error);
       } else {
         const links = [];
         if (
