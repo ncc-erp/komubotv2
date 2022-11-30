@@ -65,7 +65,7 @@ export class UserNotDailyService {
       const userNotWFH = await this.userRepository
         .createQueryBuilder("user")
         .where(
-          userOff && userOff.length ? '"email" NOT IN (:...userOff)' : "true",
+          userOff && userOff.length ? 'LOWER("email") NOT IN (:...userOff)' : "true",
           {
             userOff: userOff,
           }
@@ -116,26 +116,38 @@ export class UserNotDailyService {
         .select("*")
         .execute();
 
-      const dailyEmailMorning = dailyMorning.map((item) => item.email);
-      const dailyEmailAfternoon = dailyAfternoon.map((item) => item.email);
-      const dailyEmailFullday = dailyFullday.map((item) => item.email);
+      const dailyEmailMorning = dailyMorning.map((item) =>
+        item.email.toLowerCase()
+      );
+      const dailyEmailAfternoon = dailyAfternoon.map((item) =>
+        item.email.toLowerCase()
+      );
+      const dailyEmailFullday = dailyFullday.map((item) =>
+        item.email.toLowerCase()
+      );
 
       const notDailyMorning = [];
       for (const wfhData of wfhUserEmail) {
-        if (!dailyEmailMorning.includes(wfhData) && wfhData !== undefined) {
+        if (
+          !dailyEmailMorning.includes(wfhData.toLowerCase()) &&
+          wfhData !== undefined
+        ) {
           notDailyMorning.push(wfhData);
         }
       }
       const notDailyAfternoon = [];
       for (const wfhData of wfhUserEmail) {
-        if (!dailyEmailAfternoon.includes(wfhData) && wfhData !== undefined) {
+        if (
+          !dailyEmailAfternoon.includes(wfhData.toLowerCase()) &&
+          wfhData !== undefined
+        ) {
           notDailyAfternoon.push(wfhData);
         }
       }
       const notDailyFullday = [];
       for (const userNotWFHData of userEmail) {
         if (
-          !dailyEmailFullday.includes(userNotWFHData) &&
+          !dailyEmailFullday.includes(userNotWFHData.toLowerCase()) &&
           userNotWFHData !== undefined
         ) {
           notDailyFullday.push(userNotWFHData);
