@@ -65,7 +65,9 @@ export class UserNotDailyService {
       const userNotWFH = await this.userRepository
         .createQueryBuilder("user")
         .where(
-          userOff && userOff.length ? 'LOWER("email") NOT IN (:...userOff)' : "true",
+          userOff && userOff.length
+            ? 'LOWER("email") NOT IN (:...userOff)'
+            : "true",
           {
             userOff: userOff,
           }
@@ -183,10 +185,10 @@ export class UserNotDailyService {
           notDaily.map((user) =>
             this.userRepository
               .createQueryBuilder()
-              .where(`"email" = :email`, {
+              .where(`LOWER("email") = :email`, {
                 email: user.email,
               })
-              .orWhere(`"username" = :username`, {
+              .orWhere(`LOWER("username") = :username`, {
                 username: user.email,
               })
               .andWhere(`"deactive" IS NOT TRUE`)
