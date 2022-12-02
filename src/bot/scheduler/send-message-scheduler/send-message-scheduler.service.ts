@@ -312,7 +312,10 @@ export class SendMessageSchedulerService {
       }
       mess = getPointWorkOut
         .slice(i * 50, (i + 1) * 50)
-        .map((list) => `${list.email} - point: ${list.scores_workout}`)
+        .map(
+          (list) =>
+            `${list.email.toLowerCase()} - point: ${list.scores_workout}`
+        )
         .join("\n");
       const Embed = new EmbedBuilder()
         .setTitle("Top workout")
@@ -413,7 +416,7 @@ export class SendMessageSchedulerService {
         .createQueryBuilder()
         .where(
           workoutUserEmail && workoutUserEmail.length > 0
-            ? '"email" IN (:...workoutUserEmail)'
+            ? 'LOWER("email") IN (:...workoutUserEmail)'
             : "true",
           {
             workoutUserEmail: workoutUserEmail,
@@ -433,7 +436,10 @@ export class SendMessageSchedulerService {
         }
         mess = getTotalUser
           .slice(i * 50, (i + 1) * 50)
-          .map((list) => `${list.email} - point: ${list.scores_workout}`)
+          .map(
+            (list) =>
+              `${list.email.toLowerCase()} - point: ${list.scores_workout}`
+          )
           .join("\n");
         const Embed = new EmbedBuilder()
           .setTitle("Danh sách không daily workout ngày hôm qua")
