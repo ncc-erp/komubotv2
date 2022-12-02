@@ -96,7 +96,7 @@ export class WorkoutCommand implements CommandLineClass {
             }
             mess = getPointWorkOut
               .slice(i * 50, (i + 1) * 50)
-              .map((item) => `${item.email} - point: ${item.scores_workout}`)
+              .map((item) => `${item.email.toLowerCase()} - point: ${item.scores_workout}`)
               .join("\n");
             const Embed = new EmbedBuilder()
               .setTitle("Top workout")
@@ -212,7 +212,7 @@ export class WorkoutCommand implements CommandLineClass {
 
             const workout = await this.workoutRepository.save({
               userId: message.author.id,
-              email: findWorkoutUser.email,
+              email: findWorkoutUser.email.toLowerCase(),
               createdTimestamp: Date.now(),
               attachment: true,
               status: "approve",
