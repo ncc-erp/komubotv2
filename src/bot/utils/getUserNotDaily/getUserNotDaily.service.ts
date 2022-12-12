@@ -186,10 +186,10 @@ export class UserNotDailyService {
             this.userRepository
               .createQueryBuilder()
               .where(`LOWER("email") = :email`, {
-                email: user.email,
+                email: user.email.toLowerCase(),
               })
               .orWhere(`LOWER("username") = :username`, {
-                username: user.email,
+                username: user.email.toLowerCase(),
               })
               .andWhere(`"deactive" IS NOT TRUE`)
               .select("*")
