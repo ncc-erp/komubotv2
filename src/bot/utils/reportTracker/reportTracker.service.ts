@@ -91,7 +91,7 @@ export class ReportTrackerService {
     try {
       const result = await axios.get(
         `http://tracker.komu.vn:5600/api/0/report?day=${args[1]}`,
-        { headers: { secret: "ScjP6mX2yA" } }
+        { headers: { "X-Secret-Key": this.clientConfigService.komuTrackerApiKey } }
       );
 
       const { data } = result;
