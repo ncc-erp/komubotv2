@@ -460,7 +460,7 @@ export class KomubotrestService {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId("komu_wfh_complain#" + userId + "#" + wfhId)
-        .setLabel("I'am in daily call")
+        .setLabel("I'm unable to react that time")
         .setEmoji("⏳")
         .setStyle(4),
       new ButtonBuilder()
