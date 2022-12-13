@@ -123,6 +123,10 @@ export class ClientConfigService {
 
     this.wfhApiKey = `${configService.get<string>("WFH_API_KEY_SECRET")}`;
 
+    this.komuTrackerApiKey = `${configService.get<string>(
+      "KOMUTRACKER_API_KEY_SECRET"
+    )}`;
+
     this.komubotrestpass = `${configService.get<string>(
       "KOMUBOTREST_PASSWORD"
     )}`;
@@ -372,6 +376,8 @@ export class ClientConfigService {
   komubotrestpass: string;
 
   wfhApiKey: string;
+
+  komuTrackerApiKey: string;
 
   prefix: string;
   // Your ID
