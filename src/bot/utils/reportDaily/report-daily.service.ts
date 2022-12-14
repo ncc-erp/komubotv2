@@ -41,14 +41,15 @@ export class ReportDailyService {
           if (userNotDaily.slice(i * 50, (i + 1) * 50).length === 0) break;
           mess = userNotDaily
             .slice(i * 50, (i + 1) * 50)
+            .filter((user) => user)
             .map((user) => {
               if (user.userId) {
-                return `${user.email} (${this.findCountNotDaily(
+                return `${user.email.toLowerCase()} (${this.findCountNotDaily(
                   notDaily,
                   user.username
                 )})`;
               } else {
-                return `${user.email} (${this.findCountNotDaily(
+                return `${user.email.toLowerCase()} (${this.findCountNotDaily(
                   notDaily,
                   user.username
                 )})`;
