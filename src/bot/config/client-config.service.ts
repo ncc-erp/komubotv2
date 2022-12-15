@@ -218,6 +218,16 @@ export class ClientConfigService {
       "KOMUBOTREST_NCC8_CHANNEL_ID"
     )}`;
 
+    this.driverClientId = `${configService.get<string>("DRIVER_CLIENT_ID")}`;
+   
+    this.driverClientSecret = `${configService.get<string>("DRIVER_CLIENT_SECRET")}`;
+    
+    this.driverRedirectId = `${configService.get<string>("DRIVER_REDIRECT_URI")}`;
+    
+    this.driverRefreshToken = `${configService.get<string>("DRIVER_REFRESH_TOKEN")}`;
+    
+    this.driverFolderParentId = `${configService.get<string>("FOLDER_DRIVER_PARENTS_ID")}`;
+
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
     this.footer = "KOMU ";
@@ -244,6 +254,16 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
   }
+
+  driverClientId: string;
+
+  driverClientSecret: string;
+
+  driverRedirectId: string;
+
+  driverRefreshToken: string;
+
+  driverFolderParentId: string;
 
   topCategoryId: string;
 

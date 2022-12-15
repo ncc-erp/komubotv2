@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   Res,
+  StreamableFile,
   UseInterceptors,
   UsePipes,
 } from "@nestjs/common";
@@ -18,7 +19,9 @@ import { KomubotrestService } from "./komubotrest.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Request, Response } from "express";
 import { InjectDiscordClient } from "@discord-nestjs/core";
-
+import { google } from "googleapis";
+import { join } from "path";
+import { createReadStream } from "fs";
 import { diskStorage } from "multer";
 import { fileFilter, fileName } from "../helper";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
@@ -36,6 +39,7 @@ import {
 import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
 import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
 import { RegexEmailPipe } from "src/bot/middleware/regex-email";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -43,6 +47,7 @@ export class KomubotrestController {
     private komubotrestService: KomubotrestService,
     @InjectDiscordClient()
     private client: Client,
+    private clientConfigService: ClientConfigService,
     @InjectRepository(Uploadfile)
     private readonly uploadFileRepository: Repository<Uploadfile>
   ) {}
@@ -230,6 +235,36 @@ export class KomubotrestController {
       createTimestamp: Date.now(),
       episode,
     });
+    try {
+      const oauth2Client = new google.auth.OAuth2(
+        this.clientConfigService.driverClientId,
+        this.clientConfigService.driverClientSecret,
+        this.clientConfigService.driverRedirectId
+      );
+      oauth2Client.setCredentials({
+        refresh_token: this.clientConfigService.driverRefreshToken,
+      });
+
+      const drive = google.drive({
+        version: "v3",
+        auth: oauth2Client,
+      });
+
+      const nccPath = join(__dirname, "../../../..", "uploads/");
+      await drive.files.create({
+        requestBody: {
+          name: file.filename,
+          mimeType: file.mimetype,
+          parents: [this.clientConfigService.driverFolderParentId],
+        },
+        media: {
+          mimeType: file.mimetype,
+          body: createReadStream(join(nccPath + file.filename)),
+        },
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
     res.send(file);
   }
 
@@ -241,5 +276,23 @@ export class KomubotrestController {
   @Get("/getUserNotDaily")
   async getUserNotDaily() {
     return await this.komubotrestService.getUserNotDaily();
+  }
+
+  @Get("/download")
+  async getFile(@Res({ passthrough: true }) res: Response) {
+    try {
+      const nccPath = join(__dirname, "../../../..", "uploads/");
+
+      const fileDownload = await this.komubotrestService.downloadFile();
+      const file = createReadStream(join(nccPath + fileDownload[0].fileName));
+
+      res.set({
+        "Content-Type": "audio/mp3",
+        "Content-Disposition": `attachment; filename=${fileDownload[0].fileName}`,
+      });
+      return new StreamableFile(file);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
