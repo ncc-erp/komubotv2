@@ -26,12 +26,15 @@ import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Brackets, Repository } from "typeorm";
 import { Daily } from "src/bot/models/daily.entity";
 import { UtilsService } from "../utils.service";
+import { Uploadfile } from "src/bot/models/uploadFile.entity";
 @Injectable()
 export class KomubotrestService {
   constructor(
     // private clientConfigServiec : ClientConfigService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Uploadfile)
+    private uploadFileData: Repository<Uploadfile>,
     @InjectRepository(Msg)
     private messageRepository: Repository<Msg>,
     @InjectRepository(Channel)
@@ -723,5 +726,14 @@ export class KomubotrestService {
       )
       .select("daily.email")
       .execute();
+  }
+
+  async downloadFile() {
+    return await this.uploadFileData.find({
+      order: {
+        createTimestamp: "DESC",
+      },
+      take: 1,
+    });
   }
 }

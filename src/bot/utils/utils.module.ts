@@ -16,6 +16,7 @@ import { Opentalk } from "../models/opentalk.entity";
 import { Order } from "../models/order.entity";
 import { TrackerSpentTime } from "../models/trackerSpentTime.entity";
 import { TX8 } from "../models/tx8.entity";
+import { Uploadfile } from "../models/uploadFile.entity";
 import { User } from "../models/user.entity";
 import { WorkFromHome } from "../models/wfh.entity";
 import { WomenDay } from "../models/womenDay.entity";
@@ -62,6 +63,7 @@ import { UtilsService } from "./utils.service";
       TrackerSpentTime,
       Msg,
       Channel,
+      Uploadfile,
     ]),
     ReportOrderModule,
     ReportHolidayModule,

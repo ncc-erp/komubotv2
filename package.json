@@ -49,6 +49,7 @@
     "discord.js": "14.1.1",
     "ffmpeg-static": "^5.1.0",
     "fs": "^0.0.1-security",
+    "googleapis": "^109.0.1",
     "hex-color-regex": "^1.1.0",
     "image-downloader": "^4.3.0",
     "is-url": "^1.2.4",
