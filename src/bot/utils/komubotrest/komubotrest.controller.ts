@@ -278,7 +278,7 @@ export class KomubotrestController {
     return await this.komubotrestService.getUserNotDaily();
   }
 
-  @Get("/download")
+  @Get("/ncc8/download")
   async getFile(@Res({ passthrough: true }) res: Response) {
     try {
       const nccPath = join(__dirname, "../../../..", "uploads/");
