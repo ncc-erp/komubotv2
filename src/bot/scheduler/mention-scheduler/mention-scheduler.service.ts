@@ -109,13 +109,15 @@ export class MentionSchedulerService {
       await Promise.all(
         mentionedUsers.map(async (user) => {
           let thread = false;
-          let mentionChannel = await client.channels.fetch(user.channelId);
+          let mentionChannel = await client.channels
+            .fetch(user.channelId)
+            .catch((err) => {});
           const channelName = mentionChannel.name;
           if (mentionChannel.type !== ChannelType.GuildText) {
             thread = true;
-            mentionChannel = await client.channels.fetch(
-              mentionChannel.parentId
-            );
+            mentionChannel = await client.channels
+              .fetch(mentionChannel.parentId)
+              .catch((err) => {});
           }
           let content;
           thread
