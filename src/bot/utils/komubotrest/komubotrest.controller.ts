@@ -253,7 +253,7 @@ export class KomubotrestController {
       const nccPath = join(__dirname, "../../../..", "uploads/");
       await drive.files.create({
         requestBody: {
-          name: file.filename,
+          name: `NCC8.${episode}_mixdown.mp3`,
           mimeType: file.mimetype,
           parents: [this.clientConfigService.driverFolderParentId],
         },
