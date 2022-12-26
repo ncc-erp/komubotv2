@@ -183,7 +183,7 @@ export class VoiceChannelSchedulerService {
       .set({ status: "finish", end_time: Date.now() })
       .where('"status" = :status', { status: "joining" })
       .andWhere(`"start_time" >= :gtestart_time`, {
-        gtestart_time: beforeHours,
+        gtestart_time: beforeHours.getTime(),
       })
       .execute()
       .catch(console.error);
