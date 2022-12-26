@@ -14,10 +14,10 @@ import { setupSwagger } from "./setup-swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.listen(3000, () => {
     console.log("App listen on port 3000");
   });
-  app.enableCors();
   setupSwagger(app);
 
   const meetingSchedulerService = app.get(MeetingSchedulerService);

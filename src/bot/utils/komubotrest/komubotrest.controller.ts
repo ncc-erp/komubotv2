@@ -40,6 +40,7 @@ import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
 import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
 import { RegexEmailPipe } from "src/bot/middleware/regex-email";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { ReportDailyDTO } from "./komubotrest.dto";
 @Controller()
 @Injectable()
 export class KomubotrestController {
@@ -276,6 +277,12 @@ export class KomubotrestController {
   @Get("/getUserNotDaily")
   async getUserNotDaily() {
     return await this.komubotrestService.getUserNotDaily();
+  }
+
+  
+  @Get("/reportDaily")
+  async reportDaily(@Query() query: ReportDailyDTO) {
+    return await this.komubotrestService.getReportUserDaily(query);
   }
 
   @Get("/ncc8/download")

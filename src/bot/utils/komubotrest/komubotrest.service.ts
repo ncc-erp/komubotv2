@@ -27,6 +27,8 @@ import { Brackets, Repository } from "typeorm";
 import { Daily } from "src/bot/models/daily.entity";
 import { UtilsService } from "../utils.service";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
+import { ReportDailyDTO } from "./komubotrest.dto";
+import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
 @Injectable()
 export class KomubotrestService {
   constructor(
@@ -44,7 +46,8 @@ export class KomubotrestService {
     private utilsService: UtilsService,
     @InjectRepository(Daily)
     private dailyRepository: Repository<Daily>,
-    private clientConfig: ClientConfigService
+    private clientConfig: ClientConfigService,
+    private userNotDailyService: UserNotDailyService
   ) {}
   private data;
   async findUserData(_pramams) {
@@ -726,6 +729,34 @@ export class KomubotrestService {
       )
       .select("daily.email")
       .execute();
+  }
+
+  async getReportUserDaily(query: ReportDailyDTO) {
+    let dateTime;
+    if (query.date) {
+      const day = query.date.slice(0, 2);
+      const month = query.date.slice(3, 5);
+      const year = query.date.slice(6);
+      const fomat = `${month}/${day}/${year}`;
+      dateTime = new Date(fomat);
+      if (
+        !/^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([1][26]|[2468][048]|[3579][26])00))))$/.test(
+          query.date
+        )
+      ) {
+        return;
+      }
+    } else {
+      dateTime = new Date();
+    }
+    const data = await this.userNotDailyService.getUserNotDaily(
+      dateTime,
+      null,
+      null,
+      null
+    );
+    const result = data.notDailyFullday;
+    return { result };
   }
 
   async downloadFile() {

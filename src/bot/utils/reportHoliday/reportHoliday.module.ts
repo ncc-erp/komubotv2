@@ -1,4 +1,5 @@
 import { DiscordModule } from "@discord-nestjs/core";
+import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -10,6 +11,7 @@ import { Order } from "src/bot/models/order.entity";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
+import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
 import { UtilsService } from "../utils.service";
 import { ReportHolidayService } from "./reportHoliday.service";
@@ -28,7 +30,13 @@ import { ReportHolidayService } from "./reportHoliday.service";
     ]),
     DiscordModule.forFeature(),
     DiscoveryModule,
+    HttpModule,
   ],
-  providers: [ReportHolidayService, UtilsService, KomubotrestService],
+  providers: [
+    ReportHolidayService,
+    UtilsService,
+    UserNotDailyService,
+    KomubotrestService,
+  ],
 })
 export class ReportHolidayModule {}
