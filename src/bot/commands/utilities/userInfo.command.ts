@@ -56,7 +56,7 @@ export class UserInfoCommand implements CommandLineClass {
     ).catch((err) => {
       console.log("Error ", err);
     });
-    const phoneNumber = (data as any).data.result.phoneNumber;
+    const phoneNumber = (data as any).data.result.phoneNumber || "";
     let api_url_getListProjectOfUserApi;
     try {
       const url = `${this.clientConfigService.project.api_url_getListProjectOfUser}?email=${member.user.username}@ncc.asia`;
