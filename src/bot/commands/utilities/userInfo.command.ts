@@ -45,7 +45,9 @@ export class UserInfoCommand implements CommandLineClass {
     const data = await firstValueFrom(
       this.http
         .get(
-          `${this.clientConfigService.wiki.api_url}${member.user.username}@ncc.asia`,
+          `${
+            this.clientConfigService.wiki.api_url
+          }${message.member.displayName.toLowerCase()}@ncc.asia`,
           {
             headers: {
               "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
@@ -61,7 +63,9 @@ export class UserInfoCommand implements CommandLineClass {
       : "";
     let api_url_getListProjectOfUserApi;
     try {
-      const url = `${this.clientConfigService.project.api_url_getListProjectOfUser}?email=${member.user.username}@ncc.asia`;
+      const url = `${
+        this.clientConfigService.project.api_url_getListProjectOfUser
+      }?email=${message.member.displayName.toLowerCase()}@ncc.asia`;
       api_url_getListProjectOfUserApi = await firstValueFrom(
         this.http.get(url).pipe((res) => res)
       );
