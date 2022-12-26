@@ -1,11 +1,14 @@
 import { HttpService } from "@nestjs/axios";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Client, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { User } from "src/bot/models/user.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { logTimeSheetFromDaily } from "src/bot/utils/timesheet.until";
 import { UtilsService } from "src/bot/utils/utils.service";
+import { Repository } from "typeorm";
 import { DailyService } from "./daily.service";
 
 const messHelp =
@@ -119,13 +122,21 @@ export class DailyCommand implements CommandLineClass {
     private komubotrestService: KomubotrestService,
     private readonly clientConfigService: ClientConfigService,
     private readonly http: HttpService,
-    private configService: ClientConfigService
+    private configService: ClientConfigService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
   async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
-      const authorUsername = message.author.username;
+      const findUser = await this.userRepository
+        .createQueryBuilder()
+        .where(`"userId" = :userId`, { userId: message.author.id })
+        .andWhere(`"deactive" IS NOT true`)
+        .select("*")
+        .getRawOne();
+      const authorUsername = findUser.email;
       if (args[0] === "help") {
         return message
           .reply({
