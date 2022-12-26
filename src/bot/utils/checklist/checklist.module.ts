@@ -12,7 +12,6 @@ import { Subcategorys } from "src/bot/models/subcategoryData.entity";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
-import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
 import { UtilsService } from "../utils.service";
 import { CheckListController } from "./checklist.controller";
@@ -32,7 +31,6 @@ import { CheckListService } from "./checklist.service";
       Uploadfile,
       Holiday,
     ]),
-    HttpModule,
   ],
   exports: [CheckListController, KomubotrestService, ClientConfigService],
   providers: [
@@ -43,7 +41,6 @@ import { CheckListService } from "./checklist.service";
     ClientConfigService,
     UtilsService,
     ConfigService,
-    UserNotDailyService,
   ],
 })
 export class CheckListModule {}

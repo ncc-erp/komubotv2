@@ -1,5 +1,4 @@
 import { DiscordModule } from "@discord-nestjs/core";
-import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -10,7 +9,6 @@ import { Msg } from "src/bot/models/msg.entity";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
-import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
 import { UtilsService } from "../utils.service";
 import { ReportMentionService } from "./reportMention.service";
@@ -27,12 +25,10 @@ import { ReportMentionService } from "./reportMention.service";
       Uploadfile,
     ]),
     DiscordModule.forFeature(),
-    HttpModule,
     DiscoveryModule,
   ],
   providers: [
     ReportMentionService,
-    UserNotDailyService,
     UtilsService,
     KomubotrestService,
   ],

@@ -28,7 +28,6 @@ import { Daily } from "src/bot/models/daily.entity";
 import { UtilsService } from "../utils.service";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { ReportDailyDTO } from "./komubotrest.dto";
-import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
 @Injectable()
 export class KomubotrestService {
   constructor(
@@ -46,8 +45,7 @@ export class KomubotrestService {
     private utilsService: UtilsService,
     @InjectRepository(Daily)
     private dailyRepository: Repository<Daily>,
-    private clientConfig: ClientConfigService,
-    private userNotDailyService: UserNotDailyService
+    private clientConfig: ClientConfigService
   ) {}
   private data;
   async findUserData(_pramams) {
@@ -749,13 +747,18 @@ export class KomubotrestService {
     } else {
       dateTime = new Date();
     }
-    const data = await this.userNotDailyService.getUserNotDaily(
-      dateTime,
-      null,
-      null,
-      null
-    );
-    const result = data.notDailyFullday;
+
+    const dailyFullday = await this.dailyRepository
+      .createQueryBuilder()
+      .where(`"createdAt" >= :gtecreatedAt`, {
+        gtecreatedAt: this.utilsService.getDateDay(dateTime).fullday.fisttime,
+      })
+      .andWhere(`"createdAt" <= :ltecreatedAt`, {
+        ltecreatedAt: this.utilsService.getDateDay(dateTime).fullday.lastime,
+      })
+      .select("*")
+      .execute();
+    const result = dailyFullday;
     return { result };
   }
 
