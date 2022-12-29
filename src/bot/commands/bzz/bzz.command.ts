@@ -36,18 +36,41 @@ export class BzzCommand implements CommandLineClass {
             console.log("Error ", err);
             return { data: "There was an error!" };
           });
-          if (!data || !data.result) return;
-          await firstValueFrom(
-            this.http
-              .post(this.clientConfigService.sendSms, {
-                tel: data.result.phoneNumber,
-                timeout: 10,
+          if (!data || !data.result) {
+            return message
+              .reply({
+                content: "Can't find phone number",
               })
-              .pipe((res) => res)
-          ).catch((err) => {
-            console.log("Error ", err);
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+          try {
+            message
+              .reply({
+                content: "Calling",
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            await firstValueFrom(
+              this.http
+                .post(this.clientConfigService.sendSms, {
+                  tel: data.result.phoneNumber,
+                  timeout: 10,
+                })
+                .pipe((res) => res)
+            );
+          } catch (error) {
+            message
+              .reply({
+                content: "Failed",
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             return { data: "There was an error!" };
-          });
+          }
         } catch (error) {}
       }
     } catch (error) {}
