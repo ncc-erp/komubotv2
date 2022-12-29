@@ -5,5 +5,9 @@ import { Transform } from "class-transformer";
 export class ReportDailyDTO {
   @ApiProperty()
   @IsNotEmpty()
-  date: string;
+  from?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  to?: string;
 }

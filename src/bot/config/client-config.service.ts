@@ -85,6 +85,10 @@ export class ClientConfigService {
     this.birthday = {
       api_url: `${configService.get<string>("HRM_API")}GetEmployeesByBirthday`,
     };
+    this.phonenumber = {
+      api_url: `${configService.get<string>("HRM_API")}GetEmployeePhone?email=`,
+    };
+    this.sendSms = `${configService.get<string>("SEND_SMS_API")}`;
     this.gem = {
       api_url_getMyRank: `${configService.get<string>(
         "GEMSOFGOD_API"
@@ -122,6 +126,7 @@ export class ClientConfigService {
     };
 
     this.wfhApiKey = `${configService.get<string>("WFH_API_KEY_SECRET")}`;
+    this.hrmApiKey = `${configService.get<string>("HRM_API_KEY_SECRET")}`;
 
     this.komuTrackerApiKey = `${configService.get<string>(
       "KOMUTRACKER_API_KEY_SECRET"
@@ -219,14 +224,22 @@ export class ClientConfigService {
     )}`;
 
     this.driverClientId = `${configService.get<string>("DRIVER_CLIENT_ID")}`;
-   
-    this.driverClientSecret = `${configService.get<string>("DRIVER_CLIENT_SECRET")}`;
-    
-    this.driverRedirectId = `${configService.get<string>("DRIVER_REDIRECT_URI")}`;
-    
-    this.driverRefreshToken = `${configService.get<string>("DRIVER_REFRESH_TOKEN")}`;
-    
-    this.driverFolderParentId = `${configService.get<string>("FOLDER_DRIVER_PARENTS_ID")}`;
+
+    this.driverClientSecret = `${configService.get<string>(
+      "DRIVER_CLIENT_SECRET"
+    )}`;
+
+    this.driverRedirectId = `${configService.get<string>(
+      "DRIVER_REDIRECT_URI"
+    )}`;
+
+    this.driverRefreshToken = `${configService.get<string>(
+      "DRIVER_REFRESH_TOKEN"
+    )}`;
+
+    this.driverFolderParentId = `${configService.get<string>(
+      "FOLDER_DRIVER_PARENTS_ID"
+    )}`;
 
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
@@ -386,6 +399,13 @@ export class ClientConfigService {
   birthday: {
     api_url: string;
   };
+  phonenumber: {
+    api_url: string;
+  };
+
+  hrmApiKey: string;
+
+  sendSms: string;
 
   ticketApiKey: string;
 

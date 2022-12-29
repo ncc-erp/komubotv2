@@ -145,6 +145,7 @@ import { DmmessageService } from "./utils/dmmessage/dmmessage.service";
 import { WorkoutService } from "./utils/workout/workout.service";
 import { Workout } from "./models/workout.entity";
 import { WorkoutCommand } from "./commands/workout/workout.command";
+import { BzzCommand } from "./commands/bzz/bzz.command";
 
 @Module({
   imports: [
@@ -199,6 +200,7 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
     getApiWfhModule,
   ],
   providers: [
+    BzzCommand,
     CompantripCommand,
     CompanytripService,
     BotGateway,

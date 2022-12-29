@@ -730,36 +730,25 @@ export class KomubotrestService {
   }
 
   async getReportUserDaily(query: ReportDailyDTO) {
-    let dateTime;
-    if (query.date) {
-      const day = query.date.slice(0, 2);
-      const month = query.date.slice(3, 5);
-      const year = query.date.slice(6);
-      const fomat = `${month}/${day}/${year}`;
-      dateTime = new Date(fomat);
-      if (
-        !/^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([1][26]|[2468][048]|[3579][26])00))))$/.test(
-          query.date
-        )
-      ) {
-        return;
+    try {
+      if (query.from && query.to) {
+        const dailyFullday = await this.dailyRepository
+          .createQueryBuilder("daily")
+          .innerJoin("komu_channel", "c", "daily.channelid = c.id")
+          .where(`"createdAt" >= :gtecreatedAt`, {
+            gtecreatedAt: query.from,
+          })
+          .andWhere(`"createdAt" <= :ltecreatedAt`, {
+            ltecreatedAt: query.to,
+          })
+          .select(
+            "daily.id, daily.userid, daily.email, daily.daily, daily.createdAt, daily.channelId, c.name"
+          )
+          .execute();
+        const result = dailyFullday;
+        return { result };
       }
-    } else {
-      dateTime = new Date();
-    }
-
-    const dailyFullday = await this.dailyRepository
-      .createQueryBuilder()
-      .where(`"createdAt" >= :gtecreatedAt`, {
-        gtecreatedAt: this.utilsService.getDateDay(dateTime).fullday.fisttime,
-      })
-      .andWhere(`"createdAt" <= :ltecreatedAt`, {
-        ltecreatedAt: this.utilsService.getDateDay(dateTime).fullday.lastime,
-      })
-      .select("*")
-      .execute();
-    const result = dailyFullday;
-    return { result };
+    } catch (error) {}
   }
 
   async downloadFile() {
