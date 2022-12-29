@@ -46,13 +46,6 @@ export class BzzCommand implements CommandLineClass {
               });
           }
           try {
-            message
-              .reply({
-                content: "Calling",
-              })
-              .catch((err) => {
-                console.log(err);
-              });
             await firstValueFrom(
               this.http
                 .post(this.clientConfigService.sendSms, {
@@ -61,6 +54,13 @@ export class BzzCommand implements CommandLineClass {
                 })
                 .pipe((res) => res)
             );
+            message
+              .reply({
+                content: "Calling",
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           } catch (error) {
             message
               .reply({
