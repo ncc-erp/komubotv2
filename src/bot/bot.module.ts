@@ -146,6 +146,8 @@ import { WorkoutService } from "./utils/workout/workout.service";
 import { Workout } from "./models/workout.entity";
 import { WorkoutCommand } from "./commands/workout/workout.command";
 import { BzzCommand } from "./commands/bzz/bzz.command";
+import { BuzzCommand } from "./commands/buzz/buzz";
+import { CallUserService } from "./utils/callUser/callUser.service";
 
 @Module({
   imports: [
@@ -201,6 +203,8 @@ import { BzzCommand } from "./commands/bzz/bzz.command";
   ],
   providers: [
     BzzCommand,
+    CallUserService,
+    BuzzCommand,
     CompantripCommand,
     CompanytripService,
     BotGateway,
