@@ -67,7 +67,8 @@ export class CallUserService {
         if (
           users.length > 0 ||
           authorId == "922148445626716182" ||
-          authorId == "764877775068594177"
+          authorId == "764877775068594177" ||
+          authorId == "960372801880080504"
         ) {
           try {
             const userMention = await this.userRepository
