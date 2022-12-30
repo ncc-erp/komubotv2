@@ -113,14 +113,14 @@ export class CallUserService {
                   console.log(err);
                 });
             }
+            const messageReply = await message
+              .reply({
+                content: "I'm calling",
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             try {
-              const messageReply = await message
-                .reply({
-                  content: "I'm calling",
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
               await firstValueFrom(
                 this.http
                   .post(this.clientConfigService.sendSms, {
@@ -129,15 +129,13 @@ export class CallUserService {
                   })
                   .pipe((res) => res)
               );
-              await (messageReply as Message).edit("Done");
+              await (messageReply as Message).edit("Done").catch((err) => {
+                console.log(err);
+              });
             } catch (error) {
-              await message
-                .reply({
-                  content: "I'm busy",
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
+              await (messageReply as Message).edit("I'm busy").catch((err) => {
+                console.log(err);
+              });
               return { data: "There was an error!" };
             }
           } catch (error) {}
