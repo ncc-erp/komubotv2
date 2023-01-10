@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   ActionRowBuilder,
   ButtonBuilder,
+  ChannelType,
   Client,
   EmbedBuilder,
   Message,
@@ -729,7 +730,7 @@ export class KomubotrestService {
       .execute();
   }
 
-  async getReportUserDaily(query: ReportDailyDTO) {
+  async getReportUserDaily(query: ReportDailyDTO, client: Client) {
     try {
       if (query.from && query.to) {
         const dailyFullday = await this.dailyRepository
@@ -745,7 +746,32 @@ export class KomubotrestService {
             "daily.id, daily.userid, daily.email, daily.daily, daily.createdAt, daily.channelId, c.name"
           )
           .execute();
-        const result = dailyFullday;
+
+        const promises = dailyFullday.map(async (item) => {
+          const fetchChannel = await client.channels
+            .fetch(item.channelid)
+            .catch((err) => {
+              console.log("error", err);
+            });
+          if (
+            (fetchChannel as any).type === ChannelType.GuildPublicThread ||
+            (fetchChannel as any).type === ChannelType.GuildPrivateThread
+          ) {
+            const channelParent = await client.channels
+              .fetch((fetchChannel as any).parentId)
+              .catch((err) => {});
+            if (channelParent) {
+              return {
+                ...item,
+                parentId: (channelParent as any).id,
+                parentName: (channelParent as any).name,
+              };
+            } else {
+              return item;
+            }
+          } else return item;
+        });
+        const result = await Promise.all(promises);
         return { result };
       }
     } catch (error) {}

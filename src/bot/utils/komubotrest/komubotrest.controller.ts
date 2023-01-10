@@ -282,7 +282,7 @@ export class KomubotrestController {
   
   @Get("/reportDaily")
   async reportDaily(@Query() query: ReportDailyDTO) {
-    return await this.komubotrestService.getReportUserDaily(query);
+    return await this.komubotrestService.getReportUserDaily(query, this.client);
   }
 
   @Get("/ncc8/download")
