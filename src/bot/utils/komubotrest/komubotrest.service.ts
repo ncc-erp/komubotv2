@@ -760,15 +760,12 @@ export class KomubotrestService {
             const channelParent = await client.channels
               .fetch((fetchChannel as any).parentId)
               .catch((err) => {});
-            if (channelParent) {
-              return {
-                ...item,
-                parentId: (channelParent as any).id,
-                parentName: (channelParent as any).name,
-              };
-            } else {
-              return item;
-            }
+            console.log((channelParent as any).id, "abc");
+            return {
+              ...item,
+              parentId: (channelParent as any).id,
+              parentName: (channelParent as any).name,
+            };
           } else return item;
         });
         const result = await Promise.all(promises);
