@@ -90,7 +90,8 @@ function sendCMDToPfsense(branch, identity, ipAddress) {
       host = "10.10.60.1";
       break;
     default:
-      return;
+      host = "172.16.10.1";
+      break;
   }
 
   try {
