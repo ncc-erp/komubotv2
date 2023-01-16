@@ -234,10 +234,10 @@ export class DailyCommand implements CommandLineClass {
             .saveDaily(message, args)
             .catch((err) => console.log(err));
 
-          await logTimeSheetFromDaily({
-            emailAddress,
-            content: content,
-          });
+          // await logTimeSheetFromDaily({
+          //   emailAddress,
+          //   content: content,
+          // });
 
           if (!checkTimeSheet()) {
             message
@@ -272,10 +272,10 @@ export class DailyCommand implements CommandLineClass {
             .saveDaily(message, args)
             .catch((err) => console.log(err));
 
-          await logTimeSheetFromDaily({
-            emailAddress,
-            content: content,
-          });
+          // await logTimeSheetFromDaily({
+          //   emailAddress,
+          //   content: content,
+          // });
 
           if (!checkTimeNotWFH()) {
             message
