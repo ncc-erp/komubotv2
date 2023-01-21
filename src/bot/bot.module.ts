@@ -148,6 +148,9 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
 import { BzzCommand } from "./commands/bzz/bzz.command";
 import { BuzzCommand } from "./commands/buzz/buzz";
 import { CallUserService } from "./utils/callUser/callUser.service";
+import { IndividualChannel } from "./models/individualChannel.entity";
+import { IndividualChannelCommand } from "./commands/individual/individual.command";
+import { IndividualChannelService } from "./commands/individual/individual.service";
 
 @Module({
   imports: [
@@ -193,6 +196,7 @@ import { CallUserService } from "./utils/callUser/callUser.service";
       Wiki,
       Workout,
       Mentioned,
+      IndividualChannel
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -307,6 +311,8 @@ import { CallUserService } from "./utils/callUser/callUser.service";
     WfhService,
     DmmessageService,
     WorkoutService,
+    IndividualChannelCommand,
+    IndividualChannelService,
   ],
   controllers: [KomubotrestController],
 })

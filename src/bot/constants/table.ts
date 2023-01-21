@@ -39,4 +39,5 @@ export const TABLE = {
   CHECK_CAMERA: "komu_checkCamera",
   CHANNEL: "komu_channel",
   BWLREACTION: "komu_bwlReaction",
+  INDIVIDUAL_CHANNEL: "komu_individualChannel",
 };
