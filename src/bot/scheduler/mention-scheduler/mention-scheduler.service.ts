@@ -112,6 +112,7 @@ export class MentionSchedulerService {
           let mentionChannel = await client.channels
             .fetch(user.channelId)
             .catch((err) => {});
+          if (!mentionChannel) return;
           const channelName = mentionChannel.name;
           if (mentionChannel.type !== ChannelType.GuildText) {
             thread = true;
