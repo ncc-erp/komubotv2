@@ -37,12 +37,14 @@ export class GetApiWfhService {
     if (!wfhGetApi || wfhGetApi.data == undefined) {
       return;
     }
-    wfhGetApi.data.result.map((item) =>
-      dataWfh.push({
-        email: this.getUserNameByEmail(item.emailAddress),
-        status: item.status,
-      })
-    );
+    if (wfhGetApi && wfhGetApi.data && wfhGetApi.data.result.length > 0) {
+      wfhGetApi.data.result.map((item) =>
+        dataWfh.push({
+          email: this.getUserNameByEmail(item.emailAddress),
+          status: item.status,
+        })
+      );
+    }
     return dataWfh;
   }
 }
