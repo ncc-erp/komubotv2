@@ -230,74 +230,76 @@ export class WfhSchedulerService {
       this.utilsService.getUserNameByEmail(item.emailAddress)
     );
 
-    const users = await this.userRepository
-      .createQueryBuilder("user")
-      .innerJoin("komu_msg", "m", "user.last_bot_message_id = m.id")
-      .where(
-        wfhUserEmail && wfhUserEmail.length > 0
-          ? '"email" IN (:...wfhUserEmail)'
-          : "true",
-        {
-          wfhUserEmail: wfhUserEmail,
-        }
-      )
-      .andWhere('"deactive" IS NOT True')
-      .andWhere('"roles_discord" IS Not Null')
-      .andWhere('"botPing" = :botPing', {
-        botPing: true,
-      })
-      .andWhere('"last_bot_message_id" IS NOT Null')
-      .select("*")
-      .execute();
-
-    users.map(async (user) => {
-      if (
-        Date.now() - user.createdTimestamp >= 1800000 &&
-        user.createdTimestamp >=
-          this.utilsService.getTimeToDay(null).firstDay.getTime() &&
-        user.createdTimestamp <=
-          this.utilsService.getTimeToDay(null).lastDay.getTime()
-      ) {
-        const content = `<@${
-          user.userId
-        }> không trả lời tin nhắn WFH lúc ${moment(
-          parseInt(user.createdTimestamp.toString())
+    if (wfhUserEmail.length > 0) {
+      const users = await this.userRepository
+        .createQueryBuilder("user")
+        .innerJoin("komu_msg", "m", "user.last_bot_message_id = m.id")
+        .where(
+          wfhUserEmail && wfhUserEmail.length > 0
+            ? '"email" IN (:...wfhUserEmail)'
+            : "true",
+          {
+            wfhUserEmail: wfhUserEmail,
+          }
         )
-          .utcOffset(420)
-          .format("YYYY-MM-DD HH:mm:ss")} !\n`;
-        const userInsert = await this.userRepository.findOne({
-          where: {
-            userId: user.userId,
-          },
-        });
-        const data = await this.wfhRepository.save({
-          user: userInsert,
-          wfhMsg: content,
-          complain: false,
-          pmconfirm: false,
-          status: "ACTIVE",
-          type: "wfh",
-          createdAt: Date.now(),
-        });
-        const message = this.komubotrestService.getWFHWarninghMessage(
-          content,
-          user.userId,
-          data.id
-        );
-        const channel = await client.channels.fetch(
-          this.clientConfigService.machleoChannelId
-        );
-        await this.userRepository
-          .createQueryBuilder("user")
-          .update(User)
-          .set({
-            botPing: false,
-          })
-          .where(`"userId" = :userId`, { userId: user.userId })
-          .andWhere(`"deactive" IS NOT TRUE`)
-          .execute();
-        await channel.send(message).catch(console.error);
-      }
-    });
+        .andWhere('"deactive" IS NOT True')
+        .andWhere('"roles_discord" IS Not Null')
+        .andWhere('"botPing" = :botPing', {
+          botPing: true,
+        })
+        .andWhere('"last_bot_message_id" IS NOT Null')
+        .select("*")
+        .execute();
+        
+      users.map(async (user) => {
+        if (
+          Date.now() - user.createdTimestamp >= 1800000 &&
+          user.createdTimestamp >=
+            this.utilsService.getTimeToDay(null).firstDay.getTime() &&
+          user.createdTimestamp <=
+            this.utilsService.getTimeToDay(null).lastDay.getTime()
+        ) {
+          const content = `<@${
+            user.userId
+          }> không trả lời tin nhắn WFH lúc ${moment(
+            parseInt(user.createdTimestamp.toString())
+          )
+            .utcOffset(420)
+            .format("YYYY-MM-DD HH:mm:ss")} !\n`;
+          const userInsert = await this.userRepository.findOne({
+            where: {
+              userId: user.userId,
+            },
+          });
+          const data = await this.wfhRepository.save({
+            user: userInsert,
+            wfhMsg: content,
+            complain: false,
+            pmconfirm: false,
+            status: "ACTIVE",
+            type: "wfh",
+            createdAt: Date.now(),
+          });
+          const message = this.komubotrestService.getWFHWarninghMessage(
+            content,
+            user.userId,
+            data.id
+          );
+          const channel = await client.channels.fetch(
+            this.clientConfigService.machleoChannelId
+          );
+          await this.userRepository
+            .createQueryBuilder("user")
+            .update(User)
+            .set({
+              botPing: false,
+            })
+            .where(`"userId" = :userId`, { userId: user.userId })
+            .andWhere(`"deactive" IS NOT TRUE`)
+            .execute();
+          await channel.send(message).catch(console.error);
+        }
+      });
+    }
   }
 }
