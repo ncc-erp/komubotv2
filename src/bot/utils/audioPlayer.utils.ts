@@ -80,7 +80,7 @@ export class AudioPlayer {
 
       if (episode && message) {
         message.channel
-          .send(`@here go to <#921323636491710504>`)
+          .send(`Go to <#921323636491710504>`)
           .catch(console.error);
       }
     } catch (err) {
