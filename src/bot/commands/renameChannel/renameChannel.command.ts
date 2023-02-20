@@ -18,7 +18,7 @@ export class RenameChannelCommand implements CommandLineClass {
   async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
-      if (authorId !== this.clientConfig.user_daitrinh_id) {
+      if (!this.clientConfig.adminIds.includes(authorId)) {
         return message
           .reply({
             content:

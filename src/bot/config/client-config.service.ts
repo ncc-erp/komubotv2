@@ -215,7 +215,6 @@ export class ClientConfigService {
       "CHUYENPHIEM_CHANNEL_ID"
     )}`;
     this.guild_komu_id = `${configService.get<string>("GUILD_KOMU_ID")}`;
-    this.user_daitrinh_id = `${configService.get<string>("USER_DAITRINH_ID")}`;
     this.guildvoice_parent_id = `${configService.get<string>(
       "GUILDVOICE_PARENT_ID"
     )}`;
@@ -311,7 +310,7 @@ export class ClientConfigService {
   guild_komu_id: string;
 
   //user_daitrinh_id
-  user_daitrinh_id: string;
+  adminIds: string[] = ["921260899799539782", "922148445626716182"];
 
   //chuyenphiem_id
   chuyenphiem_id: string;
