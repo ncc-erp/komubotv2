@@ -54,7 +54,7 @@ export class UserStatusCommand implements CommandLineClass {
       let mess;
 
       if (!getUserStatus.data.result) {
-        mess = "Work At Office";
+        mess = "Invalid user!";
       } else {
         mess = getUserStatus.data.result.message;
       }

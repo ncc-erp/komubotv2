@@ -148,6 +148,8 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
 import { BzzCommand } from "./commands/bzz/bzz.command";
 import { BuzzCommand } from "./commands/buzz/buzz";
 import { CallUserService } from "./utils/callUser/callUser.service";
+import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.command";
+import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 
 @Module({
   imports: [
@@ -233,7 +235,6 @@ import { CallUserService } from "./utils/callUser/callUser.service";
     PollCommand,
     OrderService,
     CheckListController,
-    KomubotrestController,
     CompanytripService,
     AudioPlayer,
     CheckListService,
@@ -307,6 +308,8 @@ import { CallUserService } from "./utils/callUser/callUser.service";
     WfhService,
     DmmessageService,
     WorkoutService,
+    RenameChannelCommand,
+    RenameChannelService,
   ],
   controllers: [KomubotrestController],
 })

@@ -9,9 +9,16 @@ import { KomubotrestService } from "./komubotrest.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Msg, Uploadfile, Channel, WorkFromHome, Uploadfile]),
+    TypeOrmModule.forFeature([
+      User,
+      Msg,
+      Uploadfile,
+      Channel,
+      WorkFromHome,
+      Uploadfile,
+    ]),
   ],
-  exports: [KomubotrestService, KomubotrestService, Uploadfile],
-  providers: [KomubotrestService, KomubotrestService, Uploadfile],
+  exports: [KomubotrestService],
+  providers: [KomubotrestService],
 })
 export class KomubotrestModule {}

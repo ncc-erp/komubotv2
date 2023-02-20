@@ -41,6 +41,9 @@ import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
 import { RegexEmailPipe } from "src/bot/middleware/regex-email";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { ReportDailyDTO } from "./komubotrest.dto";
+import { ApiTags } from "@nestjs/swagger";
+
+@ApiTags("Komu")
 @Controller()
 @Injectable()
 export class KomubotrestController {
