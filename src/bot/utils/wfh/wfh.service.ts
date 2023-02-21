@@ -14,6 +14,8 @@ import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Repository } from "typeorm";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
+let interactionChannelMachleo;
+
 @Injectable()
 @Injectable()
 export class WfhService {
@@ -28,6 +30,9 @@ export class WfhService {
   ) {}
   async wfh(interaction, client) {
     const arrIds = interaction.customId.split("#");
+    if (interaction.channel.id == this.clientConfigService.machleoChannelId) {
+      interactionChannelMachleo = interaction.message.id;
+    }
     const customId = arrIds[0];
     const labelImageId = arrIds.length > 1 ? arrIds[1] : "";
     let isCheckin = true;
@@ -281,10 +286,18 @@ export class WfhService {
               .where(`"id" = :id`, {
                 id: wfhid,
               });
-            await client.channels.cache
-              .get(this.clientConfigService.machleoChannelId)
-              .send(message)
-              .catch(console.error);
+            const channelMachleo = await client.channels.cache.get(
+              this.clientConfigService.machleoChannelId
+            );
+            const replyMessage = await channelMachleo.messages.fetch(
+              interactionChannelMachleo
+            );
+            replyMessage
+              .reply({
+                content: message,
+                // ephemeral: true,
+              })
+              .catch((err) => {});
             await interaction
               .reply({
                 content: `You just ${arrIds[3]}ed WFH complain for <@${labelImageId}>`,
