@@ -281,18 +281,10 @@ export class WfhService {
               .where(`"id" = :id`, {
                 id: wfhid,
               });
-            const channelMachleo = await client.channels.cache.get(
-              this.clientConfigService.machleoChannelId
-            );
-            const replyMessage = await channelMachleo.messages.fetch(
-              interaction.message.id
-            );
-            replyMessage
-              .reply({
-                content: message,
-                // ephemeral: true,
-              })
-              .catch((err) => {});
+            await client.channels.cache
+              .get(this.clientConfigService.machleoChannelId)
+              .send(message)
+              .catch(console.error);
             await interaction
               .reply({
                 content: `You just ${arrIds[3]}ed WFH complain for <@${labelImageId}>`,
