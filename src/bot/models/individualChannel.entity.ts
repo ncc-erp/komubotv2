@@ -15,6 +15,6 @@ export class IndividualChannel {
   @Column({ nullable: true })
   ownerUsername: string;
 
-  @Column({ default: true })
+  @Column({ nullable: true })
   ownerId: string;
 }
