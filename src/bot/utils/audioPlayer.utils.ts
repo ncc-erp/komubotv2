@@ -44,7 +44,7 @@ export class AudioPlayer {
       joinVoiceChannel({
         channelId: channel.id,
         guildId: (channel as VoiceChannel).guild.id,
-        adapterCreator: (channel as VoiceChannel).guild.voiceAdapterCreator
+        adapterCreator: (channel as VoiceChannel).guild.voiceAdapterCreator,
       }).subscribe(player);
       let dataMp3;
       if (!episode) {
@@ -79,9 +79,7 @@ export class AudioPlayer {
       player.play(resource);
 
       if (episode && message) {
-        message.channel
-          .send(`@here go to <#921323636491710504>`)
-          .catch(console.error);
+        message.reply(`Go to <#921323636491710504>`).catch(console.error);
       }
     } catch (err) {
       console.log(err);

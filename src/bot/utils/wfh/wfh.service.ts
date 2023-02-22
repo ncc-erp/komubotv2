@@ -35,7 +35,11 @@ export class WfhService {
 
     if (
       arrIds.length > 2 &&
-      ((labelImageId == interaction.user.id && arrIds[0] == "komu_wfh_complain" && arrIds.length === 3) || (arrIds[0] == "komu_wfh_complain" && arrIds.length > 3) || arrIds[0] == "komu_wfh_accept")
+      ((labelImageId == interaction.user.id &&
+        arrIds[0] == "komu_wfh_complain" &&
+        arrIds.length === 3) ||
+        (arrIds[0] == "komu_wfh_complain" && arrIds.length > 3) ||
+        arrIds[0] == "komu_wfh_accept")
     ) {
       console.log("wfh complain from", interaction.user.id);
 
@@ -204,7 +208,9 @@ export class WfhService {
                 "#" +
                 wfhid +
                 "#reject#" +
-                pmdb.userId
+                pmdb.userId +
+                "#" +
+                interaction.message.id
             )
             .setLabel("Reject")
             .setStyle(ButtonStyle.Danger),
@@ -215,7 +221,9 @@ export class WfhService {
                 "#" +
                 wfhid +
                 "#confirm#" +
-                pmdb.userId
+                pmdb.userId +
+                "#" +
+                interaction.message.id
             )
             .setLabel("Confirm")
             .setStyle(ButtonStyle.Primary)
@@ -277,10 +285,15 @@ export class WfhService {
               .where(`"id" = :id`, {
                 id: wfhid,
               });
-            await client.channels.cache
-              .get(this.clientConfigService.machleoChannelId)
-              .send(message)
-              .catch(console.error);
+            const channelMachleo = await client.channels.cache.get(
+              this.clientConfigService.machleoChannelId
+            );
+            const replyMessage = await channelMachleo.messages.fetch(arrIds[5]);
+            replyMessage
+              .reply({
+                content: message,
+              })
+              .catch((err) => {});
             await interaction
               .reply({
                 content: `You just ${arrIds[3]}ed WFH complain for <@${labelImageId}>`,

@@ -14,7 +14,7 @@ export class UserStatusService {
     return await this.userRepository
       .createQueryBuilder()
       .where(`"email" = :email`, { email: email })
-      .andWhere(`"username" = :username`, { username: email })
+      .orWhere(`"username" = :username`, { username: email })
       .select("*")
       .execute();
   }

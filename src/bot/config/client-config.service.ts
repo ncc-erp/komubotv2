@@ -309,6 +309,9 @@ export class ClientConfigService {
   //guild_komu_id
   guild_komu_id: string;
 
+  //user_daitrinh_id
+  adminIds: string[] = ["921260899799539782", "922148445626716182"];
+
   //chuyenphiem_id
   chuyenphiem_id: string;
 

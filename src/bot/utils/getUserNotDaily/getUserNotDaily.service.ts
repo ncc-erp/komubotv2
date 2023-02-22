@@ -48,16 +48,19 @@ export class UserNotDailyService {
         return;
       }
 
-      const wfhUserEmail = wfhGetApi.data.result.map((item) =>
-        this.utilsService.getUserNameByEmail(item.emailAddress)
-      );
+      let wfhUserEmail = [];
+      if (wfhGetApi && wfhGetApi.data && wfhGetApi.data.result.length > 0) {
+        wfhUserEmail = wfhGetApi.data.result.map((item) =>
+          this.utilsService.getUserNameByEmail(item.emailAddress)
+        );
 
-      // if no wfh
-      if (
-        (Array.isArray(wfhUserEmail) && wfhUserEmail.length === 0) ||
-        !wfhUserEmail
-      ) {
-        return;
+        // if no wfh
+        if (
+          (Array.isArray(wfhUserEmail) && wfhUserEmail.length === 0) ||
+          !wfhUserEmail
+        ) {
+          return;
+        }
       }
 
       const { userOffFullday } = await getUserOffWork(date);

@@ -67,7 +67,7 @@ export default class PenaltyCommand implements CommandLineClass {
           mess = result
             .map(
               (item) =>
-                `<@${item.userId}>(${item.username}) : ${item.ammount} vnd`
+                `${item.username} : ${item.ammount} vnd`
             )
             .join("\n");
         }

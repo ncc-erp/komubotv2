@@ -151,6 +151,8 @@ import { CallUserService } from "./utils/callUser/callUser.service";
 import { IndividualChannel } from "./models/individualChannel.entity";
 import { IndividualChannelCommand } from "./commands/individual/individual.command";
 import { IndividualChannelService } from "./commands/individual/individual.service";
+import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.command";
+import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 
 @Module({
   imports: [
@@ -237,7 +239,6 @@ import { IndividualChannelService } from "./commands/individual/individual.servi
     PollCommand,
     OrderService,
     CheckListController,
-    KomubotrestController,
     CompanytripService,
     AudioPlayer,
     CheckListService,
@@ -313,6 +314,8 @@ import { IndividualChannelService } from "./commands/individual/individual.servi
     WorkoutService,
     IndividualChannelCommand,
     IndividualChannelService,
+    RenameChannelCommand,
+    RenameChannelService,
   ],
   controllers: [KomubotrestController],
 })
