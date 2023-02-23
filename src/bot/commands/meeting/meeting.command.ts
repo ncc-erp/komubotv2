@@ -366,7 +366,7 @@ export class MeetingCommand implements CommandLineClass {
           let repeatTime = args.slice(4, args.length).join(" ");
           const checkDate = args.slice(1, 2).join(" ");
           const checkTime = args.slice(2, 3).join(" ");
-          if (!/^[0-9]+$/.test(repeatTime)) {
+          if (repeatTime.length > 0 && !/^[0-9]+$/.test(repeatTime)) {
             return message
               .reply({
                 content: messHelp,
