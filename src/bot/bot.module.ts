@@ -148,6 +148,9 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
 import { BzzCommand } from "./commands/bzz/bzz.command";
 import { BuzzCommand } from "./commands/buzz/buzz";
 import { CallUserService } from "./utils/callUser/callUser.service";
+import { IndividualChannel } from "./models/individualChannel.entity";
+import { IndividualChannelCommand } from "./commands/individual/individual.command";
+import { IndividualChannelService } from "./commands/individual/individual.service";
 import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.command";
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 
@@ -195,6 +198,7 @@ import { RenameChannelService } from "./commands/renameChannel/renameChannel.ser
       Wiki,
       Workout,
       Mentioned,
+      IndividualChannel
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -308,6 +312,8 @@ import { RenameChannelService } from "./commands/renameChannel/renameChannel.ser
     WfhService,
     DmmessageService,
     WorkoutService,
+    IndividualChannelCommand,
+    IndividualChannelService,
     RenameChannelCommand,
     RenameChannelService,
   ],
