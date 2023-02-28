@@ -61,7 +61,7 @@ export class SendMessageSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("sendMessagePMs", "00 15 * * 2", () =>
+    this.addCronJob("sendMessagePMs", "30 13 * * 2", () =>
       this.sendMessagePMs(this.client)
     );
     this.addCronJob("sendMessTurnOffPc", "30 17 * * 1-5", () =>
@@ -95,7 +95,7 @@ export class SendMessageSchedulerService {
     const userDiscord = await client.channels.fetch("921787088830103593");
     userDiscord
       .send(
-        `Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report tuần này đi.`
+        `Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report nhé. Lưu ý: hoàn thành sau 15h00 -> 25k/project;  sau 17h00 -> 100k/project. Đừng để tiền rơi`
       )
       .catch(console.error);
   }
