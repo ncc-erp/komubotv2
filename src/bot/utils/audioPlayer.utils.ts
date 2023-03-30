@@ -56,9 +56,9 @@ export class AudioPlayer {
           .select("*")
           .execute();
       } else {
-        if (checkTimeSchulderNCC8()) {
-          return message.reply("scheduled playing");
-        }
+        // if (checkTimeSchulderNCC8()) {
+        //   return message.reply("scheduled playing");
+        // }
         dataMp3 = await this.uploadFileData.findBy({
           episode: episode,
         });
