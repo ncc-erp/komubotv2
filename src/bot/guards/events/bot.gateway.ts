@@ -2,10 +2,8 @@ import {
   InjectDiscordClient,
   On,
   Once,
-  UseGuards,
-  UsePipes,
 } from "@discord-nestjs/core";
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, UseGuards, UsePipes } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   ChannelType,

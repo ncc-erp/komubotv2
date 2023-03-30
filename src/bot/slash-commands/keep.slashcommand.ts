@@ -1,45 +1,43 @@
-import { TransformPipe } from "@discord-nestjs/common";
 import {
   Command,
-  DiscordTransformedCommand,
-  InjectDiscordClient,
-  Payload,
-  TransformedCommandExecutionContext,
-  UsePipes,
+  EventParams,
+  Handler,
+  InteractionEvent,
 } from "@discord-nestjs/core";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Message } from "discord.js";
+import { ClientEvents, InteractionReplyOptions } from "discord.js";
 import { Repository } from "typeorm";
 import { KeepDto } from "./dto/keep.dto";
 import { Keep } from "../models/keep.entity";
+import { SlashCommandPipe } from "@discord-nestjs/common";
 
 @Command({
   name: "keep",
   description: "manage yourself note",
 })
-@UsePipes(TransformPipe)
-export class KeepSlashCommand implements DiscordTransformedCommand<KeepDto> {
+export class KeepSlashCommand {
   constructor(
     @InjectRepository(Keep)
     private keepData: Repository<Keep>
   ) {}
 
+  @Handler()
   async handler(
-    @Payload() dto: KeepDto,
-    { interaction }: TransformedCommandExecutionContext
-  ): Promise<any> {
+    @InteractionEvent(SlashCommandPipe) dto: KeepDto,
+    @EventParams() args: ClientEvents['interactionCreate'],
+  ): Promise<InteractionReplyOptions> {
     try {
-      const note = interaction.options.get("note").value as string;
+      const interaction = args.at(0);
       await this.keepData.insert({
         userId: interaction.user.id,
-        note: note,
+        note: dto.note,
         start_time: Date.now(),
         status: "active",
       });
-      interaction.reply({
+      return {
         content: "`✅` Note saved. Use `/wiki note` to list.",
         ephemeral: true,
-      });
+      };
     } catch (error) {
       console.log(error);
     }

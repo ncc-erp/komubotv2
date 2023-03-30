@@ -1,16 +1,17 @@
-import { TransformPipe } from "@discord-nestjs/common";
+import { SlashCommandPipe } from "@discord-nestjs/common";
 import {
   Command,
-  DiscordTransformedCommand,
-  InjectDiscordClient,
-  Payload,
-  TransformedCommandExecutionContext,
-  UsePipes,
+  EventParams,
+  Handler,
+  InteractionEvent,
 } from "@discord-nestjs/core";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EmbedBuilder, Message } from "discord.js";
+import {
+  ClientEvents,
+  EmbedBuilder,
+  InteractionReplyOptions,
+} from "discord.js";
 import { Repository } from "typeorm";
-import { KeepDto } from "./dto/keep.dto";
 import { Keep } from "../models/keep.entity";
 import { WikiDto } from "./dto/wiki.dto";
 import { Wiki } from "../models/wiki.entity";
@@ -23,8 +24,7 @@ import { firstValueFrom } from "rxjs";
   name: "wiki",
   description: "show wiki",
 })
-@UsePipes(TransformPipe)
-export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
+export class WikiSlashCommand {
   constructor(
     @InjectRepository(Wiki)
     private wikiData: Repository<Wiki>,
@@ -34,12 +34,14 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
     private httpService: HttpService
   ) {}
 
+  @Handler()
   async handler(
-    @Payload() dto: WikiDto,
-    { interaction }: TransformedCommandExecutionContext
-  ): Promise<any> {
+    @InteractionEvent(SlashCommandPipe) dto: WikiDto,
+    @EventParams() args: ClientEvents["interactionCreate"]
+  ): Promise<InteractionReplyOptions> {
     try {
-      let topic = interaction.options.get("topic").value as string;
+      let topic = dto.topic;
+      const interaction = args.at(0);
       let supportTypes = await this.wikiData
         .createQueryBuilder()
         .distinctOn(["type"])
@@ -54,16 +56,13 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           topic.substring(20) != ">" &&
           !supportTypes.includes(topic))
       ) {
-        interaction
-          .reply({
-            content:
-              "Available commands: \n" +
-              "`@user` " +
-              supportTypes.map((x) => `\`${x}\``).join(" "),
-            ephemeral: true,
-          })
-          .catch(console.error);
-        return;
+        return {
+          content:
+            "Available commands: \n" +
+            "`@user` " +
+            supportTypes.map((x) => `\`${x}\``).join(" "),
+          ephemeral: true,
+        };
       }
       if (topic.substring(0, 4) == "note") {
         try {
@@ -74,24 +73,17 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
             },
           });
           if (keeps.length === 0) {
-            interaction
-              .reply({ content: "No data", ephemeral: true })
-              .catch(console.error);
-            return;
+            return { content: "No data", ephemeral: true };
           }
           let result = "```\n";
           keeps.forEach((doc) => {
             result += `${doc.note}\n`;
           });
           result += "```";
-          interaction
-            .reply({ content: result, ephemeral: true })
-            .catch(console.error);
+          return { content: result, ephemeral: true };
         } catch (error) {
-          interaction.reply({ content: "Error", ephemeral: true });
-          return;
+          return { content: "Error", ephemeral: true };
         }
-        return;
       }
       if (topic.substring(0, 2) == "<@" && topic.substring(20) == ">") {
         topic = topic.substring(2, 20);
@@ -103,10 +95,7 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           .getRawOne();
 
         if (userdb == null) {
-          interaction
-            .reply({ content: "Email not found.", ephemeral: true })
-            .catch(console.error);
-          return;
+          return { content: "Email not found.", ephemeral: true };
         }
 
         const { data } = await firstValueFrom(
@@ -120,13 +109,9 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           )
         ).catch((err) => {
           console.log("Error ", err);
-          interaction
-            .reply({
-              content: `Error while looking up for **${userdb.email}**.`,
-              ephemeral: true,
-            })
-            .catch(console.error);
-          return { data: "There was an error!" };
+          return {
+            data: undefined,
+          };
         });
 
         if (
@@ -137,12 +122,10 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           data.result == undefined ||
           data.result.length == 0
         ) {
-          return interaction
-            .reply({
-              content: `No data for **${userdb.email}**.`,
-              ephemeral: true,
-            })
-            .catch(console.error);
+          return {
+            content: `No data for **${userdb.email}**.`,
+            ephemeral: true,
+          };
         }
 
         const infos = [];
@@ -172,10 +155,7 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
               inline: false,
             }
           );
-        interaction
-          .reply({ embeds: [embed], ephemeral: true })
-          .catch((err) => console.log(err));
-        return;
+        return { embeds: [embed], ephemeral: true };
       }
 
       let filter = { type: topic } as any;
@@ -188,8 +168,7 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           where: filter,
         });
         if (wikis.length === 0) {
-          interaction.reply({ content: "No data", ephemeral: true });
-          return;
+          return { content: "No data", ephemeral: true };
         }
         let result = "```\n";
         wikis.forEach((doc) => {
@@ -197,16 +176,13 @@ export class WikiSlashCommand implements DiscordTransformedCommand<WikiDto> {
           result += `${doc.value}\n\n`;
         });
         result += "```";
-        interaction.reply({ content: result, ephemeral: true });
-        return;
+        return { content: result, ephemeral: true };
       } catch (error) {
-        interaction.reply({ content: "Error", ephemeral: true });
-        return;
+        return { content: "Error", ephemeral: true };
       }
     } catch (err) {
       console.log(err);
-      interaction.reply({ content: "Error " + err, ephemeral: true });
-      return;
+      return { content: "Error " + err, ephemeral: true };
     }
   }
 }

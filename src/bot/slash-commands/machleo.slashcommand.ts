@@ -1,16 +1,11 @@
-import { TransformPipe } from "@discord-nestjs/common";
+import { SlashCommandPipe } from "@discord-nestjs/common";
 import {
   Command,
-  DiscordTransformedCommand,
+  Handler,
   InjectDiscordClient,
-  Payload,
-  TransformedCommandExecutionContext,
-  UsePipes,
+  InteractionEvent,
 } from "@discord-nestjs/core";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Client, Message, TextChannel } from "discord.js";
-import { send } from "process";
-import { Repository } from "typeorm";
+import { Client, TextChannel } from "discord.js";
 import { ClientConfigService } from "../config/client-config.service";
 import { MachleoDto } from "./dto/machleo.dto";
 
@@ -18,21 +13,19 @@ import { MachleoDto } from "./dto/machleo.dto";
   name: "machleo",
   description: "Thích machleo",
 })
-@UsePipes(TransformPipe)
-export class MachleoSlashCommand
-  implements DiscordTransformedCommand<MachleoDto>
-{
+export class MachleoSlashCommand{
   constructor(
     @InjectDiscordClient()
     private client: Client,
     private clientConfig: ClientConfigService
   ) {}
+
+  @Handler()
   async handler(
-    @Payload() dto: MachleoDto,
-    { interaction }: TransformedCommandExecutionContext
+    @InteractionEvent(SlashCommandPipe) dto: MachleoDto
   ): Promise<any> {
     try {
-      const machleomsg = interaction.options.get("message").value as string;
+      const machleomsg = dto.message;
       (
         (await this.client.channels.cache.get(
           this.clientConfig.machleoChannelId
@@ -41,10 +34,10 @@ export class MachleoSlashCommand
         .send(machleomsg)
         .catch(console.error);
 
-      interaction.reply({
-        content: "`✅` Message sent to #macleo.",
+      return {
+        content: "`✅` Message sent to #machleo.",
         ephemeral: true,
-      });
+      };
     } catch (error) {
       console.log(error);
     }

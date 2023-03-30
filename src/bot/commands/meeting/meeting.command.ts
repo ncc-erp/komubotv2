@@ -135,9 +135,6 @@ export class MeetingCommand implements CommandLineClass {
                 );
               });
           } else {
-            let guild = await client.guilds.fetch(
-              this.clientConfig.guild_komu_id
-            );
             const getAllVoice = client.channels.cache.filter(
               (guild) =>
                 guild.type == ChannelType.GuildVoice &&

@@ -1,10 +1,9 @@
-import { TransformPipe } from "@discord-nestjs/common";
-import { DiscordCommand, SubCommand, UsePipes } from "@discord-nestjs/core";
+import { Handler, SubCommand } from "@discord-nestjs/core";
 import { CommandInteraction } from "discord.js";
 
-@UsePipes(TransformPipe)
 @SubCommand({ name: "query", description: "query is add|remove|list" })
-export class QuerySubCommand implements DiscordCommand {
+export class QuerySubCommand {
+  @Handler()
   handler(interaction: CommandInteraction) {
     const { options } = interaction;
     const topic = options.get("query").value;

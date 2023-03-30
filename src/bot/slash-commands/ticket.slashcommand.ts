@@ -1,39 +1,41 @@
 import {
   Command,
-  DiscordTransformedCommand,
+  EventParams,
+  Handler,
+  InteractionEvent,
   Param,
-  Payload,
-  TransformedCommandExecutionContext,
   UseGroup,
 } from "@discord-nestjs/core";
 import { HttpService } from "@nestjs/axios";
 import { Transform } from "class-transformer";
-import { MessagePayload, InteractionReplyOptions } from "discord.js";
+import { MessagePayload, InteractionReplyOptions, ClientEvents } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { ClientConfigService } from "../config/client-config.service";
 import { QuerySubCommand } from "./ticket-subcommand/query.subcommand";
 import { TicketDevDto } from "../slash-commands/dto/ticketdev.dto";
+import { SlashCommandPipe } from "@discord-nestjs/common";
 @Command({
   name: "ticketdev",
   description: "manage ticket",
 })
-export class TicketSlashCommand
-  implements DiscordTransformedCommand<TicketDevDto>
-{
+export class TicketSlashCommand {
   constructor(
     private httpService: HttpService,
     private clientConfigService: ClientConfigService
   ) {}
+
+  @Handler()
   async handler(
-    @Payload() dto: TicketDevDto,
-    { interaction, collectors }: TransformedCommandExecutionContext
+    @InteractionEvent(SlashCommandPipe) dto: TicketDevDto,
+    @EventParams() args: ClientEvents['interactionCreate'],
   ): Promise<any> {
-    const topic = interaction.options.get("query").value;
-    const topicAssignee = interaction.options.get("assignee").value;
+    const topic = dto.query;
+    const topicAssignee = dto.assignee;
+    const interaction = args.at(0);
 
     try {
       if (topic === "add") {
-        const topicTask = interaction.options.get("task").value;
+        const topicTask = dto.task;
         await firstValueFrom(
           this.httpService.post(
             `${this.clientConfigService.ticket.api_url_create}`,
@@ -53,12 +55,9 @@ export class TicketSlashCommand
           )
         ).catch((err) => {
           console.log("Email address not found", err);
-          interaction
-            .reply({ content: "Email address not found", ephemeral: true })
-            .catch(console.error);
-          return { data: "There was an error!" };
+          return { content: "Email address not found", ephemeral: true };
         });
-        interaction.reply({ content: "`✅` Ticket saved.", ephemeral: true });
+        return { content: "`✅` Ticket saved.", ephemeral: true };
       } else if (topic === "list") {
         const { data } = await firstValueFrom(
           this.httpService.get(
@@ -71,15 +70,14 @@ export class TicketSlashCommand
           )
         ).catch((err) => {
           console.log("Error ", err);
-          interaction
-            .reply({
-              content: `Error while looking up for **${topicAssignee}**.`,
-              ephemeral: true,
-            })
-            .catch(console.error);
-          return { data: "There was an error!" };
+          return {
+            data: undefined
+            };
         });
-        if (!data || !data.result) return;
+        if (!data || !data.result) return {
+          content: `Error while looking up for **${topicAssignee}**.`,
+          ephemeral: true,
+        };;
         const dataJobs = data.result.map((item) => [
           item.jobId,
           item.jobName,
@@ -103,23 +101,7 @@ export class TicketSlashCommand
             "\n" +
             "\n";
         });
-        interaction.reply({ content: mess, ephemeral: true });
-
-        if (
-          data == null ||
-          data == undefined ||
-          data.length == 0 ||
-          data.result == null ||
-          data.result == undefined ||
-          data.result.length == 0
-        ) {
-          return interaction
-            .reply({
-              content: `No data for **${topicAssignee}**.`,
-              ephemeral: true,
-            })
-            .catch(console.error);
-        }
+        return { content: mess, ephemeral: true };
       } else {
         return interaction.channel
           .send("```" + "*No query ticket" + "```")
@@ -127,8 +109,7 @@ export class TicketSlashCommand
       }
     } catch (error) {
       console.log(error);
-      interaction.reply({ content: "Error " + error, ephemeral: true });
-      return;
+      return { content: "Error " + error, ephemeral: true };
     }
   }
 }
