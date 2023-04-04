@@ -95,7 +95,13 @@ export class SendMessageSchedulerService {
     const userDiscord = await client.channels.fetch("921787088830103593");
     userDiscord
       .send(
-        `Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report nhé. Lưu ý: hoàn thành sau 15h00 -> 25k/project;  sau 17h00 -> 100k/project. Đừng để tiền rơi`
+        "Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report nhé. Lưu ý:\n"
+        + "- Các PM nộp báo cáo trên Project tool trước 15h00 thứ 3 hàng tuần (chú ý click btn Send mới được tính là nộp)\n"
+        + "- Nộp sau 15h00: 50k/PM\n"
+        + "- Nộp sau 17h00: 100k/PM\n"
+        + "- Không chấp nhận mọi lý do\n"
+        + "- Áp dụng từ 01/03/2023\n"
+        + "- Guideline: https://docs.google.com/document/d/15BpNpBsSNaT2UYg4qPQeHNbXCeHfB1oj/edit?usp=sharing&ouid=109739496225261626689&rtpof=true&sd=true"
       )
       .catch(console.error);
   }
