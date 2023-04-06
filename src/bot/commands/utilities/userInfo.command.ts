@@ -73,31 +73,20 @@ export class UserInfoCommand implements CommandLineClass {
     const phoneNumber = (data as any)?.data?.result?.phoneNumber
       ? (data as any).data.result.phoneNumber
       : "";
-    let api_url_getListProjectOfUserApi;
-    try {
-      const url = `${
-        this.clientConfigService.project.api_url_getListProjectOfUser
-      }?email=${findUser?.email.toLowerCase()}@ncc.asia`;
-      api_url_getListProjectOfUserApi = await firstValueFrom(
-        this.http.get(url).pipe((res) => res)
-      );
-    } catch (error) {
-      console.log(error);
+    const url = `${
+      this.clientConfigService.project.getPMOfUser
+    }?email=${findUser?.email.toLowerCase()}@ncc.asia`;
+    const pmData = await firstValueFrom(
+      this.http.get(url).pipe((res) => res)
+    ).catch((err) => {
+      console.log("Error", err)
+    });
+
+    let mess = "";
+
+    if (pmData && pmData.data && pmData.data.result && pmData.data.result.length) {
+      mess = `${pmData.data.result[0].projectName} (${pmData.data.result[0].projectCode}) - PM ${pmData.data.result[0].pm.fullName}`
     }
-
-    const api_url_getListProject = [];
-    api_url_getListProjectOfUserApi
-      ? api_url_getListProjectOfUserApi.data.result.map((item) => {
-          api_url_getListProject.push({
-            projectName: item.projectName,
-            projectCode: item.projectCode,
-          });
-        })
-      : [];
-
-    const mess = api_url_getListProject
-      .map((item) => `- ${item.projectName} (${item.projectCode})`)
-      .join("\n");
     const lang = this.extendersService.translateMessage(
       "USERINFO",
       guildDB.lang
@@ -140,9 +129,7 @@ export class UserInfoCommand implements CommandLineClass {
           .locale(guildDB.lang)
           .fromNow()}\`)
                         **Phone**: ${phoneNumber}
-                        **Project[${
-                          api_url_getListProject.length
-                        }]: \n **${mess}
+                        **Project:** ${mess}
               \n\n`,
       })
       .addFields({

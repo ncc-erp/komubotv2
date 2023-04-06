@@ -44,6 +44,9 @@ export class ClientConfigService {
       api_url_getListProjectOfUser: `${configService.get<string>(
         "TIMESHEET_API"
       )}Public/GetPMsOfUser`,
+      getPMOfUser: `${configService.get<string>(
+        "PROJECT_API"
+      )}Public/GetPMOfUser`
     };
     this.checkinTimesheet = {
       api_url: `${configService.get<string>(
@@ -383,6 +386,7 @@ export class ClientConfigService {
 
   project: {
     api_url_getListProjectOfUser: string;
+    getPMOfUser: string
   };
 
   checkinTimesheet: {
