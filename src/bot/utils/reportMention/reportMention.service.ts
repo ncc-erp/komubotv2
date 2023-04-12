@@ -3,7 +3,7 @@ import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Repository } from "typeorm";
 import { UtilsService } from "../utils.service";
 import { Injectable } from "@nestjs/common";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder, Message } from "discord.js";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
 
 @Injectable()
@@ -15,8 +15,22 @@ export class ReportMentionService {
     private utilsService: UtilsService
   ) {}
 
-  async reportMention(message, client) {
+  async reportMention(message: Message, args, client: Client) {
     const authorId = message.author.id;
+    let fomatDate;
+    if (args[1]) {
+      const day = args[1].slice(0, 2);
+      const month = args[1].slice(3, 5);
+      const year = args[1].slice(6);
+
+      fomatDate = `${month}/${day}/${year}`;
+    } else {
+      fomatDate = new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
     const mentionFullday = await this.wfhRepository
       .createQueryBuilder("wfh")
       .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
@@ -29,10 +43,10 @@ export class ReportMentionService {
           statusAPPROVED: "APPROVED",
           pmconfirm: false,
           firstDay: this.utilsService
-            .getTimeToDayMention(null)
+            .getTimeToDayMention(fomatDate)
             .firstDay.getTime(),
           lastDay: this.utilsService
-            .getTimeToDayMention(null)
+            .getTimeToDayMention(fomatDate)
             .lastDay.getTime(),
         }
       )

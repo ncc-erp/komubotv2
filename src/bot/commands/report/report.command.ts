@@ -112,7 +112,7 @@ export class ReportCommand implements CommandLineClass {
           );
         }
       } else if (args[0] === "mention") {
-        await this.ReportMentionService.reportMention(message, args);
+        await this.ReportMentionService.reportMention(message, args, client);
       } else if (args[0] === "checkcamera") {
         await this.reportCheckCameraService.reportCheckCamera(
           message,
