@@ -37,7 +37,7 @@ export class ReportWFHService {
       .createQueryBuilder("wfh")
       .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
       .where(
-        '("status" = :statusACCEPT AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusACTIVE AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type AND "createdAt" >= :firstDay AND "createdAt" <= :lastDay)',
+        '("status" = :statusACCEPT AND "type" = :type AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusACTIVE AND "type" = :type AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay)',
         {
           type: "wfh",
           statusACCEPT: "ACCEPT",
@@ -100,16 +100,16 @@ export class ReportWFHService {
     }
 
     const wfhFullday = await this.wfhRepository
-      .createQueryBuilder()
+      .createQueryBuilder("wfh")
       .where(`"status" = :status`, { status: "APPROVED" })
       .andWhere(`"complain" = :complain`, { complain: true })
       .andWhere(
-        `"createdAt" > ${this.utilsService
+        `wfh.createdAt > ${this.utilsService
           .getTimeToDay(fomatDate)
           .firstDay.getTime()}`
       )
       .andWhere(
-        `"createdAt" < ${this.utilsService
+        `wfh.createdAt < ${this.utilsService
           .getTimeToDay(fomatDate)
           .lastDay.getTime()}`
       )
