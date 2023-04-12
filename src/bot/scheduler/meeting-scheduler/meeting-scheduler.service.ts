@@ -335,7 +335,7 @@ export class MeetingSchedulerService {
               case "repeat":
                 if (
                   this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
-                  this.utilsService.isDiffDay(dateScheduler, item.repeatTime) &&
+                  this.utilsService.isDiffDay(dateScheduler, +item.repeatTime) &&
                   this.utilsService.isTimeDay(dateScheduler)
                 ) {
                   const repeatFetchChannel = await client.channels.fetch(
@@ -380,14 +380,14 @@ export class MeetingSchedulerService {
                       .catch(console.error);
                   let newCreatedTimestampRepeat = item.createdTimestamp;
                   newCreatedTimestampRepeat = currentDate.setDate(
-                    currentDate.getDate() + item.repeatTime
+                    currentDate.getDate() + +item.repeatTime
                   );
 
                   while (
                     await this.utilsService.checkHolidayMeeting(currentDate)
                   ) {
                     newCreatedTimestampRepeat = currentDate.setDate(
-                      currentDate.getDate() + item.repeatTime
+                      currentDate.getDate() + +item.repeatTime
                     );
                   }
                   await this.meetingRepository

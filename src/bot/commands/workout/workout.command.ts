@@ -63,6 +63,9 @@ export class WorkoutCommand implements CommandLineClass {
       if (args[0] === "summary") {
         const getPointWorkOut = await this.userRepository
           .createQueryBuilder("user")
+          .where(`"scores_workout" >= :gtescores_workout`, {
+            gtescores_workout: 1,
+          })
           .innerJoin("komu_workout", "w", "user.userId = w.userId")
           .groupBy("w.userId")
           .addGroupBy("w.email")
@@ -93,7 +96,7 @@ export class WorkoutCommand implements CommandLineClass {
             }
             mess = getPointWorkOut
               .slice(i * 50, (i + 1) * 50)
-              .map((item) => `${item.email} - point: ${item.scores_workout}`)
+              .map((item) => `${item.email.toLowerCase()} - point: ${item.scores_workout}`)
               .join("\n");
             const Embed = new EmbedBuilder()
               .setTitle("Top workout")
@@ -106,9 +109,50 @@ export class WorkoutCommand implements CommandLineClass {
         }
         // }
       } else if (args[0] === "help") {
-        return (message as any).channel
-          .reply("```" + "*workout month" + "\n" + "*workout" + "```")
+        return (message as any)
+          .reply(
+            "```" +
+              "*workout summary" +
+              "\n" +
+              "*workout update email point" +
+              "\n" +
+              "*workout reset point" +
+              "\n" +
+              "*workout" +
+              "```"
+          )
           .catch(console.error);
+      } else if (args[0] === "update") {
+        if (args[1] && args[2]) {
+          const checkRole = await this.userRepository
+            .createQueryBuilder("user")
+            .where('"userId" = :userId', { userId: authorId })
+            .andWhere('"deactive" IS NOT True')
+            .andWhere('("roles_discord" @> :hr)', {
+              hr: ["HR"],
+            })
+            .select("*")
+            .execute();
+
+          if (
+            checkRole.length > 0 ||
+            authorId === "921261168088190997" ||
+            authorId === "871666965293445171"
+          ) {
+            const point = +args[2];
+            if (!point) return;
+            await this.userRepository
+              .createQueryBuilder()
+              .update(User)
+              .set({
+                scores_workout: args[2],
+              })
+              .where('"email" = :email', { email: args[1] })
+              .execute()
+              .catch(console.error);
+            return message.reply("Update point success").catch(console.error);
+          }
+        }
       } else if (args[0] === "reset" && args[1] === "point") {
         await this.userRepository
           .createQueryBuilder()
@@ -120,6 +164,7 @@ export class WorkoutCommand implements CommandLineClass {
             scores_workout: 0,
           })
           .execute();
+        return message.reply("Update point success").catch(console.error);
       } else {
         const links = [];
         if (
@@ -167,7 +212,7 @@ export class WorkoutCommand implements CommandLineClass {
 
             const workout = await this.workoutRepository.save({
               userId: message.author.id,
-              email: findWorkoutUser.email,
+              email: findWorkoutUser.email.toLowerCase(),
               createdTimestamp: Date.now(),
               attachment: true,
               status: "approve",

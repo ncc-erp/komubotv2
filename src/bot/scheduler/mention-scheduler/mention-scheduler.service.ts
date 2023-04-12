@@ -77,8 +77,11 @@ export class MentionSchedulerService {
 
       await Promise.all(
         notiUser.map(async (user) => {
+          let threadNoti = false;
           let mentionChannel = await client.channels.fetch(user.channelId);
+          const channelNameNoti = mentionChannel.name;
           if (mentionChannel.type !== ChannelType.GuildText) {
+            threadNoti = true;
             mentionChannel = await client.channels.fetch(
               mentionChannel.parentId
             );
@@ -87,32 +90,56 @@ export class MentionSchedulerService {
           let mentionName = await client.users.fetch(user.authorId);
 
           const userDiscord = await client.users.fetch(user.mentionUserId);
-          userDiscord
-            .send(
-              `Hãy trả lời ${mentionName.username} tại channel ${mentionChannel.name} nhé!`
-            )
-            .catch(console.error);
+          threadNoti
+            ? userDiscord
+                .send(
+                  `Hãy trả lời ${mentionName.username} tại thread ${channelNameNoti} (${mentionChannel.name}) nhé!`
+                )
+                .catch(console.error)
+            : userDiscord
+                .send(
+                  `Hãy trả lời ${mentionName.username} tại channel ${mentionChannel.name} nhé!`
+                )
+                .catch(console.error);
+
           await this.mentionRepository.update({ id: user.id }, { noti: true });
         })
       );
 
       await Promise.all(
         mentionedUsers.map(async (user) => {
-          let mentionChannel = await client.channels.fetch(user.channelId);
+          let thread = false;
+          let mentionChannel = await client.channels
+            .fetch(user.channelId)
+            .catch((err) => {});
+          if (!mentionChannel) return;
+          const channelName = mentionChannel.name;
           if (mentionChannel.type !== ChannelType.GuildText) {
-            mentionChannel = await client.channels.fetch(
-              mentionChannel.parentId
-            );
+            thread = true;
+            mentionChannel = await client.channels
+              .fetch(mentionChannel.parentId)
+              .catch((err) => {});
           }
-          const content = `<@${
-            user.mentionUserId
-          }> không trả lời tin nhắn mention của <@${
-            user.authorId
-          }> lúc ${moment(parseInt(user.createdTimestamp.toString()))
-            .utcOffset(420)
-            .format("YYYY-MM-DD HH:mm:ss")} tại channel ${
-            mentionChannel.name
-          }!\n`;
+          let content;
+          thread
+            ? (content = `<@${
+                user.mentionUserId
+              }> không trả lời tin nhắn mention của <@${
+                user.authorId
+              }> lúc ${moment(parseInt(user.createdTimestamp.toString()))
+                .utcOffset(420)
+                .format("YYYY-MM-DD HH:mm:ss")} tại thread ${channelName} (${
+                mentionChannel.name
+              })!\n`)
+            : (content = `<@${
+                user.mentionUserId
+              }> không trả lời tin nhắn mention của <@${
+                user.authorId
+              }> lúc ${moment(parseInt(user.createdTimestamp.toString()))
+                .utcOffset(420)
+                .format("YYYY-MM-DD HH:mm:ss")} tại channel ${
+                mentionChannel.name
+              }!\n`);
           const findUser = await this.userRepository.findOne({
             where: { userId: user.mentionUserId },
           });

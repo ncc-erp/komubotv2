@@ -7,6 +7,7 @@ import { Daily } from "src/bot/models/daily.entity";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { Order } from "src/bot/models/order.entity";
+import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
@@ -23,10 +24,15 @@ import { ReportHolidayService } from "./reportHoliday.service";
       WorkFromHome,
       Channel,
       Daily,
+      Uploadfile,
     ]),
     DiscordModule.forFeature(),
     DiscoveryModule,
   ],
-  providers: [ReportHolidayService, UtilsService, KomubotrestService],
+  providers: [
+    ReportHolidayService,
+    UtilsService,
+    KomubotrestService,
+  ],
 })
 export class ReportHolidayModule {}

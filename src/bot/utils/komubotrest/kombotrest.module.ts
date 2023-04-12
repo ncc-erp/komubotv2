@@ -1,19 +1,24 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Channel } from "src/bot/models/channel.entity";
-import { Daily } from "src/bot/models/daily.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
-import { UtilsService } from "../utils.service";
 import { KomubotrestService } from "./komubotrest.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Msg, Channel, WorkFromHome, Uploadfile]),
+    TypeOrmModule.forFeature([
+      User,
+      Msg,
+      Uploadfile,
+      Channel,
+      WorkFromHome,
+      Uploadfile,
+    ]),
   ],
-  exports: [KomubotrestService, KomubotrestService, Uploadfile],
-  providers: [KomubotrestService, KomubotrestService, Uploadfile],
+  exports: [KomubotrestService],
+  providers: [KomubotrestService],
 })
 export class KomubotrestModule {}

@@ -4,6 +4,7 @@ import { subDays } from "date-fns";
 import { Repository } from "typeorm";
 import { Holiday } from "../models/holiday.entity";
 
+const timeUTC = 60000 * 60 * 7;
 @Injectable()
 export class UtilsService {
   constructor(
@@ -12,11 +13,11 @@ export class UtilsService {
   ) {}
 
   getYesterdayDate() {
-    return subDays(new Date().setHours(23, 59, 59, 999), 1).getTime();
+    return subDays(new Date().setHours(23, 59, 59, 999), 1).getTime() - timeUTC;
   }
 
   getTomorrowDate() {
-    return subDays(new Date().setHours(0, 0, 0, 0), -1).getTime();
+    return subDays(new Date().setHours(0, 0, 0, 0), -1).getTime() - timeUTC;
   }
   setTime(date, hours, minute, second, msValue) {
     return date.setHours(hours, minute, second, msValue);
@@ -155,7 +156,9 @@ export class UtilsService {
     const dd = String(today.getDate()).padStart(2, "0");
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
+    const hours = today.getHours().toString().padStart(2, "0");
+    const minutes = today.getMinutes().toString().padStart(2, "0");
+    return `${dd}/${mm}/${yyyy} ${hours}:${minutes}`;
   }
 
   async checkHolidayMeeting(date) {
@@ -312,7 +315,7 @@ export class UtilsService {
       },
       afternoon: {
         fisttime: new Date(this.setTime(date, 5 + timezone, 0, 0, 0)).getTime(),
-        lastime: new Date(this.setTime(date, 7 + timezone, 1, 0, 0)).getTime(),
+        lastime: new Date(this.setTime(date, 11 + timezone, 1, 0, 0)).getTime(),
       },
       fullday: {
         fisttime: new Date(this.setTime(date, 0 + timezone, 0, 0, 0)).getTime(),

@@ -1,11 +1,14 @@
 import { HttpService } from "@nestjs/axios";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Client, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { User } from "src/bot/models/user.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { logTimeSheetFromDaily } from "src/bot/utils/timesheet.until";
 import { UtilsService } from "src/bot/utils/utils.service";
+import { Repository } from "typeorm";
 import { DailyService } from "./daily.service";
 
 const messHelp =
@@ -78,7 +81,7 @@ function checkTimeSheet() {
     setTime(time, 5 + timezone, 0, 0, 0)
   ).getTime();
   const lastTimeAfternoon = new Date(
-    setTime(time, 7 + timezone, 1, 0, 0)
+    setTime(time, 11 + timezone, 1, 0, 0)
   ).getTime();
 
   if (
@@ -119,13 +122,21 @@ export class DailyCommand implements CommandLineClass {
     private komubotrestService: KomubotrestService,
     private readonly clientConfigService: ClientConfigService,
     private readonly http: HttpService,
-    private configService: ClientConfigService
+    private configService: ClientConfigService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
   async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
-      const authorUsername = message.author.username;
+      const findUser = await this.userRepository
+        .createQueryBuilder()
+        .where(`"userId" = :userId`, { userId: message.author.id })
+        .andWhere(`"deactive" IS NOT true`)
+        .select("*")
+        .getRawOne();
+      const authorUsername = findUser.email;
       if (args[0] === "help") {
         return message
           .reply({
@@ -232,7 +243,7 @@ export class DailyCommand implements CommandLineClass {
             message
               .reply({
                 content:
-                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-14h. WFH not daily 20k/time.)```",
+                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-18h. WFH not daily 20k/time.)```",
                 // ephemeral: true,
               })
               .catch((err) => {

@@ -2,10 +2,8 @@ import {
   InjectDiscordClient,
   On,
   Once,
-  UseGuards,
-  UsePipes,
 } from "@discord-nestjs/core";
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, UseGuards, UsePipes } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   ChannelType,
@@ -143,7 +141,12 @@ export class BotGateway {
       if (message.content.endsWith("*") && !message.content.includes("prefix"))
         return;
       if (message.content.startsWith("*")) {
-        argument = message.content.slice("*".length).trim().split(/ +/);
+        const messageContent = message.content;
+        argument = messageContent
+          .replace("\n", " ")
+          .slice("*".length)
+          .trim()
+          .split(/ +/);
       }
       r = argument.shift().toLowerCase();
       // check command and excute

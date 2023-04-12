@@ -145,6 +145,14 @@ import { DmmessageService } from "./utils/dmmessage/dmmessage.service";
 import { WorkoutService } from "./utils/workout/workout.service";
 import { Workout } from "./models/workout.entity";
 import { WorkoutCommand } from "./commands/workout/workout.command";
+import { BzzCommand } from "./commands/bzz/bzz.command";
+import { BuzzCommand } from "./commands/buzz/buzz";
+import { CallUserService } from "./utils/callUser/callUser.service";
+import { IndividualChannel } from "./models/individualChannel.entity";
+import { IndividualChannelCommand } from "./commands/individual/individual.command";
+import { IndividualChannelService } from "./commands/individual/individual.service";
+import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.command";
+import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 
 @Module({
   imports: [
@@ -190,6 +198,7 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
       Wiki,
       Workout,
       Mentioned,
+      IndividualChannel
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -199,6 +208,9 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
     getApiWfhModule,
   ],
   providers: [
+    BzzCommand,
+    CallUserService,
+    BuzzCommand,
     CompantripCommand,
     CompanytripService,
     BotGateway,
@@ -227,7 +239,6 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
     PollCommand,
     OrderService,
     CheckListController,
-    KomubotrestController,
     CompanytripService,
     AudioPlayer,
     CheckListService,
@@ -301,6 +312,10 @@ import { WorkoutCommand } from "./commands/workout/workout.command";
     WfhService,
     DmmessageService,
     WorkoutService,
+    IndividualChannelCommand,
+    IndividualChannelService,
+    RenameChannelCommand,
+    RenameChannelService,
   ],
   controllers: [KomubotrestController],
 })

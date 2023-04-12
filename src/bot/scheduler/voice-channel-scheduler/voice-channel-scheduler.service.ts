@@ -54,9 +54,9 @@ export class VoiceChannelSchedulerService {
     this.addCronJob("kickMemberVoiceChannel", CronExpression.EVERY_MINUTE, () =>
       this.kickMemberVoiceChannel(this.client)
     );
-    this.addCronJob("audioPlayer", "15 13 * * 5", () =>
-      this.audioPlayerService.audioPlayer(this.client, null, null)
-    );
+    // this.addCronJob("audioPlayer", "15 13 * * 5", () =>
+    //   this.audioPlayerService.audioPlayer(this.client, null, null)
+    // );
     this.addCronJob("renameVoiceChannel", "23 00 * * 0-6", () =>
       this.renameVoiceChannel(this.client)
     );
@@ -183,7 +183,7 @@ export class VoiceChannelSchedulerService {
       .set({ status: "finish", end_time: Date.now() })
       .where('"status" = :status', { status: "joining" })
       .andWhere(`"start_time" >= :gtestart_time`, {
-        gtestart_time: beforeHours,
+        gtestart_time: beforeHours.getTime(),
       })
       .execute()
       .catch(console.error);

@@ -1,5 +1,7 @@
+import { InjectRepository } from "@nestjs/typeorm";
 import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
+import { User } from "src/bot/models/user.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import {
   checkHelpMessage,
@@ -11,6 +13,7 @@ import {
   validateTimesheetFormat,
 } from "src/bot/utils/timesheet.until";
 import { UtilsService } from "src/bot/utils/utils.service";
+import { Repository } from "typeorm";
 
 const messHelp = `
 Please log timesheet follow this template:
@@ -30,11 +33,19 @@ Please log timesheet follow this template:
 export class TimeSheetCommand implements CommandLineClass {
   constructor(
     private utilsService: UtilsService,
-    private komubotrestService: KomubotrestService
+    private komubotrestService: KomubotrestService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
   async execute(message: Message, args, client: Client) {
     const authorId = message.author.id;
-    const username = message.author.username;
+    const findUser = await this.userRepository
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, { userId: message.author.id })
+      .andWhere(`"deactive" IS NOT true`)
+      .select("*")
+      .getRawOne();
+    const username = findUser.email;
     const content = message.content;
 
     const timesheetObj = parseTimesheetMessage(content);

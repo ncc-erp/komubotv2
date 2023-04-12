@@ -9,6 +9,7 @@ import { Channel } from "src/bot/models/channel.entity";
 import { Daily } from "src/bot/models/daily.entity";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Msg } from "src/bot/models/msg.entity";
+import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
@@ -25,6 +26,7 @@ import { ReportDailyService } from "./report-daily.service";
       Msg,
       WorkFromHome,
       Channel,
+      Uploadfile,
     ]),
     DiscordModule.forFeature(),
     DiscoveryModule,

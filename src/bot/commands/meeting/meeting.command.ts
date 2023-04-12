@@ -135,9 +135,6 @@ export class MeetingCommand implements CommandLineClass {
                 );
               });
           } else {
-            let guild = await client.guilds.fetch(
-              this.clientConfig.guild_komu_id
-            );
             const getAllVoice = client.channels.cache.filter(
               (guild) =>
                 guild.type == ChannelType.GuildVoice &&
@@ -366,6 +363,19 @@ export class MeetingCommand implements CommandLineClass {
           let repeatTime = args.slice(4, args.length).join(" ");
           const checkDate = args.slice(1, 2).join(" ");
           const checkTime = args.slice(2, 3).join(" ");
+          if (repeatTime.length > 0 && !/^[0-9]+$/.test(repeatTime)) {
+            return message
+              .reply({
+                content: messHelp,
+              })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
+              });
+          }
           if (
             !/^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([1][26]|[2468][048]|[3579][26])00))))$/.test(
               checkDate

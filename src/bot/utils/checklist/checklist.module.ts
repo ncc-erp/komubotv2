@@ -1,3 +1,4 @@
+import { HttpModule } from "@nestjs/axios";
 import { Global, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -8,6 +9,7 @@ import { Daily } from "src/bot/models/daily.entity";
 import { Holiday } from "src/bot/models/holiday.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { Subcategorys } from "src/bot/models/subcategoryData.entity";
+import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
@@ -26,6 +28,7 @@ import { CheckListService } from "./checklist.service";
       Channel,
       User,
       Daily,
+      Uploadfile,
       Holiday,
     ]),
   ],

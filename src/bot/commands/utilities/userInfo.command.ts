@@ -1,10 +1,13 @@
 import { HttpService } from "@nestjs/axios";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Client, EmbedBuilder, Message } from "discord.js";
 import moment from "moment";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { User } from "src/bot/models/user.entity";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
+import { Repository } from "typeorm";
 
 @CommandLine({
   name: "userinfo",
@@ -15,7 +18,9 @@ export class UserInfoCommand implements CommandLineClass {
   constructor(
     private readonly http: HttpService,
     private readonly clientConfigService: ClientConfigService,
-    private extendersService: ExtendersService
+    private extendersService: ExtendersService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
   async execute(message: Message, args, client: Client, guildDB) {
@@ -42,10 +47,19 @@ export class UserInfoCommand implements CommandLineClass {
       member = message.member;
     }
 
+    const findUser = await this.userRepository
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, { userId: member.user.id })
+      .andWhere(`"deactive" IS NOT true`)
+      .select("*")
+      .getRawOne();
+
     const data = await firstValueFrom(
       this.http
         .get(
-          `${this.clientConfigService.wiki.api_url}${member.user.username}@ncc.asia`,
+          `${
+            this.clientConfigService.wiki.api_url
+          }${findUser?.email.toLowerCase()}@ncc.asia`,
           {
             headers: {
               "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
@@ -56,30 +70,23 @@ export class UserInfoCommand implements CommandLineClass {
     ).catch((err) => {
       console.log("Error ", err);
     });
-    const phoneNumber = (data as any).data.result.phoneNumber;
-    let api_url_getListProjectOfUserApi;
-    try {
-      const url = `${this.clientConfigService.project.api_url_getListProjectOfUser}?email=${member.user.username}@ncc.asia`;
-      api_url_getListProjectOfUserApi = await firstValueFrom(
-        this.http.get(url).pipe((res) => res)
-      );
-    } catch (error) {
-      console.log(error);
+    const phoneNumber = (data as any)?.data?.result?.phoneNumber
+      ? (data as any).data.result.phoneNumber
+      : "";
+    const url = `${
+      this.clientConfigService.project.getPMOfUser
+    }?email=${findUser?.email.toLowerCase()}@ncc.asia`;
+    const pmData = await firstValueFrom(
+      this.http.get(url).pipe((res) => res)
+    ).catch((err) => {
+      console.log("Error", err)
+    });
+
+    let mess = "";
+
+    if (pmData && pmData.data && pmData.data.result && pmData.data.result.length) {
+      mess = `${pmData.data.result[0].projectName} (${pmData.data.result[0].projectCode}) - PM ${pmData.data.result[0].pm.fullName}`
     }
-
-    const api_url_getListProject = [];
-    api_url_getListProjectOfUserApi
-      ? api_url_getListProjectOfUserApi.data.result.map((item) => {
-          api_url_getListProject.push({
-            projectName: item.projectName,
-            projectCode: item.projectCode,
-          });
-        })
-      : [];
-
-    const mess = api_url_getListProject
-      .map((item) => `- ${item.projectName} (${item.projectCode})`)
-      .join("\n");
     const lang = this.extendersService.translateMessage(
       "USERINFO",
       guildDB.lang
@@ -122,9 +129,7 @@ export class UserInfoCommand implements CommandLineClass {
           .locale(guildDB.lang)
           .fromNow()}\`)
                         **Phone**: ${phoneNumber}
-                        **Project[${
-                          api_url_getListProject.length
-                        }]: \n **${mess}
+                        **Project:** ${mess}
               \n\n`,
       })
       .addFields({

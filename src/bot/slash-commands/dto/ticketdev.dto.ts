@@ -2,7 +2,6 @@ import { Param } from "@discord-nestjs/core";
 import { Transform } from "class-transformer";
 
 export class TicketDevDto {
-  @Transform(({ value }) => value.toUpperCase())
   @Param({
     name: "query",
     description: "query is add|remove|list",
@@ -10,7 +9,6 @@ export class TicketDevDto {
   })
   query: string;
 
-  @Transform(({ value }) => value.toUpperCase())
   @Param({
     name: "assignee",
     description: "assignee email (example: a.nguyenvan)",
@@ -18,7 +16,6 @@ export class TicketDevDto {
   })
   assignee: string;
 
-  @Transform(({ value }) => value.toUpperCase())
   @Param({
     name: "task",
     description: "task title (example: Add Login UI)",

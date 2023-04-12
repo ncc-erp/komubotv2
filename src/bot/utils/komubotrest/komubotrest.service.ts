@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   ActionRowBuilder,
   ButtonBuilder,
+  ChannelType,
   Client,
   EmbedBuilder,
   Message,
@@ -26,12 +27,16 @@ import { WorkFromHome } from "src/bot/models/wfh.entity";
 import { Brackets, Repository } from "typeorm";
 import { Daily } from "src/bot/models/daily.entity";
 import { UtilsService } from "../utils.service";
+import { Uploadfile } from "src/bot/models/uploadFile.entity";
+import { ReportDailyDTO } from "./komubotrest.dto";
 @Injectable()
 export class KomubotrestService {
   constructor(
     // private clientConfigServiec : ClientConfigService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Uploadfile)
+    private uploadFileData: Repository<Uploadfile>,
     @InjectRepository(Msg)
     private messageRepository: Repository<Msg>,
     @InjectRepository(Channel)
@@ -460,7 +465,7 @@ export class KomubotrestService {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId("komu_wfh_complain#" + userId + "#" + wfhId)
-        .setLabel("I'am in daily call")
+        .setLabel("I'm unable to react that time")
         .setEmoji("⏳")
         .setStyle(4),
       new ButtonBuilder()
@@ -723,5 +728,61 @@ export class KomubotrestService {
       )
       .select("daily.email")
       .execute();
+  }
+
+  async getReportUserDaily(query: ReportDailyDTO, client: Client) {
+    try {
+      if (query.from && query.to) {
+        const dailyFullday = await this.dailyRepository
+          .createQueryBuilder("daily")
+          .innerJoin("komu_channel", "c", "daily.channelid = c.id")
+          .where(`"createdAt" >= :gtecreatedAt`, {
+            gtecreatedAt: query.from,
+          })
+          .andWhere(`"createdAt" <= :ltecreatedAt`, {
+            ltecreatedAt: query.to,
+          })
+          .select(
+            "daily.id, daily.userid, daily.email, daily.daily, daily.createdAt, daily.channelId, c.name"
+          )
+          .execute();
+
+        const promises = dailyFullday.map(async (item) => {
+          const fetchChannel = await client.channels
+            .fetch(item.channelid)
+            .catch((err) => {
+              console.log("error", err);
+            });
+          if (
+            (fetchChannel as any).type === ChannelType.GuildPublicThread ||
+            (fetchChannel as any).type === ChannelType.GuildPrivateThread
+          ) {
+            const channelParent = await client.channels
+              .fetch((fetchChannel as any).parentId)
+              .catch((err) => {});
+            if (channelParent) {
+              return {
+                ...item,
+                parentId: (channelParent as any).id,
+                parentName: (channelParent as any).name,
+              };
+            } else {
+              return item;
+            }
+          } else return item;
+        });
+        const result = await Promise.all(promises);
+        return { result };
+      }
+    } catch (error) {}
+  }
+
+  async downloadFile() {
+    return await this.uploadFileData.find({
+      order: {
+        createTimestamp: "DESC",
+      },
+      take: 1,
+    });
   }
 }

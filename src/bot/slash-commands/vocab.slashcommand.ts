@@ -1,16 +1,13 @@
-import { TransformPipe } from "@discord-nestjs/common";
+import { SlashCommandPipe } from "@discord-nestjs/common";
 import {
   Command,
-  DiscordTransformedCommand,
-  InjectDiscordClient,
-  Payload,
-  TransformedCommandExecutionContext,
-  UsePipes,
+  EventParams,
+  Handler,
+  InteractionEvent,
 } from "@discord-nestjs/core";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EmbedBuilder, Message } from "discord.js";
+import { ClientEvents, EmbedBuilder, InteractionReplyOptions } from "discord.js";
 import { Repository } from "typeorm";
-import { KeepDto } from "./dto/keep.dto";
 import { Keep } from "../models/keep.entity";
 import { VocabDto } from "./dto/vocab.dto";
 import { firstValueFrom } from "rxjs";
@@ -20,39 +17,36 @@ import { HttpService } from "@nestjs/axios";
   name: "vocab",
   description: "Vocabulary search",
 })
-@UsePipes(TransformPipe)
-export class VocabSlashCommand implements DiscordTransformedCommand<VocabDto> {
+export class VocabSlashCommand {
   constructor(
     @InjectRepository(Keep)
     private keepData: Repository<Keep>,
     private httpService: HttpService
   ) {}
 
+  @Handler()
   async handler(
-    @Payload() dto: VocabDto,
-    { interaction }: TransformedCommandExecutionContext
-  ): Promise<any> {
+    @InteractionEvent(SlashCommandPipe) dto: VocabDto,
+    @EventParams() args: ClientEvents['interactionCreate'],
+  ): Promise<InteractionReplyOptions> {
     try {
-      const word = interaction.options.get("word").value as string;
+      const word = dto.word;
       const { data } = await firstValueFrom(
         this.httpService.get(
           `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
         )
       ).catch((err) => {
         console.log("error", err);
-        interaction.reply({
-          content: `Nothing match... **${word}**.`,
-          ephemeral: true,
-        });
-        return { data: "There was an error!" };
+        return {
+          data: undefined
+        };
       });
 
       if (data == undefined || data.length == undefined || data.length == 0) {
-        interaction.reply({
+        return {
           content: `Nothing match... **${word}**.`,
           ephemeral: true,
-        });
-        return;
+        };
       }
 
       const botTexts = [];
@@ -105,9 +99,7 @@ export class VocabSlashCommand implements DiscordTransformedCommand<VocabDto> {
             inline: false,
           }
         );
-      interaction
-        .reply({ embeds: [embed], ephemeral: true })
-        .catch((err) => console.log(err));
+      return { embeds: [embed], ephemeral: true };
     } catch (error) {
       console.log(error, "error");
     }

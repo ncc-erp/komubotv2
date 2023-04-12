@@ -61,7 +61,7 @@ export class SendMessageSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("sendMessagePMs", "00 15 * * 2", () =>
+    this.addCronJob("sendMessagePMs", "30 13 * * 2", () =>
       this.sendMessagePMs(this.client)
     );
     this.addCronJob("sendMessTurnOffPc", "30 17 * * 1-5", () =>
@@ -95,7 +95,13 @@ export class SendMessageSchedulerService {
     const userDiscord = await client.channels.fetch("921787088830103593");
     userDiscord
       .send(
-        `Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report tuần này đi.`
+        "Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report nhé. Lưu ý:\n"
+        + "- Các PM nộp báo cáo trên Project tool trước 15h00 thứ 3 hàng tuần (chú ý click btn Send mới được tính là nộp)\n"
+        + "- Nộp sau 15h00: 50k/PM\n"
+        + "- Nộp sau 17h00: 100k/PM\n"
+        + "- Không chấp nhận mọi lý do\n"
+        + "- Áp dụng từ 01/03/2023\n"
+        + "- Guideline: https://docs.google.com/document/d/15BpNpBsSNaT2UYg4qPQeHNbXCeHfB1oj/edit?usp=sharing&ouid=109739496225261626689&rtpof=true&sd=true"
       )
       .catch(console.error);
   }
@@ -312,7 +318,10 @@ export class SendMessageSchedulerService {
       }
       mess = getPointWorkOut
         .slice(i * 50, (i + 1) * 50)
-        .map((list) => `${list.email} - point: ${list.scores_workout}`)
+        .map(
+          (list) =>
+            `${list.email.toLowerCase()} - point: ${list.scores_workout}`
+        )
         .join("\n");
       const Embed = new EmbedBuilder()
         .setTitle("Top workout")
@@ -333,7 +342,6 @@ export class SendMessageSchedulerService {
           this.utilsService.getYesterdayDate() - 86400000
         } AND ${this.utilsService.getYesterdayDate()}`
       )
-
       .groupBy("workout.userId")
       .addGroupBy("workout.email")
       .select("workout.userId, workout.email")
@@ -352,12 +360,42 @@ export class SendMessageSchedulerService {
       ({ email: id1 }) =>
         !getUserNotUpload.some(({ email: id2 }) => id2 === id1)
     );
+
+    const resultsUserWorkout = getUserYesterday.filter(({ email: id1 }) =>
+      getUserNotUpload.some(({ email: id2 }) => id2 === id1)
+    );
+
+    await Promise.all(
+      resultsUserWorkout.map(async (item) => {
+        const getUser = await this.userRepository.findOne({
+          where: { userId: item.userId },
+        });
+        if (!getUser) return;
+
+        await this.userRepository.update(
+          {
+            userId: item.userId,
+          },
+          {
+            not_workout: 0,
+          }
+        );
+      })
+    );
+
     await Promise.all(
       results.map(async (item) => {
         const getUserId = await this.userRepository.findOne({
           where: { userId: item.userId },
         });
         if (!getUserId) return;
+
+        let notWorkout;
+        if (getUserId.not_workout) {
+          notWorkout = getUserId.not_workout + 1;
+        } else {
+          notWorkout = 1;
+        }
 
         let scrores;
         if (getUserId.scores_workout <= 1) {
@@ -372,43 +410,52 @@ export class SendMessageSchedulerService {
           },
           {
             scores_workout: scrores,
+            not_workout: notWorkout,
           }
         );
       })
     );
 
-    const workoutUserEmail = results.map((item) => item.email);
-    const getTotalUser = await this.userRepository
-      .createQueryBuilder()
-      .where(
-        workoutUserEmail && workoutUserEmail.length > 0
-          ? '"email" IN (:...workoutUserEmail)'
-          : "true",
-        {
-          workoutUserEmail: workoutUserEmail,
-        }
-      )
-      .orderBy("scores_workout", "DESC")
-      .select("*")
-      .execute();
+    if (results.length > 0) {
+      const workoutUserEmail = results.map((item) => item.email);
+      const getTotalUser = await this.userRepository
+        .createQueryBuilder()
+        .where(
+          workoutUserEmail && workoutUserEmail.length > 0
+            ? 'LOWER("email") IN (:...workoutUserEmail)'
+            : "true",
+          {
+            workoutUserEmail: workoutUserEmail,
+          }
+        )
+        .andWhere(`"scores_workout" >= :gtescores_workout`, {
+          gtescores_workout: 1,
+        })
+        .orderBy("scores_workout", "DESC")
+        .select("*")
+        .execute();
 
-    let mess;
-    for (let i = 0; i <= Math.ceil(getTotalUser.length / 50); i += 1) {
-      if (getTotalUser.slice(i * 50, (i + 1) * 50).length === 0) {
-        break;
+      let mess;
+      for (let i = 0; i <= Math.ceil(getTotalUser.length / 50); i += 1) {
+        if (getTotalUser.slice(i * 50, (i + 1) * 50).length === 0) {
+          break;
+        }
+        mess = getTotalUser
+          .slice(i * 50, (i + 1) * 50)
+          .map(
+            (list) =>
+              `${list.email.toLowerCase()} - point: ${list.scores_workout}`
+          )
+          .join("\n");
+        const Embed = new EmbedBuilder()
+          .setTitle("Danh sách không daily workout ngày hôm qua")
+          .setColor("Red")
+          .setDescription(`${mess}`);
+        const userDiscord = await client.channels.fetch(
+          this.clientConfigService.workoutChannelId
+        );
+        userDiscord.send({ embeds: [Embed] }).catch(console.error);
       }
-      mess = getTotalUser
-        .slice(i * 50, (i + 1) * 50)
-        .map((list) => `${list.email} - point: ${list.scores_workout}`)
-        .join("\n");
-      const Embed = new EmbedBuilder()
-        .setTitle("Danh sách không daily workout ngày hôm qua")
-        .setColor("Red")
-        .setDescription(`${mess}`);
-      const userDiscord = await client.channels.fetch(
-        this.clientConfigService.workoutChannelId
-      );
-      userDiscord.send({ embeds: [Embed] }).catch(console.error);
     }
   }
 }

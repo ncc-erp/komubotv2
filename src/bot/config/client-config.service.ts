@@ -44,6 +44,9 @@ export class ClientConfigService {
       api_url_getListProjectOfUser: `${configService.get<string>(
         "TIMESHEET_API"
       )}Public/GetPMsOfUser`,
+      getPMOfUser: `${configService.get<string>(
+        "PROJECT_API"
+      )}Public/GetPMOfUser`
     };
     this.checkinTimesheet = {
       api_url: `${configService.get<string>(
@@ -85,6 +88,10 @@ export class ClientConfigService {
     this.birthday = {
       api_url: `${configService.get<string>("HRM_API")}GetEmployeesByBirthday`,
     };
+    this.phonenumber = {
+      api_url: `${configService.get<string>("HRM_API")}GetEmployeePhone?email=`,
+    };
+    this.sendSms = `${configService.get<string>("SEND_SMS_API")}`;
     this.gem = {
       api_url_getMyRank: `${configService.get<string>(
         "GEMSOFGOD_API"
@@ -122,6 +129,11 @@ export class ClientConfigService {
     };
 
     this.wfhApiKey = `${configService.get<string>("WFH_API_KEY_SECRET")}`;
+    this.hrmApiKey = `${configService.get<string>("HRM_API_KEY_SECRET")}`;
+
+    this.komuTrackerApiKey = `${configService.get<string>(
+      "KOMUTRACKER_API_KEY_SECRET"
+    )}`;
 
     this.komubotrestpass = `${configService.get<string>(
       "KOMUBOTREST_PASSWORD"
@@ -214,6 +226,24 @@ export class ClientConfigService {
       "KOMUBOTREST_NCC8_CHANNEL_ID"
     )}`;
 
+    this.driverClientId = `${configService.get<string>("DRIVER_CLIENT_ID")}`;
+
+    this.driverClientSecret = `${configService.get<string>(
+      "DRIVER_CLIENT_SECRET"
+    )}`;
+
+    this.driverRedirectId = `${configService.get<string>(
+      "DRIVER_REDIRECT_URI"
+    )}`;
+
+    this.driverRefreshToken = `${configService.get<string>(
+      "DRIVER_REFRESH_TOKEN"
+    )}`;
+
+    this.driverFolderParentId = `${configService.get<string>(
+      "FOLDER_DRIVER_PARENTS_ID"
+    )}`;
+
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
     this.footer = "KOMU ";
@@ -240,6 +270,16 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
   }
+
+  driverClientId: string;
+
+  driverClientSecret: string;
+
+  driverRedirectId: string;
+
+  driverRefreshToken: string;
+
+  driverFolderParentId: string;
 
   topCategoryId: string;
 
@@ -271,6 +311,9 @@ export class ClientConfigService {
 
   //guild_komu_id
   guild_komu_id: string;
+
+  //user_daitrinh_id
+  adminIds: string[] = ["921260899799539782", "922148445626716182"];
 
   //chuyenphiem_id
   chuyenphiem_id: string;
@@ -343,6 +386,7 @@ export class ClientConfigService {
 
   project: {
     api_url_getListProjectOfUser: string;
+    getPMOfUser: string
   };
 
   checkinTimesheet: {
@@ -362,6 +406,13 @@ export class ClientConfigService {
   birthday: {
     api_url: string;
   };
+  phonenumber: {
+    api_url: string;
+  };
+
+  hrmApiKey: string;
+
+  sendSms: string;
 
   ticketApiKey: string;
 
@@ -372,6 +423,8 @@ export class ClientConfigService {
   komubotrestpass: string;
 
   wfhApiKey: string;
+
+  komuTrackerApiKey: string;
 
   prefix: string;
   // Your ID

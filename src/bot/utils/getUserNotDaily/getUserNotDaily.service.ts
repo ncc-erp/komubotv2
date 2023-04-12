@@ -44,21 +44,23 @@ export class UserNotDailyService {
       } catch (error) {
         console.log(error);
       }
-      console.log(wfhGetApi, "wfhGetApi");
       if (!wfhGetApi || wfhGetApi.data == undefined) {
         return;
       }
 
-      const wfhUserEmail = wfhGetApi.data.result.map((item) =>
-        this.utilsService.getUserNameByEmail(item.emailAddress)
-      );
+      let wfhUserEmail = [];
+      if (wfhGetApi && wfhGetApi.data && wfhGetApi.data.result.length > 0) {
+        wfhUserEmail = wfhGetApi.data.result.map((item) =>
+          this.utilsService.getUserNameByEmail(item.emailAddress)
+        );
 
-      // if no wfh
-      if (
-        (Array.isArray(wfhUserEmail) && wfhUserEmail.length === 0) ||
-        !wfhUserEmail
-      ) {
-        return;
+        // if no wfh
+        if (
+          (Array.isArray(wfhUserEmail) && wfhUserEmail.length === 0) ||
+          !wfhUserEmail
+        ) {
+          return;
+        }
       }
 
       const { userOffFullday } = await getUserOffWork(date);
@@ -66,12 +68,14 @@ export class UserNotDailyService {
       const userNotWFH = await this.userRepository
         .createQueryBuilder("user")
         .where(
-          userOff && userOff.length ? '"email" NOT IN (:...userOff)' : "true",
+          userOff && userOff.length
+            ? 'LOWER("email") NOT IN (:...userOff)'
+            : "true",
           {
             userOff: userOff,
           }
         )
-        .andWhere('"createdAt" < :today OR "createdAt" = NULL', {
+        .andWhere('("createdAt" < :today OR "createdAt" is NULL)', {
           today: Date.now() - 86400 * 1000,
         })
         .andWhere('("roles_discord" @> :intern OR "roles_discord" @> :staff)', {
@@ -117,26 +121,38 @@ export class UserNotDailyService {
         .select("*")
         .execute();
 
-      const dailyEmailMorning = dailyMorning.map((item) => item.email);
-      const dailyEmailAfternoon = dailyAfternoon.map((item) => item.email);
-      const dailyEmailFullday = dailyFullday.map((item) => item.email);
+      const dailyEmailMorning = dailyMorning.map((item) =>
+        item.email.toLowerCase()
+      );
+      const dailyEmailAfternoon = dailyAfternoon.map((item) =>
+        item.email.toLowerCase()
+      );
+      const dailyEmailFullday = dailyFullday.map((item) =>
+        item.email.toLowerCase()
+      );
 
       const notDailyMorning = [];
       for (const wfhData of wfhUserEmail) {
-        if (!dailyEmailMorning.includes(wfhData) && wfhData !== undefined) {
+        if (
+          !dailyEmailMorning.includes(wfhData.toLowerCase()) &&
+          wfhData !== undefined
+        ) {
           notDailyMorning.push(wfhData);
         }
       }
       const notDailyAfternoon = [];
       for (const wfhData of wfhUserEmail) {
-        if (!dailyEmailAfternoon.includes(wfhData) && wfhData !== undefined) {
+        if (
+          !dailyEmailAfternoon.includes(wfhData.toLowerCase()) &&
+          wfhData !== undefined
+        ) {
           notDailyAfternoon.push(wfhData);
         }
       }
       const notDailyFullday = [];
       for (const userNotWFHData of userEmail) {
         if (
-          !dailyEmailFullday.includes(userNotWFHData) &&
+          !dailyEmailFullday.includes(userNotWFHData.toLowerCase()) &&
           userNotWFHData !== undefined
         ) {
           notDailyFullday.push(userNotWFHData);
@@ -172,11 +188,11 @@ export class UserNotDailyService {
           notDaily.map((user) =>
             this.userRepository
               .createQueryBuilder()
-              .where(`"email" = :email`, {
-                email: user.email,
+              .where(`LOWER("email") = :email`, {
+                email: user.email.toLowerCase(),
               })
-              .orWhere(`"username" = :username`, {
-                username: user.email,
+              .orWhere(`LOWER("username") = :username`, {
+                username: user.email.toLowerCase(),
               })
               .andWhere(`"deactive" IS NOT TRUE`)
               .select("*")

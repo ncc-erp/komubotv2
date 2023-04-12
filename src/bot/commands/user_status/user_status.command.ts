@@ -38,7 +38,7 @@ export class UserStatusCommand implements CommandLineClass {
       // });
 
       const user = await this.userStatusService.getUserStatus(email);
-      if (!user)
+      if (user.length == 0)
         return message.reply(`Wrong Email!`).catch((err) => {
           this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
