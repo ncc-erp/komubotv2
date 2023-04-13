@@ -11,6 +11,9 @@ export class RegexEmailPipe implements PipeTransform {
     private userRepository: Repository<User>
   ) {}
   async transform(sendMessageToChannelDTO: SendMessageToChannelDTO) {
+    if (!sendMessageToChannelDTO.message) {
+      return sendMessageToChannelDTO
+    }
     const regex = new RegExp(/\${([^{}]+)}/g);
     const emails = sendMessageToChannelDTO.message.match(
       /(?<=\${)(.[^}]+)(?=})/g

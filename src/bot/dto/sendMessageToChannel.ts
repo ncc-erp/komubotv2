@@ -1,7 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsOptional} from "class-validator";
 
 export class SendMessageToChannelDTO {
+  @ApiPropertyOptional()
+  @IsOptional()
+  file?: Express.Multer.File;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  fileUrl?: string;
+
   @ApiProperty({ required: true })
   @IsOptional()
   channelid?: string = "";

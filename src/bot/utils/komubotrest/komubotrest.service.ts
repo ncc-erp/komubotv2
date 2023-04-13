@@ -29,6 +29,7 @@ import { Daily } from "src/bot/models/daily.entity";
 import { UtilsService } from "../utils.service";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { ReportDailyDTO } from "./komubotrest.dto";
+import { join } from "path";
 @Injectable()
 export class KomubotrestService {
   constructor(
@@ -432,6 +433,35 @@ export class KomubotrestService {
     if (!sendMessageToChannelDTO.channelid) {
       res.status(400).send({ message: "ChannelId can not be empty!" });
       return;
+    }
+
+    if (sendMessageToChannelDTO.file) {
+      try {
+        const channel = await client.channels.fetch(sendMessageToChannelDTO.channelid);
+        await channel.send({
+          content: sendMessageToChannelDTO.message,
+          files: [{
+            attachment: join(join(__dirname, "../../../..", "uploads/"), sendMessageToChannelDTO.file.filename),
+          }]
+        });
+        res.status(200).send({ message: "Successfully!" });
+      } catch (error) {
+        console.log("error", error);
+        res.status(400).send({ message: error });
+      }
+      return
+    }
+
+    if (sendMessageToChannelDTO.fileUrl) {
+      try {
+        const channel = await client.channels.fetch(sendMessageToChannelDTO.channelid);
+        await channel.send({ content: sendMessageToChannelDTO.message, files: [sendMessageToChannelDTO.fileUrl] });
+        res.status(200).send({ message: "Successfully!" });
+      } catch (error) {
+        console.log("error", error);
+        res.status(400).send({ message: error });
+      }
+      return
     }
 
     if (!sendMessageToChannelDTO.message) {

@@ -23,7 +23,7 @@ import { google } from "googleapis";
 import { join } from "path";
 import { createReadStream } from "fs";
 import { diskStorage } from "multer";
-import { fileFilter, fileName } from "../helper";
+import { fileFilter, fileName, imageName } from "../helper";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -85,12 +85,26 @@ export class KomubotrestController {
   }
 
   @Post("/sendMessageToChannel")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads",
+        filename: imageName,
+      }),
+      limits: {
+        fileSize: 1024 * 1024 * 100,
+      },
+      fileFilter: fileFilter,
+    })
+  )
   @UsePipes(RegexEmailPipe)
   async sendMessageToChannel(
     @Body() sendMessageToChannelDTO: SendMessageToChannelDTO,
     @Headers("X-Secret-Key") header,
+    @Req() req: Request,
     @Res() res: Response
   ) {
+    sendMessageToChannelDTO.file = req.file
     return this.komubotrestService.sendMessageToChannel(
       this.client,
       sendMessageToChannelDTO,
