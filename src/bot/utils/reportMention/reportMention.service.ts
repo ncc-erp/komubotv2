@@ -5,6 +5,8 @@ import { UtilsService } from "../utils.service";
 import { Injectable } from "@nestjs/common";
 import { Client, EmbedBuilder, Message } from "discord.js";
 import { KomubotrestService } from "../komubotrest/komubotrest.service";
+import { getUserOffWork } from "src/bot/utils/getUserOffWork";
+import moment from "moment";
 
 @Injectable()
 export class ReportMentionService {
@@ -17,15 +19,15 @@ export class ReportMentionService {
 
   async reportMention(message: Message, args, client: Client) {
     const authorId = message.author.id;
-    let fomatDate;
+    let formatDate;
     if (args[1]) {
       const day = args[1].slice(0, 2);
       const month = args[1].slice(3, 5);
       const year = args[1].slice(6);
 
-      fomatDate = `${month}/${day}/${year}`;
+      formatDate = `${month}/${day}/${year}`;
     } else {
-      fomatDate = new Date().toLocaleDateString("en-US", {
+      formatDate = new Date().toLocaleDateString("en-US", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -43,36 +45,52 @@ export class ReportMentionService {
           statusAPPROVED: "APPROVED",
           pmconfirm: false,
           firstDay: this.utilsService
-            .getTimeToDayMention(fomatDate)
+            .getTimeToDayMention(formatDate)
             .firstDay.getTime(),
           lastDay: this.utilsService
-            .getTimeToDayMention(fomatDate)
+            .getTimeToDayMention(formatDate)
             .lastDay.getTime(),
         }
       )
-      .groupBy("m.username")
+      .groupBy("m.email")
       .addGroupBy("wfh.userId")
-      .select("wfh.userId, COUNT(wfh.userId) as total, m.username")
+      .select("wfh.userId, COUNT(wfh.userId) as total, m.email")
       .orderBy("total", "DESC")
       .execute();
 
     let mess;
+    const offUsers = await getUserOffWork(moment(formatDate, "MM/DD/YYYY").toDate());
     if (!mentionFullday) {
       return;
     } else if (Array.isArray(mentionFullday) && mentionFullday.length === 0) {
-      mess = "```" + "Không có ai vi phạm trong ngày" + "```";
+      mess = "```" + "Không có ai vi phạm trong ngày " + moment(formatDate, "MM/DD/YYYY").format('DD/MM/YYYY') + "```";
       return message.reply(mess).catch((err) => {
         this.komubotrestService.sendErrorToDevTest(client, authorId, err);
       });
     } else {
-      for (let i = 0; i <= Math.ceil(mentionFullday.length / 50); i += 1) {
-        if (mentionFullday.slice(i * 50, (i + 1) * 50).length === 0) break;
-        mess = mentionFullday
+      const punishUsers = mentionFullday.reduce((result, user) => {
+        if (offUsers.userOffAffternoon.find((offUser) => offUser.emailAddress === user.email)) {
+          user.userOffAffternoon = true;
+        }
+        
+        if (offUsers.userOffMorning.find((offUser) => offUser.emailAddress === user.email)) {
+          user.userOffMorning = true;
+        }
+
+        if (!offUsers.userOffFullday.find((offUser) => offUser.emailAddress === user.email)) {
+          result.push(user);
+        }
+        return result;
+      }, [])
+
+      for (let i = 0; i <= Math.ceil(punishUsers.length / 50); i += 1) {
+        if (punishUsers.slice(i * 50, (i + 1) * 50).length === 0) break;
+        mess = punishUsers
           .slice(i * 50, (i + 1) * 50)
-          .map((mention) => `${mention.username} (${mention.total})`)
+          .map((mention) => `${mention.email} (${mention.total}) ${mention.userOffMorning ? '(Off morning)' : mention.userOffAffternoon ? '(Off afternoon)' : ''}`)
           .join("\n");
         const Embed = new EmbedBuilder()
-          .setTitle("Những người không trả lời mention trong ngày hôm nay")
+          .setTitle(`Những người không trả lời mention trong ngày ${moment(formatDate, "MM/DD/YYYY").format('DD/MM/YYYY')}`)
           .setColor("Red")
           .setDescription(`${mess}`);
         await message.reply({ embeds: [Embed] }).catch((err) => {

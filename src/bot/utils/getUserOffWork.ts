@@ -14,7 +14,7 @@ function getStatusDay() {
   return statusDay;
 }
 
-export async function getUserOffWork(date) {
+export async function getUserOffWork(date?) {
   try {
     let userOffFullday = [];
     let userOffMorning = [];
