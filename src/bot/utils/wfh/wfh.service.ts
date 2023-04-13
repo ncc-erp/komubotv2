@@ -284,7 +284,8 @@ export class WfhService {
               })
               .where(`"id" = :id`, {
                 id: wfhid,
-              });
+              })
+              .execute();
             const channelMachleo = await client.channels.cache.get(
               this.clientConfigService.machleoChannelId
             );
