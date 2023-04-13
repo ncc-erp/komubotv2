@@ -69,15 +69,15 @@ export class ReportMentionService {
       });
     } else {
       const punishUsers = mentionFullday.reduce((result, user) => {
-        if (offUsers.userOffAffternoon.find((offUser) => offUser.emailAddress === user.email)) {
+        if (offUsers.userOffAffternoon.find((offUser) => offUser === user.email)) {
           user.userOffAffternoon = true;
         }
         
-        if (offUsers.userOffMorning.find((offUser) => offUser.emailAddress === user.email)) {
+        if (offUsers.userOffMorning.find((offUser) => offUser === user.email)) {
           user.userOffMorning = true;
         }
 
-        if (!offUsers.userOffFullday.find((offUser) => offUser.emailAddress === user.email)) {
+        if (!offUsers.userOffFullday.find((offUser) => offUser === user.email)) {
           result.push(user);
         }
         return result;
