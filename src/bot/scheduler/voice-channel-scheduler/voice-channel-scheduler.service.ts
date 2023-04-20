@@ -54,13 +54,13 @@ export class VoiceChannelSchedulerService {
     this.addCronJob("kickMemberVoiceChannel", CronExpression.EVERY_MINUTE, () =>
       this.kickMemberVoiceChannel(this.client)
     );
-    // this.addCronJob("audioPlayer", "15 13 * * 5", () =>
-    //   this.audioPlayerService.audioPlayer(this.client, null, null)
-    // );
+    this.addCronJob("audioPlayer", "15 13 * * 4", () =>
+      this.audioPlayerService.audioPlayer(this.client, null, null)
+    );
     this.addCronJob("renameVoiceChannel", "23 00 * * 0-6", () =>
       this.renameVoiceChannel(this.client)
     );
-    this.addCronJob("turnOffBot", "15 14 * * 5", () =>
+    this.addCronJob("turnOffBot", "15 14 * * 4", () =>
       this.turnOffBot(this.client)
     );
     this.addCronJob("checkJoinCall", "0 9-11,13-17 * * 1-5", () =>
