@@ -136,7 +136,10 @@ export class DailyCommand implements CommandLineClass {
         .andWhere(`"deactive" IS NOT true`)
         .select("*")
         .getRawOne();
-      const authorUsername = findUser.email;
+      if (!findUser) {
+        return;
+      }
+      const authorUsername = findUser?.email;
       if (args[0] === "help") {
         return message
           .reply({

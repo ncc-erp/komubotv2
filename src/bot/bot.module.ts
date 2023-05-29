@@ -150,6 +150,14 @@ import { BuzzCommand } from "./commands/buzz/buzz";
 import { CallUserService } from "./utils/callUser/callUser.service";
 import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.command";
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
+import { ChannelModule } from "./komu-dashboard/channel/channel.module";
+import { UserModule } from "./komu-dashboard/user/user.module";
+import { DailyModule } from "./komu-dashboard/daily/daily.module";
+import { MeetingModule } from "./komu-dashboard/meeting/meeting.module";
+import { PenaltyModule } from "./komu-dashboard/penalty/penalty.module";
+import { AuthModule } from "./komu-dashboard/auth/auth.module";
+import { MessageModule } from "./komu-dashboard/message/message.module";
+import { DashboardModule } from "./komu-dashboard/dashboard/dashboard.module";
 
 @Module({
   imports: [
@@ -202,6 +210,14 @@ import { RenameChannelService } from "./commands/renameChannel/renameChannel.ser
     UtilsModule,
     ReportWFHModule,
     getApiWfhModule,
+    ChannelModule,
+    UserModule,
+    DailyModule,
+    MeetingModule,
+    PenaltyModule,
+    AuthModule,
+    MessageModule,
+    DashboardModule,
   ],
   providers: [
     BzzCommand,

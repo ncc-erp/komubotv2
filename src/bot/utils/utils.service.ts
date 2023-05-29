@@ -58,11 +58,17 @@ export class UtilsService {
       (today.getMonth() + 1).toString().padStart(2, "0") +
       "/" +
       today.getFullYear();
-    const holiday = await this.holidayRepository.find({
-      where: {
-        dateTime: time,
-      },
-    });
+    const holiday = await this.holidayRepository
+    .createQueryBuilder()
+    .where('"dateTime" = :time', { time: time })
+    .select("*")
+    .getQuery();
+    // await this.holidayRepository.find({
+    //   where: {
+    //     dateTime: time,
+    //   },
+    // });
+    console.log(holiday);
 
     if (holiday.length > 0) {
       result = true;

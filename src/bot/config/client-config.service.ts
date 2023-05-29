@@ -241,6 +241,8 @@ export class ClientConfigService {
       "FOLDER_DRIVER_PARENTS_ID"
     )}`;
 
+    this.jwtSecret = `${configService.get<string>("JWT_SECRET")}`;
+
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
     this.footer = "KOMU ";
@@ -452,4 +454,6 @@ export class ClientConfigService {
   shards: number;
   // The categories. Put null to enabled to disable a category
   categories: any;
+
+  jwtSecret: string;
 }
