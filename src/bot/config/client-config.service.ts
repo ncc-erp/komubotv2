@@ -171,6 +171,10 @@ export class ClientConfigService {
       "KOMUBOTREST_ADMIN_USER_ID"
     )}`;
 
+    this.komubotId = `${configService.get<string>(
+      "KOMUBOT_ID"
+    )}`;
+
     this.komubotRestThongBaoPmChannelId = `${configService.get<string>(
       "KOMUBOTREST_THONGBAO_PM_CHANNEL_ID"
     )}`;
@@ -344,6 +348,8 @@ export class ClientConfigService {
   // KOMUBOTREST_ADMIN_USER_ID
 
   komubotrestAdminId: string;
+
+  komubotId: string;
 
   komubotRestSecretKey: string;
 
