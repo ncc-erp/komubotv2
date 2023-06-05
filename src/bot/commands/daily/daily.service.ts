@@ -33,12 +33,12 @@ export class DailyService {
     return roles.includes("PM");
   }
 
-  async handleThreadChannel(message, configService) {
+  async handleThreadChannel(message) {
     let hasPMRoleFlag = false;
     const thread = message.channel;
     const members = await thread.members.fetch();
     const filteredMembers = members.filter(
-      (member) => member.id !== configService.komubotId
+      (member) => member.user != null && !member.user.bot
     );
     const hasMoreThanTwoMembers = filteredMembers.size > 1;
 
@@ -57,7 +57,7 @@ export class DailyService {
     }
   }
 
-  async handleTextChannel(message, configService) {
+  async handleTextChannel(message) {
     const channelMessage = message.channel;
     if (!(channelMessage instanceof TextChannel)) return false;
 
@@ -67,9 +67,7 @@ export class DailyService {
     const guild = message.client.guilds.cache.get(guildId);
     const channel = guild.channels.cache.get(channelId);
 
-    const members = channel.members.filter(
-      (member) => member.id !== configService.komubotId
-    );
+    const members = channel.members.filter((member) => !member.user.bot);
 
     const hasMoreThanTwoMembers = members.size > 1;
     let hasPMRoleFlag = false;

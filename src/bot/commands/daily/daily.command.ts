@@ -133,15 +133,9 @@ export class DailyCommand implements CommandLineClass {
       let checkDaily = false;
 
       if (message.channel.isThread()) {
-        checkDaily = await this.dailyService.handleThreadChannel(
-          message,
-          this.configService
-        );
+        checkDaily = await this.dailyService.handleThreadChannel(message);
       } else if (message.channel instanceof TextChannel) {
-        checkDaily = await this.dailyService.handleTextChannel(
-          message,
-          this.configService
-        );
+        checkDaily = await this.dailyService.handleTextChannel(message);
       } else {
         checkDaily = false;
       }
@@ -149,7 +143,7 @@ export class DailyCommand implements CommandLineClass {
       if (checkDaily != true) {
         return message
           .reply({
-            content: "```invalid dailly```",
+            content: "can't daily in private channel",
             // ephemeral: true,
           })
           .catch((err) => {
