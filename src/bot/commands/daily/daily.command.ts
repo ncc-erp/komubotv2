@@ -17,13 +17,11 @@ const messHelp =
   "\n" +
   "*daily [projectCode] [date]" +
   "\n" +
-  "- yesterday: what you have done yesterday" +
+  "yesterday: what you have done yesterday" +
   "\n" +
-  "- today: what you're going to to today; 2h" +
+  "today: what you're going to to today; 2h" +
   "\n" +
-  "- block: thing that block you " +
-  "\n\n" +
-  "*daily help for more details" +
+  "block: thing that block you " +
   "```";
 
 const dailyHelp =
@@ -156,6 +154,7 @@ export class DailyCommand implements CommandLineClass {
           .andWhere(`"deactive" IS NOT true`)
           .select("*")
           .getRawOne();
+        if (!findUser) return;
         const authorUsername = findUser.email;
         if (args[0] === "help") {
           return message
