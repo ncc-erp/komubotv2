@@ -100,7 +100,7 @@ export class WikiSlashCommand {
 
         const { data } = await firstValueFrom(
           this.httpService.get(
-            `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`,
+            `${this.clientConfigService.wiki.api_url}${userdb.user_email}@ncc.asia`,
             {
               headers: {
                 "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
@@ -116,7 +116,7 @@ export class WikiSlashCommand {
 
         if (!data?.result) {
           return {
-            content: `No data for **${userdb.email}**.`,
+            content: `No data for **${userdb.user_email}**.`,
             ephemeral: true,
           };
         }
