@@ -33,7 +33,7 @@ export class PenaltyService {
       .select("*")
       .execute();
   }
-  async clearPenatly(_channelId) {
+  async clearPenalty(_channelId) {
     return await this.penaltyRepository
       .createQueryBuilder()
       .update(Penalty)

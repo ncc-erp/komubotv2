@@ -55,7 +55,6 @@ export class DmmessageService {
         case "*sync":
           return this.syncRole.execute(message, args, client);
 
-        //doan nay da dc comment tu dau
         // case '/tick':
         //   return const slashTicket = ticket.execute(message, client);
         // case '/keep':
