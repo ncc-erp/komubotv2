@@ -11,7 +11,7 @@ import {
   EmbedBuilder,
   InteractionReplyOptions,
 } from "discord.js";
-import { Repository } from "typeorm";
+import { IsNull, Not, Repository } from "typeorm";
 import { Keep } from "../models/keep.entity";
 import { WikiDto } from "./dto/wiki.dto";
 import { Wiki } from "../models/wiki.entity";
@@ -88,11 +88,13 @@ export class WikiSlashCommand {
       if (topic.substring(0, 2) == "<@" && topic.substring(20) == ">") {
         topic = topic.substring(2, 20);
         const userdb = await this.userData
-          .createQueryBuilder("user")
-          .where('"userId" = :id', { id: topic })
-          .andWhere("email IS NOT NULL")
-          .andWhere("deactive IS NOT TRUE")
-          .getRawOne();
+          .findOne({
+            where: {
+              userId: topic,
+              email: Not(IsNull()),
+              deactive: false
+            }
+          });
 
         if (userdb == null) {
           return { content: "Email not found.", ephemeral: true };
@@ -100,7 +102,7 @@ export class WikiSlashCommand {
 
         const { data } = await firstValueFrom(
           this.httpService.get(
-            `${this.clientConfigService.wiki.api_url}${userdb.user_email}@ncc.asia`,
+            `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`,
             {
               headers: {
                 "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
@@ -116,7 +118,7 @@ export class WikiSlashCommand {
 
         if (!data?.result) {
           return {
-            content: `No data for **${userdb.user_email}**.`,
+            content: `No data for **${userdb.email}**.`,
             ephemeral: true,
           };
         }
