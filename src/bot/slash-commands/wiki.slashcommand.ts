@@ -89,7 +89,7 @@ export class WikiSlashCommand {
         topic = topic.substring(2, 20);
         const userdb = await this.userData
           .createQueryBuilder("user")
-          .where("user.userId = :id", { id: topic })
+          .where('"userId" = :id', { id: topic })
           .andWhere("email IS NOT NULL")
           .andWhere("deactive IS NOT TRUE")
           .getRawOne();
@@ -100,7 +100,7 @@ export class WikiSlashCommand {
 
         const { data } = await firstValueFrom(
           this.httpService.get(
-            `${this.clientConfigService.wiki.api_url}${userdb.user_email}@ncc.asia`,
+            `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`,
             {
               headers: {
                 "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
@@ -116,7 +116,7 @@ export class WikiSlashCommand {
 
         if (!data?.result) {
           return {
-            content: `No data for **${userdb.user_email}**.`,
+            content: `No data for **${userdb.email}**.`,
             ephemeral: true,
           };
         }
