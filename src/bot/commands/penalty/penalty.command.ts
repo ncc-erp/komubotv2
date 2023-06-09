@@ -115,11 +115,11 @@ export default class PenaltyCommand implements CommandLineClass {
           .catch(console.error);
       } else if (args[0] === "clear") {
         // clear
-        await this.penaltyService.clearPenatly(message.channel.id);
+        await this.penaltyService.clearPenalty(message.channel.id);
 
         message
           .reply({
-            content: "Clear penatly successfully",
+            content: "Clear penalty successfully",
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
