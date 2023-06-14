@@ -77,28 +77,15 @@ export class MentionSchedulerService {
 
       await Promise.all(
         notiUser.map(async (user) => {
-          let threadNoti = false;
-          let mentionChannel = await client.channels.fetch(user.channelId);
-          const channelNameNoti = mentionChannel.name;
-          if (mentionChannel.type !== ChannelType.GuildText) {
-            threadNoti = true;
-            mentionChannel = await client.channels.fetch(
-              mentionChannel.parentId
-            );
-          }
-
-          let mentionName = await client.users.fetch(user.authorId);
-
+          const mentionChannel = await client.channels.fetch(user.channelId);
+          const threadNoti = mentionChannel.type !== ChannelType.GuildText;
+          const message = await mentionChannel.messages.fetch(user.messageId);
+          const mentionName = await client.users.fetch(user.authorId);
           const userDiscord = await client.users.fetch(user.mentionUserId);
-          threadNoti
-            ? userDiscord
+          
+          userDiscord
               .send(
-                `Hãy trả lời ${mentionName.username} tại thread <#${channelNameNoti}> (${mentionChannel.name}) nhé!`
-              )
-              .catch(console.error)
-            : userDiscord
-              .send(
-                `Hãy trả lời ${mentionName.username} tại channel <#${mentionChannel.name}> nhé!`
+                `Hãy trả lời ${mentionName.username} tại ${threadNoti ? 'thread' : 'channel'} ${message.url} nhé!`
               )
               .catch(console.error);
 
