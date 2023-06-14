@@ -92,15 +92,15 @@ export class MentionSchedulerService {
           const userDiscord = await client.users.fetch(user.mentionUserId);
           threadNoti
             ? userDiscord
-                .send(
-                  `Hãy trả lời ${mentionName.username} tại thread ${channelNameNoti} (${mentionChannel.name}) nhé!`
-                )
-                .catch(console.error)
+              .send(
+                `Hãy trả lời ${mentionName.username} tại thread <#${channelNameNoti}> (${mentionChannel.name}) nhé!`
+              )
+              .catch(console.error)
             : userDiscord
-                .send(
-                  `Hãy trả lời ${mentionName.username} tại channel ${mentionChannel.name} nhé!`
-                )
-                .catch(console.error);
+              .send(
+                `Hãy trả lời ${mentionName.username} tại channel <#${mentionChannel.name}> nhé!`
+              )
+              .catch(console.error);
 
           await this.mentionRepository.update({ id: user.id }, { noti: true });
         })
