@@ -1,6 +1,6 @@
 import { HttpService } from "@nestjs/axios";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message } from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { ClientConfigService } from "src/bot/config/client-config.service";
@@ -32,11 +32,11 @@ const dailyHelp =
   "\n\n" +
   "*daily [projectCode] [date]" +
   "\n" +
-  "- yesterday: what you have done yesterday" +
+  "yesterday: what you have done yesterday" +
   "\n" +
-  "- today: what you're going to to today; 2h" +
+  "today: what you're going to to today; 2h" +
   "\n" +
-  "- block: thing that block you" +
+  "block: thing that block you" +
   "\n\n" +
   "Tips:" +
   "\n" +
@@ -128,89 +128,121 @@ export class DailyCommand implements CommandLineClass {
   async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
-      let checkDaily = false;
-
-      if (message.channel.isThread()) {
-        checkDaily = await this.dailyService.handleThreadChannel(message);
-      } else if (message.channel instanceof TextChannel) {
-        checkDaily = await this.dailyService.handleTextChannel(message);
-      } else {
-        checkDaily = false;
-      }
-
-      if (checkDaily != true) {
+      const findUser = await this.userRepository
+        .createQueryBuilder()
+        .where(`"userId" = :userId`, { userId: message.author.id })
+        .andWhere(`"deactive" IS NOT true`)
+        .select("*")
+        .getRawOne();
+      if (!findUser) return;
+      const authorUsername = findUser.email;
+      if (args[0] === "help") {
         return message
           .reply({
-            content: "can't daily in private channel",
+            content: dailyHelp,
             // ephemeral: true,
           })
           .catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
       } else {
-        const findUser = await this.userRepository
-          .createQueryBuilder()
-          .where(`"userId" = :userId`, { userId: message.author.id })
-          .andWhere(`"deactive" IS NOT true`)
-          .select("*")
-          .getRawOne();
-        if (!findUser) return;
-        const authorUsername = findUser.email;
-        if (args[0] === "help") {
+        const daily = args.join(" ");
+        const content = message.content;
+        let checkDaily = false;
+        const wordInString = (s, word) =>
+          new RegExp("\\b" + word + "\\b", "i").test(s);
+        ["yesterday", "today", "block"].forEach((q) => {
+          if (!wordInString(daily, q)) return (checkDaily = true);
+        });
+        const emailAddress = `${authorUsername}@ncc.asia`;
+
+        if (checkDaily) {
           return message
             .reply({
-              content: dailyHelp,
+              content: messHelp,
               // ephemeral: true,
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
-        } else {
-          const daily = args.join(" ");
-          const content = message.content;
-          let checkDaily = false;
-          const wordInString = (s, word) =>
-            new RegExp("\\b" + word + "\\b", "i").test(s);
-          ["yesterday", "today", "block"].forEach((q) => {
-            if (!wordInString(daily, q)) return (checkDaily = true);
+        }
+
+        if (!daily || daily == undefined) {
+          return message
+            .reply({
+              content: "```please add your daily text```",
+              // ephemeral: true,
+            })
+            .catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+            });
+        }
+
+        if (daily.length < 100) {
+          return message
+            .reply({
+              content:
+                "```Please enter at least 100 characters in your daily text```",
+              // ephemeral: true,
+            })
+            .catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+            });
+        }
+
+        // if (findPeriod(daily)) {
+        //   return message
+        //     .reply({
+        //       content: '```Please chat with correct syntax```',
+        //       ephemeral: true,
+        //     })
+        //     .catch((err) => {
+        //       this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+        //     });
+        // }
+
+        const date = new Date();
+        let wfhGetApi;
+        try {
+          const url = date
+            ? `${
+                this.clientConfigService.wfh.api_url
+              }?date=${date.toDateString()}`
+            : this.clientConfigService.wfh.api_url;
+          wfhGetApi = await firstValueFrom(
+            this.http
+              .get(url, {
+                headers: {
+                  securitycode: this.configService.wfhApiKey,
+                },
+              })
+              .pipe((res) => res)
+          );
+        } catch (error) {
+          console.log(error);
+        }
+
+        const wfhUserEmail = wfhGetApi
+          ? wfhGetApi.data.result.map((item) =>
+              this.utilsService.getUserNameByEmail(item.emailAddress)
+            )
+          : [];
+
+        if (wfhUserEmail.includes(authorUsername)) {
+          await this.dailyService
+            .saveDaily(message, args)
+            .catch((err) => console.log(err));
+
+          await logTimeSheetFromDaily({
+            emailAddress,
+            content: content,
           });
-          const emailAddress = `${authorUsername}@ncc.asia`;
 
-          if (checkDaily) {
-            return message
-              .reply({
-                content: messHelp,
-                // ephemeral: true,
-              })
-              .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(
-                  client,
-                  authorId,
-                  err
-                );
-              });
-          }
-
-          if (!daily || daily == undefined) {
-            return message
-              .reply({
-                content: "```please add your daily text```",
-                // ephemeral: true,
-              })
-              .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(
-                  client,
-                  authorId,
-                  err
-                );
-              });
-          }
-
-          if (daily.length < 100) {
-            return message
+          if (!checkTimeSheet()) {
+            message
               .reply({
                 content:
-                  "```Please enter at least 100 characters in your daily text```",
+                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-18h. WFH not daily 20k/time.)```",
                 // ephemeral: true,
               })
               .catch((err) => {
@@ -220,122 +252,57 @@ export class DailyCommand implements CommandLineClass {
                   err
                 );
               });
-          }
-
-          // if (findPeriod(daily)) {
-          //   return message
-          //     .reply({
-          //       content: '```Please chat with correct syntax```',
-          //       ephemeral: true,
-          //     })
-          //     .catch((err) => {
-          //       this.komubotrestService.sendErrorToDevTest(client, authorId, err);
-          //     });
-          // }
-
-          const date = new Date();
-          let wfhGetApi;
-          try {
-            const url = date
-              ? `${
-                  this.clientConfigService.wfh.api_url
-                }?date=${date.toDateString()}`
-              : this.clientConfigService.wfh.api_url;
-            wfhGetApi = await firstValueFrom(
-              this.http
-                .get(url, {
-                  headers: {
-                    securitycode: this.configService.wfhApiKey,
-                  },
-                })
-                .pipe((res) => res)
-            );
-          } catch (error) {
-            console.log(error);
-          }
-
-          const wfhUserEmail = wfhGetApi
-            ? wfhGetApi.data.result.map((item) =>
-                this.utilsService.getUserNameByEmail(item.emailAddress)
-              )
-            : [];
-
-          if (wfhUserEmail.includes(authorUsername)) {
-            await this.dailyService
-              .saveDaily(message, args)
-              .catch((err) => console.log(err));
-
-            await logTimeSheetFromDaily({
-              emailAddress,
-              content: content,
-            });
-
-            if (!checkTimeSheet()) {
-              message
-                .reply({
-                  content:
-                    "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-9h30, 12h-18h. WFH not daily 20k/time.)```",
-                  // ephemeral: true,
-                })
-                .catch((err) => {
-                  this.komubotrestService.sendErrorToDevTest(
-                    client,
-                    authorId,
-                    err
-                  );
-                });
-            } else {
-              message
-                .reply({
-                  content: "✅ Daily saved.",
-                  // ephemeral: true
-                })
-                .catch((err) => {
-                  this.komubotrestService.sendErrorToDevTest(
-                    client,
-                    authorId,
-                    err
-                  );
-                });
-            }
           } else {
-            await this.dailyService
-              .saveDaily(message, args)
-              .catch((err) => console.log(err));
+            message
+              .reply({
+                content: "✅ Daily saved.",
+                // ephemeral: true
+              })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
+              });
+          }
+        } else {
+          await this.dailyService
+            .saveDaily(message, args)
+            .catch((err) => console.log(err));
 
-            await logTimeSheetFromDaily({
-              emailAddress,
-              content: content,
-            });
+          await logTimeSheetFromDaily({
+            emailAddress,
+            content: content,
+          });
 
-            if (!checkTimeNotWFH()) {
-              message
-                .reply({
-                  content:
-                    "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-17h. not daily 20k/time.)```",
-                  // ephemeral: true,
-                })
-                .catch((err) => {
-                  this.komubotrestService.sendErrorToDevTest(
-                    client,
-                    authorId,
-                    err
-                  );
-                });
-            } else {
-              message
-                .reply({
-                  content: "`✅` Daily saved.",
-                  //  ephemeral: true
-                })
-                .catch((err) => {
-                  this.komubotrestService.sendErrorToDevTest(
-                    client,
-                    authorId,
-                    err
-                  );
-                });
-            }
+          if (!checkTimeNotWFH()) {
+            message
+              .reply({
+                content:
+                  "```✅ Daily saved. (Invalid daily time frame. Please daily at 7h30-17h. not daily 20k/time.)```",
+                // ephemeral: true,
+              })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
+              });
+          } else {
+            message
+              .reply({
+                content: "`✅` Daily saved.",
+                //  ephemeral: true
+              })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  authorId,
+                  err
+                );
+              });
           }
         }
       }

@@ -33,7 +33,7 @@ export const parseTimeSheetSentence = (sentence) => {
 
 export const parseDailyMessage = (message) => {
   const [, metaRaw, yesterday, todayRaw, block] = message.split(
-    new RegExp("\\*daily|- yesterday:|- today:|- block:", "ig")
+    new RegExp("\\*daily|[- ]?yesterday:|[- ]?today:|[- ]?block:", "ig")
   );
   const [projectRaw, dateRaw] = metaRaw.trim().split(/\s+/);
   const dateStr = dateRaw
