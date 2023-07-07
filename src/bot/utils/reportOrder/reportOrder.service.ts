@@ -20,7 +20,7 @@ export class ReportOrderService {
 
       const arrayUser = await this.orderRepository
         .createQueryBuilder("orders")
-        .select("email")
+        .select("username")
         .addSelect('MAX("createdTimestamp")', "timeStamp")
         .where(`"channelId" = :channelId`, {
           channelId: channel,
@@ -30,7 +30,7 @@ export class ReportOrderService {
           `"createdTimestamp" > ${this.utilsService.getYesterdayDate()}`
         )
         .andWhere(`"createdTimestamp" < ${this.utilsService.getTomorrowDate()}`)
-        .groupBy("email")
+        .groupBy("username")
         .execute();
 
       if (arrayUser.length > 0) {
@@ -54,7 +54,7 @@ export class ReportOrderService {
             mess = listOrder
               .slice(i * 50, (i + 1) * 50)
               .map(
-                (list) => `<${list.email}> order ${list.menu.toUpperCase()}`
+                (list) => `<${list.username}> order ${list.menu.toUpperCase()}`
               )
               .join("\n");
             const Embed = new EmbedBuilder()
