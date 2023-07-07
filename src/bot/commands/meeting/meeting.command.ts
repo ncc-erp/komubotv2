@@ -37,8 +37,6 @@ export class MeetingCommand implements CommandLineClass {
   constructor(
     private meetingService: MeetingService,
     private readonly utilsService: UtilsService,
-    @InjectRepository(Meeting)
-    private readonly meetingRepository: Repository<Meeting>,
     private komubotrestService: KomubotrestService,
     private clientConfig: ClientConfigService
   ) {}
@@ -357,88 +355,83 @@ export class MeetingCommand implements CommandLineClass {
             });
           })();
         } else {
-          const task = args.slice(0, 1).join(" ");
-          const datetime = args.slice(1, 3).join(" ");
-          let repeat = args.slice(3, 4).join(" ");
-          let repeatTime = args.slice(4, args.length).join(" ");
-          const checkDate = args.slice(1, 2).join(" ");
-          const checkTime = args.slice(2, 3).join(" ");
-          if (repeatTime.length > 0 && !/^[0-9]+$/.test(repeatTime)) {
-            return message
-              .reply({
-                content: messHelp,
-              })
-              .catch((err) => {
+          const task = args[0];
+          let datetime = args.slice(1, 3).join(" ");
+          let repeat = args[3];
+          let repeatTime = args.slice(4).join(" ");
+          const checkDate = args[1];
+          let checkTime = args[2];
+          let timestamp;
+
+          if (repeat == "first" || repeat == "last") {
+            repeat = checkTime;
+            repeatTime = args.slice(3).join(" ");
+            checkTime = checkDate;
+
+            if (
+              !this.meetingService.validateTime(checkTime) ||
+              repeat != "monthly"
+            ) {
+              return message.reply({ content: messHelp }).catch((err) => {
                 this.komubotrestService.sendErrorToDevTest(
                   client,
                   authorId,
                   err
                 );
               });
+            } else {
+              const currentDate = new Date();
+              const [hours, minutes] = checkTime.split(":");
+              currentDate.setHours(Number(hours), Number(minutes));
+              timestamp = currentDate.getTime();
+            }
           }
-          if (
-            !/^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([1][26]|[2468][048]|[3579][26])00))))$/.test(
-              checkDate
-            )
-          ) {
-            return message
-              .reply({
-                content: messHelp,
-                // ephemeral: true
-              })
-              .catch((err) => {
+
+          if (repeatTime != "first" && repeatTime != "last") {
+            if (
+              !this.meetingService.validateRepeatTime(repeatTime) ||
+              !this.meetingService.validateDate(checkDate) ||
+              !this.meetingService.validateTime(checkTime)
+            ) {
+              return message.reply({ content: messHelp }).catch((err) => {
                 this.komubotrestService.sendErrorToDevTest(
                   client,
                   authorId,
                   err
                 );
               });
-          }
-          if (!/(2[0-3]|[01][0-9]):[0-5][0-9]/.exec(checkTime)) {
-            return message
-              .reply({
-                content: messHelp,
-                // ephemeral: true
-              })
-              .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(
-                  client,
-                  authorId,
-                  err
-                );
-              });
+            } else {
+              const day = datetime.slice(0, 2);
+              const month = datetime.slice(3, 5);
+              const year = datetime.slice(6);
+
+              const format = `${month}/${day}/${year}`;
+              const dateObject = new Date(format);
+              timestamp = dateObject.getTime();
+            }
           }
 
           if (repeat === "") repeat = "once";
-          const list = ["once", "daily", "weekly", "repeat"];
-          if (list.includes(repeat) === false)
-            return message
-              .reply({
-                content: messHelp,
-                // ephemeral: true
-              })
-              .catch((err) => {
-                this.komubotrestService.sendErrorToDevTest(
-                  client,
-                  authorId,
-                  err
-                );
-              });
+          const allowedRepeats = [
+            "once",
+            "daily",
+            "weekly",
+            "repeat",
+            "monthly",
+          ];
+          if (!allowedRepeats.includes(repeat)) {
+            return message.reply({ content: messHelp }).catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+            });
+          }
 
-          const day = datetime.slice(0, 2);
-          const month = datetime.slice(3, 5);
-          const year = datetime.slice(6);
-
-          const fomat = `${month}/${day}/${year}`;
-          const dateObject = new Date(fomat);
-          const timestamp = dateObject.getTime();
-          await this.meetingRepository.insert({
-            channelId: channel_id,
-            task: task,
-            createdTimestamp: timestamp,
-            repeat: repeat,
-            repeatTime: repeatTime,
-          });
+          await this.meetingService.saveMeeting(
+            channel_id,
+            task,
+            timestamp,
+            repeat,
+            repeatTime
+          );
 
           message
             .reply({
