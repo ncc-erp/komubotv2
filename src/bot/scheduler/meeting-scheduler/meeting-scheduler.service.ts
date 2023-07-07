@@ -416,20 +416,15 @@ export class MeetingSchedulerService {
                   const isRepeatLast = item.repeatTime === "last";
                   const isRepeatMonthly = !isRepeatFirst && !isRepeatLast;
 
+                  today.setHours(today.getHours() + 7);
                   const isCurrentMonthFirstDay = isFirstDayOfMonth(today);
                   const isCurrentMonthLastDay = isLastDayOfMonth(today);
-                  const isCurrentDateScheduler = isSameDay(
-                    today,
-                    dateScheduler
-                  );
+                  const isCurrentDateScheduler =
+                    today.getDate() === dateScheduler.getDate();
 
                   if (
-                    (isRepeatFirst &&
-                      isCurrentMonthFirstDay &&
-                      isCurrentDateScheduler) ||
-                    (isRepeatLast &&
-                      isCurrentMonthLastDay &&
-                      isCurrentDateScheduler) ||
+                    (isRepeatFirst && isCurrentMonthFirstDay) ||
+                    (isRepeatLast && isCurrentMonthLastDay) ||
                     (isRepeatMonthly && isCurrentDateScheduler)
                   ) {
                     const monthlyFetchChannel = await client.channels.fetch(
