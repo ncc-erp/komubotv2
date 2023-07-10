@@ -102,7 +102,7 @@ export class HeyboyCommand implements CommandLineClass {
     const response = await firstValueFrom(
       this.http
         .get(
-          "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
+          "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
         )
         .pipe((res) => res)
     );
