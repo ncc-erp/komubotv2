@@ -9,6 +9,7 @@ import { SchedulerRegistry, CronExpression } from "@nestjs/schedule";
 import { ChannelType, Client } from "discord.js";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { isFirstDayOfMonth, isLastDayOfMonth, isSameDay } from "date-fns";
 
 @Injectable()
 export class MeetingSchedulerService {
@@ -335,7 +336,10 @@ export class MeetingSchedulerService {
               case "repeat":
                 if (
                   this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
-                  this.utilsService.isDiffDay(dateScheduler, +item.repeatTime) &&
+                  this.utilsService.isDiffDay(
+                    dateScheduler,
+                    +item.repeatTime
+                  ) &&
                   this.utilsService.isTimeDay(dateScheduler)
                 ) {
                   const repeatFetchChannel = await client.channels.fetch(
@@ -379,15 +383,15 @@ export class MeetingSchedulerService {
                       .send(`@here voice channel full`)
                       .catch(console.error);
                   let newCreatedTimestampRepeat = item.createdTimestamp;
-                  newCreatedTimestampRepeat = currentDate.setDate(
-                    currentDate.getDate() + +item.repeatTime
-                  );
+                  const newDate = new Date(currentDate);
+                  newDate.setDate(newDate.getDate() + +item.repeatTime);
+                  newCreatedTimestampRepeat = newDate.getTime();
 
                   while (
                     await this.utilsService.checkHolidayMeeting(currentDate)
                   ) {
-                    newCreatedTimestampRepeat = currentDate.setDate(
-                      currentDate.getDate() + +item.repeatTime
+                    newCreatedTimestampRepeat = newDate.setDate(
+                      newDate.getDate() + +item.repeatTime
                     );
                   }
                   await this.meetingRepository
@@ -401,6 +405,84 @@ export class MeetingSchedulerService {
                     .execute()
                     .catch(console.error);
                 }
+                return;
+              case "monthly":
+                if (this.utilsService.isSameDay()) {
+                  return;
+                }
+
+                if (this.utilsService.isSameMinute(minuteDb, dateScheduler)) {
+                  const isRepeatFirst = item.repeatTime === "first";
+                  const isRepeatLast = item.repeatTime === "last";
+                  const isRepeatMonthly = !isRepeatFirst && !isRepeatLast;
+
+                  today.setHours(today.getHours() + 7);
+                  const isCurrentMonthFirstDay = isFirstDayOfMonth(today);
+                  const isCurrentMonthLastDay = isLastDayOfMonth(today);
+                  const isCurrentDateScheduler =
+                    today.getDate() === dateScheduler.getDate();
+
+                  if (
+                    (isRepeatFirst && isCurrentMonthFirstDay) ||
+                    (isRepeatLast && isCurrentMonthLastDay) ||
+                    (isRepeatMonthly && isCurrentDateScheduler)
+                  ) {
+                    const monthlyFetchChannel = await client.channels.fetch(
+                      item.channelId
+                    );
+
+                    if (roomVoice.length !== 0) {
+                      monthlyFetchChannel
+                        .send(`@here our meeting room is <#${roomVoice[0]}>`)
+                        .catch(console.error);
+
+                      const monthlyShift = roomVoice.shift(roomVoice[0]);
+                      const channelNameMonthly = await client.channels.fetch(
+                        monthlyShift
+                      );
+                      let originalNameMonthly = channelNameMonthly.name;
+                      const searchTermMonthly = "(";
+                      const indexOfFirstMonthly =
+                        originalNameMonthly.indexOf(searchTermMonthly);
+
+                      if (indexOfFirstMonthly > 0) {
+                        originalNameMonthly = originalNameMonthly.slice(
+                          0,
+                          indexOfFirstMonthly - 1
+                        );
+                      }
+
+                      await channelNameMonthly.setName(
+                        `${originalNameMonthly} (${item.task})`
+                      );
+
+                      const newRoomMonthly = channelNameMonthly.name;
+                      await this.voiceChannelRepository
+                        .insert({
+                          voiceChannelId: channelNameMonthly.id,
+                          originalName: originalNameMonthly,
+                          newRoomName: newRoomMonthly,
+                          createdTimestamp: Date.now(),
+                        })
+                        .catch(console.error);
+                    } else {
+                      await monthlyFetchChannel
+                        .send(`@here voice channel full`)
+                        .catch(console.error);
+                    }
+
+                    await this.meetingRepository
+                      .createQueryBuilder()
+                      .update(Meeting)
+                      .set({
+                        reminder: true,
+                      })
+                      .where('"id" = :id', { id: item.id })
+                      .execute()
+                      .catch(console.error);
+                  }
+                }
+
                 return;
               default:
                 break;

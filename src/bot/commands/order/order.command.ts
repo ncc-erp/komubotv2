@@ -18,7 +18,7 @@ export class OrderCommand implements CommandLineClass {
     const orderData = this.orderService;
     const channelId = message.channel.id;
     let author = message.author.id;
-    let username = message.author.username;
+    let username = message.member.displayName;
 
     try {
       if (!args[0]) {
