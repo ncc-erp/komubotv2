@@ -21,7 +21,8 @@ export class DmmessageService {
   ) {}
 
   API_TOKEN = "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";
-  API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  //API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  API_URL = "http://172.16.100.196:8000/query/?query=";
 
   async getMessageAI(url, sender, message, token) {
     try {
@@ -68,6 +69,7 @@ export class DmmessageService {
       const createdTimestamp = message.createdTimestamp;
       const authorId = message.author.id;
       const content = message.content;
+      const defaultReply = "Very busy, too much work today. I'm so tired. (DM)";
 
       const data = await this.dmMessageRepository
         .createQueryBuilder()
@@ -84,7 +86,7 @@ export class DmmessageService {
 
       if (!authorId || !content) return;
       const res = await this.getMessageAI(
-        this.API_URL,
+        this.API_URL + content,
         message.author.username,
         `${content}`,
         this.API_TOKEN
@@ -92,12 +94,23 @@ export class DmmessageService {
 
       if (res && res.data && res.data.length) {
         res.data.map((item) => {
-          return message.channel.send(item.text).catch(console.log);
+          message.channel.send(item.text).catch(console.log);
+          return;
         });
-      } else {
-        message.channel
-          .send("Very busy, too much work today. I'm so tired. BRB.")
+      } else 
+      {
+        if (res == null || res.data == null || res.data.answer == null)
+        {
+          message.channel
+          .send(defaultReply)
           .catch(console.error);
+        }
+        else
+        {
+          message.channel
+          .send(res.data.answer)
+          .catch(console.error);
+        }
         return;
       }
       if (data) {

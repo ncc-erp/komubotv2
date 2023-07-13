@@ -20,24 +20,24 @@ async function bootstrap() {
   });
   setupSwagger(app);
 
-  const meetingSchedulerService = app.get(MeetingSchedulerService);
-  await meetingSchedulerService.startCronJobs();
-  const reminderSchedulerService = app.get(ReminderSchedulerService);
-  await reminderSchedulerService.startCronJobs();
-  const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
-  await sendMessageSchedulerService.startCronJobs();
-  const datingSchedulerService = app.get(DatingSchedulerService);
-  await datingSchedulerService.startCronJobs();
-  const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
-  await updateRoleSchedulerService.startCronJobs();
-  const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
-  await voiceChannelSchedulerService.startCronJobs();
-  const sendquizSchedulerService = app.get(SendquizSchedulerService);
-  await sendquizSchedulerService.startCronJobs();
-  const mentionSchedulerService = app.get(MentionSchedulerService);
-  await mentionSchedulerService.startCronJobs();
-  const wfhSchedulerService = app.get(WfhSchedulerService);
-  await wfhSchedulerService.startCronJobs();
+  // const meetingSchedulerService = app.get(MeetingSchedulerService);
+  // await meetingSchedulerService.startCronJobs();
+  // const reminderSchedulerService = app.get(ReminderSchedulerService);
+  // await reminderSchedulerService.startCronJobs();
+  // const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
+  // await sendMessageSchedulerService.startCronJobs();
+  // const datingSchedulerService = app.get(DatingSchedulerService);
+  // await datingSchedulerService.startCronJobs();
+  // const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
+  // await updateRoleSchedulerService.startCronJobs();
+  // const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
+  // await voiceChannelSchedulerService.startCronJobs();
+  // const sendquizSchedulerService = app.get(SendquizSchedulerService);
+  // await sendquizSchedulerService.startCronJobs();
+  // const mentionSchedulerService = app.get(MentionSchedulerService);
+  // await mentionSchedulerService.startCronJobs();
+  // const wfhSchedulerService = app.get(WfhSchedulerService);
+  // await wfhSchedulerService.startCronJobs();
 }
 
 bootstrap();

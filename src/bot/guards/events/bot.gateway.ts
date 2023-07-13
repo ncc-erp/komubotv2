@@ -127,7 +127,7 @@ export class BotGateway {
             return message.reply(item.text).catch(console.log);
           });
         } else {
-          message.reply("Very busy, too much work today. I'm so tired. BRB.");
+          message.reply("Very busy, too much work today. I'm so tired. (Gateway).");
           return;
         }
       }

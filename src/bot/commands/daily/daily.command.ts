@@ -10,6 +10,7 @@ import { logTimeSheetFromDaily } from "src/bot/utils/timesheet.until";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
 import { DailyService } from "./daily.service";
+import { bool } from "@hapi/joi";
 
 const messHelp =
   "```" +
@@ -128,14 +129,16 @@ export class DailyCommand implements CommandLineClass {
   async execute(message: Message, args, client: Client) {
     try {
       const authorId = message.author.id;
-      const findUser = await this.userRepository
-        .createQueryBuilder()
-        .where(`"userId" = :userId`, { userId: message.author.id })
-        .andWhere(`"deactive" IS NOT true`)
-        .select("*")
-        .getRawOne();
-      if (!findUser) return;
-      const authorUsername = findUser.email;
+      // const findUser = await this.userRepository
+      //   .createQueryBuilder()
+      //   .where(`"userId" = :userId`, { userId: message.author.id })
+      //   .andWhere(`"deactive" IS NOT true`)
+      //   .select("*")
+      //   .getRawOne();
+      // if (!findUser) return;
+      // const authorUsername = findUser.email;
+      const authorUsername = message.author.username;
+
       if (args[0] === "help") {
         return message
           .reply({
@@ -156,6 +159,19 @@ export class DailyCommand implements CommandLineClass {
         });
         const emailAddress = `${authorUsername}@ncc.asia`;
 
+        const validChannel = (await this.dailyService.handleTextChannel(message)).valueOf();
+        console.log(validChannel);
+        if (!validChannel)
+        {
+          return message
+            .reply({
+              content: "Channel must have at least 2 Members and 1 PM to daily !",
+            })
+            .catch((err) => {
+              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+            });
+        }
+
         if (checkDaily) {
           return message
             .reply({
@@ -174,7 +190,7 @@ export class DailyCommand implements CommandLineClass {
               // ephemeral: true,
             })
             .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(client, authorId, err);
+              console.log(err);
             });
         }
 
@@ -189,6 +205,8 @@ export class DailyCommand implements CommandLineClass {
               this.komubotrestService.sendErrorToDevTest(client, authorId, err);
             });
         }
+
+
 
         // if (findPeriod(daily)) {
         //   return message
