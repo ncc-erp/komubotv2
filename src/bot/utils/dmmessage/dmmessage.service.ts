@@ -22,7 +22,7 @@ export class DmmessageService {
 
   API_TOKEN = "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";
   //API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
-  API_URL = "http://172.16.100.196:8000/query/?query=";
+  API_URL = "http://172.16.100.196:8000/query/";
 
   
   async getMessageAI(url, sender, message, token) {
@@ -31,10 +31,7 @@ export class DmmessageService {
         this.http
           .post(
             url,
-            {
-              sender,
-              message,
-            },
+            { "question": message },
             { headers: { Authorization: `Bearer ${token}` } }
           )
           .pipe((res) => res)
@@ -86,7 +83,7 @@ export class DmmessageService {
 
       if (!authorId || !content) return;
       const res = await this.getMessageAI(
-        this.API_URL + content,
+        this.API_URL,
         message.author.username,
         `${content}`,
         this.API_TOKEN
