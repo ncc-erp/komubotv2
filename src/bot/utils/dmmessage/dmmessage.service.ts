@@ -21,8 +21,10 @@ export class DmmessageService {
   ) {}
 
   API_TOKEN = "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";
-  API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  //API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  API_URL = "http://172.16.100.196:8000/query/?query=";
 
+  
   async getMessageAI(url, sender, message, token) {
     try {
       const response = await firstValueFrom(
@@ -84,19 +86,19 @@ export class DmmessageService {
 
       if (!authorId || !content) return;
       const res = await this.getMessageAI(
-        this.API_URL,
+        this.API_URL + content,
         message.author.username,
         `${content}`,
         this.API_TOKEN
       );
-
       if (res && res.data && res.data.length) {
         res.data.map((item) => {
           return message.channel.send(item.text).catch(console.log);
         });
       } else {
+        const reply = res.data.answer;
         message.channel
-          .send("Very busy, too much work today. I'm so tired. BRB.")
+          .send(reply)
           .catch(console.error);
         return;
       }
