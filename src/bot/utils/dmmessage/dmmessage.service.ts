@@ -8,6 +8,7 @@ import { Conversation } from "src/bot/models/conversation.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { Client, Message } from "discord.js";
+import { content } from "googleapis/build/src/apis/content";
 
 @Injectable()
 export class DmmessageService {
@@ -31,8 +32,7 @@ export class DmmessageService {
           .post(
             url,
             {
-              sender,
-              message,
+              'question': message
             },
             { headers: { Authorization: `Bearer ${token}` } }
           )
@@ -86,9 +86,9 @@ export class DmmessageService {
 
       if (!authorId || !content) return;
       const res = await this.getMessageAI(
-        this.API_URL + content,
+        this.API_URL,
         message.author.username,
-        `${content}`,
+        content,
         this.API_TOKEN
       );
 
@@ -99,6 +99,7 @@ export class DmmessageService {
         });
       } else 
       {
+        console.log(res);
         if (res == null || res.data == null || res.data.answer == null)
         {
           message.channel
