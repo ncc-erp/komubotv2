@@ -7,18 +7,12 @@ import { Sync_role } from "src/bot/commands/sync_roles/sync_role.command";
 import { Conversation } from "src/bot/models/conversation.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { Client, Message } from "discord.js";
-import { ActionRowBuilder, ActionRow, ButtonBuilder, ButtonStyle } from "discord.js";
-import { KomubotrestService } from "../komubotrest/komubotrest.service";
-import { QuizService } from "../quiz/quiz.service";
-import {
-  EmbedBuilder,
-  User as UserDiscord,
-} from "discord.js";
+import { Client, Message, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, } from "discord.js";
+
 @Injectable()
 export class DmmessageService {
-  private komubotrestService: KomubotrestService
-  private quizService: QuizService
+
   constructor(
     private userStatusCommand: UserStatusCommand,
     private toggleActiveCommand: ToggleActiveCommand,
