@@ -77,15 +77,12 @@ export class DmmessageService {
         .setStyle(1)
       );
     }
-    console.log("mess id" + messageId);
 
     const row = new ActionRowBuilder().addComponents(buttons);
     const embed = new EmbedBuilder()
       .setColor("Random")
       .setTitle("Is This Helpful!");
   
-    const message = await user.send({ embeds: [embed], components: [row as any] });
-    
     client.setMaxListeners(0);    
     client.on("interactionCreate", async (interaction) => {
       if (interaction.isButton()) {
