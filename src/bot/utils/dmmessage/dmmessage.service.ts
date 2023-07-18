@@ -8,6 +8,7 @@ import { Conversation } from "src/bot/models/conversation.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { Client, Message } from "discord.js";
+import { content } from "googleapis/build/src/apis/content";
 
 @Injectable()
 export class DmmessageService {
@@ -21,7 +22,8 @@ export class DmmessageService {
   ) {}
 
   API_TOKEN = "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";
-  API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  //API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  API_URL = "http://172.16.100.196:8000/query/?query=";
 
   async getMessageAI(url, sender, message, token) {
     try {
@@ -30,8 +32,7 @@ export class DmmessageService {
           .post(
             url,
             {
-              sender,
-              message,
+              'question': message
             },
             { headers: { Authorization: `Bearer ${token}` } }
           )
@@ -68,6 +69,7 @@ export class DmmessageService {
       const createdTimestamp = message.createdTimestamp;
       const authorId = message.author.id;
       const content = message.content;
+      const defaultReply = "Very busy, too much work today. I'm so tired. (DM)";
 
       const data = await this.dmMessageRepository
         .createQueryBuilder()
@@ -86,18 +88,30 @@ export class DmmessageService {
       const res = await this.getMessageAI(
         this.API_URL,
         message.author.username,
-        `${content}`,
+        content,
         this.API_TOKEN
       );
 
       if (res && res.data && res.data.length) {
         res.data.map((item) => {
-          return message.channel.send(item.text).catch(console.log);
+          message.channel.send(item.text).catch(console.log);
+          return;
         });
-      } else {
-        message.channel
-          .send("Very busy, too much work today. I'm so tired. BRB.")
+      } else 
+      {
+        console.log(res);
+        if (res == null || res.data == null || res.data.answer == null)
+        {
+          message.channel
+          .send(defaultReply)
           .catch(console.error);
+        }
+        else
+        {
+          message.channel
+          .send(res.data.answer)
+          .catch(console.error);
+        }
         return;
       }
       if (data) {
