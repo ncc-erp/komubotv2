@@ -61,12 +61,7 @@ export class DailyService {
     const channelMessage = message.channel;
     if (!(channelMessage instanceof TextChannel)) return false;
 
-    const channelId = channelMessage.id;
-    const guildId = channelMessage.guild.id;
-
-    const guild = message.client.guilds.cache.get(guildId);
-    const channel = guild.channels.cache.get(channelId);
-
+    const channel = message.channel;
     const members = channel.members.filter((member) => !member.user.bot);
 
     const hasMoreThanTwoMembers = members.size > 1;
@@ -75,9 +70,10 @@ export class DailyService {
     members.forEach((member) => {
       if (this.hasPMRole(member)) {
         hasPMRoleFlag = true;
-        return;
       }
     });
+
+    console.log(channel.members);
 
     if (hasMoreThanTwoMembers && hasPMRoleFlag) {
       return true;
