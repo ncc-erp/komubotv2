@@ -7,10 +7,12 @@ import { Sync_role } from "src/bot/commands/sync_roles/sync_role.command";
 import { Conversation } from "src/bot/models/conversation.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { Client, Message } from "discord.js";
+import { Client, Message, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, } from "discord.js";
 
 @Injectable()
 export class DmmessageService {
+
   constructor(
     private userStatusCommand: UserStatusCommand,
     private toggleActiveCommand: ToggleActiveCommand,
@@ -21,18 +23,18 @@ export class DmmessageService {
   ) {}
 
   API_TOKEN = "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";
-  API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  //API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  API_URL = "http://172.16.100.196:8000/query/";
+  API_RATING = "http://172.16.100.196:8000/update-history/?history_id=";
 
+  
   async getMessageAI(url, sender, message, token) {
     try {
       const response = await firstValueFrom(
         this.http
           .post(
             url,
-            {
-              sender,
-              message,
-            },
+            { "question": message },
             { headers: { Authorization: `Bearer ${token}` } }
           )
           .pipe((res) => res)
@@ -42,6 +44,65 @@ export class DmmessageService {
       return null;
     }
   }
+
+  async sendRatingAi(url, messageId, rating, token) {
+    try {
+      const response = await firstValueFrom(
+        this.http
+          .put(
+            url+messageId,
+            {   
+              "status": "RAW",
+              "rating": rating,
+              "refine": "string"
+          },
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+          .pipe((res) => res)
+      );
+      return response as any;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async ratting(client: Client, user, messageId) {
+    const label: string[] = ["Very Bad", "Bad", "Ok", "Good", "Very Good"];
+    const buttons: ButtonBuilder[] = [];
+    
+    for (let i = 0; i < 5; i++) {
+      buttons.push(new ButtonBuilder()
+        .setCustomId("rating_answer" + messageId + "#" + (i+1))
+        .setLabel(label[i])
+        .setStyle(1)
+      );
+    }
+
+    const row = new ActionRowBuilder().addComponents(buttons);
+    const embed = new EmbedBuilder()
+      .setColor("Random")
+      .setTitle("Is This Helpful!");
+  
+    client.setMaxListeners(0);    
+    client.on("interactionCreate", async (interaction) => {
+      if (interaction.isButton()) {
+        const customId = interaction.customId;
+        if(!customId.includes(messageId)){
+          return;
+        }
+        const rating = parseInt(customId.replace("rating_answer" + messageId + "#", ""));
+        const ratingRes = await this.sendRatingAi(this.API_RATING, messageId, rating, this.API_TOKEN);
+
+        if (ratingRes) {
+          await interaction.reply({ content: `Thank you for your rating!`, ephemeral: true, fetchReply: true }).catch(err => {
+            console.log(rating);
+          });
+          interaction.message.edit({ components: [] }).catch(console.error);
+        }
+      }
+    });
+  }
+  
 
   async dmmessage(message: Message, client: Client) {
     try {
@@ -89,14 +150,20 @@ export class DmmessageService {
         `${content}`,
         this.API_TOKEN
       );
-
+      if(!res){
+        message.reply("không có câu trả lời cho câu hỏi của bạn");
+        return;
+      }
+      this.ratting(client, message.author, res.data.id);
+     
       if (res && res.data && res.data.length) {
         res.data.map((item) => {
           return message.channel.send(item.text).catch(console.log);
         });
       } else {
+        const reply = res.data.answer;
         message.channel
-          .send("Very busy, too much work today. I'm so tired. BRB.")
+          .send(reply)
           .catch(console.error);
         return;
       }

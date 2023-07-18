@@ -155,7 +155,11 @@ export class DailyCommand implements CommandLineClass {
           if (!wordInString(daily, q)) return (checkDaily = true);
         });
         const emailAddress = `${authorUsername}@ncc.asia`;
-
+        // let isValidChanel = (await this.dailyService.handleThreadChannel(message)).valueOf();
+        // if(!isValidChanel){
+        //   message.reply("Channel mush have at least 2 member and 1 PM");
+        //   return;
+        // }
         if (checkDaily) {
           return message
             .reply({
