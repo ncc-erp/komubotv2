@@ -177,7 +177,6 @@ export class KomubotrestService {
           .send(message)
           .catch(console.error);
         return null;
-        ``;
       }
       const sent = await user.send(msg);
 

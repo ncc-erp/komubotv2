@@ -8,12 +8,14 @@ import { Conversation } from "src/bot/models/conversation.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { Client, Message } from "discord.js";
+import { RequestVoiceCallCommand } from "src/bot/commands/requestVoiceCall/requestVoiceCall.command";
 
 @Injectable()
 export class DmmessageService {
   constructor(
     private userStatusCommand: UserStatusCommand,
     private toggleActiveCommand: ToggleActiveCommand,
+    private requestVoiceCallCommand: RequestVoiceCallCommand,
     private syncRole: Sync_role,
     @InjectRepository(Conversation)
     private dmMessageRepository: Repository<Conversation>,
@@ -54,6 +56,8 @@ export class DmmessageService {
           return this.toggleActiveCommand.execute(message, args, client);
         case "*sync":
           return this.syncRole.execute(message, args, client);
+        case "*call":
+          return this.requestVoiceCallCommand.execute(message, args, client);
 
         // case '/tick':
         //   return const slashTicket = ticket.execute(message, client);
