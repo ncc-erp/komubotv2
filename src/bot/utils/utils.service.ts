@@ -136,7 +136,8 @@ export class UtilsService {
     const diffTime = Math.abs(
       (this.checkTimeMeeting() as any).dateTimeNow - newDateTimestamp
     );
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const millisecondsOfDay = 1000 * 60 * 60 * 24;
+    const diffDays = Math.ceil(diffTime / millisecondsOfDay);
     if (diffDays % multiples === 0) {
       result = true;
     }

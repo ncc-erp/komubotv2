@@ -244,6 +244,10 @@ export class ClientConfigService {
       "FOLDER_DRIVER_PARENTS_ID"
     )}`;
 
+    this.pmsChannelId = `${configService.get<string>(
+      "PMS_CHANNEL_ID"
+    )}`;
+
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
     this.footer = "KOMU ";
@@ -270,6 +274,8 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
   }
+
+  pmsChannelId: string;
 
   driverClientId: string;
 

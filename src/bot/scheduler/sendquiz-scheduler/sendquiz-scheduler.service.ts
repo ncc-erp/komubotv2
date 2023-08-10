@@ -83,10 +83,11 @@ export class SendquizSchedulerService {
         .select("*")
         .execute();
 
+      const millisecondsOfTwoHours = 1000 * 60 * 60 * 2;
       let arrayUser = userSendQuiz.filter(
         (user) =>
           !user.createdTimestamp ||
-          Date.now() - user.createdTimestamp >= 1000 * 60 * 60 * 2
+          Date.now() - user.createdTimestamp >= millisecondsOfTwoHours
       );
       await Promise.all(
         arrayUser.map((user) =>

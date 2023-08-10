@@ -19,7 +19,8 @@ export class RequestVoiceCallCommand implements CommandLineClass {
         const emailUser = args[0];
         let authorId = message.author.id;
         const user = await this.requestVoiceCallService.getDataUser(emailUser);
-        if (user.length == 0)
+
+        if (!user)
           return message.reply(`Wrong Email!`).catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });

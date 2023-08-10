@@ -17,6 +17,7 @@ export class ReportMsgCountService {
     try {
       const userid = message.author.id;
       const username = message.author.username;
+      const isBots = ["922003239887581205", "931377010616451122"];
 
       if (!userid || !username) return;
 
@@ -24,7 +25,7 @@ export class ReportMsgCountService {
         .createQueryBuilder("msg")
         .innerJoinAndSelect("komu_user", "m", "msg.authorId = m.userId")
         .where('"authorId" NOT IN (:...authorId)', {
-          authorId: ["922003239887581205", "931377010616451122"],
+          authorId: isBots,
         })
         .andWhere('"createdTimestamp" >= :gtecreatedTimestamp', {
           gtecreatedTimestamp: this.utilsService
