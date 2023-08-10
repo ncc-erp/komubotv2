@@ -230,7 +230,7 @@ export class DailyCommand implements CommandLineClass {
 
         if (wfhUserEmail.includes(authorUsername)) {
           await this.dailyService
-            .saveDaily(message, args)
+            .saveDaily(message, args, authorUsername)
             .catch((err) => console.log(err));
 
           await logTimeSheetFromDaily({
@@ -268,7 +268,7 @@ export class DailyCommand implements CommandLineClass {
           }
         } else {
           await this.dailyService
-            .saveDaily(message, args)
+            .saveDaily(message, args, authorUsername)
             .catch((err) => console.log(err));
 
           await logTimeSheetFromDaily({

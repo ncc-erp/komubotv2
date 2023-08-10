@@ -153,6 +153,8 @@ import { IndividualChannelCommand } from "./commands/individual/individual.comma
 import { IndividualChannelService } from "./commands/individual/individual.service";
 import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.command";
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
+import { RequestVoiceCallCommand } from "./commands/requestVoiceCall/requestVoiceCall.command";
+import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoiceCall.service";
 
 @Module({
   imports: [
@@ -316,6 +318,8 @@ import { RenameChannelService } from "./commands/renameChannel/renameChannel.ser
     IndividualChannelService,
     RenameChannelCommand,
     RenameChannelService,
+    RequestVoiceCallCommand,
+    RequestVoiceCallService,
   ],
   controllers: [KomubotrestController],
 })

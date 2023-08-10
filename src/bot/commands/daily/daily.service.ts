@@ -10,17 +10,14 @@ export class DailyService {
     @InjectRepository(Daily) private dailyRepository: Repository<Daily>
   ) {}
 
-  async saveDaily(message: Message, args: string[]) {
+  async saveDaily(message: Message, args: string[], email: string) {
     await this.dailyRepository
       .createQueryBuilder(TABLE.DAILY)
       .insert()
       .into(Daily)
       .values({
         userid: message.author.id,
-        email:
-          message.member != null || message.member != undefined
-            ? message.member.displayName
-            : message.author.username,
+        email: email,
         daily: args.join(" "),
         createdAt: Date.now(),
         channelid: message.channel.id,
