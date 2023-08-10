@@ -11,6 +11,7 @@ import { createReadStream } from "fs";
 import { join } from "path";
 import { Injectable } from "@nestjs/common";
 import { Client, Message, VoiceChannel } from "discord.js";
+import { ClientConfigService } from "../config/client-config.service";
 
 function setTime(date, hours, minute, second, msValue) {
   return date.setHours(hours, minute, second, msValue);
@@ -33,12 +34,13 @@ export class AudioPlayer {
   constructor(
     @InjectRepository(Uploadfile)
     private uploadFileData: Repository<Uploadfile>,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private configClient: ClientConfigService
   ) {}
 
   async audioPlayer(client: Client, message: Message, episode) {
     try {
-      const channel = await client.channels.fetch("921323636491710504");
+      const channel = await client.channels.fetch(this.configClient.ncc8Voice);
       const player = createAudioPlayer();
 
       joinVoiceChannel({
@@ -79,7 +81,9 @@ export class AudioPlayer {
       player.play(resource);
 
       if (episode && message) {
-        message.reply(`Go to <#921323636491710504>`).catch(console.error);
+        message
+          .reply(`Go to <#${this.configClient.ncc8Voice}>`)
+          .catch(console.error);
       }
     } catch (err) {
       console.log(err);

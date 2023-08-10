@@ -92,16 +92,18 @@ export class SendMessageSchedulerService {
 
   async sendMessagePMs(client) {
     if (await this.utilsService.checkHoliday()) return;
-    const userDiscord = await client.channels.fetch("921787088830103593");
+    const userDiscord = await client.channels.fetch(
+      this.clientConfigService.pmsChannelId
+    );
     userDiscord
       .send(
-        "Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report nhé. Lưu ý:\n"
-        + "- Các PM nộp báo cáo trên Project tool trước 15h00 thứ 3 hàng tuần (chú ý click btn Send mới được tính là nộp)\n"
-        + "- Nộp sau 15h00: 20k/PM\n"
-        + "- Nộp sau 17h00: 50k/PM\n"
-        + "- Không chấp nhận mọi lý do\n"
-        + "- Áp dụng từ 01/03/2023\n"
-        + "- Guideline: https://docs.google.com/document/d/15BpNpBsSNaT2UYg4qPQeHNbXCeHfB1oj/edit?usp=sharing&ouid=109739496225261626689&rtpof=true&sd=true"
+        "Đã đến giờ report, PMs hãy nhanh chóng hoàn thành report nhé. Lưu ý:\n" +
+          "- Các PM nộp báo cáo trên Project tool trước 15h00 thứ 3 hàng tuần (chú ý click btn Send mới được tính là nộp)\n" +
+          "- Nộp sau 15h00: 20k/PM\n" +
+          "- Nộp sau 17h00: 50k/PM\n" +
+          "- Không chấp nhận mọi lý do\n" +
+          "- Áp dụng từ 01/03/2023\n" +
+          "- Guideline: https://docs.google.com/document/d/15BpNpBsSNaT2UYg4qPQeHNbXCeHfB1oj/edit?usp=sharing&ouid=109739496225261626689&rtpof=true&sd=true"
       )
       .catch(console.error);
   }
@@ -242,7 +244,9 @@ export class SendMessageSchedulerService {
 
   async sendOdinReport(client) {
     try {
-      const fetchChannel = await client.channels.fetch("925707563629150238");
+      const fetchChannel = await client.channels.fetch(
+        this.clientConfigService.komubotRestDevtestChannelId
+      );
       try {
         const date = new Date();
 
@@ -335,11 +339,12 @@ export class SendMessageSchedulerService {
   }
 
   async sendReportNotUpload(client) {
+    const millisecondsOfDay = 86400000;
     const getUserNotUpload = await this.workoutRepository
       .createQueryBuilder("workout")
       .where(
         `"createdTimestamp" BETWEEN ${
-          this.utilsService.getYesterdayDate() - 86400000
+          this.utilsService.getYesterdayDate() - millisecondsOfDay
         } AND ${this.utilsService.getYesterdayDate()}`
       )
       .groupBy("workout.userId")

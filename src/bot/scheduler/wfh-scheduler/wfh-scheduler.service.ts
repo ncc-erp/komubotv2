@@ -142,13 +142,14 @@ export class WfhSchedulerService {
         .andWhere('"last_bot_message_id" IS Not Null')
         .select("*")
         .execute();
+      const thirtyMinutes = 1800000;
 
       const coditionGetMessageBotTimeStamp = (user) => {
         let result = false;
         if (!user.createdTimestamp) {
           result = true;
         } else {
-          if (Date.now() - user.createdTimestamp >= 1800000) {
+          if (Date.now() - user.createdTimestamp >= thirtyMinutes) {
             result = true;
           }
         }
@@ -177,7 +178,7 @@ export class WfhSchedulerService {
         if (!user.createdTimestamp) {
           result = true;
         } else {
-          if (Date.now() - user.createdTimestamp >= 1800000) {
+          if (Date.now() - user.createdTimestamp >= thirtyMinutes) {
             result = true;
           }
         }
@@ -250,10 +251,11 @@ export class WfhSchedulerService {
         .andWhere('"last_bot_message_id" IS NOT Null')
         .select("*")
         .execute();
-        
+      const thirtyMinutes = 1800000;
+
       users.map(async (user) => {
         if (
-          Date.now() - user.createdTimestamp >= 1800000 &&
+          Date.now() - user.createdTimestamp >= thirtyMinutes &&
           user.createdTimestamp >=
             this.utilsService.getTimeToDay(null).firstDay.getTime() &&
           user.createdTimestamp <=

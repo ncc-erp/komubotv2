@@ -96,11 +96,8 @@ export class Tx8Command implements CommandLineClass {
         return;
       }
 
-      if (
-        userId != "694732284116598797" &&
-        userId != "871713984670216273" &&
-        args[0] == "draw"
-      ) {
+      const admins = ["694732284116598797", "871713984670216273"];
+      if (!admins.includes(userId) && args[0] == "draw") {
         message
           .reply({
             content: "```You are not allowed to use this command.```",

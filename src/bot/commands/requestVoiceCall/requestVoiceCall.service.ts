@@ -50,9 +50,17 @@ export class RequestVoiceCallService {
     return voices.map((item) => item.voiceChannelId);
   }
 
-  getVoiceChannelLink(voiceChannel) {
+  getVoiceChannelLink(
+    voiceChannel: String,
+    userMentions: UserDiscord,
+    author: UserDiscord
+  ) {
     const guildChannel = this.configClient.guild_komu_id;
-    return `https://discord.com/channels/${guildChannel}/${voiceChannel}`;
+    return (
+      `Komu is connecting the call between ${userMentions.username} and ${author.username}` +
+      "\n" +
+      `https://discord.com/channels/${guildChannel}/${voiceChannel}`
+    );
   }
 
   async sendLinkToJoinCall(
@@ -60,7 +68,7 @@ export class RequestVoiceCallService {
     author: UserDiscord,
     roomId: string
   ) {
-    const link = this.getVoiceChannelLink(roomId);
+    const link = this.getVoiceChannelLink(roomId, userMentions, author);
     await userMentions.send(link);
     await author.send(link);
   }

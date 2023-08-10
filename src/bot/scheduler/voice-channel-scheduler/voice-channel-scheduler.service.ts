@@ -88,9 +88,10 @@ export class VoiceChannelSchedulerService {
       .select("*")
       .execute();
 
+    const tenMinutes = 600000;
     timeVoiceAlone.map(async (item) => {
       voiceNow.push(item.channelId);
-      if (timeNow - item.start_time >= 600000) {
+      if (timeNow - item.start_time >= tenMinutes) {
         const fetchVoiceNcc8 = await client.channels.fetch(item.channelId);
         if (fetchVoiceNcc8.members.first) {
           const target = fetchVoiceNcc8.members.first();
@@ -166,7 +167,7 @@ export class VoiceChannelSchedulerService {
       this.configClient.ncc8Voice
     );
     const target = await fetchVoiceNcc8.guild.members.fetch(
-      "922003239887581205"
+      this.configClient.guild_komu_id
     );
     target.voice.disconnect().catch(console.error);
   }
@@ -174,8 +175,8 @@ export class VoiceChannelSchedulerService {
   async checkJoinCall(client) {
     if (await this.utilsService.checkHoliday()) return;
     const now = new Date();
-    const HOURS = 2;
-    const beforeHours = new Date(now.getTime() - 1000 * 60 * 60 * HOURS);
+    const millisecondsOfTwoHours = 1000 * 60 * 60 * 2;
+    const beforeHours = new Date(now.getTime() - millisecondsOfTwoHours);
 
     await this.joinCallRepository
       .createQueryBuilder()
