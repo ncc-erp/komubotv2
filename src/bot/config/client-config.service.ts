@@ -10,6 +10,9 @@ export class ClientConfigService {
         "TIMESHEET_API"
       )}Public/GetUserWorkFromHome`,
     };
+    this.timesheet = {
+      api_url: `${configService.get<string>("TIMESHEET_API")}Public/GetAllUser`,
+    };
     this.ticket = {
       api_url_create: `${configService.get<string>(
         "TIMESHEET_API"
@@ -46,7 +49,7 @@ export class ClientConfigService {
       )}Public/GetPMsOfUser`,
       getPMOfUser: `${configService.get<string>(
         "PROJECT_API"
-      )}Public/GetPMOfUser`
+      )}Public/GetPMOfUser`,
     };
     this.checkinTimesheet = {
       api_url: `${configService.get<string>(
@@ -244,9 +247,7 @@ export class ClientConfigService {
       "FOLDER_DRIVER_PARENTS_ID"
     )}`;
 
-    this.pmsChannelId = `${configService.get<string>(
-      "PMS_CHANNEL_ID"
-    )}`;
+    this.pmsChannelId = `${configService.get<string>("PMS_CHANNEL_ID")}`;
 
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
@@ -321,6 +322,9 @@ export class ClientConfigService {
   //user_daitrinh_id
   adminIds: string[] = ["921260899799539782", "922148445626716182"];
 
+  //user_duongnguyen,user_trannhan
+  adminTX8Ids: string[] = ["694732284116598797", "871713984670216273"];
+
   //chuyenphiem_id
   chuyenphiem_id: string;
 
@@ -374,6 +378,11 @@ export class ClientConfigService {
   wfh: {
     api_url: string;
   };
+
+  timesheet: {
+    api_url: string;
+  };
+
   ticket: {
     api_url_create: string;
     api_url_get: string;
@@ -392,7 +401,7 @@ export class ClientConfigService {
 
   project: {
     api_url_getListProjectOfUser: string;
-    getPMOfUser: string
+    getPMOfUser: string;
   };
 
   checkinTimesheet: {

@@ -57,103 +57,145 @@ export class MentionSchedulerService {
     );
   }
 
+  async notifyUser(client, user) {
+    const mentionChannel = await client.channels.fetch(user.channelId);
+    const threadNoti = mentionChannel.type !== ChannelType.GuildText;
+    const message = await mentionChannel.messages.fetch(user.messageId);
+    const mentionName = await client.users.fetch(user.authorId);
+    const userDiscord = await client.users.fetch(user.mentionUserId);
+
+    userDiscord
+      .send(
+        `Hãy trả lời ${mentionName.username} tại ${
+          threadNoti ? "thread" : "channel"
+        } ${message.url} nhé!`
+      )
+      .catch(console.error);
+
+    await this.mentionRepository.update({ id: user.id }, { noti: true });
+  }
+
+  async processNotiUsers(client, mentionedUsers) {
+    const millisecondsOfTwentyfiveMinutes = 1500000;
+    const millisecondsOfThirtyMinutes = 1000;
+    const dateNow = Date.now();
+    const notiUser = mentionedUsers.filter(
+      (item) =>
+        dateNow - item.createdTimestamp >= millisecondsOfTwentyfiveMinutes &&
+        dateNow - item.createdTimestamp < millisecondsOfThirtyMinutes &&
+        !item.noti
+    );
+
+    await Promise.all(
+      notiUser.map(async (user) => {
+        await this.notifyUser(client, user);
+      })
+    );
+
+    const filteredMentionedUsers = mentionedUsers.filter(
+      (item) => dateNow - item.createdTimestamp >= millisecondsOfThirtyMinutes
+    );
+
+    return filteredMentionedUsers;
+  }
+
+  async createWFHWarning(client, user, mentionChannel, thread, channelName) {
+    let content;
+    thread
+      ? (content = `<@${
+          user.mentionUserId
+        }> không trả lời tin nhắn mention của <@${user.authorId}> lúc ${moment(
+          parseInt(user.createdTimestamp.toString())
+        )
+          .utcOffset(420)
+          .format("YYYY-MM-DD HH:mm:ss")} tại thread ${channelName} (${
+          mentionChannel.name
+        })!\n`)
+      : (content = `<@${
+          user.mentionUserId
+        }> không trả lời tin nhắn mention của <@${user.authorId}> lúc ${moment(
+          parseInt(user.createdTimestamp.toString())
+        )
+          .utcOffset(420)
+          .format("YYYY-MM-DD HH:mm:ss")} tại channel ${
+          mentionChannel.name
+        }!\n`);
+
+    const findUser = await this.userRepository.findOne({
+      where: { userId: user.mentionUserId },
+    });
+
+    const data = await this.wfhRepository.save({
+      user: findUser,
+      wfhMsg: content,
+      complain: false,
+      pmconfirm: false,
+      status: "ACTIVE",
+      type: "mention",
+      createdAt: Date.now(),
+    });
+
+    const message = this.komubotrestService.getWFHWarninghMessage(
+      content,
+      user.mentionUserId,
+      data.id.toString()
+    );
+
+    const channel = await client.channels.fetch(
+      this.clientConfig.machleoChannelId
+    );
+
+    await channel.send(message).catch(console.error);
+    await this.mentionRepository.update(
+      { id: user.id },
+      { confirm: true, punish: true }
+    );
+  }
+
+  async processMentionedUsers(client, mentionedUsers) {
+    await Promise.all(
+      mentionedUsers.map(async (user) => {
+        let thread = false;
+        let mentionChannel = await client.channels
+          .fetch(user.channelId)
+          .catch((err) => {});
+
+        if (!mentionChannel) return;
+
+        const channelName = mentionChannel.name;
+        if (mentionChannel.type !== ChannelType.GuildText) {
+          thread = true;
+          mentionChannel = await client.channels
+            .fetch(mentionChannel.parentId)
+            .catch((err) => {});
+        }
+
+        await this.createWFHWarning(
+          client,
+          user,
+          mentionChannel,
+          thread,
+          channelName
+        );
+      })
+    );
+  }
+
   async checkMention(client) {
     if (await this.utilsService.checkHoliday()) return;
     if (this.utilsService.checkTime(new Date())) return;
-    const now = Date.now();
+
     try {
       let mentionedUsers = await this.mentionRepository.find({
         where: { confirm: false },
       });
-      const notiUser = mentionedUsers.filter(
-        (item) =>
-          now - item.createdTimestamp >= 1500000 &&
-          now - item.createdTimestamp < 1800000 &&
-          !item.noti
-      );
-      mentionedUsers = mentionedUsers.filter(
-        (item) => now - item.createdTimestamp >= 1800000
+
+      const filteredMentionedUsers = await this.processNotiUsers(
+        client,
+        mentionedUsers
       );
 
-      await Promise.all(
-        notiUser.map(async (user) => {
-          const mentionChannel = await client.channels.fetch(user.channelId);
-          const threadNoti = mentionChannel.type !== ChannelType.GuildText;
-          const message = await mentionChannel.messages.fetch(user.messageId);
-          const mentionName = await client.users.fetch(user.authorId);
-          const userDiscord = await client.users.fetch(user.mentionUserId);
-          
-          userDiscord
-              .send(
-                `Hãy trả lời ${mentionName.username} tại ${threadNoti ? 'thread' : 'channel'} ${message.url} nhé!`
-              )
-              .catch(console.error);
-
-          await this.mentionRepository.update({ id: user.id }, { noti: true });
-        })
-      );
-
-      await Promise.all(
-        mentionedUsers.map(async (user) => {
-          let thread = false;
-          let mentionChannel = await client.channels
-            .fetch(user.channelId)
-            .catch((err) => {});
-          if (!mentionChannel) return;
-          const channelName = mentionChannel.name;
-          if (mentionChannel.type !== ChannelType.GuildText) {
-            thread = true;
-            mentionChannel = await client.channels
-              .fetch(mentionChannel.parentId)
-              .catch((err) => {});
-          }
-          let content;
-          thread
-            ? (content = `<@${
-                user.mentionUserId
-              }> không trả lời tin nhắn mention của <@${
-                user.authorId
-              }> lúc ${moment(parseInt(user.createdTimestamp.toString()))
-                .utcOffset(420)
-                .format("YYYY-MM-DD HH:mm:ss")} tại thread ${channelName} (${
-                mentionChannel.name
-              })!\n`)
-            : (content = `<@${
-                user.mentionUserId
-              }> không trả lời tin nhắn mention của <@${
-                user.authorId
-              }> lúc ${moment(parseInt(user.createdTimestamp.toString()))
-                .utcOffset(420)
-                .format("YYYY-MM-DD HH:mm:ss")} tại channel ${
-                mentionChannel.name
-              }!\n`);
-          const findUser = await this.userRepository.findOne({
-            where: { userId: user.mentionUserId },
-          });
-          const data = await this.wfhRepository.save({
-            user: findUser,
-            wfhMsg: content,
-            complain: false,
-            pmconfirm: false,
-            status: "ACTIVE",
-            type: "mention",
-            createdAt: Date.now(),
-          });
-          const message = this.komubotrestService.getWFHWarninghMessage(
-            content,
-            user.mentionUserId,
-            data.id.toString()
-          );
-          const channel = await client.channels.fetch(
-            this.clientConfig.machleoChannelId
-          );
-          await channel.send(message).catch(console.error);
-          await this.mentionRepository.update(
-            { id: user.id },
-            { confirm: true, punish: true }
-          );
-        })
-      );
+      await this.processMentionedUsers(client, filteredMentionedUsers);
     } catch (error) {
       console.log(error);
     }

@@ -145,6 +145,7 @@ export class UtilsService {
   }
 
   isTimeDay(newDateTimestamp) {
+    newDateTimestamp.setHours(0, 0, 0, 0);
     let result = false;
     if ((this.checkTimeMeeting() as any).dateTimeNow - newDateTimestamp >= 0) {
       result = true;
