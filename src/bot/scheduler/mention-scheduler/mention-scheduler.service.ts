@@ -77,7 +77,7 @@ export class MentionSchedulerService {
 
   async processNotiUsers(client, mentionedUsers) {
     const millisecondsOfTwentyfiveMinutes = 1500000;
-    const millisecondsOfThirtyMinutes = 1000;
+    const millisecondsOfThirtyMinutes = 1800000;
     const dateNow = Date.now();
     const notiUser = mentionedUsers.filter(
       (item) =>
