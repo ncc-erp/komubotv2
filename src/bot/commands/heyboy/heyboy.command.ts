@@ -5,6 +5,7 @@ import { firstValueFrom } from "rxjs";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { HeyboyService } from "./heyboy.service";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @CommandLine({
   name: "chuc",
@@ -14,6 +15,7 @@ import { HeyboyService } from "./heyboy.service";
 export class HeyboyCommand implements CommandLineClass {
   constructor(
     private heyboyService: HeyboyService,
+    private configService: ClientConfigService,
     private readonly http: HttpService,
     private komubotrestService: KomubotrestService
   ) {}
@@ -102,7 +104,7 @@ export class HeyboyCommand implements CommandLineClass {
     const response = await firstValueFrom(
       this.http
         .get(
-          "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
+          `${this.configService.timesheet.api_url}`
         )
         .pipe((res) => res)
     );

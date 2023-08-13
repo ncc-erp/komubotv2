@@ -21,8 +21,8 @@ export async function getUserOffWork(date?) {
     let userOffAffternoon = [];
 
     const url = date
-      ? `http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay?date=${date.toDateString()}`
-      : "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay";
+      ? `https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay?date=${date.toDateString()}`
+      : "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay";
     const response = await firstValueFrom(
       (new HttpService).get(url).pipe((res) => res)
     );

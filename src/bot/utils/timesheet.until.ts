@@ -156,7 +156,7 @@ export const logTimeSheetForTask = async ({
 
 export const getProjectOfUser = async (email) => {
   const url = getDebug()
-    ? "http://timesheetapi.nccsoft.vn/api/services/app/Public/GetPMsOfUser"
+    ? "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetPMsOfUser"
     : `${process.env.TIMESHEET_API}Public/GetPMsOfUser`;
   const projects =
     (
