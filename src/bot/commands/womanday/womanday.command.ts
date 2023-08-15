@@ -27,7 +27,7 @@ export class WomanDayCommand implements CommandLineClass {
     try {
       if (args[0] !== "women's" || args[1] !== "day") return;
       const response = await axios.get(
-        `${this.configService.timesheet.api_url}`
+        `${this.configService.getAllUser.api_url}`
       );
       if (!response.data || !response.data.result) return;
       const userWomenTest = response.data.result

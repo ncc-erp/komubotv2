@@ -104,7 +104,7 @@ export class HeyboyCommand implements CommandLineClass {
     const response = await firstValueFrom(
       this.http
         .get(
-          `${this.configService.timesheet.api_url}`
+          `${this.configService.getAllUser.api_url}`
         )
         .pipe((res) => res)
     );

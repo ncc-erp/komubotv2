@@ -74,7 +74,7 @@ export class DatingSchedulerService {
       const response = await firstValueFrom(
         this.http
           .get(
-            `${this.configClient.timesheet.api_url}`
+            `${this.configClient.getAllUser.api_url}`
           )
           .pipe((res) => res)
       );

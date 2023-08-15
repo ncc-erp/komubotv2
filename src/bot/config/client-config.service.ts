@@ -10,7 +10,7 @@ export class ClientConfigService {
         "TIMESHEET_API"
       )}Public/GetUserWorkFromHome`,
     };
-    this.timesheet = {
+    this.getAllUser = {
       api_url: `${configService.get<string>("TIMESHEET_API")}Public/GetAllUser`,
     };
     this.ticket = {
@@ -379,7 +379,7 @@ export class ClientConfigService {
     api_url: string;
   };
 
-  timesheet: {
+  getAllUser: {
     api_url: string;
   };
 
