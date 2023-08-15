@@ -1,13 +1,11 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Client, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { TABLE } from "src/bot/constants/table";
-import { Channel } from "src/bot/models/channel.entity";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 import { Msg } from "src/bot/models/msg.entity";
 import { TX8 } from "src/bot/models/tx8.entity";
 import { User } from "src/bot/models/user.entity";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
-import { UtilsService } from "src/bot/utils/utils.service";
 import { Repository } from "typeorm";
 
 function delay(time) {
@@ -28,8 +26,7 @@ export class Tx8Command implements CommandLineClass {
     private readonly msgRepository: Repository<Msg>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Channel)
-    private readonly channelRepository: Repository<Channel>
+    private configClient: ClientConfigService
   ) {}
 
   async execute(message: Message, args, client: Client, authorId) {
@@ -96,8 +93,7 @@ export class Tx8Command implements CommandLineClass {
         return;
       }
 
-      const admins = ["694732284116598797", "871713984670216273"];
-      if (!admins.includes(userId) && args[0] == "draw") {
+      if (!this.configClient.adminTX8Ids.includes(userId) && args[0] == "draw") {
         message
           .reply({
             content: "```You are not allowed to use this command.```",

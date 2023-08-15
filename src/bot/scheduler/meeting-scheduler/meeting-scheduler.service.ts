@@ -54,443 +54,423 @@ export class MeetingSchedulerService {
       this.updateReminderMeeting()
     );
   }
-  async tagMeeting(client: any) {
+
+  async tagMeeting(client: Client) {
     if (await this.utilsService.checkHoliday()) return;
-    let guild = client.guilds.fetch(this.configClient.guild_komu_id);
-    const getAllVoice = client.channels.cache.filter(
-      (guild) =>
-        guild.type === ChannelType.GuildVoice &&
-        guild.parentId === this.configClient.guildvoice_parent_id
+
+    const getAllVoice = await this.getAllVoiceChannels(client);
+    const repeatMeet = await this.getValidMeetings();
+
+    const voiceNow = await this.getActiveVoiceChannels();
+
+    const { countVoice, roomVoice } = await this.getCountAndRooms(
+      getAllVoice,
+      voiceNow,
+      client
     );
-    const repeatMeet = await this.meetingRepository
+
+    await this.checkAndSendNotifications(
+      client,
+      repeatMeet,
+      countVoice,
+      getAllVoice,
+      roomVoice
+    );
+  }
+
+  async getAllVoiceChannels(client: Client) {
+    await client.guilds.fetch(this.configClient.guild_komu_id);
+    return client.channels.cache.filter(
+      (channel) =>
+        channel.type === ChannelType.GuildVoice &&
+        channel.parentId === this.configClient.guildvoice_parent_id
+    );
+  }
+
+  async getValidMeetings() {
+    return await this.meetingRepository
       .createQueryBuilder("meeting")
       .where(`"reminder" IS NOT TRUE`)
       .andWhere(`"cancel" IS NOT TRUE`)
       .select("meeting.*")
       .execute();
+  }
 
-    const voiceChannel = getAllVoice.map((item) => item.id);
-
-    let countVoice = 0;
-    let roomMap = [];
-    let voiceNow = [];
-
-    const findVoice = await this.voiceChannelRepository.find({
+  async getActiveVoiceChannels() {
+    const activeVoiceChannels = await this.voiceChannelRepository.find({
       where: {
         status: "start",
       },
     });
-    findVoice.map((item) => {
-      voiceNow.push(item.voiceChannelId);
-    });
 
-    voiceChannel.map(async (voice, index) => {
-      const userDiscord = await client.channels.fetch(voice);
+    return activeVoiceChannels.map((item) => item.voiceChannelId);
+  }
+
+  async getCountAndRooms(
+    allVoiceChannels,
+    activeVoiceChannels,
+    client: Client
+  ) {
+    let countVoice = 0;
+    let roomVoice = [];
+
+    allVoiceChannels.forEach(async (channel) => {
+      const userDiscord: any = await client.channels.fetch(channel.id);
 
       if (userDiscord.members.size > 0) {
         countVoice++;
-      }
-      if (userDiscord.members.size === 0) {
-        roomMap.push(userDiscord.id);
-      }
-      let roomVoice: any = roomMap.filter((room) => !voiceNow.includes(room));
-
-      if (index === voiceChannel.length - 1) {
-        const timeCheck = repeatMeet.map(async (item) => {
-          const dateScheduler = new Date(+item.createdTimestamp);
-          const minuteDb = dateScheduler.getMinutes();
-
-          const dateCreatedTimestamp = new Date(
-            +item.createdTimestamp.toString()
-          ).toLocaleDateString("en-US");
-          if (
-            countVoice === voiceChannel.length &&
-            this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
-            this.utilsService.isSameDate(dateCreatedTimestamp)
-          ) {
-            const fetchChannelFull = await client.channels.fetch(
-              item.channelId
-            );
-            await fetchChannelFull
-              .send(`@here voice channel full`)
-              .catch(console.error);
-          } else {
-            const newDateTimestamp = new Date(
-              +item.createdTimestamp.toString()
-            );
-            const currentDate = new Date(newDateTimestamp.getTime());
-            const today = new Date();
-            currentDate.setDate(today.getDate());
-            currentDate.setMonth(today.getMonth());
-            switch (item.repeat) {
-              case "once":
-                if (
-                  this.utilsService.isSameDate(dateCreatedTimestamp) &&
-                  this.utilsService.isSameMinute(minuteDb, dateScheduler)
-                ) {
-                  const onceFetchChannel = await client.channels.fetch(
-                    item.channelId
-                  );
-                  if (roomVoice.length !== 0) {
-                    onceFetchChannel
-                      .send(`@here our meeting room is <#${roomVoice[0]}>`)
-                      .catch(console.error);
-                    const onceShift = roomVoice.shift(roomVoice[0]);
-                    const channelNameOnce = await client.channels.fetch(
-                      onceShift
-                    );
-                    let originalNameOnce = channelNameOnce.name;
-                    const searchTermOnce = "(";
-                    const indexOfFirstOnce =
-                      originalNameOnce.indexOf(searchTermOnce);
-                    if (indexOfFirstOnce > 0) {
-                      originalNameOnce = originalNameOnce.slice(
-                        0,
-                        indexOfFirstOnce - 1
-                      );
-                      await channelNameOnce.setName(
-                        `${originalNameOnce} (${item.task})`
-                      );
-                    } else
-                      await channelNameOnce.setName(
-                        `${channelNameOnce.name} (${item.task})`
-                      );
-                    const newRoomOnce = channelNameOnce.name;
-                    await this.voiceChannelRepository
-                      .insert({
-                        voiceChannelId: channelNameOnce.id,
-                        originalName: originalNameOnce,
-                        newRoomName: newRoomOnce,
-                        createdTimestamp: Date.now(),
-                      })
-                      .catch((err) => console.log(err));
-                  } else
-                    await onceFetchChannel
-                      .send(`@here voice channel full`)
-                      .catch(console.error);
-                  await this.meetingRepository
-                    .createQueryBuilder()
-                    .update(Meeting)
-                    .set({ reminder: true })
-                    .where('"id" = :id', { id: item.id })
-                    .execute()
-                    .catch(console.error);
-                }
-                return;
-              case "daily":
-                if (this.utilsService.isSameDay()) return;
-                if (this.utilsService.isSameMinute(minuteDb, dateScheduler)) {
-                  const dailyFetchChannel = await client.channels.fetch(
-                    item.channelId
-                  );
-                  if (roomVoice.length !== 0) {
-                    dailyFetchChannel
-                      .send(`@here our meeting room is <#${roomVoice[0]}>`)
-                      .catch(console.error);
-                    const dailyShift = roomVoice.shift(roomVoice[0]);
-                    const channelNameDaily = await client.channels.fetch(
-                      dailyShift
-                    );
-                    let originalNameDaily = channelNameDaily.name;
-                    const searchTermDaily = "(";
-                    const indexOfFirstDaily =
-                      originalNameDaily.indexOf(searchTermDaily);
-                    if (indexOfFirstDaily > 0) {
-                      originalNameDaily = originalNameDaily.slice(
-                        0,
-                        indexOfFirstDaily - 1
-                      );
-                      await channelNameDaily.setName(
-                        `${originalNameDaily} (${item.task})`
-                      );
-                    } else
-                      await channelNameDaily.setName(
-                        `${channelNameDaily.name} (${item.task})`
-                      );
-                    console.log(`setname ${item.task} daily ${item.channelId}`);
-                    const newRoomDaily = channelNameDaily.name;
-                    await this.voiceChannelRepository
-                      .insert({
-                        voiceChannelId: channelNameDaily.id,
-                        originalName: originalNameDaily,
-                        newRoomName: newRoomDaily,
-                        createdTimestamp: Date.now(),
-                      })
-                      .catch((err) => console.log(err));
-                    console.log(
-                      `wait for update ${item.task} daily ${item.channelId}`
-                    );
-                  } else
-                    await dailyFetchChannel
-                      .send(`@here voice channel full`)
-                      .catch(console.error);
-
-                  let newCreatedTimestamp = item.createdTimestamp;
-                  newCreatedTimestamp = currentDate.setDate(
-                    currentDate.getDate() + 1
-                  );
-
-                  while (
-                    await this.utilsService.checkHolidayMeeting(currentDate)
-                  ) {
-                    newCreatedTimestamp = currentDate.setDate(
-                      currentDate.getDate() + 1
-                    );
-                  }
-                  console.log(
-                    `checkholiday set timestamp ${item.task} ${item.channelId}`
-                  );
-                  await this.meetingRepository
-                    .createQueryBuilder()
-                    .update(Meeting)
-                    .set({
-                      reminder: true,
-                      createdTimestamp: newCreatedTimestamp,
-                    })
-                    .where('"id" = :id', { id: item.id })
-                    .execute()
-                    .catch(console.error);
-                  console.log(
-                    `update daily ${item.task} successfully ${item.channelId}`
-                  );
-
-                  const findMeetingAfter = await this.meetingRepository.find({
-                    where: {
-                      channelId: item.channelId,
-                      task: item.task,
-                      repeat: item.repeat,
-                    },
-                  });
-                  console.log(findMeetingAfter, "findMeetingAfterUpdate");
-                }
-                return;
-              case "weekly":
-                if (
-                  this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
-                  this.utilsService.isDiffDay(dateScheduler, 7) &&
-                  this.utilsService.isTimeDay(dateScheduler)
-                ) {
-                  const weeklyFetchChannel = await client.channels.fetch(
-                    item.channelId
-                  );
-                  if (roomVoice.length !== 0) {
-                    weeklyFetchChannel
-                      .send(`@here our meeting room is <#${roomVoice[0]}>`)
-                      .catch(console.error);
-                    const weeklyShift = roomVoice.shift(roomVoice[0]);
-                    const channelNameWeekly = await client.channels.fetch(
-                      weeklyShift
-                    );
-                    let originalNameWeekly = channelNameWeekly.name;
-                    const searchTermWeekly = "(";
-                    const indexOfFirstWeekly =
-                      originalNameWeekly.indexOf(searchTermWeekly);
-                    if (indexOfFirstWeekly > 0) {
-                      originalNameWeekly = originalNameWeekly.slice(
-                        0,
-                        indexOfFirstWeekly - 1
-                      );
-                      await channelNameWeekly.setName(
-                        `${originalNameWeekly} (${item.task})`
-                      );
-                    } else
-                      await channelNameWeekly.setName(
-                        `${channelNameWeekly.name} (${item.task})`
-                      );
-                    const newRoomWeekly = channelNameWeekly.name;
-                    await this.voiceChannelRepository
-                      .insert({
-                        voiceChannelId: channelNameWeekly.id,
-                        originalName: originalNameWeekly,
-                        newRoomName: newRoomWeekly,
-                        createdTimestamp: Date.now(),
-                      })
-                      .catch((err) => console.log(err));
-                  } else
-                    await weeklyFetchChannel
-                      .send(`@here voice channel full`)
-                      .catch(console.error);
-                  let newCreatedTimestampWeekly = item.createdTimestamp;
-                  newCreatedTimestampWeekly = currentDate.setDate(
-                    currentDate.getDate() + 7
-                  );
-                  while (
-                    await this.utilsService.checkHolidayMeeting(currentDate)
-                  ) {
-                    newCreatedTimestampWeekly = currentDate.setDate(
-                      currentDate.getDate() + 7
-                    );
-                  }
-                  await this.meetingRepository
-                    .createQueryBuilder()
-                    .update(Meeting)
-                    .set({
-                      reminder: true,
-                      createdTimestamp: newCreatedTimestampWeekly,
-                    })
-                    .where('"id" = :id', { id: item.id })
-                    .execute()
-                    .catch(console.error);
-                }
-                return;
-              case "repeat":
-                if (
-                  this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
-                  this.utilsService.isDiffDay(
-                    dateScheduler,
-                    +item.repeatTime
-                  ) &&
-                  this.utilsService.isTimeDay(dateScheduler)
-                ) {
-                  const repeatFetchChannel = await client.channels.fetch(
-                    item.channelId
-                  );
-                  if (roomVoice.length !== 0) {
-                    repeatFetchChannel
-                      .send(`@here our meeting room is <#${roomVoice[0]}>`)
-                      .catch(console.error);
-                    const repeatShift = roomVoice.shift(roomVoice[0]);
-                    const channelNameRepeat = await client.channels.fetch(
-                      repeatShift
-                    );
-                    let originalNameRepeat = channelNameRepeat.name;
-                    const searchTermRepeat = "(";
-                    const indexOfFirstRepeat =
-                      originalNameRepeat.indexOf(searchTermRepeat);
-                    if (indexOfFirstRepeat > 0) {
-                      originalNameRepeat = originalNameRepeat.slice(
-                        0,
-                        indexOfFirstRepeat - 1
-                      );
-                      await channelNameRepeat.setName(
-                        `${originalNameRepeat} (${item.task})`
-                      );
-                    } else
-                      await channelNameRepeat.setName(
-                        `${channelNameRepeat.name} (${item.task})`
-                      );
-                    const newRoomRepeat = channelNameRepeat.name;
-                    await this.voiceChannelRepository
-                      .insert({
-                        voiceChannelId: channelNameRepeat.id,
-                        originalName: originalNameRepeat,
-                        newRoomName: newRoomRepeat,
-                        createdTimestamp: Date.now(),
-                      })
-                      .catch((err) => console.log(err));
-                  } else
-                    await repeatFetchChannel
-                      .send(`@here voice channel full`)
-                      .catch(console.error);
-                  let newCreatedTimestampRepeat = item.createdTimestamp;
-                  const newDate = new Date(currentDate);
-                  newDate.setDate(newDate.getDate() + +item.repeatTime);
-                  newCreatedTimestampRepeat = newDate.getTime();
-
-                  while (
-                    await this.utilsService.checkHolidayMeeting(currentDate)
-                  ) {
-                    newCreatedTimestampRepeat = newDate.setDate(
-                      newDate.getDate() + +item.repeatTime
-                    );
-                  }
-                  await this.meetingRepository
-                    .createQueryBuilder()
-                    .update(Meeting)
-                    .set({
-                      reminder: true,
-                      createdTimestamp: newCreatedTimestampRepeat,
-                    })
-                    .where('"id" = :id', { id: item.id })
-                    .execute()
-                    .catch(console.error);
-                }
-                return;
-              case "monthly":
-                if (this.utilsService.isSameDay()) {
-                  return;
-                }
-
-                if (this.utilsService.isSameMinute(minuteDb, dateScheduler)) {
-                  const isRepeatFirst = item.repeatTime === "first";
-                  const isRepeatLast = item.repeatTime === "last";
-                  const isRepeatMonthly = !isRepeatFirst && !isRepeatLast;
-
-                  today.setHours(today.getHours() + 7);
-                  const isCurrentMonthFirstDay = isFirstDayOfMonth(today);
-                  const isCurrentMonthLastDay = isLastDayOfMonth(today);
-                  const isCurrentDateScheduler =
-                    today.getDate() === dateScheduler.getDate();
-
-                  if (
-                    (isRepeatFirst && isCurrentMonthFirstDay) ||
-                    (isRepeatLast && isCurrentMonthLastDay) ||
-                    (isRepeatMonthly && isCurrentDateScheduler)
-                  ) {
-                    const monthlyFetchChannel = await client.channels.fetch(
-                      item.channelId
-                    );
-
-                    if (roomVoice.length !== 0) {
-                      monthlyFetchChannel
-                        .send(`@here our meeting room is <#${roomVoice[0]}>`)
-                        .catch(console.error);
-
-                      const monthlyShift = roomVoice.shift(roomVoice[0]);
-                      const channelNameMonthly = await client.channels.fetch(
-                        monthlyShift
-                      );
-                      let originalNameMonthly = channelNameMonthly.name;
-                      const searchTermMonthly = "(";
-                      const indexOfFirstMonthly =
-                        originalNameMonthly.indexOf(searchTermMonthly);
-
-                      if (indexOfFirstMonthly > 0) {
-                        originalNameMonthly = originalNameMonthly.slice(
-                          0,
-                          indexOfFirstMonthly - 1
-                        );
-                      }
-
-                      await channelNameMonthly.setName(
-                        `${originalNameMonthly} (${item.task})`
-                      );
-
-                      const newRoomMonthly = channelNameMonthly.name;
-                      await this.voiceChannelRepository
-                        .insert({
-                          voiceChannelId: channelNameMonthly.id,
-                          originalName: originalNameMonthly,
-                          newRoomName: newRoomMonthly,
-                          createdTimestamp: Date.now(),
-                        })
-                        .catch(console.error);
-                    } else {
-                      await monthlyFetchChannel
-                        .send(`@here voice channel full`)
-                        .catch(console.error);
-                    }
-
-                    await this.meetingRepository
-                      .createQueryBuilder()
-                      .update(Meeting)
-                      .set({
-                        reminder: true,
-                      })
-                      .where('"id" = :id', { id: item.id })
-                      .execute()
-                      .catch(console.error);
-                  }
-                }
-
-                return;
-              default:
-                break;
-            }
-          }
-        });
+      } else {
+        roomVoice.push(channel.id);
       }
     });
+
+    roomVoice = roomVoice.filter((room) => !activeVoiceChannels.includes(room));
+
+    return { countVoice, roomVoice };
+  }
+
+  async checkAndSendNotifications(
+    client,
+    repeatMeet,
+    countVoice,
+    getAllVoice,
+    roomVoice
+  ) {
+    for (const data of repeatMeet) {
+      const dateScheduler = new Date(+data.createdTimestamp);
+      const minuteDb = dateScheduler.getMinutes();
+      const dateCreatedTimestamp = new Date(
+        +data.createdTimestamp.toString()
+      ).toLocaleDateString("en-US");
+
+      if (
+        countVoice === getAllVoice.length &&
+        this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+        this.utilsService.isSameDate(dateCreatedTimestamp)
+      ) {
+        const fetchChannelFull = await client.channels.fetch(data.channelId);
+        await fetchChannelFull
+          .send(`@here voice channel full`)
+          .catch(console.error);
+      } else {
+        await this.handleMeetingRepeat(
+          data,
+          roomVoice,
+          dateCreatedTimestamp,
+          client,
+          dateScheduler,
+          minuteDb
+        );
+      }
+    }
+  }
+
+  async handleMeetingRepeat(
+    data,
+    roomVoice,
+    dateCreatedTimestamp,
+    client,
+    dateScheduler,
+    minuteDb
+  ) {
+    const newDateTimestamp = new Date(+data.createdTimestamp.toString());
+    const currentDate = new Date(newDateTimestamp.getTime());
+    const today = new Date();
+    currentDate.setDate(today.getDate());
+    currentDate.setMonth(today.getMonth());
+
+    switch (data.repeat) {
+      case "once":
+        await this.handleOnceMeeting(
+          data,
+          roomVoice,
+          dateCreatedTimestamp,
+          client,
+          dateScheduler,
+          minuteDb
+        );
+        break;
+      case "daily":
+        await this.handleDailyMeeting(
+          data,
+          roomVoice,
+          currentDate,
+          client,
+          dateScheduler,
+          minuteDb
+        );
+        break;
+      case "weekly":
+        await this.handleWeeklyMeeting(
+          data,
+          roomVoice,
+          currentDate,
+          client,
+          dateScheduler,
+          minuteDb
+        );
+        break;
+      case "repeat":
+        await this.handleRepeatMeeting(
+          data,
+          roomVoice,
+          currentDate,
+          client,
+          dateScheduler,
+          minuteDb
+        );
+        break;
+      case "monthly":
+        await this.handleMonthlyMeeting(
+          data,
+          roomVoice,
+          today,
+          client,
+          dateScheduler,
+          minuteDb
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
+  async handleOnceMeeting(
+    data,
+    roomVoice,
+    dateCreatedTimestamp,
+    client,
+    dateScheduler,
+    minuteDb
+  ) {
+    if (
+      this.utilsService.isSameDate(dateCreatedTimestamp) &&
+      this.utilsService.isSameMinute(minuteDb, dateScheduler)
+    ) {
+      const onceFetchChannel = await client.channels.fetch(data.channelId);
+      await this.handleRenameVoiceChannel(
+        roomVoice,
+        onceFetchChannel,
+        client,
+        data
+      );
+      await this.meetingRepository
+        .createQueryBuilder()
+        .update(Meeting)
+        .set({ reminder: true })
+        .where('"id" = :id', { id: data.id })
+        .execute()
+        .catch(console.error);
+    }
+  }
+
+  async handleDailyMeeting(
+    data,
+    roomVoice,
+    currentDate,
+    client,
+    dateScheduler,
+    minuteDb
+  ) {
+    if (this.utilsService.isSameDay()) return;
+
+    if (
+      this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+      this.utilsService.isTimeDay(dateScheduler)
+    ) {
+      const dailyFetchChannel = await client.channels.fetch(data.channelId);
+      await this.handleRenameVoiceChannel(
+        roomVoice,
+        dailyFetchChannel,
+        client,
+        data
+      );
+
+      let newCreatedTimestamp = data.createdTimestamp;
+      newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
+
+      while (await this.utilsService.checkHolidayMeeting(currentDate)) {
+        newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      await this.meetingRepository
+        .createQueryBuilder()
+        .update(Meeting)
+        .set({ reminder: true, createdTimestamp: newCreatedTimestamp })
+        .where('"id" = :id', { id: data.id })
+        .execute()
+        .catch(console.error);
+
+      const findMeetingAfter = await this.meetingRepository.find({
+        where: {
+          channelId: data.channelId,
+          task: data.task,
+          repeat: data.repeat,
+        },
+      });
+      console.log(findMeetingAfter, "findMeetingAfterUpdate");
+    }
+  }
+
+  async handleWeeklyMeeting(
+    data,
+    roomVoice,
+    currentDate,
+    client,
+    dateScheduler,
+    minuteDb
+  ) {
+    if (
+      this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+      this.utilsService.isDiffDay(dateScheduler, 7) &&
+      this.utilsService.isTimeDay(dateScheduler)
+    ) {
+      const weeklyFetchChannel = await client.channels.fetch(data.channelId);
+      await this.handleRenameVoiceChannel(
+        roomVoice,
+        weeklyFetchChannel,
+        client,
+        data
+      );
+
+      let newCreatedTimestampWeekly = data.createdTimestamp;
+      newCreatedTimestampWeekly = currentDate.setDate(
+        currentDate.getDate() + 7
+      );
+      while (await this.utilsService.checkHolidayMeeting(currentDate)) {
+        newCreatedTimestampWeekly = currentDate.setDate(
+          currentDate.getDate() + 7
+        );
+      }
+      await this.meetingRepository
+        .createQueryBuilder()
+        .update(Meeting)
+        .set({ reminder: true, createdTimestamp: newCreatedTimestampWeekly })
+        .where('"id" = :id', { id: data.id })
+        .execute()
+        .catch(console.error);
+    }
+  }
+
+  async handleRepeatMeeting(
+    data,
+    roomVoice,
+    currentDate,
+    client,
+    dateScheduler,
+    minuteDb
+  ) {
+    if (
+      this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+      this.utilsService.isDiffDay(dateScheduler, +data.repeatTime) &&
+      this.utilsService.isTimeDay(dateScheduler)
+    ) {
+      const repeatFetchChannel = await client.channels.fetch(data.channelId);
+      await this.handleRenameVoiceChannel(
+        roomVoice,
+        repeatFetchChannel,
+        client,
+        data
+      );
+
+      let newCreatedTimestampRepeat = data.createdTimestamp;
+      const newDate = new Date(currentDate);
+      newDate.setDate(newDate.getDate() + +data.repeatTime);
+      newCreatedTimestampRepeat = newDate.getTime();
+      while (await this.utilsService.checkHolidayMeeting(currentDate)) {
+        newCreatedTimestampRepeat = newDate.setDate(
+          newDate.getDate() + +data.repeatTime
+        );
+      }
+      await this.meetingRepository
+        .createQueryBuilder()
+        .update(Meeting)
+        .set({ reminder: true, createdTimestamp: newCreatedTimestampRepeat })
+        .where('"id" = :id', { id: data.id })
+        .execute()
+        .catch(console.error);
+    }
+  }
+
+  async handleMonthlyMeeting(
+    data,
+    roomVoice,
+    today,
+    client,
+    dateScheduler,
+    minuteDb
+  ) {
+    if (this.utilsService.isSameDay()) {
+      return;
+    }
+
+    if (
+      this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+      this.utilsService.isTimeDay(dateScheduler)
+    ) {
+      const isRepeatFirst = data.repeatTime === "first";
+      const isRepeatLast = data.repeatTime === "last";
+      const isRepeatMonthly = !isRepeatFirst && !isRepeatLast;
+
+      today.setHours(today.getHours() + 7);
+      const isCurrentMonthFirstDay = isFirstDayOfMonth(today);
+      const isCurrentMonthLastDay = isLastDayOfMonth(today);
+      const isCurrentDateScheduler =
+        today.getDate() === dateScheduler.getDate();
+
+      if (
+        (isRepeatFirst && isCurrentMonthFirstDay) ||
+        (isRepeatLast && isCurrentMonthLastDay) ||
+        (isRepeatMonthly && isCurrentDateScheduler)
+      ) {
+        const monthlyFetchChannel = await client.channels.fetch(data.channelId);
+
+        await this.handleRenameVoiceChannel(
+          roomVoice,
+          monthlyFetchChannel,
+          client,
+          data
+        );
+
+        await this.meetingRepository
+          .createQueryBuilder()
+          .update(Meeting)
+          .set({ reminder: true })
+          .where('"id" = :id', { id: data.id })
+          .execute()
+          .catch(console.error);
+      }
+    }
+  }
+
+  async handleRenameVoiceChannel(roomVoice, channel, client, data) {
+    if (roomVoice.length !== 0) {
+      await channel
+        .send(`@here our meeting room is <#${roomVoice[0]}>`)
+        .catch(console.error);
+      const voiceRemove = roomVoice.shift(roomVoice[0]);
+      const voiceChannel = await client.channels.fetch(voiceRemove);
+      let originalName = voiceChannel.name;
+      const searchTerm = "(";
+      const indexOfFirst = originalName.indexOf(searchTerm);
+      if (indexOfFirst > 0) {
+        originalName = originalName.slice(0, indexOfFirst - 1);
+        await voiceChannel.setName(`${originalName} (${data.task})`);
+      } else {
+        await voiceChannel.setName(`${voiceChannel.name} (${data.task})`);
+      }
+      const newRoom = voiceChannel.name;
+      await this.voiceChannelRepository
+        .insert({
+          voiceChannelId: voiceChannel.id,
+          originalName: originalName,
+          newRoomName: newRoom,
+          createdTimestamp: Date.now(),
+        })
+        .catch((err) => console.log(err));
+    } else {
+      await channel.send(`@here voice channel full`).catch(console.error);
+    }
   }
 
   async updateReminderMeeting() {

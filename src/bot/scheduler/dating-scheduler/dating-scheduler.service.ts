@@ -74,7 +74,7 @@ export class DatingSchedulerService {
       const response = await firstValueFrom(
         this.http
           .get(
-            "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
+            `${this.configClient.getAllUser.api_url}`
           )
           .pipe((res) => res)
       );

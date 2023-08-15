@@ -5,6 +5,7 @@ import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from "discord.js";
 import { WomanDayService } from "./womanday.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { ClientConfigService } from "src/bot/config/client-config.service";
 
 @CommandLine({
   name: "happy",
@@ -14,6 +15,7 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 export class WomanDayCommand implements CommandLineClass {
   constructor(
     private WomanDayService: WomanDayService,
+    private configService: ClientConfigService,
     private komubotrestController: KomubotrestService
   ) {}
   getUserNameByEmail(string) {
@@ -25,7 +27,7 @@ export class WomanDayCommand implements CommandLineClass {
     try {
       if (args[0] !== "women's" || args[1] !== "day") return;
       const response = await axios.get(
-        "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUser"
+        `${this.configService.getAllUser.api_url}`
       );
       if (!response.data || !response.data.result) return;
       const userWomenTest = response.data.result
