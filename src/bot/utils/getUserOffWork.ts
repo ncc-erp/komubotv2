@@ -1,5 +1,6 @@
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
+import https from "https";
 
 function getStatusDay() {
   let statusDay;
@@ -23,9 +24,14 @@ export async function getUserOffWork(date?) {
     const url = date
       ? `https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay?date=${date.toDateString()}`
       : "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay";
+    const httpsAgent = new https.Agent({
+      rejectUnauthorized: false,
+    });
+
     const response = await firstValueFrom(
-      (new HttpService).get(url).pipe((res) => res)
+      new HttpService().get(url, { httpsAgent }).pipe((res) => res)
     );
+
     if ((response as any).data && (response as any).data.result) {
       userOffFullday = (response as any).data.result
         .filter((user) => user.message.includes("Off Fullday"))

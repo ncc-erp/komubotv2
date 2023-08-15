@@ -63,7 +63,8 @@ export class ReportCheckoutService {
             .get(
               `${
                 this.clientConfigService.checkinTimesheet.api_url
-              }?startDate=${this.utilsService.getyesterdaydate()}&endDate=${this.utilsService.getyesterdaydate()}`
+              }?startDate=${this.utilsService.getyesterdaydate()}&endDate=${this.utilsService.getyesterdaydate()}`,
+              { httpsAgent: this.clientConfigService.https }
             )
             .pipe((res) => res)
         );
@@ -133,7 +134,8 @@ export class ReportCheckoutService {
           const lists = await firstValueFrom(
             this.http
               .get(
-                `${this.clientConfigService.checkinTimesheet.api_url}?startDate=${startDate}&endDate=${startDate}`
+                `${this.clientConfigService.checkinTimesheet.api_url}?startDate=${startDate}&endDate=${startDate}`,
+                { httpsAgent: this.clientConfigService.https }
               )
               .pipe((res) => res)
           );
@@ -186,7 +188,8 @@ export class ReportCheckoutService {
         const lists = await firstValueFrom(
           this.http
             .get(
-              `${this.clientConfigService.checkinTimesheet.api_url}?startDate=${startDate}&endDate=${startDate}`
+              `${this.clientConfigService.checkinTimesheet.api_url}?startDate=${startDate}&endDate=${startDate}`,
+              { httpsAgent: this.clientConfigService.https }
             )
             .pipe((res) => res)
         );

@@ -27,7 +27,7 @@ export class DatingSchedulerService {
     @InjectDiscordClient()
     private client: Client,
     private readonly http: HttpService,
-    private configClient: ClientConfigService
+    private clientConfigService: ClientConfigService
   ) {}
 
   private readonly logger = new Logger(DatingSchedulerService.name);
@@ -52,7 +52,7 @@ export class DatingSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("dating", '0-15/1 17 * * 5', () =>
+    this.addCronJob("dating", "0-15/1 17 * * 5", () =>
       this.dating(this.client)
     );
   }
@@ -73,9 +73,9 @@ export class DatingSchedulerService {
     if (minute === 0) {
       const response = await firstValueFrom(
         this.http
-          .get(
-            `${this.configClient.getAllUser.api_url}`
-          )
+          .get(`${this.clientConfigService.getAllUser.api_url}`, {
+            httpsAgent: this.clientConfigService.https,
+          })
           .pipe((res) => res)
       );
       if (!response.data || !response.data.result) return;
@@ -179,11 +179,11 @@ export class DatingSchedulerService {
 
       if (!checkUserMan || !checkUserWoman) return;
 
-      let guild = client.guilds.fetch(this.configClient.guild_komu_id);
+      await client.guilds.fetch(this.clientConfigService.guild_komu_id);
       const getAllVoice = client.channels.cache.filter(
         (guild) =>
           guild.type === ChannelType.GuildVoice &&
-          guild.parentId === this.configClient.guildvoice_parent_id
+          guild.parentId === this.clientConfigService.guildvoice_parent_id
       );
       const voiceChannel = getAllVoice.map((item) => item.id);
       let roomMap = [];
@@ -262,13 +262,13 @@ export class DatingSchedulerService {
           if (countVoice === voiceChannel.length) {
             {
               const fetchChannelFull = await client.channels.fetch(
-                this.configClient.chuyenphiem_id
+                this.clientConfigService.chuyenphiem_id
               );
               fetchChannelFull.send(`Voice channel full`);
             }
           } else {
             const nowFetchChannel = await client.channels.fetch(
-              this.configClient.chuyenphiem_id
+              this.clientConfigService.chuyenphiem_id
             );
             for (let i = 0; i < datingIdWoman.length; i++) {
               if (roomMap.length !== 0) {
@@ -332,10 +332,11 @@ export class DatingSchedulerService {
         } else idWomanPrivate.push(item.userId);
       });
 
-      let fetchGuild = client.guilds.fetch(this.configClient.guild_komu_id);
+      await client.guilds.fetch(this.clientConfigService.guild_komu_id);
       const getAllVoicePrivate = client.channels.cache.filter(
         (guild) =>
-          guild.type === ChannelType.GuildVoice && guild.parentId === this.configClient.topCategoryId
+          guild.type === ChannelType.GuildVoice &&
+          guild.parentId === this.clientConfigService.topCategoryId
       );
       const voiceChannelPrivate = getAllVoicePrivate.map((item) => item.id);
       let roomMapPrivate = [];

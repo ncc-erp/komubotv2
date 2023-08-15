@@ -42,10 +42,12 @@ export class UserStatusCommand implements CommandLineClass {
         return message.reply(`Wrong Email!`).catch((err) => {
           this.komubotrestService.sendErrorToDevTest(client, authorId, err);
         });
+
       const getUserStatus = await firstValueFrom(
         this.http
           .get(
-            `${this.clientConfig.user_status.api_url_userstatus}?emailAddress=${email}@ncc.asia`
+            `${this.clientConfig.user_status.api_url_userstatus}?emailAddress=${email}@ncc.asia`,
+            { httpsAgent: this.clientConfig.https }
           )
           .pipe((res) => res)
       );

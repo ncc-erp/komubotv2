@@ -90,6 +90,7 @@ export class WfhSchedulerService {
         wfhGetApi = await firstValueFrom(
           this.http
             .get(this.clientConfigService.wfh.api_url, {
+              httpsAgent: this.clientConfigService.https,
               headers: {
                 securitycode: this.clientConfigService.wfhApiKey,
               },
@@ -214,6 +215,7 @@ export class WfhSchedulerService {
       wfhGetApi = await firstValueFrom(
         this.http
           .get(this.clientConfigService.wfh.api_url, {
+            httpsAgent: this.clientConfigService.https,
             headers: {
               securitycode: this.clientConfigService.wfhApiKey,
             },

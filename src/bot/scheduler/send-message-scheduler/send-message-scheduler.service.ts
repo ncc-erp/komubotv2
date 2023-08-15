@@ -140,7 +140,8 @@ export class SendMessageSchedulerService {
         this.http
           .get(
             this.clientConfigService.submitTimesheet
-              .api_url_getListUserLogTimesheet
+              .api_url_getListUserLogTimesheet,
+            { httpsAgent: this.clientConfigService.https }
           )
           .pipe((res) => res)
       );
@@ -182,6 +183,7 @@ export class SendMessageSchedulerService {
       const listsUser = await firstValueFrom(
         this.http
           .get(this.clientConfigService.checkout.api_url, {
+            httpsAgent: this.clientConfigService.https,
             headers: {
               "X-Secret-Key": `${this.clientConfigService.komubotRestSecretKey}`,
             },

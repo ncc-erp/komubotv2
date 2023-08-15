@@ -15,7 +15,7 @@ import { ClientConfigService } from "src/bot/config/client-config.service";
 export class HeyboyCommand implements CommandLineClass {
   constructor(
     private heyboyService: HeyboyService,
-    private configService: ClientConfigService,
+    private clientConfigService: ClientConfigService,
     private readonly http: HttpService,
     private komubotrestService: KomubotrestService
   ) {}
@@ -103,9 +103,9 @@ export class HeyboyCommand implements CommandLineClass {
     });
     const response = await firstValueFrom(
       this.http
-        .get(
-          `${this.configService.getAllUser.api_url}`
-        )
+        .get(`${this.clientConfigService.getAllUser.api_url}`, {
+          httpsAgent: this.clientConfigService.https,
+        })
         .pipe((res) => res)
     );
     if (!response.data || !response.data.result) {

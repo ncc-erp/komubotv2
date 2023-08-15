@@ -3,17 +3,16 @@ import {
   EventParams,
   Handler,
   InteractionEvent,
-  Param,
-  UseGroup,
 } from "@discord-nestjs/core";
 import { HttpService } from "@nestjs/axios";
-import { Transform } from "class-transformer";
-import { MessagePayload, InteractionReplyOptions, ClientEvents } from "discord.js";
+import {
+  ClientEvents,
+} from "discord.js";
 import { firstValueFrom } from "rxjs";
 import { ClientConfigService } from "../config/client-config.service";
-import { QuerySubCommand } from "./ticket-subcommand/query.subcommand";
 import { TicketDevDto } from "../slash-commands/dto/ticketdev.dto";
 import { SlashCommandPipe } from "@discord-nestjs/common";
+
 @Command({
   name: "ticketdev",
   description: "manage ticket",
@@ -27,7 +26,7 @@ export class TicketSlashCommand {
   @Handler()
   async handler(
     @InteractionEvent(SlashCommandPipe) dto: TicketDevDto,
-    @EventParams() args: ClientEvents['interactionCreate'],
+    @EventParams() args: ClientEvents["interactionCreate"]
   ): Promise<any> {
     const topic = dto.query;
     const topicAssignee = dto.assignee;
@@ -47,6 +46,7 @@ export class TicketSlashCommand {
             },
 
             {
+              httpsAgent: this.clientConfigService.https,
               headers: {
                 "X-Secret-Key": this.clientConfigService.ticketApiKey,
                 "Content-Type": "application/json",
@@ -63,6 +63,7 @@ export class TicketSlashCommand {
           this.httpService.get(
             `${this.clientConfigService.ticket.api_url_get}?email=${topicAssignee}@ncc.asia`,
             {
+              httpsAgent: this.clientConfigService.https,
               headers: {
                 "X-Secret-Key": this.clientConfigService.ticketApiKey,
               },
@@ -71,13 +72,14 @@ export class TicketSlashCommand {
         ).catch((err) => {
           console.log("Error ", err);
           return {
-            data: undefined
-            };
+            data: undefined,
+          };
         });
-        if (!data || !data.result) return {
-          content: `Error while looking up for **${topicAssignee}**.`,
-          ephemeral: true,
-        };;
+        if (!data || !data.result)
+          return {
+            content: `Error while looking up for **${topicAssignee}**.`,
+            ephemeral: true,
+          };
         const dataJobs = data.result.map((item) => [
           item.jobId,
           item.jobName,

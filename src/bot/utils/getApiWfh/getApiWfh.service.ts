@@ -23,6 +23,7 @@ export class GetApiWfhService {
       wfhGetApi = await firstValueFrom(
         this.http
           .get(`${this.clientConfigService.wfh.api_url}?date=${date}`, {
+            httpsAgent: this.clientConfigService.https,
             headers: {
               // WFH_API_KEY_SECRET
               securitycode: this.clientConfigService.wfhApiKey,

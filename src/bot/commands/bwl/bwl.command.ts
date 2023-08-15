@@ -1,7 +1,5 @@
 import { EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { firstValueFrom } from "rxjs";
-import { getUserOffWork } from "src/bot/utils/getUserOffWork";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { BWLService } from "./bwl.service";
 

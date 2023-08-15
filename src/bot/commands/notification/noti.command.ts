@@ -43,6 +43,7 @@ export default class NotificationCommand implements CommandLineClass {
                 content: noti,
               },
               {
+                httpsAgent: this.clientConfigService.https,
                 headers: {
                   securityCode: this.clientConfigService.imsKeySecret,
                 },

@@ -1,9 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import https from "https";
 
 @Injectable()
 export class ClientConfigService {
   constructor(configService: ConfigService) {
+    this.https = new https.Agent({
+      rejectUnauthorized: false,
+    });
+
     this.prefix = "*";
     this.wfh = {
       api_url: `${configService.get<string>(
@@ -275,6 +280,8 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
   }
+
+  https: https.Agent;
 
   pmsChannelId: string;
 

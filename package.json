@@ -51,6 +51,7 @@
     "fs": "^0.0.1-security",
     "googleapis": "^109.0.1",
     "hex-color-regex": "^1.1.0",
+    "https": "^1.0.0",
     "image-downloader": "^4.3.0",
     "is-url": "^1.2.4",
     "local-devices": "^4.0.0",

@@ -58,6 +58,7 @@ export class ReportTrackerService {
       wfhGetApi = await firstValueFrom(
         this.http
           .get(url, {
+            httpsAgent: this.clientConfigService.https,
             headers: {
               // WFH_API_KEY_SECRET
               securitycode: this.clientConfigService.wfhApiKey,
@@ -91,7 +92,11 @@ export class ReportTrackerService {
     try {
       const result = await axios.get(
         `http://tracker.komu.vn:5600/api/0/report?day=${args[1]}`,
-        { headers: { "X-Secret-Key": this.clientConfigService.komuTrackerApiKey } }
+        {
+          headers: {
+            "X-Secret-Key": this.clientConfigService.komuTrackerApiKey,
+          },
+        }
       );
 
       const { data } = result;
