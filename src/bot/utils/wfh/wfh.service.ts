@@ -149,6 +149,7 @@ export class WfhService {
         const response = await firstValueFrom(
           this.http
             .get(url, {
+              httpsAgent: this.clientConfigService.https,
               headers: {
                 "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
               },

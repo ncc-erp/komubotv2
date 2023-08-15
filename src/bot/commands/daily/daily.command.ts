@@ -212,6 +212,7 @@ export class DailyCommand implements CommandLineClass {
           wfhGetApi = await firstValueFrom(
             this.http
               .get(url, {
+                httpsAgent: this.clientConfigService.https,
                 headers: {
                   securitycode: this.configService.wfhApiKey,
                 },

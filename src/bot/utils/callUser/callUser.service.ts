@@ -67,6 +67,7 @@ export class CallUserService {
           .get(
             `${this.clientConfigService.phonenumber.api_url}${email}@ncc.asia`,
             {
+              httpsAgent: this.clientConfigService.https,
               headers: {
                 "X-Secret-Key": this.clientConfigService.hrmApiKey,
               },
@@ -87,10 +88,14 @@ export class CallUserService {
   async sendSms(http, apiUrl, phoneNumber) {
     try {
       await firstValueFrom(
-        http.post(apiUrl, {
-          tel: phoneNumber,
-          timeout: 20,
-        })
+        http.post(
+          apiUrl,
+          {
+            tel: phoneNumber,
+            timeout: 20,
+          },
+          { httpsAgent: this.clientConfigService.https }
+        )
       );
       return true;
     } catch (error) {

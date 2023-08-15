@@ -34,6 +34,7 @@ export class UserNotDailyService {
         wfhGetApi = await firstValueFrom(
           this.http
             .get(url, {
+              httpsAgent: this.clientConfigService.https,
               headers: {
                 // WFH_API_KEY_SECRET
                 securitycode: this.clientConfigService.wfhApiKey,

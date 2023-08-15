@@ -31,7 +31,8 @@ export class GemrankCommand implements CommandLineClass {
             rankUsername = await firstValueFrom(
               this.http
                 .get(
-                  `${this.clienConfigService.gem.api_url_getMyRank}${usernameGem}`
+                  `${this.clienConfigService.gem.api_url_getMyRank}${usernameGem}`,
+                  { httpsAgent: this.clienConfigService.https }
                 )
                 .pipe((res) => res)
             );
@@ -54,10 +55,14 @@ export class GemrankCommand implements CommandLineClass {
         } else {
           const postGemRank = await firstValueFrom(
             this.http
-              .post(this.clienConfigService.gem.api_url_getTopRank, {
-                page: 0,
-                size: 15,
-              })
+              .post(
+                this.clienConfigService.gem.api_url_getTopRank,
+                {
+                  page: 0,
+                  size: 15,
+                },
+                { httpsAgent: this.clienConfigService.https }
+              )
               .pipe((res) => res)
           );
           const rankTop = postGemRank.data.content;

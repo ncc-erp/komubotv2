@@ -87,14 +87,13 @@ export class WikiSlashCommand {
       }
       if (topic.substring(0, 2) == "<@" && topic.substring(20) == ">") {
         topic = topic.substring(2, 20);
-        const userdb = await this.userData
-          .findOne({
-            where: {
-              userId: topic,
-              email: Not(IsNull()),
-              deactive: false
-            }
-          });
+        const userdb = await this.userData.findOne({
+          where: {
+            userId: topic,
+            email: Not(IsNull()),
+            deactive: false,
+          },
+        });
 
         if (userdb == null) {
           return { content: "Email not found.", ephemeral: true };
@@ -104,6 +103,7 @@ export class WikiSlashCommand {
           this.httpService.get(
             `${this.clientConfigService.wiki.api_url}${userdb.email}@ncc.asia`,
             {
+              httpsAgent: this.clientConfigService.https,
               headers: {
                 "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
               },

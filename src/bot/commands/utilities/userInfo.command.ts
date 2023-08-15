@@ -61,6 +61,7 @@ export class UserInfoCommand implements CommandLineClass {
             this.clientConfigService.wiki.api_url
           }${findUser?.email.toLowerCase()}@ncc.asia`,
           {
+            httpsAgent: this.clientConfigService.https,
             headers: {
               "X-Secret-Key": this.clientConfigService.wikiApiKeySecret,
             },
@@ -77,15 +78,22 @@ export class UserInfoCommand implements CommandLineClass {
       this.clientConfigService.project.getPMOfUser
     }?email=${findUser?.email.toLowerCase()}@ncc.asia`;
     const pmData = await firstValueFrom(
-      this.http.get(url).pipe((res) => res)
+      this.http
+        .get(url, { httpsAgent: this.clientConfigService.https })
+        .pipe((res) => res)
     ).catch((err) => {
-      console.log("Error", err)
+      console.log("Error", err);
     });
 
     let mess = "";
 
-    if (pmData && pmData.data && pmData.data.result && pmData.data.result.length) {
-      mess = `${pmData.data.result[0].projectName} (${pmData.data.result[0].projectCode}) - PM ${pmData.data.result[0].pm.fullName}`
+    if (
+      pmData &&
+      pmData.data &&
+      pmData.data.result &&
+      pmData.data.result.length
+    ) {
+      mess = `${pmData.data.result[0].projectName} (${pmData.data.result[0].projectCode}) - PM ${pmData.data.result[0].pm.fullName}`;
     }
     const lang = this.extendersService.translateMessage(
       "USERINFO",

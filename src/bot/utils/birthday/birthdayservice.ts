@@ -59,6 +59,7 @@ export class BirthdayService {
         .get(
           `${this.clientConfigService.birthday.api_url}?month=${month}&day=${day}`,
           {
+            httpsAgent: this.clientConfigService.https,
             headers: {
               "X-Secret-Key": this.clientConfigService.wfhApiKey,
             },
