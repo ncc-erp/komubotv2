@@ -114,7 +114,7 @@ export class MeetingSchedulerService {
     let countVoice = 0;
     let roomVoice = [];
 
-    allVoiceChannels.forEach(async (channel) => {
+    await allVoiceChannels.forEach(async (channel) => {
       const userDiscord: any = await client.channels.fetch(channel.id);
 
       if (userDiscord.members.size > 0) {

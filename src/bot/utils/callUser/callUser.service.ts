@@ -122,7 +122,7 @@ export class CallUserService {
         const authorId = message.author.id;
         const users = await this.fetchActiveUsers(authorId);
 
-        if (users.length > 0 || authorId == "922148445626716182") {
+        if (users.length > 0) {
           const userMention = await this.fetchUserMention(
             this.userRepository,
             mentionUserId.user.id
