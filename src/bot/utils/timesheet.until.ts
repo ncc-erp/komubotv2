@@ -2,6 +2,7 @@ import axios from "axios";
 import parseDuration from "parse-duration";
 import * as chrono from "chrono-node";
 import { Message } from "discord.js";
+import https from "https";
 
 let DEBUG = false;
 export const normalizeString = (str) => {
@@ -143,7 +144,12 @@ export const logTimeSheetForTask = async ({
       ? `${process.env.TIMESHEET_API}MyTimesheets/CreateByKomu`
       : `${process.env.TIMESHEET_API}MyTimesheets/CreateFullByKomu`;
 
+  const httpsAgent = new https.Agent({
+    rejectUnauthorized: false,
+  });
+
   const response = await axios.post(url, timesheetPayload, {
+    httpsAgent,
     headers: {
       "X-Secret-Key": process.env.WFH_API_KEY_SECRET,
       "Content-Type": "application/json",
