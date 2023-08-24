@@ -8,8 +8,8 @@ export class ClientConfigService {
     this.https = new https.Agent({
       rejectUnauthorized: false,
     });
-
     this.prefix = "*";
+    // this.PullRequest = 'aaaa';
     this.wfh = {
       api_url: `${configService.get<string>(
         "TIMESHEET_API"
@@ -279,6 +279,10 @@ export class ClientConfigService {
     this.checkConfig = null;
     //The number of shards. Leave blank for auto
     this.shards = 1;
+    //The X-Event_Key of Bitbucket Webhook. Triggers: Created Pull Request
+    this.PullRequest = "pullrequest:created";
+    //The X-Event_Key of Bitbucket Webhook. Triggers: Build Status Created
+    this.StatusBuild = "repo:commit_status_created";
   }
 
   https: https.Agent;
@@ -478,4 +482,7 @@ export class ClientConfigService {
   shards: number;
   // The categories. Put null to enabled to disable a category
   categories: any;
+
+  PullRequest: string;
+  StatusBuild: string;
 }

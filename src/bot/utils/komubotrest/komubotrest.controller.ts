@@ -104,7 +104,7 @@ export class KomubotrestController {
     @Req() req: Request,
     @Res() res: Response
   ) {
-    sendMessageToChannelDTO.file = req.file
+    sendMessageToChannelDTO.file = req.file;
     return this.komubotrestService.sendMessageToChannel(
       this.client,
       sendMessageToChannelDTO,
@@ -296,7 +296,6 @@ export class KomubotrestController {
     return await this.komubotrestService.getUserNotDaily();
   }
 
-  
   @Get("/reportDaily")
   async reportDaily(@Query() query: ReportDailyDTO) {
     return await this.komubotrestService.getReportUserDaily(query, this.client);
@@ -318,5 +317,18 @@ export class KomubotrestController {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  @Post("bitbucket/webhook")
+  async bitbucketWebhookGetStatusBuild(
+    @Req() req,
+    @Headers("X-Event-Key") event
+  ) {
+    const data = req.body;
+    return await this.komubotrestService.bitbucketWebhook(
+      this.client,
+      data,
+      event
+    );
   }
 }
