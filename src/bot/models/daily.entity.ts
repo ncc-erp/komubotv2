@@ -1,24 +1,24 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
-import { TABLE } from '../constants/table';
+import { TABLE } from "../constants/table";
 
 @Entity(TABLE.DAILY)
 export class Daily {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({})
+  @Column({ nullable: true })
   userid: string;
 
-  @Column({})
+  @Column({ nullable: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   daily: string;
 
-  @Column({ type: 'date' })
-  createdAt: Date;
+  @Column({ type: "decimal", nullable: true })
+  createdAt: number;
 
-  @Column()
+  @Column({ nullable: true })
   channelid: string;
 }
