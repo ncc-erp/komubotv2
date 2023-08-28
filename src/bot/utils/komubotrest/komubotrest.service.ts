@@ -30,6 +30,8 @@ import { UtilsService } from "../utils.service";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
 import { ReportDailyDTO } from "./komubotrest.dto";
 import { join } from "path";
+import moment from "moment";
+
 @Injectable()
 export class KomubotrestService {
   constructor(
@@ -436,31 +438,43 @@ export class KomubotrestService {
 
     if (sendMessageToChannelDTO.file) {
       try {
-        const channel = await client.channels.fetch(sendMessageToChannelDTO.channelid);
+        const channel = await client.channels.fetch(
+          sendMessageToChannelDTO.channelid
+        );
         await channel.send({
           content: sendMessageToChannelDTO.message,
-          files: [{
-            attachment: join(join(__dirname, "../../../..", "uploads/"), sendMessageToChannelDTO.file.filename),
-          }]
+          files: [
+            {
+              attachment: join(
+                join(__dirname, "../../../..", "uploads/"),
+                sendMessageToChannelDTO.file.filename
+              ),
+            },
+          ],
         });
         res.status(200).send({ message: "Successfully!" });
       } catch (error) {
         console.log("error", error);
         res.status(400).send({ message: error });
       }
-      return
+      return;
     }
 
     if (sendMessageToChannelDTO.fileUrl) {
       try {
-        const channel = await client.channels.fetch(sendMessageToChannelDTO.channelid);
-        await channel.send({ content: sendMessageToChannelDTO.message, files: [sendMessageToChannelDTO.fileUrl] });
+        const channel = await client.channels.fetch(
+          sendMessageToChannelDTO.channelid
+        );
+        await channel.send({
+          content: sendMessageToChannelDTO.message,
+          files: [sendMessageToChannelDTO.fileUrl],
+        });
         res.status(200).send({ message: "Successfully!" });
       } catch (error) {
         console.log("error", error);
         res.status(400).send({ message: error });
       }
-      return
+      return;
     }
 
     if (!sendMessageToChannelDTO.message) {
@@ -813,5 +827,124 @@ export class KomubotrestService {
       },
       take: 1,
     });
+  }
+
+  async bitbucketWebhook(client, data, event) {
+    const channel: any = client.channels.cache.get("984354455573106769");
+    if (event == this.clientConfig.StatusBuild) {
+      const commit_status_name = data.commit_status.name;
+      const commit_state = data.commit_status.state;
+
+      if (commit_status_name.includes("Pull Request")) {
+        const discord_message = new EmbedBuilder()
+          .setColor(15548997)
+          .setTitle("Webhook data received. Pull Request status skipped.");
+        return channel.send({ embeds: [discord_message] });
+      }
+
+      const repository_nane = data.repository.full_name;
+      const author_name = data.commit_status.commit.author.user.display_name;
+      const commit_refname = data.commit_status.refname;
+      const name_build = data.commit_status.name;
+      const commit_message = data.commit_status.commit.message;
+
+      if (commit_state == "SUCCESSFULL") {
+        const discord_message = new EmbedBuilder()
+          .setColor(9291330)
+          .setTitle(name_build)
+          .setDescription(
+            `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+          );
+
+        return channel.send({ embeds: [discord_message] });
+      } else if (commit_state == "FAILED") {
+        const discord_message = new EmbedBuilder()
+          .setColor(14226966)
+          .setTitle(name_build)
+          .setDescription(
+            `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+          );
+
+        return channel.send({ embeds: [discord_message] });
+      } else if (commit_state == "INPROGRESS") {
+        const discord_message = new EmbedBuilder()
+          .setColor(0x2771f2)
+          .setTitle(name_build)
+          .setDescription(
+            `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+          );
+
+        return channel.send({ embeds: [discord_message] });
+      } else {
+        const discord_message = new EmbedBuilder()
+          .setColor(0xffc923)
+          .setTitle(name_build)
+          .setDescription(
+            `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+          );
+
+        return channel.send({ embeds: [discord_message] });
+      }
+    } else if (event == this.clientConfig.PullRequest) {
+      const pull_request_state = data.pullrequest.state;
+      if (pull_request_state != "MERGED") {
+        const discord_message = new EmbedBuilder()
+          .setColor(15548997)
+          .setTitle(
+            "Webhook data received, but pull request state is not 'MERGED'."
+          );
+        return channel.send({ embeds: [discord_message] });
+      }
+      const pull_request_title = data.pullrequest.title;
+      const created_on = data.pullrequest.created_on;
+      const created_on_formatted = moment(created_on).format(
+        "DD--MM-YYYY h:mm:ss"
+      );
+      const branch_destination = data.pullrequest.destination.branch.name;
+      const branch_source = data.pullrequest.source.branch.name;
+
+      const reviewers = [];
+      const pullRequestReviewers: any[] = data.pullrequest.reviewers;
+      pullRequestReviewers.forEach((reviewer) => {
+        const reviewer_name = reviewer.display_name;
+        reviewers.push(reviewer_name);
+      });
+
+      const discord_message = new EmbedBuilder()
+        .setColor(0x34ebe5)
+        .setTitle(`Pull Request Merged: ${pull_request_title}`)
+        .setFields(
+          {
+            name: "Reviewers",
+            value: reviewers.join(","),
+            inline: false,
+          },
+          { name: "Branch Source", value: branch_source, inline: false },
+          {
+            name: "Branch Destination",
+            value: branch_destination,
+            inline: false,
+          },
+          { name: "Created On", value: created_on_formatted, inline: false }
+        );
+
+      return channel.send({ embeds: [discord_message] });
+    }
   }
 }
