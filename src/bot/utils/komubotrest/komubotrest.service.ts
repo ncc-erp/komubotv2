@@ -830,7 +830,7 @@ export class KomubotrestService {
   }
 
   async bitbucketWebhook(client, data, event) {
-    const channel: any = client.channels.cache.get("984354455573106769");
+    const channel: any = client.channels.cache.get("1146344016158396428");
     if (event == this.clientConfig.StatusBuild) {
       const commit_status_name = data.commit_status.name;
       const commit_state = data.commit_status.state;
@@ -848,9 +848,9 @@ export class KomubotrestService {
       const name_build = data.commit_status.name;
       const commit_message = data.commit_status.commit.message;
 
-      if (commit_state == "SUCCESSFULL") {
+      if (commit_state == "SUCCESSFUL") {
         const discord_message = new EmbedBuilder()
-          .setColor(9291330)
+          .setColor(5763719)
           .setTitle(name_build)
           .setDescription(
             `**Repository**: ${repository_nane} \n\n` +
@@ -904,13 +904,14 @@ export class KomubotrestService {
     } else if (event == this.clientConfig.PullRequest) {
       const pull_request_state = data.pullrequest.state;
       if (pull_request_state != "MERGED") {
-        const discord_message = new EmbedBuilder()
-          .setColor(15548997)
-          .setTitle(
-            "Webhook data received, but pull request state is not 'MERGED'."
-          );
-        return channel.send({ embeds: [discord_message] });
+        // const discord_message = new EmbedBuilder()
+        //   .setColor(15548997)
+        //   .setTitle(
+        //     "Webhook data received, but pull request state is not 'MERGED'."
+        //   );
+        // return channel.send({ embeds: [discord_message] });
       }
+
       const pull_request_title = data.pullrequest.title;
       const created_on = data.pullrequest.created_on;
       const created_on_formatted = moment(created_on).format(
@@ -919,20 +920,26 @@ export class KomubotrestService {
       const branch_destination = data.pullrequest.destination.branch.name;
       const branch_source = data.pullrequest.source.branch.name;
 
-      const reviewers = [];
-      const pullRequestReviewers: any[] = data.pullrequest.reviewers;
-      pullRequestReviewers.forEach((reviewer) => {
-        const reviewer_name = reviewer.display_name;
-        reviewers.push(reviewer_name);
-      });
+      const actor = data.actor.display_name;
 
+      const reviewers = [];
+      reviewers.push(actor);
+      const pullRequestReviewers: any[] = data.pullrequest.participants;
+      pullRequestReviewers.forEach((participants) => {
+        if (participants.state == "approved") {
+          const reviewer_name = participants.user.display_name;
+          if (!reviewers.includes(reviewer_name)) {
+            reviewers.push(reviewer_name);
+          }
+        }
+      });
       const discord_message = new EmbedBuilder()
         .setColor(0x34ebe5)
         .setTitle(`Pull Request Merged: ${pull_request_title}`)
         .setFields(
           {
             name: "Reviewers",
-            value: reviewers.join(","),
+            value: ` ${reviewers.join(", ")}`,
             inline: false,
           },
           { name: "Branch Source", value: branch_source, inline: false },
