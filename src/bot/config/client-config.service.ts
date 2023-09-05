@@ -280,9 +280,9 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
     //The X-Event_Key of Bitbucket Webhook. Triggers: Created Pull Request
-    this.PullRequest = "pullrequest:created";
+    this.PullRequest = "pullrequest:fulfilled";
     //The X-Event_Key of Bitbucket Webhook. Triggers: Build Status Created
-    this.StatusBuild = "repo:commit_status_created";
+    this.StatusBuild = "repo:commit_status_updated";
   }
 
   https: https.Agent;
