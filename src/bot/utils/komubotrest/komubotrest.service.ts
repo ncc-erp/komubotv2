@@ -830,7 +830,7 @@ export class KomubotrestService {
   }
 
   async bitbucketWebhook(client, data, event) {
-    const channel: any = client.channels.cache.get("1146344016158396428");
+    const channel: any = client.channels.cache.get("1141262221742182501");
     if (event == this.clientConfig.StatusBuild) {
       const commit_status_name = data.commit_status.name;
       const commit_state = data.commit_status.state;
