@@ -831,7 +831,7 @@ export class KomubotrestService {
   }
 
   async bitbucketWebhook(client, data, event) {
-    const channel: any = client.channels.cache.get("1146344016158396428");
+    const channel: any = client.channels.cache.get("1141262221742182501");
     const branch = ["attic", "staging", "pre-prod", "master"];
     if (event == this.clientConfig.StatusBuild) {
       const commit_refname = data.commit_status.refname;
