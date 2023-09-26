@@ -259,12 +259,7 @@ export class ReminderSchedulerService {
     if (await this.utilsService.checkHoliday()) return;
     try {
       const { notDailyMorning, notDailyFullday } =
-        await this.userNotDailyService.getUserNotDaily(
-          null,
-          null,
-          null,
-          client
-        );
+        await this.userNotDailyService.getUserNotDaily(null);
       // send message komu to user
 
       const userNotDaily = [...notDailyMorning, ...notDailyFullday];
@@ -286,12 +281,7 @@ export class ReminderSchedulerService {
     if (await this.utilsService.checkHoliday()) return;
     try {
       const { notDailyAfternoon, notDailyFullday } =
-        await this.userNotDailyService.getUserNotDaily(
-          null,
-          null,
-          null,
-          client
-        );
+        await this.userNotDailyService.getUserNotDaily(null);
       // send message komu to user
 
       const userNotDaily = [...notDailyAfternoon, ...notDailyFullday];
