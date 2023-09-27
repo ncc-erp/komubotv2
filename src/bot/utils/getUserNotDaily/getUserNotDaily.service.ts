@@ -23,7 +23,7 @@ export class UserNotDailyService {
   ) {}
 
   async getUserNotDaily(date: Date) {
-    if (date.getDay() === 0 || date.getDay() === 6 || date > new Date()) {
+    if (date && (date.getDay() === 0 || date.getDay() === 6 || date > new Date())) {
       return {
         notDaily: [],
         userNotDaily: [],
