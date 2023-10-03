@@ -59,7 +59,7 @@ export class KomubotrestController {
     private reportWFHService: ReportWFHService,
     @InjectRepository(Uploadfile)
     private readonly uploadFileRepository: Repository<Uploadfile>
-  ) {}
+  ) { }
   //xong
   @Post("/getUserIdByUsername")
   async getUserIdByUsername(
@@ -344,6 +344,16 @@ export class KomubotrestController {
       this.client,
       data,
       event
+    );
+  }
+
+  @Post("jira/webhook")
+  async jiraWebhook(
+    @Req() req) {
+    const data = req.body;
+    return await this.komubotrestService.jiraWebhook(
+      this.client,
+      data
     );
   }
 }
