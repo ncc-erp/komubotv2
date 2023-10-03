@@ -830,8 +830,7 @@ export class KomubotrestService {
 
   async jiraWebhook(client, data) {
     try {
-      const channel: any = client.channels.cache.get(this.clientConfig.komubotRestJiraWebhookChannelId);
-      console.log(this.clientConfig.komubotRestJiraWebhookChannelId)
+      const channel: any = client.channels.cache.get(this.clientConfig.jiraWebhookChannelId);
       const issueKey = data.key;
       const summary = data.fields.summary;
       const sprintName = data.fields.customfield_10020[0]?.name || 'N/A';
@@ -880,7 +879,7 @@ export class KomubotrestService {
   }
 
   async bitbucketWebhook(client, data, event) {
-    const channel: any = client.channels.cache.get("1141262221742182501");
+    const channel: any = client.channels.cache.get(this.clientConfig.bitbucketWebhookChannelId);
     const branch = ["attic", "staging", "pre-prod", "master"]
     if (event == this.clientConfig.StatusBuild) {
       const commit_refname = data.commit_status.refname;

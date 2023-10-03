@@ -284,11 +284,11 @@ export class ClientConfigService {
     //The X-Event_Key of Bitbucket Webhook. Triggers: Build Status Created
     this.StatusBuild = "repo:commit_status_updated";
 
-    this.komubotRestBitbucketWebhookChannelId = `${configService.get<string>(
+    this.bitbucketWebhookChannelId = `${configService.get<string>(
       "BITBUCKET_WEBOOOK_CHANNEL_ID"
     )}`;
 
-    this.komubotRestJiraWebhookChannelId = `${configService.get<string>(
+    this.jiraWebhookChannelId = `${configService.get<string>(
       "JIRA_WEBOOOK_CHANNEL_ID"
     )}`;
   }
@@ -496,8 +496,8 @@ export class ClientConfigService {
   StatusBuild: string;
 
   // KOMUBOTREST_THONGBAO_JIRA_WEBOOOK_CHANNEL_ID
-  komubotRestJiraWebhookChannelId: string;
+  jiraWebhookChannelId: string;
 
   // KOMUBOTREST_THONGBAO_BITBUCKET_WEBOOOK_CHANNEL_ID
-  komubotRestBitbucketWebhookChannelId: string;
+  bitbucketWebhookChannelId: string;
 }
