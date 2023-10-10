@@ -156,6 +156,9 @@ import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.com
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 import { RequestVoiceCallCommand } from "./commands/requestVoiceCall/requestVoiceCall.command";
 import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoiceCall.service";
+import { EventCommand } from "./commands/event/event.command";
+import { EventSchedulerService } from "./scheduler/event-scheduler/event-scheduler.service";
+import { EventEntity } from "./models/event.entity";
 
 @Module({
   imports: [
@@ -202,6 +205,7 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
       Workout,
       Mentioned,
       IndividualChannel,
+      EventEntity,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -322,7 +326,9 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
     RenameChannelService,
     RequestVoiceCallCommand,
     RequestVoiceCallService,
+    EventCommand,
+    EventSchedulerService,
   ],
   controllers: [KomubotrestController],
 })
-export class BotModule {}
+export class BotModule { }

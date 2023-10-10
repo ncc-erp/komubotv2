@@ -1,0 +1,290 @@
+import { Logger } from "@nestjs/common";
+import { CronJob } from "cron";
+import { SchedulerRegistry, CronExpression } from "@nestjs/schedule";
+import { InjectDiscordClient } from "@discord-nestjs/core";
+import { ChannelType, Client, Message, User as UserDiscord } from "discord.js";
+import { UtilsService } from "src/bot/utils/utils.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
+import { Repository } from "typeorm";
+import { ClientConfigService } from "src/bot/config/client-config.service";
+import { EventEntity } from "src/bot/models/event.entity";
+import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
+import { User } from "src/bot/models/user.entity";
+
+export class EventSchedulerService {
+    constructor(
+        private komubotrestService: KomubotrestService,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
+        @InjectRepository(EventEntity)
+        private readonly eventRepository: Repository<EventEntity>,
+        private utilsService: UtilsService,
+        @InjectRepository(VoiceChannels)
+        private voiceChannelRepository: Repository<VoiceChannels>,
+        private schedulerRegistry: SchedulerRegistry,
+        private configClient: ClientConfigService,
+        @InjectDiscordClient()
+        private client: Client
+    ) { }
+
+    private readonly logger = new Logger(EventSchedulerService.name);
+    addCronJob(name: string, time: string, callback: () => void): void {
+        const job = new CronJob(
+            time,
+            () => {
+                this.logger.warn(`time (${time}) for job ${name} to run!`);
+                callback();
+            },
+            null,
+            true,
+            "Asia/Ho_Chi_Minh"
+        );
+        this.schedulerRegistry.addCronJob(name, job);
+        job.start();
+
+        this.logger.warn(`job ${name} added for each minute at ${time} seconds!`);
+    }
+    // Start cron job
+    startCronJobs(): void {
+        this.addCronJob("tagEvent", CronExpression.EVERY_MINUTE, () =>
+            this.tagEvent(this.client)
+        );
+        this.addCronJob("updateReminderEvent", CronExpression.EVERY_MINUTE, () =>
+            this.updateReminderEvent()
+        );
+    }
+
+    async tagEvent(client: Client) {
+
+        // const getAllVoice = await this.getAllVoiceChannels(client);
+        const getAllVoice = []
+        //event reminder false and cancel false
+        const repeatMeet = await this.getValidMeetings();
+
+        //voice channel active. status:start
+        // const voiceNow = await this.getActiveVoiceChannels();
+        const voiceNow = ['958646576627187736', '995889802996088905']
+
+        const { countVoice, roomVoice } = await this.getCountAndRooms(
+            getAllVoice,
+            voiceNow,
+            client
+        );
+        await this.checkAndSendNotifications(
+            client,
+            repeatMeet,
+            countVoice,
+            getAllVoice,
+            roomVoice
+        );
+    }
+
+    async getAllVoiceChannels(client: Client) {
+        await client.guilds.fetch(this.configClient.guild_komu_id);
+        return client.channels.cache.filter(
+            (channel) =>
+                channel.type === ChannelType.GuildVoice &&
+                channel.parentId === this.configClient.guildvoice_parent_id
+        );
+    }
+
+    async getValidMeetings() {
+        return await this.eventRepository
+            .createQueryBuilder("event")
+            .where(`"reminder" IS NOT TRUE`)
+            .andWhere(`"cancel" IS NOT TRUE`)
+            .select("event.*")
+            .execute();
+    }
+
+    async getActiveVoiceChannels() {
+        const activeVoiceChannels = await this.voiceChannelRepository.find({
+            where: {
+                status: "start",
+            },
+        });
+        return activeVoiceChannels.map((item) => item.voiceChannelId);
+    }
+
+    async getCountAndRooms(
+        allVoiceChannels,
+        activeVoiceChannels,
+        client: Client
+    ) {
+        let countVoice = 0;
+        let roomVoice = [];
+
+        await allVoiceChannels.forEach(async (channel) => {
+            const userDiscord: any = await client.channels.fetch(channel.id);
+
+            if (userDiscord.members.size > 0) {
+                countVoice++;
+            } else {
+                roomVoice.push(channel.id);
+            }
+        });
+
+        roomVoice = roomVoice.filter((room) => !activeVoiceChannels.includes(room));
+
+        return { countVoice, roomVoice };
+    }
+    async checkAndSendNotifications(
+        client,
+        repeatMeet,
+        countVoice,
+        getAllVoice,
+        roomVoice
+    ) {
+        for (const data of repeatMeet) {
+            const dateScheduler = new Date(+data.createdTimestamp);
+            const minuteDb = dateScheduler.getMinutes();
+            const dateCreatedTimestamp = new Date(
+                +data.createdTimestamp.toString()
+            ).toLocaleDateString("en-US");
+
+            if (
+                countVoice === getAllVoice.length &&
+                this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+                this.utilsService.isSameDate(dateCreatedTimestamp)
+            ) {
+                const fetchChannelFull = await client.channels.fetch(data.channelId);
+                await fetchChannelFull
+                    .send(`@here voice channel full`)
+                    .catch(console.error);
+            } else {
+                await this.handleMeetingRepeat(
+                    data,
+                    roomVoice,
+                    dateCreatedTimestamp,
+                    client,
+                    dateScheduler,
+                    minuteDb
+                );
+            }
+        }
+    }
+
+    async handleMeetingRepeat(
+        data,
+        roomVoice,
+        dateCreatedTimestamp,
+        client,
+        dateScheduler,
+        minuteDb
+    ) {
+        const newDateTimestamp = new Date(+data.createdTimestamp.toString());
+        const currentDate = new Date(newDateTimestamp.getTime());
+        const today = new Date();
+        currentDate.setDate(today.getDate());
+        currentDate.setMonth(today.getMonth());
+        await this.handleOnceMeeting(
+            data,
+            roomVoice,
+            dateCreatedTimestamp,
+            client,
+            dateScheduler,
+            minuteDb
+        );
+    }
+    async handleOnceMeeting(
+        data,
+        roomVoice,
+        dateCreatedTimestamp,
+        client,
+        dateScheduler,
+        minuteDb
+    ) {
+        if (
+            this.utilsService.isSameDate(dateCreatedTimestamp) &&
+            this.utilsService.isSameMinute(minuteDb, dateScheduler)
+        ) {
+            const onceFetchChannel = await client.channels.fetch(data.channelId);
+            await this.handleRenameVoiceChannel(
+                roomVoice,
+                onceFetchChannel,
+                client,
+                data
+            );
+            await this.eventRepository
+                .createQueryBuilder()
+                .update(EventEntity)
+                .set({ reminder: true })
+                .where('"id" = :id', { id: data.id })
+                .execute()
+                .catch(console.error);
+        }
+    }
+
+    async handleRenameVoiceChannel(roomVoice, channel, client, data) {
+        if (roomVoice.length !== 0) {
+            await channel
+                .send(` our meeting room is <#${roomVoice[0]}>`)
+                .catch(console.error);
+            const voiceRemove = roomVoice.shift(roomVoice[0]);
+            const voiceChannel = await client.channels.fetch(voiceRemove);
+            let originalName = voiceChannel.name;
+            const searchTerm = "(";
+            const indexOfFirst = originalName.indexOf(searchTerm);
+            if (indexOfFirst > 0) {
+                originalName = originalName.slice(0, indexOfFirst - 1);
+                await voiceChannel.setName(`${originalName} (${data.title})`);
+            } else {
+                await voiceChannel.setName(`${voiceChannel.name} (${data.title})`);
+            }
+            const newRoom = voiceChannel.name;
+            await this.voiceChannelRepository
+                .insert({
+                    voiceChannelId: voiceChannel.id,
+                    originalName: originalName,
+                    newRoomName: newRoom,
+                    createdTimestamp: Date.now(),
+                })
+                .catch((err) => console.log(err));
+        } else {
+            await channel.send(`@here voice channel full`).catch(console.error);
+        }
+    }
+    async updateReminderEvent() {
+        if (await this.utilsService.checkHoliday()) return;
+        const repeatMeet = await this.eventRepository.find({
+            where: {
+                reminder: true,
+            },
+        });
+        console.log(repeatMeet)
+        // console.log(new Date(repeatMeet[0].createdTimestamp))
+        const dateTimeNow = new Date();
+        dateTimeNow.setHours(dateTimeNow.getHours());
+        const hourDateNow = dateTimeNow.getHours();
+        const minuteDateNow = dateTimeNow.getMinutes();
+
+        console.log(`hourDateNow ${hourDateNow}:minuteDateNow ${minuteDateNow} `)
+
+
+        repeatMeet.map(async (item) => {
+            let checkFiveMinute;
+            let hourTimestamp;
+            const dateScheduler = new Date(+item.createdTimestamp);
+
+            const minuteDb = dateScheduler.getMinutes();
+            if (minuteDb >= 0 && minuteDb <= 4) {
+                checkFiveMinute = minuteDb + 60 - minuteDateNow;
+                const hourDb = dateScheduler;
+                const setHourTimestamp = hourDb.setHours(hourDb.getHours() - 1);
+                hourTimestamp = new Date(setHourTimestamp).getHours();
+            } else {
+                checkFiveMinute = minuteDateNow - minuteDb;
+                hourTimestamp = dateScheduler.getHours();
+            }
+            if (hourDateNow === hourTimestamp && checkFiveMinute > 1) {
+                await this.eventRepository.update(
+                    { id: item.id },
+                    { cancel: true }
+                );
+
+            }
+        });
+    }
+}

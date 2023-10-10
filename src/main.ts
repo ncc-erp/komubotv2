@@ -11,6 +11,7 @@ import { UpdateRoleSchedulerService } from "./bot/scheduler/updateRole-scheduler
 import { VoiceChannelSchedulerService } from "./bot/scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
 import { WfhSchedulerService } from "./bot/scheduler/wfh-scheduler/wfh-scheduler.service";
 import { setupSwagger } from "./setup-swagger";
+import { EventSchedulerService } from "./bot/scheduler/event-scheduler/event-scheduler.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,24 +21,26 @@ async function bootstrap() {
   });
   setupSwagger(app);
 
-  const meetingSchedulerService = app.get(MeetingSchedulerService);
-  await meetingSchedulerService.startCronJobs();
-  const reminderSchedulerService = app.get(ReminderSchedulerService);
-  await reminderSchedulerService.startCronJobs();
-  const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
-  await sendMessageSchedulerService.startCronJobs();
-  const datingSchedulerService = app.get(DatingSchedulerService);
-  await datingSchedulerService.startCronJobs();
-  const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
-  await updateRoleSchedulerService.startCronJobs();
-  const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
-  await voiceChannelSchedulerService.startCronJobs();
-  const sendquizSchedulerService = app.get(SendquizSchedulerService);
-  await sendquizSchedulerService.startCronJobs();
-  const mentionSchedulerService = app.get(MentionSchedulerService);
-  await mentionSchedulerService.startCronJobs();
-  const wfhSchedulerService = app.get(WfhSchedulerService);
-  await wfhSchedulerService.startCronJobs();
+  // const meetingSchedulerService = app.get(MeetingSchedulerService);
+  // await meetingSchedulerService.startCronJobs();
+  // const reminderSchedulerService = app.get(ReminderSchedulerService);
+  // await reminderSchedulerService.startCronJobs();
+  // const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
+  // await sendMessageSchedulerService.startCronJobs();
+  // const datingSchedulerService = app.get(DatingSchedulerService);
+  // await datingSchedulerService.startCronJobs();
+  // const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
+  // await updateRoleSchedulerService.startCronJobs();
+  // const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
+  // await voiceChannelSchedulerService.startCronJobs();
+  // const sendquizSchedulerService = app.get(SendquizSchedulerService);
+  // await sendquizSchedulerService.startCronJobs();
+  // const mentionSchedulerService = app.get(MentionSchedulerService);
+  // await mentionSchedulerService.startCronJobs();
+  // const wfhSchedulerService = app.get(WfhSchedulerService);
+  // await wfhSchedulerService.startCronJobs();
+  const eventSchedulerService = app.get(EventSchedulerService);
+  await eventSchedulerService.startCronJobs();
 }
 
 bootstrap();
