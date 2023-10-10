@@ -252,7 +252,7 @@ export class ClientConfigService {
       "FOLDER_DRIVER_PARENTS_ID"
     )}`;
 
-    this.pmsChannelId = `${configService.get<string>("PMS_CHANNEL_ID")}`;
+    this.jwtSecret = `${configService.get<string>("JWT_SECRET")}`;
 
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
@@ -292,6 +292,7 @@ export class ClientConfigService {
       "JIRA_WEBOOOK_CHANNEL_ID"
     )}`;
   }
+  jwtSecret: string;
 
   https: https.Agent;
 

@@ -156,6 +156,15 @@ import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.com
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 import { RequestVoiceCallCommand } from "./commands/requestVoiceCall/requestVoiceCall.command";
 import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoiceCall.service";
+import { ChannelModule } from "./komu-dashboard/channel/channel.module";
+import { UserModule } from "./komu-dashboard/user/user.module";
+import { DailyModule } from "./komu-dashboard/daily/daily.module";
+import { MeetingModule } from "./komu-dashboard/meeting/meeting.module";
+import { MentionModule } from "./komu-dashboard/mention/mention.module";
+import { PenaltyModule } from "./komu-dashboard/penalty/penalty.module";
+import { AuthModule } from "./komu-dashboard/auth/auth.module";
+import { MessageModule } from "./komu-dashboard/message/message.module";
+import { DashboardModule } from "./komu-dashboard/dashboard/dashboard.module";
 
 @Module({
   imports: [
@@ -209,6 +218,15 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
     UtilsModule,
     ReportWFHModule,
     getApiWfhModule,
+    ChannelModule,
+    UserModule,
+    DailyModule,
+    MeetingModule,
+    MentionModule,
+    PenaltyModule,
+    AuthModule,
+    MessageModule,
+    DashboardModule,
   ],
   providers: [
     BzzCommand,

@@ -12,11 +12,13 @@ import { VoiceChannelSchedulerService } from "./bot/scheduler/voice-channel-sche
 import { WfhSchedulerService } from "./bot/scheduler/wfh-scheduler/wfh-scheduler.service";
 import { setupSwagger } from "./setup-swagger";
 
+const port = process.env.KOMU_PORT || 3001;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  app.listen(3000, () => {
-    console.log("App listen on port 3000");
+  app.enableCors({origin: '*'});
+  app.listen(port, () => {
+    console.log(`App listen on port ${port}`);
   });
   setupSwagger(app);
 
