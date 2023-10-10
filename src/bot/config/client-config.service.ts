@@ -252,7 +252,7 @@ export class ClientConfigService {
       "FOLDER_DRIVER_PARENTS_ID"
     )}`;
 
-    this.pmsChannelId = `${configService.get<string>("PMS_CHANNEL_ID")}`;
+    this.jwtSecret = `${configService.get<string>("JWT_SECRET")}`;
 
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
@@ -284,6 +284,9 @@ export class ClientConfigService {
     //The X-Event_Key of Bitbucket Webhook. Triggers: Build Status Created
     this.StatusBuild = "repo:commit_status_created";
   }
+  PullRequest: string;
+  StatusBuild: string;
+  jwtSecret: string;
 
   https: https.Agent;
 
@@ -482,7 +485,4 @@ export class ClientConfigService {
   shards: number;
   // The categories. Put null to enabled to disable a category
   categories: any;
-
-  PullRequest: string;
-  StatusBuild: string;
 }

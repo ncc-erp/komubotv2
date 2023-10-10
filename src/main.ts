@@ -16,9 +16,9 @@ const port = process.env.KOMU_PORT || 3001;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({origin: '*'});
   app.listen(port, () => {
-    console.log("App listen on port 3000");
+    console.log(`App listen on port ${port}`);
   });
   setupSwagger(app);
 

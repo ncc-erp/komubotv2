@@ -118,4 +118,7 @@ export class User {
 
   @Column({ type: "numeric", nullable: true })
   createdAt: number;
+
+  @Column({ default: false })
+  server_deactive: boolean | null;
 }
