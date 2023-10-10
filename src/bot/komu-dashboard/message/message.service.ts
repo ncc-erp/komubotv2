@@ -16,8 +16,8 @@ export class MessageService {
     private msgRepository: Repository<Msg>
   ) {}
   async findAll(query: getListMessage, client: Client): Promise<Paging<Msg>> {
-    try {
-      const { content, email, page, size, sort } = query;
+    //try {
+      const { title, page, size, sort, from, to } = query;
 
       const paging = formatPaging(page, size, sort);
 
@@ -29,15 +29,16 @@ export class MessageService {
         .orderBy(`"msg"."createdTimestamp"`, paging.query.sort as any)
         .select("*");
 
-      if (content) {
-        queryBuilder.andWhere(`"content" ilike :content`, {
-          content: `%${content}%`,
+      if (title) {
+        queryBuilder.andWhere(`"content" ilike :title OR "email" ilike :title`, {
+          title: `%${title}%`,
         });
       }
 
-      if (email) {
-        queryBuilder.andWhere(`"email" ilike :email`, {
-          email: `%${email}%`,
+      if (from && to ) {
+        queryBuilder.andWhere(`"createdAt" >= :gtecreatedAt AND "createdAt" < :ltecreatedAt`, {
+          gtecreatedAt: Number(from),
+          ltecreatedAt: Number(to),
         });
       }
 
@@ -51,8 +52,8 @@ export class MessageService {
           ...paging.pageable,
         },
       };
-    } catch (error) {
-      throw new UnauthorizedException(`Not Found`);
-    }
+    // } catch (error) {
+    //   throw new UnauthorizedException(`Not Found`);
+    // }
   }
 }

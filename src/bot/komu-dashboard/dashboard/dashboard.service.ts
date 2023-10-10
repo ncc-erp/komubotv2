@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Daily } from "src/bot/models/daily.entity";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
-import { Repository } from "typeorm";
+import { Any, In, Repository } from "typeorm";
 import {
   endOfDay,
   endOfMonth,
@@ -16,6 +16,7 @@ import {
 import { Channel } from "src/bot/models/channel.entity";
 import { NodeSSH } from "node-ssh";
 import { IReportKomubot, IReportMsg } from "./interfaces/dashboardInterface";
+import { Client } from "discord.js";
 
 const startDay = startOfWeek(new Date()).getTime();
 const endDay = endOfWeek(new Date()).getTime();
@@ -44,8 +45,12 @@ export class DashboardService {
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
     @InjectRepository(Msg)
-    private msgRepository: Repository<Msg>
-  ) {}
+    private msgRepository: Repository<Msg>,
+    @Inject('DiscordClient')
+    private readonly client: Client,
+  ) {
+    this.client.login(process.env.TOKEN);
+  }
   async getReportKomubot(): Promise<IReportKomubot> {
     try {
       const [
@@ -136,9 +141,13 @@ export class DashboardService {
 
   async reportChannel(): Promise<number> {
     try {
-      return await this.channelRepository
-        .createQueryBuilder("channel")
-        .getCount();
+      // return await this.channelRepository
+      //   .createQueryBuilder("channel")
+      //   .getCount();
+      const guild = this.client.guilds.cache.get(process.env.GUILD_ID_WITH_COMMANDS);
+      const channel: any[] = Array.from(guild.channels.cache.values());
+      const list = channel.filter(item => item?.type !== 4 && item?.type !== 10 && item?.type !== 11 && item?.type !== 12 );
+      return list?.length;
     } catch (error) {
       console.log(error);
     }
@@ -241,4 +250,59 @@ export class DashboardService {
       console.log(error);
     }
   }
+
+  async getReportRoomType(){
+    let output: any[] = [];
+    for (const item of listTypeRoom) {
+      const [list, total] = await this.userRepository
+      .createQueryBuilder("user")
+      .andWhere('("roles_discord" @> :roles_discord)', {
+        roles_discord: [item],
+      })
+      .getManyAndCount();
+      output.push({
+        name: item,
+        total: total,
+      })
+    }
+    return output;
+  }
+
+  async getReportRoleType(){
+    let output: any[] = [];
+    for (const item of listTypeRole) {
+      const [list, total] = await this.userRepository
+      .createQueryBuilder("user")
+      .andWhere('("roles" @> :roles)', {
+        roles: [item],
+      })
+      .getManyAndCount();
+      output.push({
+        name: item,
+        total: total,
+      })
+    }
+    const role = await this.getReportRoomType();
+    return {
+      room: output,
+      role,
+    };
+  }
 }
+
+export const listTypeRoom: string[] =[
+  "VINH",
+  "HANOI",
+  "HANOI2",
+  "HANOI3",
+  "DANANG",
+  "QUYNHON",
+  "SAIGON",
+  "SAIGON2",
+];
+
+export const listTypeRole: string[] =[
+  "PM",
+  "STAFF",
+  "INTERN",
+];

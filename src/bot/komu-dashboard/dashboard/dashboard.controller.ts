@@ -41,4 +41,11 @@ export class DashboardController {
   async logStreamFile() {
     return await this.dashboardService.streamFile();
   }
+
+  @Get("reportRoleType")
+  @UseGuards(JWTAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async reportRoleType() {
+    return await this.dashboardService.getReportRoleType();
+  }
 }

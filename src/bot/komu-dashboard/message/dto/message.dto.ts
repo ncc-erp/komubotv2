@@ -5,9 +5,13 @@ import { Pageable } from "src/bot/utils/commonDto";
 export class getListMessage extends Pageable {
   @ApiProperty({ required: false })
   @Type(() => String)
-  content!: string;
+  title!: string;
 
   @ApiProperty({ required: false })
-  @Type(() => String)
-  email!: string;
+  @Type(() => Number)
+  from!: number;
+
+  @ApiProperty({ required: false })
+  @Type(() => Number)
+  to!: number;
 }

@@ -29,7 +29,7 @@ export class PenaltyService {
       .createQueryBuilder("penalty")
       .take(paging.query.take)
       .skip(paging.query.skip)
-      .orderBy("id", paging.query.sort as any);
+      .orderBy("penalty.username", paging.query.sort as any);
 
     if (username) {
       queryBuilder.andWhere(`"username" ilike :username`, {

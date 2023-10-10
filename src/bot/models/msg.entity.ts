@@ -20,7 +20,7 @@ export class Msg {
   @PrimaryColumn()
   id: string;
 
-  @ManyToOne(() => User, (state) => state.msg)
+  @ManyToOne(() => User, (state) => state.msg, {onDelete:'CASCADE'})
   @JoinColumn({ name: "authorId" })
   author: User;
 

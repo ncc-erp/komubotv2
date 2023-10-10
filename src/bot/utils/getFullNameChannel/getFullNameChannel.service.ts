@@ -34,6 +34,13 @@ export class GetNameChannelService {
           }
         }
 
+        if(item?.userid){
+          const userData = await this.getEmailUser(item?.userid);
+          if (userData) {
+            item = { ...item, avatar: userData.avatar };
+          }
+        }
+
         if (!fetchChannel) return item;
         const channelFullName = `${(fetchChannel as any).name}`;
 
@@ -61,7 +68,6 @@ export class GetNameChannelService {
           return { ...item, channelFullName };
         }
       });
-
       return await Promise.all(promises);
     } catch (error) {}
   }

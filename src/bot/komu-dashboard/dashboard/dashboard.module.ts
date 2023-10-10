@@ -8,6 +8,7 @@ import { User } from "src/bot/models/user.entity";
 import { Meeting } from "src/bot/models/meeting.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { Channel } from "src/bot/models/channel.entity";
+import { Client, GatewayIntentBits } from "discord.js";
 
 @Module({
   imports: [
@@ -15,6 +16,22 @@ import { Channel } from "src/bot/models/channel.entity";
     DiscordModule.forFeature(),
   ],
   controllers: [DashboardController],
-  providers: [DashboardService],
+  providers: [
+    DashboardService,
+    {
+      provide: 'DiscordClient',
+      useValue: new Client({
+        intents: [
+          GatewayIntentBits.Guilds, 
+          GatewayIntentBits.GuildMessages,
+          GatewayIntentBits.DirectMessages,
+          GatewayIntentBits.GuildVoiceStates,
+          GatewayIntentBits.GuildMembers,
+          GatewayIntentBits.MessageContent,
+          GatewayIntentBits.GuildIntegrations
+        ],
+      }),
+    },
+  ],
 })
 export class DashboardModule {}

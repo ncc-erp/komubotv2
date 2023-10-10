@@ -2,24 +2,20 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { Pageable } from "src/bot/utils/commonDto";
 
-export class getListUser extends Pageable {
+export class getListMention extends Pageable {
   @ApiProperty({ required: false })
-  @Type(() => String)
-  email!: string;
+  @Type(() => Boolean || null)
+  type: boolean | null;
 
   @ApiProperty({ required: false })
   @Type(() => String)
-  roles!: string[];
+  name: string;
 
   @ApiProperty({ required: false })
-  @Type(() => String)
-  roles_discord!: string[];
+  @Type(() => Number)
+  from: number;
 
   @ApiProperty({ required: false })
-  @Type(() => Boolean)
-  deactive!: boolean;
-
-  @ApiProperty({ required: false })
-  @Type(() => Boolean)
-  server_deactive!: boolean | null;
+  @Type(() => Number)
+  to: number;
 }

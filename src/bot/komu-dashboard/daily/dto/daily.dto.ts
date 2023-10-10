@@ -14,4 +14,8 @@ export class getListDaily extends Pageable {
   @ApiProperty({ required: false })
   @Type(() => String)
   to!: string;
+
+  @ApiProperty({ required: false })
+  @Type(() => String)
+  filter!: string;
 }

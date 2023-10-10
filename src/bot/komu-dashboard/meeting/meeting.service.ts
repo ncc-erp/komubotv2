@@ -25,10 +25,10 @@ export class MeetingService {
     const paging = formatPaging(page, size, sort);
 
     const queryBuilder = await this.meetingRepository
-      .createQueryBuilder("user")
+      .createQueryBuilder("meeting")
       .take(paging.query.take)
       .skip(paging.query.skip)
-      .orderBy("id", paging.query.sort as any);
+      .orderBy("meeting.createdTimestamp", paging.query.sort as any);
 
     if (repeat) {
       queryBuilder.andWhere(`"repeat" = :repeat`, {

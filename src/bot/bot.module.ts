@@ -154,6 +154,7 @@ import { ChannelModule } from "./komu-dashboard/channel/channel.module";
 import { UserModule } from "./komu-dashboard/user/user.module";
 import { DailyModule } from "./komu-dashboard/daily/daily.module";
 import { MeetingModule } from "./komu-dashboard/meeting/meeting.module";
+import { MentionModule } from "./komu-dashboard/mention/mention.module";
 import { PenaltyModule } from "./komu-dashboard/penalty/penalty.module";
 import { AuthModule } from "./komu-dashboard/auth/auth.module";
 import { MessageModule } from "./komu-dashboard/message/message.module";
@@ -214,6 +215,7 @@ import { DashboardModule } from "./komu-dashboard/dashboard/dashboard.module";
     UserModule,
     DailyModule,
     MeetingModule,
+    MentionModule,
     PenaltyModule,
     AuthModule,
     MessageModule,

@@ -11,14 +11,8 @@ export const formatPaging = (
   let query = {
     take: _size,
     skip: _size * (_page - 1),
-    sort: "DESC",
+    sort: sort || 'ASC',
   };
-
-  const _sort = sort;
-
-  if (_sort && +_sort == 1) {
-    query.sort = "ASC";
-  }
 
   return {
     pageable: {

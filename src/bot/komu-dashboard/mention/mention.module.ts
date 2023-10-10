@@ -1,15 +1,15 @@
 import { Module } from "@nestjs/common";
-import { UserService } from "./user.service";
-import { UserController } from "./user.controller";
+import { MentionService } from "./mention.service";
+import { MentionController } from "./mention.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "src/bot/models/user.entity";
+import { Mentioned } from "src/bot/models/mentioned.entity";
 import { Client, GatewayIntentBits } from 'discord.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
-  controllers: [UserController],
+  imports: [TypeOrmModule.forFeature([Mentioned])],
+  controllers: [MentionController],
   providers: [
-    UserService, 
+    MentionService, 
     {
       provide: 'DiscordClient',
       useValue: new Client({
@@ -22,4 +22,4 @@ import { Client, GatewayIntentBits } from 'discord.js';
     },
   ],
 })
-export class UserModule {}
+export class MentionModule {}
