@@ -1438,7 +1438,8 @@ available-typed-arrays@^1.0.5:
 
 "aw-client@github:nccasia/aw-client-js":
   version "0.3.2"
-  resolved "git+ssh://git@github.com/nccasia/aw-client-js.git#b4c5dbbdb0e80b4d2f2e8c5b7b32511a49d91990"
+  resolved "git+ssh://git@github.com/nccasia/aw-client-js.git"
+  integrity sha512-SqInHT/cPms3dVRNW7lqR1Bj/ZM3XCqpweV5P905/v4Y3O920wmrxFvmb0GVCDO9q5tiCgmkwE2m7eNTBaaY4w==
   dependencies:
     axios "*"
     js-base64 "^3.7.2"
