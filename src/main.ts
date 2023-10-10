@@ -12,32 +12,34 @@ import { VoiceChannelSchedulerService } from "./bot/scheduler/voice-channel-sche
 import { WfhSchedulerService } from "./bot/scheduler/wfh-scheduler/wfh-scheduler.service";
 import { setupSwagger } from "./setup-swagger";
 
+const port = process.env.KOMU_PORT || 3001;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-  app.listen(3000, () => {
+  app.listen(port, () => {
     console.log("App listen on port 3000");
   });
   setupSwagger(app);
 
-  const meetingSchedulerService = app.get(MeetingSchedulerService);
-  await meetingSchedulerService.startCronJobs();
-  const reminderSchedulerService = app.get(ReminderSchedulerService);
-  await reminderSchedulerService.startCronJobs();
-  const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
-  await sendMessageSchedulerService.startCronJobs();
-  const datingSchedulerService = app.get(DatingSchedulerService);
-  await datingSchedulerService.startCronJobs();
-  const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
-  await updateRoleSchedulerService.startCronJobs();
-  const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
-  await voiceChannelSchedulerService.startCronJobs();
-  const sendquizSchedulerService = app.get(SendquizSchedulerService);
-  await sendquizSchedulerService.startCronJobs();
-  const mentionSchedulerService = app.get(MentionSchedulerService);
-  await mentionSchedulerService.startCronJobs();
-  const wfhSchedulerService = app.get(WfhSchedulerService);
-  await wfhSchedulerService.startCronJobs();
+  // const meetingSchedulerService = app.get(MeetingSchedulerService);
+  // await meetingSchedulerService.startCronJobs();
+  // const reminderSchedulerService = app.get(ReminderSchedulerService);
+  // await reminderSchedulerService.startCronJobs();
+  // const sendMessageSchedulerService = app.get(SendMessageSchedulerService);
+  // await sendMessageSchedulerService.startCronJobs();
+  // const datingSchedulerService = app.get(DatingSchedulerService);
+  // await datingSchedulerService.startCronJobs();
+  // const updateRoleSchedulerService = app.get(UpdateRoleSchedulerService);
+  // await updateRoleSchedulerService.startCronJobs();
+  // const voiceChannelSchedulerService = app.get(VoiceChannelSchedulerService);
+  // await voiceChannelSchedulerService.startCronJobs();
+  // const sendquizSchedulerService = app.get(SendquizSchedulerService);
+  // await sendquizSchedulerService.startCronJobs();
+  // const mentionSchedulerService = app.get(MentionSchedulerService);
+  // await mentionSchedulerService.startCronJobs();
+  // const wfhSchedulerService = app.get(WfhSchedulerService);
+  // await wfhSchedulerService.startCronJobs();
 }
 
 bootstrap();
