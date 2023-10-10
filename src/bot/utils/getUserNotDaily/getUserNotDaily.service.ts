@@ -22,7 +22,17 @@ export class UserNotDailyService {
     private clientConfigService: ClientConfigService
   ) {}
 
-  async getUserNotDaily(date, message: Message, args, client: Client) {
+  async getUserNotDaily(date: Date) {
+    if (date && (date.getDay() === 0 || date.getDay() === 6 || date > new Date())) {
+      return {
+        notDaily: [],
+        userNotDaily: [],
+        notDailyMorning: [],
+        notDailyFullday: [],
+        notDailyAfternoon: [],
+      };
+    }
+
     try {
       let wfhGetApi;
       try {
@@ -165,19 +175,19 @@ export class UserNotDailyService {
         ...notDailyAfternoon,
         ...notDailyFullday,
       ];
-      // => notDaily : {email : "", countnotdaily : }
+      // => notDaily : {email : "", count : }
       const notDaily = spreadNotDaily.reduce((acc, cur) => {
         if (Array.isArray(acc) && acc.length === 0) {
-          acc.push({ email: cur, countnotdaily: 1 });
+          acc.push({ email: cur, count: 1 });
         } else {
           const indexExist = acc.findIndex((item) => item.email === cur);
           if (indexExist !== -1) {
             acc[indexExist] = {
               email: acc[indexExist].email,
-              countnotdaily: acc[indexExist].countnotdaily + 1,
+              count: acc[indexExist].count + 1,
             };
           } else {
-            acc.push({ email: cur, countnotdaily: 1 });
+            acc.push({ email: cur, count: 1 });
           }
         }
         return acc;

@@ -50,7 +50,7 @@ export class KomubotrestService {
     @InjectRepository(Daily)
     private dailyRepository: Repository<Daily>,
     private clientConfig: ClientConfigService
-  ) {}
+  ) { }
   private data;
   async findUserData(_pramams) {
     return await this.userRepository
@@ -765,8 +765,7 @@ export class KomubotrestService {
     return await this.dailyRepository
       .createQueryBuilder("daily")
       .where(
-        `"createdAt" BETWEEN ${
-          this.utilsService.getYesterdayDate() - 86400000
+        `"createdAt" BETWEEN ${this.utilsService.getYesterdayDate() - 86400000
         } AND ${this.utilsService.getYesterdayDate()}`
       )
       .select("daily.email")
@@ -802,7 +801,7 @@ export class KomubotrestService {
           ) {
             const channelParent = await client.channels
               .fetch((fetchChannel as any).parentId)
-              .catch((err) => {});
+              .catch((err) => { });
             if (channelParent) {
               return {
                 ...item,
@@ -817,7 +816,7 @@ export class KomubotrestService {
         const result = await Promise.all(promises);
         return { result };
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async downloadFile() {
@@ -829,122 +828,163 @@ export class KomubotrestService {
     });
   }
 
-  async bitbucketWebhook(client, data, event) {
-    const channel: any = client.channels.cache.get("984354455573106769");
-    if (event == this.clientConfig.StatusBuild) {
-      const commit_status_name = data.commit_status.name;
-      const commit_state = data.commit_status.state;
+  async jiraWebhook(client, data) {
+    try {
+      const channel: any = client.channels.cache.get(this.clientConfig.jiraWebhookChannelId);
+      const issueKey = data.key;
+      const summary = data.fields.summary;
+      const sprintName = data.fields.customfield_10020[0]?.name || 'N/A';
+      const assigneeDisplayName = data.fields.assignee?.displayName || 'Unassigned';
+      const projectName = data.fields.project?.name || 'N/A';
+      const getURL = data.self;
+      const reporterDisplayName = data.fields.reporter?.displayName || 'Unknown Reporter';
+      const statusName = data.fields.status?.name || 'N/A';
 
-      if (commit_status_name.includes("Pull Request")) {
-        const discord_message = new EmbedBuilder()
-          .setColor(15548997)
-          .setTitle("Webhook data received. Pull Request status skipped.");
-        return channel.send({ embeds: [discord_message] });
-      }
+      const createdTimestamp = data.fields.created || Date.now();
+      const currentTimestamp = Date.now();
+      const timeDifferenceMs = currentTimestamp - createdTimestamp;
+      const timeDifferenceHours = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+      const daysPassed = Math.floor(timeDifferenceHours / 24);
+      const hoursRemaining = timeDifferenceHours % 24;
 
-      const repository_nane = data.repository.full_name;
-      const author_name = data.commit_status.commit.author.user.display_name;
-      const commit_refname = data.commit_status.refname;
-      const name_build = data.commit_status.name;
-      const commit_message = data.commit_status.commit.message;
-
-      if (commit_state == "SUCCESSFULL") {
-        const discord_message = new EmbedBuilder()
-          .setColor(9291330)
-          .setTitle(name_build)
-          .setDescription(
-            `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
-          );
-
-        return channel.send({ embeds: [discord_message] });
-      } else if (commit_state == "FAILED") {
-        const discord_message = new EmbedBuilder()
-          .setColor(14226966)
-          .setTitle(name_build)
-          .setDescription(
-            `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
-          );
-
-        return channel.send({ embeds: [discord_message] });
-      } else if (commit_state == "INPROGRESS") {
-        const discord_message = new EmbedBuilder()
-          .setColor(0x2771f2)
-          .setTitle(name_build)
-          .setDescription(
-            `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
-          );
-
-        return channel.send({ embeds: [discord_message] });
-      } else {
-        const discord_message = new EmbedBuilder()
-          .setColor(0xffc923)
-          .setTitle(name_build)
-          .setDescription(
-            `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
-          );
-
-        return channel.send({ embeds: [discord_message] });
-      }
-    } else if (event == this.clientConfig.PullRequest) {
-      const pull_request_state = data.pullrequest.state;
-      if (pull_request_state != "MERGED") {
-        const discord_message = new EmbedBuilder()
-          .setColor(15548997)
-          .setTitle(
-            "Webhook data received, but pull request state is not 'MERGED'."
-          );
-        return channel.send({ embeds: [discord_message] });
-      }
-      const pull_request_title = data.pullrequest.title;
-      const created_on = data.pullrequest.created_on;
-      const created_on_formatted = moment(created_on).format(
-        "DD--MM-YYYY h:mm:ss"
-      );
-      const branch_destination = data.pullrequest.destination.branch.name;
-      const branch_source = data.pullrequest.source.branch.name;
-
-      const reviewers = [];
-      const pullRequestReviewers: any[] = data.pullrequest.reviewers;
-      pullRequestReviewers.forEach((reviewer) => {
-        const reviewer_name = reviewer.display_name;
-        reviewers.push(reviewer_name);
-      });
+      const createdDate = new Date(createdTimestamp);
+      const formattedCreatedTime = createdDate.toUTCString();
 
       const discord_message = new EmbedBuilder()
-        .setColor(0x34ebe5)
-        .setTitle(`Pull Request Merged: ${pull_request_title}`)
-        .setFields(
+        .setColor('#34EBE5')
+        .setTitle(`Ticket ${issueKey}: ${summary}`)
+        .setDescription('Ticket has not been updated for a long time')
+        .addFields(
+          { name: 'Project', value: projectName, inline: false },
+          { name: 'Sprint', value: sprintName, inline: true },
+          { name: 'Status', value: statusName, inline: true },
           {
-            name: "Reviewers",
-            value: reviewers.join(","),
+            name: 'Ticket has not been updated for',
+            value: `${daysPassed} days and ${hoursRemaining} hours`,
             inline: false,
           },
-          { name: "Branch Source", value: branch_source, inline: false },
-          {
-            name: "Branch Destination",
-            value: branch_destination,
-            inline: false,
-          },
-          { name: "Created On", value: created_on_formatted, inline: false }
-        );
+          { name: 'Created at', value: formattedCreatedTime, inline: false },
+          { name: 'Assignee', value: assigneeDisplayName, inline: true },
+          { name: 'Reporter', value: reporterDisplayName, inline: true }
+        )
+        .setThumbnail('https://res.cloudinary.com/dmxqrmsom/image/upload/v1696298593/jira_ycmzo1.png')
+        .setURL(getURL);
 
       return channel.send({ embeds: [discord_message] });
+
+    } catch (error) {
+      console.error('Error handling Jira webhook:', error);
+      throw new Error('Failed to handle Jira webhook');
+    }
+  }
+
+  async bitbucketWebhook(client, data, event) {
+    const channel: any = client.channels.cache.get(this.clientConfig.bitbucketWebhookChannelId);
+    const branch = ["attic", "staging", "pre-prod", "master"]
+    if (event == this.clientConfig.StatusBuild) {
+      const commit_refname = data.commit_status.refname;
+      if (branch.includes(commit_refname)) {
+        const commit_state = data.commit_status.state;
+        const repository_nane = data.repository.full_name;
+        const author_name = data.commit_status.commit.author.user.display_name;
+        const name_build = data.commit_status.name;
+        const commit_message = data.commit_status.commit.message;
+
+        if (commit_state == "SUCCESSFUL") {
+          const discord_message = new EmbedBuilder()
+            .setColor(5763719)
+            .setTitle(name_build)
+            .setDescription(
+              `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+            );
+
+          return channel.send({ embeds: [discord_message] });
+        } else if (commit_state == "FAILED") {
+          const discord_message = new EmbedBuilder()
+            .setColor(14226966)
+            .setTitle(name_build)
+            .setDescription(
+              `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+            );
+
+          return channel.send({ embeds: [discord_message] });
+        } else if (commit_state == "INPROGRESS") {
+          const discord_message = new EmbedBuilder()
+            .setColor(0x2771f2)
+            .setTitle(name_build)
+            .setDescription(
+              `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+            );
+          return channel.send({ embeds: [discord_message] });
+        } else {
+          const discord_message = new EmbedBuilder()
+            .setColor(0xffc923)
+            .setTitle(name_build)
+            .setDescription(
+              `**Repository**: ${repository_nane} \n\n` +
+              `**Author**: ${author_name}\n\n` +
+              `**State**: ${commit_state}\n\n` +
+              `**Branch Destination**: ${commit_refname}\n\n` +
+              `**Commit Message**:${commit_message}`
+            );
+
+          return channel.send({ embeds: [discord_message] });
+        }
+      }
+    } else if (event == this.clientConfig.PullRequest) {
+      const branch_destination = data.pullrequest.destination.branch.name;
+      if (branch.includes(branch_destination)) {
+        const pull_request_title = data.pullrequest.title;
+        const created_on = data.pullrequest.created_on;
+        const created_on_formatted = moment(created_on).format(
+          "DD--MM-YYYY h:mm:ss"
+        );
+        const branch_source = data.pullrequest.source.branch.name;
+        const actor = data.actor.display_name;
+
+        const reviewers = [];
+        reviewers.push(actor);
+        const pullRequestReviewers: any[] = data.pullrequest.participants;
+        pullRequestReviewers.forEach((participants) => {
+          if (participants.state == "approved") {
+            const reviewer_name = participants.user.display_name;
+            if (!reviewers.includes(reviewer_name)) {
+              reviewers.push(reviewer_name);
+            }
+          }
+        });
+        const discord_message = new EmbedBuilder()
+          .setColor(0x34ebe5)
+          .setTitle(`Pull Request Merged: ${pull_request_title}`)
+          .setFields(
+            {
+              name: "Reviewers",
+              value: ` ${reviewers.join(", ")}`,
+              inline: false,
+            },
+            { name: "Branch Source", value: branch_source, inline: false },
+            {
+              name: "Branch Destination",
+              value: branch_destination,
+              inline: false,
+            },
+            { name: "Created On", value: created_on_formatted, inline: false }
+          );
+
+        return channel.send({ embeds: [discord_message] });
+      }
     }
   }
 }

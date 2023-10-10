@@ -11,18 +11,13 @@ export class ReportDailyService {
 
   findCountNotDaily(arr, email) {
     const users = arr.find((item) => item.email === email);
-    return users ? users.countnotdaily : 1;
+    return users ? users.count : 1;
   }
   async reportDaily(date, message, args, client, guildDB) {
     try {
       let authorId = message.author.id;
       const { notDaily, userNotDaily } =
-        await this.userNotDailyService.getUserNotDaily(
-          date,
-          message,
-          args,
-          client
-        );
+        await this.userNotDailyService.getUserNotDaily(date);
 
       let mess;
       const dateString = (date && date.toDateString()) || "";

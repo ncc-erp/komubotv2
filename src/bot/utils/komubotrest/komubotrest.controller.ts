@@ -42,6 +42,9 @@ import { RegexEmailPipe } from "src/bot/middleware/regex-email";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { ReportDailyDTO } from "./komubotrest.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { UserNotDailyService } from "../getUserNotDaily/getUserNotDaily.service";
+import { parse } from "date-fns";
+import { ReportWFHService } from "../reportWFH/report-wfh.service";
 
 @ApiTags("Komu")
 @Controller()
@@ -52,9 +55,11 @@ export class KomubotrestController {
     @InjectDiscordClient()
     private client: Client,
     private clientConfigService: ClientConfigService,
+    private userNotDailyService: UserNotDailyService,
+    private reportWFHService: ReportWFHService,
     @InjectRepository(Uploadfile)
     private readonly uploadFileRepository: Repository<Uploadfile>
-  ) {}
+  ) { }
   //xong
   @Post("/getUserIdByUsername")
   async getUserIdByUsername(
@@ -296,6 +301,16 @@ export class KomubotrestController {
     return await this.komubotrestService.getUserNotDaily();
   }
 
+  @Get("/getDailyReport")
+  async getDailyReport(@Query() query: { date: string }) {
+    const date = parse(query.date, 'dd/MM/yyyy', new Date());
+    const { notDaily } = await this.userNotDailyService.getUserNotDaily(date);
+
+    const mention = await this.reportWFHService.reportMachleo(date);
+
+    return { daily: notDaily, mention };
+  }
+
   @Get("/reportDaily")
   async reportDaily(@Query() query: ReportDailyDTO) {
     return await this.komubotrestService.getReportUserDaily(query, this.client);
@@ -329,6 +344,16 @@ export class KomubotrestController {
       this.client,
       data,
       event
+    );
+  }
+
+  @Post("jira/webhook")
+  async jiraWebhook(
+    @Req() req) {
+    const data = req.body;
+    return await this.komubotrestService.jiraWebhook(
+      this.client,
+      data
     );
   }
 }

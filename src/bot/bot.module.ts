@@ -109,6 +109,7 @@ import { UpdateRoleSchedulerService } from "./scheduler/updateRole-scheduler/upd
 import { VoiceChannelSchedulerService } from "./scheduler/voice-channel-scheduler/voice-channel-scheduler.service";
 import { KeepSlashCommand } from "./slash-commands/keep.slashcommand";
 import { MachleoSlashCommand } from "./slash-commands/machleo.slashcommand";
+import { CallSlashCommand } from "./slash-commands/call.slashcommand";
 import { TicketSlashCommand } from "./slash-commands/ticket.slashcommand";
 import { VocabSlashCommand } from "./slash-commands/vocab.slashcommand";
 import { WikiSlashCommand } from "./slash-commands/wiki.slashcommand";
@@ -209,7 +210,7 @@ import { DashboardModule } from "./komu-dashboard/dashboard/dashboard.module";
       Wiki,
       Workout,
       Mentioned,
-      IndividualChannel
+      IndividualChannel,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -315,6 +316,7 @@ import { DashboardModule } from "./komu-dashboard/dashboard/dashboard.module";
     BWLService,
     TicketSlashCommand,
     MachleoSlashCommand,
+    CallSlashCommand,
     KeepSlashCommand,
     WikiSlashCommand,
     VocabSlashCommand,
