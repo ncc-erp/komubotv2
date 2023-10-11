@@ -2,22 +2,16 @@ import { Logger } from "@nestjs/common";
 import { CronJob } from "cron";
 import { SchedulerRegistry, CronExpression } from "@nestjs/schedule";
 import { InjectDiscordClient } from "@discord-nestjs/core";
-import { ChannelType, Client, Message, User as UserDiscord } from "discord.js";
+import { ChannelType, Client } from "discord.js";
 import { UtilsService } from "src/bot/utils/utils.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { VoiceChannels } from "src/bot/models/voiceChannel.entity";
 import { Repository } from "typeorm";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { EventEntity } from "src/bot/models/event.entity";
-import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
-import { User } from "src/bot/models/user.entity";
 
 export class EventSchedulerService {
     constructor(
-        private komubotrestService: KomubotrestService,
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-
         @InjectRepository(EventEntity)
         private readonly eventRepository: Repository<EventEntity>,
         private utilsService: UtilsService,
@@ -57,21 +51,17 @@ export class EventSchedulerService {
     }
 
     async tagEvent(client: Client) {
-
-        // const getAllVoice = await this.getAllVoiceChannels(client);
-        const getAllVoice = []
-        //event reminder false and cancel false
+        const getAllVoice = await this.getAllVoiceChannels(client);
         const repeatMeet = await this.getValidMeetings();
 
-        //voice channel active. status:start
-        // const voiceNow = await this.getActiveVoiceChannels();
-        const voiceNow = ['958646576627187736', '995889802996088905']
+        const voiceNow = await this.getActiveVoiceChannels();
 
         const { countVoice, roomVoice } = await this.getCountAndRooms(
             getAllVoice,
             voiceNow,
             client
         );
+
         await this.checkAndSendNotifications(
             client,
             repeatMeet,
@@ -87,6 +77,7 @@ export class EventSchedulerService {
             (channel) =>
                 channel.type === ChannelType.GuildVoice &&
                 channel.parentId === this.configClient.guildvoice_parent_id
+
         );
     }
 
@@ -143,16 +134,13 @@ export class EventSchedulerService {
             const dateCreatedTimestamp = new Date(
                 +data.createdTimestamp.toString()
             ).toLocaleDateString("en-US");
-
             if (
                 countVoice === getAllVoice.length &&
                 this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
                 this.utilsService.isSameDate(dateCreatedTimestamp)
             ) {
-                const fetchChannelFull = await client.channels.fetch(data.channelId);
-                await fetchChannelFull
-                    .send(`@here voice channel full`)
-                    .catch(console.error);
+                const mess = `Event: voice channel full`
+                await this.sendMessage(mess, data.id, client)
             } else {
                 await this.handleMeetingRepeat(
                     data,
@@ -200,10 +188,8 @@ export class EventSchedulerService {
             this.utilsService.isSameDate(dateCreatedTimestamp) &&
             this.utilsService.isSameMinute(minuteDb, dateScheduler)
         ) {
-            const onceFetchChannel = await client.channels.fetch(data.channelId);
             await this.handleRenameVoiceChannel(
                 roomVoice,
-                onceFetchChannel,
                 client,
                 data
             );
@@ -217,11 +203,10 @@ export class EventSchedulerService {
         }
     }
 
-    async handleRenameVoiceChannel(roomVoice, channel, client, data) {
+    async handleRenameVoiceChannel(roomVoice, client, data) {
         if (roomVoice.length !== 0) {
-            await channel
-                .send(` our meeting room is <#${roomVoice[0]}>`)
-                .catch(console.error);
+            const mess = `Our event room is <#${roomVoice[0]}>`
+            await this.sendMessage(mess, data.id, client)
             const voiceRemove = roomVoice.shift(roomVoice[0]);
             const voiceChannel = await client.channels.fetch(voiceRemove);
             let originalName = voiceChannel.name;
@@ -243,9 +228,19 @@ export class EventSchedulerService {
                 })
                 .catch((err) => console.log(err));
         } else {
-            await channel.send(`@here voice channel full`).catch(console.error);
+            const mess = `Event: voice channel full`
+            await this.sendMessage(mess, data.id, client)
         }
     }
+
+    async sendMessage(message, id: number, client: Client) {
+        const event = await this.eventRepository.findOne({ where: { id } })
+        event.user.map(async (item) => {
+            const user = await client.users.fetch(item);
+            await user.send(`${message}`)
+        })
+    }
+
     async updateReminderEvent() {
         if (await this.utilsService.checkHoliday()) return;
         const repeatMeet = await this.eventRepository.find({
@@ -253,21 +248,14 @@ export class EventSchedulerService {
                 reminder: true,
             },
         });
-        console.log(repeatMeet)
-        // console.log(new Date(repeatMeet[0].createdTimestamp))
         const dateTimeNow = new Date();
         dateTimeNow.setHours(dateTimeNow.getHours());
         const hourDateNow = dateTimeNow.getHours();
         const minuteDateNow = dateTimeNow.getMinutes();
-
-        console.log(`hourDateNow ${hourDateNow}:minuteDateNow ${minuteDateNow} `)
-
-
         repeatMeet.map(async (item) => {
             let checkFiveMinute;
             let hourTimestamp;
             const dateScheduler = new Date(+item.createdTimestamp);
-
             const minuteDb = dateScheduler.getMinutes();
             if (minuteDb >= 0 && minuteDb <= 4) {
                 checkFiveMinute = minuteDb + 60 - minuteDateNow;
@@ -283,7 +271,6 @@ export class EventSchedulerService {
                     { id: item.id },
                     { cancel: true }
                 );
-
             }
         });
     }

@@ -9,6 +9,10 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { Client, Message } from "discord.js";
 import { RequestVoiceCallCommand } from "src/bot/commands/requestVoiceCall/requestVoiceCall.command";
+import { EventCommand } from "src/bot/commands/event/event.command";
+import { CallSlashCommand } from "src/bot/slash-commands/call.slashcommand";
+import { InteractionEvent } from "@discord-nestjs/core";
+import { SlashCommandPipe } from "@discord-nestjs/common";
 
 @Injectable()
 export class DmmessageService {
@@ -17,10 +21,12 @@ export class DmmessageService {
     private toggleActiveCommand: ToggleActiveCommand,
     private requestVoiceCallCommand: RequestVoiceCallCommand,
     private syncRole: Sync_role,
+    private eventCommand: EventCommand,
+    private callSlashCommand: CallSlashCommand,
     @InjectRepository(Conversation)
     private dmMessageRepository: Repository<Conversation>,
     private readonly http: HttpService
-  ) {}
+  ) { }
 
   API_TOKEN = "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";
   API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
@@ -58,7 +64,8 @@ export class DmmessageService {
           return this.syncRole.execute(message, args, client);
         case "*call":
           return this.requestVoiceCallCommand.execute(message, args, client);
-
+        case "*event":
+          return this.eventCommand.execute(message, args, client);
         // case '/tick':
         //   return const slashTicket = ticket.execute(message, client);
         // case '/keep':

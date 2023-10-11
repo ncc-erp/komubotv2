@@ -159,6 +159,7 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
 import { EventCommand } from "./commands/event/event.command";
 import { EventSchedulerService } from "./scheduler/event-scheduler/event-scheduler.service";
 import { EventEntity } from "./models/event.entity";
+import { EventService } from "./commands/event/event.serivce";
 
 @Module({
   imports: [
@@ -328,6 +329,7 @@ import { EventEntity } from "./models/event.entity";
     RequestVoiceCallService,
     EventCommand,
     EventSchedulerService,
+    EventService
   ],
   controllers: [KomubotrestController],
 })

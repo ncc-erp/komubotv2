@@ -7,9 +7,6 @@ export class EventEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: "text", nullable: true })
-    channelId: string;
-
     @Column({ type: "decimal", nullable: true })
     createdTimestamp: number;
 

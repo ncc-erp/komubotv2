@@ -1,15 +1,14 @@
 import { Client, Message, User, User as UserDiscord } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
-import { MeetingService } from "../meeting/meeting.service";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { EventEntity } from "src/bot/models/event.entity";
-
+import { EventService } from "./event.serivce";
 
 const messHelp =
     "```" +
     "*event dd/MM/YYYY HH:mm title [users]" +
+    "\n" +
     "*event cancel" +
     "```"
 
@@ -20,16 +19,16 @@ const messHelp =
 })
 export class EventCommand implements CommandLineClass {
     constructor(
-        @InjectRepository(EventEntity)
-        private readonly eventRepository: Repository<EventEntity>,
         private komubotrestService: KomubotrestService,
+        private readonly eventService: EventService,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>
     ) { }
     async execute(message: Message, args, client: Client) {
         try {
             let authorId = message.author.id
-            const channel_id = message.channel.id;
+            let author = await client.users.fetch(authorId)
+            let insertUser = [authorId]
             if (!args[0]) {
                 return message
                     .reply({
@@ -58,6 +57,7 @@ export class EventCommand implements CommandLineClass {
                                 })
                             throw new Error(`User ${user} not found`)
                         } else {
+                            insertUser.push(checkUser.userId)
                             return await client.users.fetch(checkUser.userId)
                         }
                     })
@@ -90,16 +90,8 @@ export class EventCommand implements CommandLineClass {
                 const fomat = `${month} / ${day} / ${year}`;
                 const dateObject = new Date(fomat);
                 const timestamp = dateObject.getTime();
-
-                await this.eventRepository.insert({
-                    channelId: channel_id,
-                    title: title,
-                    createdTimestamp: timestamp,
-                    user: usersMention,
-                });
-
+                await this.eventService.saveEvent(title, timestamp, insertUser)
                 // await this.NotiCreateEvent(user, author)
-
                 return message
                     .reply({ content: "`✅` Event saved.", })
                     .catch(err => {
