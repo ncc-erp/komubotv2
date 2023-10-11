@@ -141,4 +141,34 @@ export class ReportWFHService {
       }
     }
   }
+
+  async reportMachleo(date: Date) {
+    const formatDate = date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+
+    const result = await this.wfhRepository
+      .createQueryBuilder("wfh")
+      .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
+      .where(
+        '("status" = :statusACCEPT AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusACTIVE AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay)',
+        {
+          statusACCEPT: "ACCEPT",
+          statusACTIVE: "ACTIVE",
+          statusAPPROVED: "APPROVED",
+          pmconfirm: false,
+          firstDay: this.utilsService.getTimeToDayMention(formatDate).firstDay.getTime(),
+          lastDay: this.utilsService.getTimeToDayMention(formatDate).lastDay.getTime(),
+        }
+      )
+      .groupBy("m.email")
+      .addGroupBy("wfh.userId")
+      .select("m.email, COUNT(wfh.userId) as count")
+      .orderBy("count", "DESC")
+      .execute();
+
+    return result;
+  }
 }
