@@ -834,7 +834,7 @@ export class KomubotrestService {
       const issueKey = data.key;
       const summary = data.fields.summary;
       let sprintName = data.fields.customfield_10010;
-      (sprintName == null) ? sprintName = 'N/A' : sprintName = sprintName[0]?.name;
+      sprintName = sprintName && sprintName.length ? (sprintName[0]?.name || 'N/A') : 'N/A'
       const assigneeDisplayName = data.fields.assignee?.displayName || 'Unassigned';
       const projectName = data.fields.project?.name || 'N/A';
       const getURL = data.self;
