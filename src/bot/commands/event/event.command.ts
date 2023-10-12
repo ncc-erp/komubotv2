@@ -91,7 +91,7 @@ export class EventCommand implements CommandLineClass {
                 const dateObject = new Date(fomat);
                 const timestamp = dateObject.getTime();
                 await this.eventService.saveEvent(title, timestamp, insertUser)
-                // await this.NotiCreateEvent(user, author)
+                await this.NotiCreateEvent(user, author)
                 return message
                     .reply({ content: "`✅` Event saved.", })
                     .catch(err => {
