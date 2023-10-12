@@ -833,7 +833,8 @@ export class KomubotrestService {
       const channel: any = client.channels.cache.get(this.clientConfig.jiraWebhookChannelId);
       const issueKey = data.key;
       const summary = data.fields.summary;
-      const sprintName = data.fields.customfield_10020[0]?.name || 'N/A';
+      let sprintName = data.fields.customfield_10010;
+      (sprintName == null) ? sprintName = 'N/A' : sprintName = sprintName[0]?.name;
       const assigneeDisplayName = data.fields.assignee?.displayName || 'Unassigned';
       const projectName = data.fields.project?.name || 'N/A';
       const getURL = data.self;
