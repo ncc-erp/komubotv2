@@ -837,17 +837,22 @@ export class KomubotrestService {
       sprintName = sprintName && sprintName.length ? (sprintName[0]?.name || 'N/A') : 'N/A'
       const assigneeDisplayName = data.fields.assignee?.displayName || 'Unassigned';
       const projectName = data.fields.project?.name || 'N/A';
+      const keyName = data.fields.project.key || "N/A";
+      let boardId = data.fields.customfield_10010;
+      boardId = boardId && boardId.length ? (boardId[0]?.boardId || 'N/A') : 'N/A';
       const getURL = data.self;
       const reporterDisplayName = data.fields.reporter?.displayName || 'Unknown Reporter';
       const statusName = data.fields.status?.name || 'N/A';
+      const logoTrudi = "https://media.discordapp.net/attachments/1047723734250827806/1153150577761599498/280x280bb.png"
+      const handleUrl = getURL.split('/rest')[0];
 
       const createdTimestamp = data.fields.created || Date.now();
+      const timestampUpdated = data.fields.updated || Date.now();
       const currentTimestamp = Date.now();
-      const timeDifferenceMs = currentTimestamp - createdTimestamp;
+      const timeDifferenceMs = currentTimestamp - timestampUpdated;
       const timeDifferenceHours = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
       const daysPassed = Math.floor(timeDifferenceHours / 24);
       const hoursRemaining = timeDifferenceHours % 24;
-
       const createdDate = new Date(createdTimestamp);
       const formattedCreatedTime = createdDate.toUTCString();
 
@@ -868,8 +873,8 @@ export class KomubotrestService {
           { name: 'Assignee', value: assigneeDisplayName, inline: true },
           { name: 'Reporter', value: reporterDisplayName, inline: true }
         )
-        .setThumbnail('https://res.cloudinary.com/dmxqrmsom/image/upload/v1696298593/jira_ycmzo1.png')
-        .setURL(getURL);
+        .setThumbnail(logoTrudi)
+        .setURL(`${handleUrl}/jira/software/projects/${keyName}/boards/${boardId}/?selectedIssue=${issueKey}`);
 
       return channel.send({ embeds: [discord_message] });
 
