@@ -19,8 +19,8 @@ export class DmmessageService {
     private syncRole: Sync_role,
     @InjectRepository(Conversation)
     private dmMessageRepository: Repository<Conversation>,
-    private readonly http: HttpService
-  ) {}
+    private readonly http: HttpService,
+  ) { }
 
   API_TOKEN = "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";
   API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
@@ -58,7 +58,6 @@ export class DmmessageService {
           return this.syncRole.execute(message, args, client);
         case "*call":
           return this.requestVoiceCallCommand.execute(message, args, client);
-
         // case '/tick':
         //   return const slashTicket = ticket.execute(message, client);
         // case '/keep':
