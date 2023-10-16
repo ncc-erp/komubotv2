@@ -167,7 +167,8 @@ export class WolCommand implements CommandLineClass {
       if (!args[0]) {
         const myWOL = await this.wolRepository.findOneBy({ author: authorId })
         if (myWOL) {
-          return handleWoL(message, args);
+          const agrs1 = myWOL.wol.split(' ')
+          return handleWoL(message, agrs1);
         } else {
           return message.reply("You haven't set up wol");
         }
