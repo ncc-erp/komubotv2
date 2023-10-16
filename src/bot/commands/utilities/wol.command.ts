@@ -166,13 +166,11 @@ export class WolCommand implements CommandLineClass {
       const timeStamp = Date.now();
       if (!args[0]) {
         const myWOL = await this.wolRepository.findOneBy({ author: authorId })
-        return message
-          .reply({
-            content: `${myWOL.wol}`,
-          })
-          .catch((err) => {
-            console.log(err)
-          })
+        if (myWOL) {
+          return handleWoL(message, args);
+        } else {
+          return message.reply("You haven't set up wol");
+        }
       } else if (args[0] === "help") {
         return message.reply(
           "Using WoL to turn on an pc on LAN using mac address.\n*wol <your mac> [your ip]\n*tips: you can you *keep command to save your mac and ip"
