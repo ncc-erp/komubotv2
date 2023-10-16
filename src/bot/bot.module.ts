@@ -156,6 +156,8 @@ import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.com
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 import { RequestVoiceCallCommand } from "./commands/requestVoiceCall/requestVoiceCall.command";
 import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoiceCall.service";
+import { WOL } from "./models/wol.entity";
+import { WOLCommand } from "./commands/wol/wol.command";
 
 @Module({
   imports: [
@@ -202,6 +204,7 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
       Workout,
       Mentioned,
       IndividualChannel,
+      WOL
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -322,7 +325,8 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
     RenameChannelService,
     RequestVoiceCallCommand,
     RequestVoiceCallService,
+    WOLCommand
   ],
   controllers: [KomubotrestController],
 })
-export class BotModule {}
+export class BotModule { }
