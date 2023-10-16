@@ -9,7 +9,6 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { Client, Message } from "discord.js";
 import { RequestVoiceCallCommand } from "src/bot/commands/requestVoiceCall/requestVoiceCall.command";
-import { WOLCommand } from "src/bot/commands/wol/wol.command";
 
 @Injectable()
 export class DmmessageService {
@@ -21,7 +20,6 @@ export class DmmessageService {
     @InjectRepository(Conversation)
     private dmMessageRepository: Repository<Conversation>,
     private readonly http: HttpService,
-    private readonly wolCommand: WOLCommand
   ) { }
 
   API_TOKEN = "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";
@@ -60,9 +58,6 @@ export class DmmessageService {
           return this.syncRole.execute(message, args, client);
         case "*call":
           return this.requestVoiceCallCommand.execute(message, args, client);
-        case "*wol":
-          return this.wolCommand.execute(message, args, client);
-
         // case '/tick':
         //   return const slashTicket = ticket.execute(message, client);
         // case '/keep':

@@ -5,6 +5,9 @@ import broadcastAddress from "broadcast-address";
 import os from "os";
 import net from "net";
 import { Message } from "discord.js";
+import { InjectRepository } from "@nestjs/typeorm";
+import { WOL } from "src/bot/models/wol.entity";
+import { Repository } from "typeorm";
 
 function getAvailableBroadcastAddresses() {
   const interfacesNames = Object.keys(os.networkInterfaces());
@@ -89,7 +92,7 @@ function sendCMDToPfsense(branch, identity, ipAddress) {
     case "qn":
       host = "10.10.60.1";
       break;
-    case "hn1":  
+    case "hn1":
     default:
       host = "172.16.10.1";
       break;
@@ -153,14 +156,41 @@ function handleWoL(message: Message, args) {
   cat: "utilities",
 })
 export class WolCommand implements CommandLineClass {
+  constructor(
+    @InjectRepository(WOL)
+    private readonly wolRepository: Repository<WOL>,
+  ) { }
   async execute(message, args) {
     try {
-      if (args[0] === "help") {
+      const authorId = message.author.id;
+      const timeStamp = Date.now();
+      if (!args[0]) {
+        const myWOL = await this.wolRepository.findOneBy({ author: authorId })
+        return message
+          .reply({
+            content: `${myWOL.wol}`,
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else if (args[0] === "help") {
         return message.reply(
           "Using WoL to turn on an pc on LAN using mac address.\n*wol <your mac> [your ip]\n*tips: you can you *keep command to save your mac and ip"
         );
+      } else {
+        const wol = args.join(" ")
+        const checkUser = await this.wolRepository.findOneBy({ author: authorId })
+        if (!checkUser) {
+          await this.wolRepository.save({
+            author: authorId,
+            wol: wol,
+            createdAt: timeStamp
+          })
+        } else {
+          await this.wolRepository.update({ author: authorId }, { wol: wol })
+        }
+        return handleWoL(message, args);
       }
-      return handleWoL(message, args);
     } catch (err) {
       console.log(err);
     }
