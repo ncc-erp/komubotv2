@@ -24,7 +24,7 @@ export class DmmessageService {
     private importantSMS: ImportantSMSCommand,
     @InjectRepository(Conversation)
     private dmMessageRepository: Repository<Conversation>,
-    private readonly http: HttpService
+    private readonly http: HttpService,
   ) { }
 
   API_TOKEN = "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";

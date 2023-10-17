@@ -41,5 +41,6 @@ export const TABLE = {
   BWLREACTION: "komu_bwlReaction",
   INDIVIDUAL_CHANNEL: "komu_individualChannel",
   EVENT: "komu_event",
-  IMPORTANT_SMS: "komu_importantSms"
+  IMPORTANT_SMS: "komu_importantSms",
+  WOL: "komu_wol"
 };

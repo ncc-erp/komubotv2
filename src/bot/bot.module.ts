@@ -164,6 +164,7 @@ import { ImportantSMSCommand } from "./commands/importantMessage/important.comma
 import { ImportantSMS } from "./models/importantSMS.entity";
 import { ImportantSMSService } from "./commands/importantMessage/important.service";
 import { ImportantSchedulerService } from "./scheduler/important-scheduler/important-scheduler.service";
+import { WOL } from "./models/wol.entity";
 
 @Module({
   imports: [
@@ -212,6 +213,7 @@ import { ImportantSchedulerService } from "./scheduler/important-scheduler/impor
       IndividualChannel,
       EventEntity,
       ImportantSMS,
+      WOL
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
