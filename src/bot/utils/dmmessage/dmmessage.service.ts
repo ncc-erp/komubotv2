@@ -11,8 +11,7 @@ import { Client, Message } from "discord.js";
 import { RequestVoiceCallCommand } from "src/bot/commands/requestVoiceCall/requestVoiceCall.command";
 import { EventCommand } from "src/bot/commands/event/event.command";
 import { CallSlashCommand } from "src/bot/slash-commands/call.slashcommand";
-import { InteractionEvent } from "@discord-nestjs/core";
-import { SlashCommandPipe } from "@discord-nestjs/common";
+import { ImportantSMSCommand } from "src/bot/commands/importantMessage/important.command";
 
 @Injectable()
 export class DmmessageService {
@@ -22,7 +21,7 @@ export class DmmessageService {
     private requestVoiceCallCommand: RequestVoiceCallCommand,
     private syncRole: Sync_role,
     private eventCommand: EventCommand,
-    private callSlashCommand: CallSlashCommand,
+    private importantSMS: ImportantSMSCommand,
     @InjectRepository(Conversation)
     private dmMessageRepository: Repository<Conversation>,
     private readonly http: HttpService
@@ -66,6 +65,8 @@ export class DmmessageService {
           return this.requestVoiceCallCommand.execute(message, args, client);
         case "*event":
           return this.eventCommand.execute(message, args, client);
+        case "*sms":
+          return this.importantSMS.execute(message, args, client);
         // case '/tick':
         //   return const slashTicket = ticket.execute(message, client);
         // case '/keep':

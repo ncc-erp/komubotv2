@@ -52,7 +52,7 @@ export class EventSchedulerService {
 
     async tagEvent(client: Client) {
         const getAllVoice = await this.getAllVoiceChannels(client);
-        const repeatMeet = await this.getValidMeetings();
+        const repeatEvent = await this.getValidEvent();
 
         const voiceNow = await this.getActiveVoiceChannels();
 
@@ -64,7 +64,7 @@ export class EventSchedulerService {
 
         await this.checkAndSendNotifications(
             client,
-            repeatMeet,
+            repeatEvent,
             countVoice,
             getAllVoice,
             roomVoice
@@ -81,7 +81,7 @@ export class EventSchedulerService {
         );
     }
 
-    async getValidMeetings() {
+    async getValidEvent() {
         return await this.eventRepository
             .createQueryBuilder("event")
             .where(`"reminder" IS NOT TRUE`)
@@ -123,12 +123,12 @@ export class EventSchedulerService {
     }
     async checkAndSendNotifications(
         client,
-        repeatMeet,
+        repeatEvent,
         countVoice,
         getAllVoice,
         roomVoice
     ) {
-        for (const data of repeatMeet) {
+        for (const data of repeatEvent) {
             const dateScheduler = new Date(+data.createdTimestamp);
             const minuteDb = dateScheduler.getMinutes();
             const dateCreatedTimestamp = new Date(
@@ -243,7 +243,7 @@ export class EventSchedulerService {
 
     async updateReminderEvent() {
         if (await this.utilsService.checkHoliday()) return;
-        const repeatMeet = await this.eventRepository.find({
+        const repeatEvent = await this.eventRepository.find({
             where: {
                 reminder: true,
             },
@@ -252,7 +252,7 @@ export class EventSchedulerService {
         dateTimeNow.setHours(dateTimeNow.getHours());
         const hourDateNow = dateTimeNow.getHours();
         const minuteDateNow = dateTimeNow.getMinutes();
-        repeatMeet.map(async (item) => {
+        repeatEvent.map(async (item) => {
             let checkFiveMinute;
             let hourTimestamp;
             const dateScheduler = new Date(+item.createdTimestamp);

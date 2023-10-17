@@ -12,6 +12,7 @@ import { VoiceChannelSchedulerService } from "./bot/scheduler/voice-channel-sche
 import { WfhSchedulerService } from "./bot/scheduler/wfh-scheduler/wfh-scheduler.service";
 import { setupSwagger } from "./setup-swagger";
 import { EventSchedulerService } from "./bot/scheduler/event-scheduler/event-scheduler.service";
+import { ImportantSchedulerService } from "./bot/scheduler/important-scheduler/important-scheduler.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,6 +42,8 @@ async function bootstrap() {
   await wfhSchedulerService.startCronJobs();
   const eventSchedulerService = app.get(EventSchedulerService);
   await eventSchedulerService.startCronJobs();
+  const importantSchedulerService = app.get(ImportantSchedulerService);
+  await importantSchedulerService.startCronJobs()
 }
 
 bootstrap();

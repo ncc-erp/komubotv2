@@ -160,6 +160,10 @@ import { EventCommand } from "./commands/event/event.command";
 import { EventSchedulerService } from "./scheduler/event-scheduler/event-scheduler.service";
 import { EventEntity } from "./models/event.entity";
 import { EventService } from "./commands/event/event.serivce";
+import { ImportantSMSCommand } from "./commands/importantMessage/important.command";
+import { ImportantSMS } from "./models/importantSMS.entity";
+import { ImportantSMSService } from "./commands/importantMessage/important.service";
+import { ImportantSchedulerService } from "./scheduler/important-scheduler/important-scheduler.service";
 
 @Module({
   imports: [
@@ -207,6 +211,7 @@ import { EventService } from "./commands/event/event.serivce";
       Mentioned,
       IndividualChannel,
       EventEntity,
+      ImportantSMS,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -329,7 +334,10 @@ import { EventService } from "./commands/event/event.serivce";
     RequestVoiceCallService,
     EventCommand,
     EventSchedulerService,
-    EventService
+    EventService,
+    ImportantSMSCommand,
+    ImportantSMSService,
+    ImportantSchedulerService,
   ],
   controllers: [KomubotrestController],
 })

@@ -1,9 +1,10 @@
-import { Client, Message, User, User as UserDiscord } from "discord.js";
+import { Client, Message, TextChannel, User as UserDiscord } from "discord.js";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { EventService } from "./event.serivce";
+import { User } from "src/bot/models/user.entity";
 
 const messHelp =
     "```" +
@@ -29,7 +30,7 @@ export class EventCommand implements CommandLineClass {
             let authorId = message.author.id
             let author = await client.users.fetch(authorId)
             let insertUser = [authorId]
-            if (!args[0]) {
+            if (!args[0] || !args[3]) {
                 return message
                     .reply({
                         content: messHelp,
@@ -37,7 +38,8 @@ export class EventCommand implements CommandLineClass {
                     .catch((err) => {
                         this.komubotrestService.sendErrorToDevTest(client, authorId, err)
                     })
-            } else {
+            }
+            else {
                 const title = args[2]
                 const usersMention = args.slice(3);
                 const datetime = args.slice(0, 2).join(" ");
@@ -55,13 +57,21 @@ export class EventCommand implements CommandLineClass {
                                 .catch((err) => {
                                     this.komubotrestService.sendErrorToDevTest(client, authorId, err)
                                 })
-                            throw new Error(`User ${user} not found`)
                         } else {
                             insertUser.push(checkUser.userId)
                             return await client.users.fetch(checkUser.userId)
                         }
                     })
                 )
+                if (user.includes(undefined)) {
+                    return message
+                        .reply({
+                            content: messHelp,
+                        })
+                        .catch((err) => {
+                            this.komubotrestService.sendErrorToDevTest(client, authorId, err)
+                        })
+                }
                 if (
                     !/^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([1][26]|[2468][048]|[3579][26])00))))$/.test(
                         checkDate
