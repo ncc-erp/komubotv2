@@ -20,5 +20,5 @@ export class EventEntity {
     reminder: boolean;
 
     @Column({ nullable: true, type: "text", array: true })
-    user: string[]
+    users: string[]
 }
