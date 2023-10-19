@@ -10,11 +10,11 @@ export class EventService {
         private readonly eventRepository: Repository<EventEntity>,
     ) { }
 
-    async saveEvent(title, createdTimestamp, user,) {
+    async saveEvent(title, createdTimestamp, users) {
         await this.eventRepository.insert({
             title: title,
             createdTimestamp: createdTimestamp,
-            user: user
+            users: users
         });
     }
 

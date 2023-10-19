@@ -235,7 +235,7 @@ export class EventSchedulerService {
 
     async sendMessage(message, id: number, client: Client) {
         const event = await this.eventRepository.findOne({ where: { id } })
-        event.user.map(async (item) => {
+        event.users.map(async (item) => {
             const user = await client.users.fetch(item);
             await user.send(`${message}`)
         })
