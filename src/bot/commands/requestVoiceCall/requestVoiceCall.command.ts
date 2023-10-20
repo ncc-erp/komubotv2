@@ -23,7 +23,7 @@ export class RequestVoiceCallCommand implements CommandLineClass {
         const user = await this.requestVoiceCallService.getDataUser(emailUser);
         let rooms;
         const guild = await client.guilds.fetch(this.configClient.guild_komu_id);
-        const member = guild.members.cache.get(authorId);
+        const member = await guild.members.fetch(authorId);
         if (!user)
           return message.reply(`Wrong Email!`).catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
