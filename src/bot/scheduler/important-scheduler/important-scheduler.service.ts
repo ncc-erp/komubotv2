@@ -15,7 +15,6 @@ export class ImportantSchedulerService {
         @InjectRepository(ImportantSMS)
         private readonly importantSMS: Repository<ImportantSMS>
     ) { }
-
     private readonly logger = new Logger(ImportantSchedulerService.name);
     addCronJob(name: string, time: string, callback: () => void): void {
         const job = new CronJob(
@@ -30,8 +29,18 @@ export class ImportantSchedulerService {
         );
         this.schedulerRegistry.addCronJob(name, job);
         job.start();
-
         this.logger.warn(`job ${name} added for each minute at ${time} seconds!`);
+
+        setTimeout(() => {
+            this.removeCronJob(name);
+            job.start();
+        }, 10 * 60 * 1000)
+    }
+    removeCronJob(name: string) {
+        const job = this.schedulerRegistry.getCronJob(name);
+        if (job) {
+            job.stop();
+        }
     }
     // Start cron job
     startCronJobs(): void {
@@ -39,6 +48,7 @@ export class ImportantSchedulerService {
             this.tagImportant(this.client)
         );
     }
+
     async tagImportant(client: Client) {
         const repeatSMS = await this.getValidSMS();
         await this.checkAndSendNotifications(repeatSMS, client);
