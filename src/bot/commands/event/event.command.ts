@@ -101,7 +101,7 @@ export class EventCommand implements CommandLineClass {
                 const dateObject = new Date(fomat);
                 const timestamp = dateObject.getTime();
                 await this.eventService.saveEvent(title, timestamp, insertUser)
-                await this.NotiCreateEvent(user, author)
+                await this.NotiCreateEvent(user, author, checkDate, checkTime)
                 return message
                     .reply({ content: "`✅` Event saved.", })
                     .catch(err => {
@@ -122,12 +122,12 @@ export class EventCommand implements CommandLineClass {
             .getRawOne();
     }
 
-    async NotiCreateEvent(userMentions: UserDiscord[], author: UserDiscord) {
+    async NotiCreateEvent(userMentions: UserDiscord[], author: UserDiscord, checkDate, checkTime) {
         await Promise.all(
             userMentions.map(async (item) => {
-                await item.send(`You have a event with ${author} and ${userMentions} `)
+                await item.send(`You have an event with ${author}, ${userMentions} on ${checkDate} in ${checkTime}`)
             })
         )
-        await author.send(`You have a event with ${userMentions} `)
+        await author.send(`You have an event with ${userMentions} on ${checkDate} in ${checkTime} `)
     }
 }
