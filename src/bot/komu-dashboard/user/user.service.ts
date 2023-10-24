@@ -139,7 +139,7 @@ export class UserService {
                 })
                 .execute();  
           } else {
-            throw new UnauthorizedException('Người dùng không tồn tại trong máy chủ.');
+            throw new UnauthorizedException('Users do not exist in the server.');
           }
         } else {
           if (user) {
@@ -150,7 +150,7 @@ export class UserService {
               maxUses: 1,
               unique: true,
             });
-            dmChannel.send(`Mời bạn đến máy chủ? \n ${invite.url}`);
+            dmChannel.send(`Please go to the server? \n ${invite.url}`);
             await this.userRepository
                 .createQueryBuilder()
                 .update(User)
@@ -162,7 +162,7 @@ export class UserService {
                 })
                 .execute();
           } else {
-            throw new UnauthorizedException('Người dùng không tồn tại trong máy chủ.');
+            throw new UnauthorizedException('Users do not exist in the server.');
           }
         }
       } else {

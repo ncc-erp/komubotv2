@@ -27,7 +27,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
           GatewayIntentBits.GuildVoiceStates,
           GatewayIntentBits.GuildMembers,
           GatewayIntentBits.MessageContent,
-          GatewayIntentBits.GuildIntegrations
+          GatewayIntentBits.GuildIntegrations,
         ],
       }),
     },

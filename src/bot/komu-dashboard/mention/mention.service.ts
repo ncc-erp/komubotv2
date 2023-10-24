@@ -61,7 +61,7 @@ export class MentionService {
     const guild = await this.client.guilds.fetch(process.env.GUILD_ID_WITH_COMMANDS);
     for (const item of list) {
       const channel = await guild.channels.fetch(item?.mention_channelId);
-      listChange.push({
+      listChange && listChange.push({
         id: item?.mention_id,
         author: item?.author_username,
         mention: item?.mentionUser_username,
@@ -72,13 +72,22 @@ export class MentionService {
         reaction: item?.mention_reactionTimestamp,
       })
     }
-
-    return {
-      content: listChange,
-      pageable: {
-        total,
-        ...paging.pageable,
-      }
+    if (listChange) {
+      return {
+          content: listChange,
+          pageable: {
+              total,
+              ...paging.pageable,
+          }
+      };
+    } else {
+        return {
+            content: [],
+            pageable: {
+                total,
+                ...paging.pageable,
+            }
+        }
     }
   }
 }

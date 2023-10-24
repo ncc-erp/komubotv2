@@ -1,12 +1,14 @@
+import { fetchAntFeed } from 'src/bot/utils/ant';
 import { Injectable, Inject } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ChannelType, Client, PermissionsBitField } from "discord.js";
+import { ChannelType, Client, PermissionsBitField, REST, Routes   } from "discord.js";
 import { Channel } from "src/bot/models/channel.entity";
 import { Paging } from "src/bot/utils/commonDto";
 import { formatPaging } from "src/bot/utils/formatter";
 import { GetNameChannelService } from "src/bot/utils/getFullNameChannel/getFullNameChannel.service";
 import { Repository } from "typeorm";
 import { getListChannel, getListChannelMember, PostRemoteMemberChannel, GetSearchMemberChannel } from "./dto/channel.dto";
+import { channelListType } from "../constants/channelListType";
 
 @Injectable()
 export class ChannelService {
@@ -19,49 +21,6 @@ export class ChannelService {
   ) {
     this.client.login(process.env.TOKEN);
   }
-
-  // async findAll(
-  //   query: getListChannel,
-  //   client: Client
-  // ): Promise<Paging<Channel>> {
-  //   const { name, type, page, size } = query;
-
-  //   const paging = formatPaging(page, size);
-
-  //   const queryBuilder = await this.channelRepository
-  //     .createQueryBuilder("user")
-  //     .take(paging.query.take)
-  //     .skip(paging.query.skip);
-
-  //   if (name) {
-  //     queryBuilder.andWhere(`"name" ilike :name`, {
-  //       name: `%${name}%`,
-  //     });
-  //   }
-
-  //   if (type) {
-  //     queryBuilder.andWhere('"type" = :type', {
-  //       type: type,
-  //     });
-  //   }
-
-  //   const [list, total] = await queryBuilder.getManyAndCount();
-  //   const resultTypeChannel = await this.getTypeChannel(list);
-
-  //   const result = await this.getNameChannelService.getNameChannel(
-  //     resultTypeChannel,
-  //     client,
-  //     "id"
-  //   );
-
-  //   return {
-  //     content: result,
-  //     pageable: {
-  //       total,
-  //       ...paging.pageable,
-  //     },
-  //   };
-  // }
 
   async findAll(query: getListChannel,client: Client) {
     const { name, type, page, size, sort } = query;
@@ -140,26 +99,43 @@ export class ChannelService {
 
   async getViewChannell(query: getListChannelMember) {
     const { id, searchId } = query;
-    const guild = await this.client.guilds.fetch(process.env.GUILD_ID_WITH_COMMANDS);
-    const memberGuild = await guild.members.fetch();
+    const guild: any = await this.client.guilds.fetch(process.env.GUILD_ID_WITH_COMMANDS);
     const channel: any = await guild.channels.fetch(id);
-    const membersWithAccess = memberGuild.filter(member => {
-      const permissions = channel.permissionsFor(member);
-      return permissions && permissions.has(PermissionsBitField.Flags.ViewChannel);
-    });
     let membersWithRoles: any[] = [];
-    membersWithAccess.forEach((member: any) => {
-      const memberRoles =  member.roles.cache.map((role: any) => role.name);
-      membersWithRoles.push({
-        id: member.user.id,
-        username: member.user.username,
-        avatar: member.user.avatar,
-        roles: memberRoles,
+    if(channel?.isThread()) {
+      const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+      const membersWithAccess: any = await rest.get(Routes.threadMembers(id));
+      if (membersWithAccess?.length > 0) {
+        for (const member of membersWithAccess) {
+          const memberId = await guild.members.fetch(String(member?.user_id));
+          const memberRoles = await memberId.roles.cache.map(( role: any ) => role.name);
+          membersWithRoles.push({
+            id: memberId.id,
+            username: memberId.user.username,
+            avatar: memberId.user.avatar,
+            roles: memberRoles,
+          });
+        };
+      }
+    } else {
+      const memberGuild = await guild.members.fetch();
+      const membersWithAccess = memberGuild.filter((member: any ) => {
+        const permissions = channel.permissionsFor(member);
+        return permissions && permissions.has(PermissionsBitField.Flags.ViewChannel);
+      });    
+      membersWithAccess.forEach((member: any) => {
+        const memberRoles =  member.roles.cache.map((role: any) => role.name);
+        membersWithRoles.push({
+          id: member.user.id,
+          username: member.user.username,
+          avatar: member.user.avatar,
+          roles: memberRoles,
+        });
       });
-    });
+    }
     return {
       list: searchId ? membersWithRoles.filter(item => item?.id === searchId) : membersWithRoles,
-      total: membersWithRoles?.length,
+      total: membersWithRoles.length,
     }
   }
 
@@ -169,10 +145,14 @@ export class ChannelService {
     const channel: any = await guild.channels.fetch(channelId);
     const member =await guild.members.fetch(userId);
     if (member) {
-      channel.permissionOverwrites.edit(member.id, {
-        SendMessages: false,
-        ViewChannel: false,
-      })
+      if (channel.isThread()) {
+        await channel.members.remove(member.id);
+      } else {
+        channel.permissionOverwrites.edit(member.id, {
+          SendMessages: false,
+          ViewChannel: false,
+        });
+      }
     }
   }
 
@@ -203,65 +183,14 @@ export class ChannelService {
     const channel: any = await guild.channels.fetch(channelId);
     const member =await guild.members.fetch(userId);
     if (member) {
-      channel.permissionOverwrites.edit(member.id, {
-        SendMessages: true,
-        ViewChannel: true,
-      })
+      if (channel.isThread()) {
+        await channel.members.add(member.id);
+      } else {
+        channel.permissionOverwrites.edit(member.id, {
+          SendMessages: true,
+          ViewChannel: true,
+        });
+      }
     }
   }
 }
-
-export const channelListType =[
-  {
-    id: 0,
-    type: "GUILD_TEXT",
-  },
-  {
-    id: 1,
-    type: "DM",
-  },
-  {
-    id: 2,
-    type: "GUILD_VOICE",
-  },
-  {
-    id: 3,
-    type: "GROUP_DM",
-  },
-  {
-    id: 4,
-    type: "GUILD_CATEGORY",
-  },
-  {
-    id: 5,
-    type: "GUILD_ANNOUNCEMENT",
-  },
-  {
-    id: 10,
-    type: "ANNOUNCEMENT_THREAD",
-  },
-  {
-    id: 11,
-    type: "PUBLIC_THREAD",
-  },
-  {
-    id: 12,
-    type: "PRIVATE_THREAD",
-  },
-  {
-    id: 13,
-    type: "GUILD_STAGE_VOICE",
-  },
-  {
-    id: 14,
-    type: "GUILD_DIRECTORY",
-  },
-  {
-    id: 15,
-    type: "GUILD_FORUM",
-  },
-  {
-    id: 16,
-    type: "GUILD_MEDIA",
-  },
-]
