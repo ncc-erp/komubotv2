@@ -17,21 +17,12 @@ import { Channel } from "src/bot/models/channel.entity";
 import { NodeSSH } from "node-ssh";
 import { IReportKomubot, IReportMsg } from "./interfaces/dashboardInterface";
 import { Client } from "discord.js";
+import { office, listTypeRole, listTypeRoom } from "../constants/listTypeDashboard";
 
 const startDay = startOfWeek(new Date()).getTime();
 const endDay = endOfWeek(new Date()).getTime();
 // const startDay = startOfDay(new Date()).getTime();
 // const endDay = endOfDay(new Date()).getTime();
-const office = [
-  "VINH",
-  "HANOI",
-  "HANOI2",
-  "HANOI3",
-  "DANANG",
-  "QUYNHON",
-  "SAIGON",
-  "SAIGON2",
-];
 
 @Injectable()
 export class DashboardService {
@@ -139,19 +130,32 @@ export class DashboardService {
     }
   }
 
+  // async reportChannel(): Promise<number> {
+  //   try {
+  //     const guild = this.client.guilds.cache.get(process.env.GUILD_ID_WITH_COMMANDS);
+  //     const channel: any[] = Array.from(guild.channels.cache.values());
+  //     const list = channel.filter(item => item?.type !== 4 && item?.type !== 10 && item?.type !== 11 && item?.type !== 12 );
+  //     return list?.length;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
   async reportChannel(): Promise<number> {
     try {
-      // return await this.channelRepository
-      //   .createQueryBuilder("channel")
-      //   .getCount();
-      const guild = this.client.guilds.cache.get(process.env.GUILD_ID_WITH_COMMANDS);
-      const channel: any[] = Array.from(guild.channels.cache.values());
-      const list = channel.filter(item => item?.type !== 4 && item?.type !== 10 && item?.type !== 11 && item?.type !== 12 );
-      return list?.length;
+      const guild = this.client.guilds.cache.get(process.env.GUILD_ID_WITH_COMMANDS);  
+      if (guild) {
+        const channel: any[] = Array.from(guild.channels.cache.values());
+        const list = channel.filter(item => item?.type !== 4 && item?.type !== 10 && item?.type !== 11 && item?.type !== 12);
+        return list?.length;
+      } else {
+        return 0;
+      }
     } catch (error) {
       console.log(error);
     }
   }
+  
 
   async getReportMsg(): Promise<IReportMsg> {
     try {
@@ -289,20 +293,3 @@ export class DashboardService {
     };
   }
 }
-
-export const listTypeRoom: string[] =[
-  "VINH",
-  "HANOI",
-  "HANOI2",
-  "HANOI3",
-  "DANANG",
-  "QUYNHON",
-  "SAIGON",
-  "SAIGON2",
-];
-
-export const listTypeRole: string[] =[
-  "PM",
-  "STAFF",
-  "INTERN",
-];

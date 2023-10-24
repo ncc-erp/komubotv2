@@ -52,8 +52,5 @@ export class MessageService {
           ...paging.pageable,
         },
       };
-    // } catch (error) {
-    //   throw new UnauthorizedException(`Not Found`);
-    // }
   }
 }

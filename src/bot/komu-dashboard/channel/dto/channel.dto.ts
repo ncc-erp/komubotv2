@@ -19,6 +19,10 @@ export class getListChannelMember  {
 
   @ApiProperty({ required: false })
   @Type(() => String )
+  threadId: string;
+
+  @ApiProperty({ required: false })
+  @Type(() => String )
   searchId: string;
 }
 

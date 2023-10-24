@@ -4,7 +4,7 @@ import { EmbedBuilder, Message } from "discord.js";
 import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
 import { Repository } from "typeorm";
-import translate from "@vitalets/google-translate-api";
+// import translate from "@vitalets/google-translate-api";
 import lang from "../../languages/lang.json";
 import { GuildData } from "src/bot/models/guildData.entity";
 import { Channel } from "src/bot/models/channel.entity";
@@ -184,13 +184,13 @@ export class ExtendersService {
       throw new Error("Aucun texte indiqué ");
     }
     const target = Message.guild.lang;
-    const texttoreturn = await translate(text, { to: target })
-      .then((res) => res.text)
-      .catch((error) => console.log(error));
-    return (texttoreturn as any)
-      .replace("show", "channel")
-      .replace("living room", "channel")
-      .replace("room", "channel");
+    // const texttoreturn = await translate(text, { to: target })
+    //   .then((res) => res.text)
+    //   .catch((error) => console.log(error));
+    // return (texttoreturn as any)
+    //   .replace("show", "channel")
+    //   .replace("living room", "channel")
+    //   .replace("room", "channel");
   }
 
   errorMessageMessage(text, Message) {
