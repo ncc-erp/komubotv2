@@ -252,7 +252,7 @@ export class ClientConfigService {
       "FOLDER_DRIVER_PARENTS_ID"
     )}`;
 
-    this.pmsChannelId = `${configService.get<string>("PMS_CHANNEL_ID")}`;
+    this.jwtSecret = `${configService.get<string>("JWT_SECRET")}`;
 
     this.owners = ["KOMU#0139"];
     //The footer of the embeds that the bot will send
@@ -280,10 +280,19 @@ export class ClientConfigService {
     //The number of shards. Leave blank for auto
     this.shards = 1;
     //The X-Event_Key of Bitbucket Webhook. Triggers: Created Pull Request
-    this.PullRequest = "pullrequest:created";
+    this.PullRequest = "pullrequest:fulfilled";
     //The X-Event_Key of Bitbucket Webhook. Triggers: Build Status Created
-    this.StatusBuild = "repo:commit_status_created";
+    this.StatusBuild = "repo:commit_status_updated";
+
+    this.bitbucketWebhookChannelId = `${configService.get<string>(
+      "BITBUCKET_WEBOOOK_CHANNEL_ID"
+    )}`;
+
+    this.jiraWebhookChannelId = `${configService.get<string>(
+      "JIRA_WEBOOOK_CHANNEL_ID"
+    )}`;
   }
+  jwtSecret: string;
 
   https: https.Agent;
 
@@ -484,5 +493,12 @@ export class ClientConfigService {
   categories: any;
 
   PullRequest: string;
+
   StatusBuild: string;
+
+  // KOMUBOTREST_THONGBAO_JIRA_WEBOOOK_CHANNEL_ID
+  jiraWebhookChannelId: string;
+
+  // KOMUBOTREST_THONGBAO_BITBUCKET_WEBOOOK_CHANNEL_ID
+  bitbucketWebhookChannelId: string;
 }
