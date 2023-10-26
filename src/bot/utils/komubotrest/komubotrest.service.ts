@@ -203,7 +203,7 @@ export class KomubotrestService {
           nonce: sent.nonce as any,
           editedTimestamp: sent.editedTimestamp,
           deleted: false,
-          webhookId: sent.webhookId,
+          webhookId: sent.webhookId ?? "",
           applicationId: sent.applicationId,
           flags: sent.flags as any,
         });

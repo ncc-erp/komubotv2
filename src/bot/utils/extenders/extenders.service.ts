@@ -102,7 +102,7 @@ export class ExtendersService {
         tts: message.tts,
         nonce: message.nonce,
         editedTimestamp: message.editedTimestamp,
-        webhookId: message.webhookId,
+        webhookId: message.webhookId ?? "",
         applicationId: message.applicationId,
         flags: message.flags,
       })
