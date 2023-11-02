@@ -2,12 +2,15 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Order } from "../../models/order.entity";
+import { User } from "src/bot/models/user.entity";
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(Order)
-    private orderRepository: Repository<Order>
+    private orderRepository: Repository<Order>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
   async getUserCancelOrder(channelId, author, username) {
     return await this.orderRepository
@@ -98,7 +101,7 @@ export class OrderService {
       .select("orders.*")
       .execute();
   }
-  
+
   async order(channelId, author, username, list) {
     return await this.orderRepository.insert({
       channelId: channelId,
@@ -108,5 +111,14 @@ export class OrderService {
       createdTimestamp: Date.now(),
       isCancel: false,
     });
+  }
+
+  async getDataUser(author: String) {
+    return await this.userRepository
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, { userId: author })
+      .andWhere(`"deactive" IS NOT true`)
+      .select("*")
+      .getRawOne();
   }
 }

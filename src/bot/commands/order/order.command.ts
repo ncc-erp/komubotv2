@@ -6,7 +6,7 @@ import { OrderService } from "./order.service";
 @CommandLine({
   name: "order",
   description: "order",
-  cat: 'komu',
+  cat: "komu",
 })
 export class OrderCommand implements CommandLineClass {
   constructor(
@@ -18,7 +18,10 @@ export class OrderCommand implements CommandLineClass {
     const orderData = this.orderService;
     const channelId = message.channel.id;
     let author = message.author.id;
-    let username = message.member.displayName;
+
+    const findUser = await this.orderService.getDataUser(author);
+    if (!findUser) return;
+    const username = findUser.email ?? message.member.displayName;
 
     try {
       if (!args[0]) {
