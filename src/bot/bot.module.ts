@@ -156,6 +156,14 @@ import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.com
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 import { RequestVoiceCallCommand } from "./commands/requestVoiceCall/requestVoiceCall.command";
 import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoiceCall.service";
+import { EventCommand } from "./commands/event/event.command";
+import { EventSchedulerService } from "./scheduler/event-scheduler/event-scheduler.service";
+import { EventEntity } from "./models/event.entity";
+import { EventService } from "./commands/event/event.serivce";
+import { ImportantSMSCommand } from "./commands/importantMessage/important.command";
+import { ImportantSMS } from "./models/importantSMS.entity";
+import { ImportantSMSService } from "./commands/importantMessage/important.service";
+import { ImportantSchedulerService } from "./scheduler/important-scheduler/important-scheduler.service";
 import { WOL } from "./models/wol.entity";
 
 @Module({
@@ -203,6 +211,8 @@ import { WOL } from "./models/wol.entity";
       Workout,
       Mentioned,
       IndividualChannel,
+      EventEntity,
+      ImportantSMS,
       WOL
     ]),
     CheckListModule,
@@ -324,6 +334,12 @@ import { WOL } from "./models/wol.entity";
     RenameChannelService,
     RequestVoiceCallCommand,
     RequestVoiceCallService,
+    EventCommand,
+    EventSchedulerService,
+    EventService,
+    ImportantSMSCommand,
+    ImportantSMSService,
+    ImportantSchedulerService,
   ],
   controllers: [KomubotrestController],
 })
