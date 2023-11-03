@@ -157,6 +157,8 @@ import { RenameChannelService } from "./commands/renameChannel/renameChannel.ser
 import { RequestVoiceCallCommand } from "./commands/requestVoiceCall/requestVoiceCall.command";
 import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoiceCall.service";
 import { WOL } from "./models/wol.entity";
+import { FindUserVoiceRoomCommand } from "./commands/findUserVoiceRoom/findUserVoiceRoom.command";
+import { FindUserVoiceRoomService } from "./commands/findUserVoiceRoom/findUserVoiceRoom.service";
 
 @Module({
   imports: [
@@ -324,6 +326,8 @@ import { WOL } from "./models/wol.entity";
     RenameChannelService,
     RequestVoiceCallCommand,
     RequestVoiceCallService,
+    FindUserVoiceRoomCommand,
+    FindUserVoiceRoomService,
   ],
   controllers: [KomubotrestController],
 })
