@@ -25,11 +25,11 @@ export class FindUserVoiceRoomCommand implements CommandLineClass {
         const guild = await client.guilds.fetch(
           this.configClient.guild_komu_id
         );
-        const member = await guild.members.fetch(user.userId);
         if (!user)
           return message.reply(`Wrong Email!`).catch((err) => {
             this.komubotrestService.sendErrorToDevTest(client, authorId, err);
           });
+        const member = await guild.members.fetch(user.userId);
         if (
           member.voice.channel &&
           member.voice.channel.type === ChannelType.GuildVoice
