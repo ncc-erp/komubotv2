@@ -9,6 +9,10 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { Client, Message } from "discord.js";
 import { RequestVoiceCallCommand } from "src/bot/commands/requestVoiceCall/requestVoiceCall.command";
+import { EventCommand } from "src/bot/commands/event/event.command";
+import { CallSlashCommand } from "src/bot/slash-commands/call.slashcommand";
+import { ImportantSMSCommand } from "src/bot/commands/importantMessage/important.command";
+import { FindUserVoiceRoomCommand } from "src/bot/commands/findUserVoiceRoom/findUserVoiceRoom.command";
 
 @Injectable()
 export class DmmessageService {
@@ -16,11 +20,14 @@ export class DmmessageService {
     private userStatusCommand: UserStatusCommand,
     private toggleActiveCommand: ToggleActiveCommand,
     private requestVoiceCallCommand: RequestVoiceCallCommand,
+    private findUserVoiceRoomCommand: FindUserVoiceRoomCommand,
     private syncRole: Sync_role,
+    private eventCommand: EventCommand,
+    private importantSMS: ImportantSMSCommand,
     @InjectRepository(Conversation)
     private dmMessageRepository: Repository<Conversation>,
-    private readonly http: HttpService,
-  ) { }
+    private readonly http: HttpService
+  ) {}
 
   API_TOKEN = "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";
   API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
@@ -58,6 +65,12 @@ export class DmmessageService {
           return this.syncRole.execute(message, args, client);
         case "*call":
           return this.requestVoiceCallCommand.execute(message, args, client);
+        case "*where":
+          return this.findUserVoiceRoomCommand.execute(message, args, client);
+        case "*event":
+          return this.eventCommand.execute(message, args, client);
+        case "*sms":
+          return this.importantSMS.execute(message, args, client);
         // case '/tick':
         //   return const slashTicket = ticket.execute(message, client);
         // case '/keep':
