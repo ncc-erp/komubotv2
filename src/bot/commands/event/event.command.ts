@@ -9,6 +9,8 @@ import { UtilsService } from "src/bot/utils/utils.service";
 
 const messHelp =
     "```" +
+    "*event" +
+    "\n" +
     "*event help" +
     "\n" +
     "*event dd/MM/YYYY HH:mm title [users]" +

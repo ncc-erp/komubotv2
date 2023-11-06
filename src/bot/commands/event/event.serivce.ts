@@ -24,7 +24,8 @@ export class EventService {
                 title,
                 users,
                 createdTimestamp,
-                channelId: channel_id
+                channelId: channel_id,
+                cancel: false
             }
         })
     }
