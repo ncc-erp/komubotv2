@@ -10,12 +10,35 @@ export class EventService {
         private readonly eventRepository: Repository<EventEntity>,
     ) { }
 
-    async saveEvent(title, createdTimestamp, users) {
-        await this.eventRepository.insert({
-            title: title,
-            createdTimestamp: createdTimestamp,
-            users: users
-        });
+    async getListEvent(channel_id) {
+        return await this.eventRepository
+            .createQueryBuilder("event")
+            .where(`"channelId" = :channelId`, { channelId: channel_id })
+            .andWhere(`"cancel" IS NOT true`)
+            .select(`event.*`)
+            .execute();
+    }
+    async checkEvent(title, users, createdTimestamp, channel_id) {
+        return await this.eventRepository.findOne({
+            where: {
+                title,
+                users,
+                createdTimestamp,
+                channelId: channel_id
+            }
+        })
+    }
+
+    async saveEvent(title, createdTimestamp, users, channel_id) {
+        const checkEvent = await this.checkEvent(title, users, createdTimestamp, channel_id)
+        if (!checkEvent) {
+            return await this.eventRepository.insert({
+                title,
+                createdTimestamp,
+                users,
+                channelId: channel_id
+            });
+        }
     }
 
     async cancelEventById(id) {
