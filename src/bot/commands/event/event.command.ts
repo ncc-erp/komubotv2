@@ -190,7 +190,7 @@ export class EventCommand implements CommandLineClass {
                     const createEvent = await this.eventService.saveEvent(title, timestamp, insertUser, channel_id)
                     if (!createEvent) {
                         return message
-                            .reply({ content: "This event is exist!", })
+                            .reply({ content: "This event already exists!", })
                             .catch(err => {
                                 this.komubotrestService.sendErrorToDevTest(client, authorId, err)
                             })
