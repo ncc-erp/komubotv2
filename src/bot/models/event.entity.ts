@@ -24,4 +24,7 @@ export class EventEntity {
 
     @Column({ nullable: true, type: "text", array: true })
     users: string[]
+
+    @Column({ nullable: true, type: 'text' })
+    attachment: string
 }

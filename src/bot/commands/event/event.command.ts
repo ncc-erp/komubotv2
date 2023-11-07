@@ -64,7 +64,7 @@ export class EventCommand implements CommandLineClass {
                                             return this.getDataUserById(user);
                                         }));
                                         const users = userMention.map(user => user.username).join(', ');
-                                        return `- ${item.title} ${dateTime} (ID: ${item.id}) with ${users}`;
+                                        return `- ${item.title} ${dateTime} (ID: ${item.id}) with ${users}` + '\n' + item.attachment;
                                     })
                             )).join("\n") +
                             "```";
@@ -122,7 +122,13 @@ export class EventCommand implements CommandLineClass {
                     });
                 } else {
                     const title = args[2]
-                    const usersMention = args.slice(3);
+                    const usersMention = args.slice(3, args.length - 1);
+                    let attachment;
+                    if (args[args.length - 1].startsWith('http://') || args[args.length - 1].startsWith('https://')) {
+                        attachment = args[args.length - 1]
+                    } else {
+                        usersMention.push(args[args.length - 1])
+                    }
                     const datetime = args.slice(0, 2).join(" ");
                     const checkDate = args.slice(0, 1).join(" ");
                     const checkTime = args.slice(1, 2).join(" ");
@@ -189,7 +195,7 @@ export class EventCommand implements CommandLineClass {
                     const fomat = `${month} / ${day} / ${year}`;
                     const dateObject = new Date(fomat);
                     const timestamp = dateObject.getTime();
-                    const createEvent = await this.eventService.saveEvent(title, timestamp, insertUser, channel_id)
+                    const createEvent = await this.eventService.saveEvent(title, timestamp, insertUser, channel_id, attachment)
                     if (!createEvent) {
                         return message
                             .reply({ content: "This event already exists!", })
@@ -197,9 +203,11 @@ export class EventCommand implements CommandLineClass {
                                 this.komubotrestService.sendErrorToDevTest(client, authorId, err)
                             })
                     }
-                    await this.NotiCreateEvent(user, author, checkDate, checkTime)
+                    await this.NotiCreateEvent(user, author, checkDate, checkTime, attachment, title)
                     return message
-                        .reply({ content: "`✅` Event saved.", })
+                        .reply({
+                            content: "`✅` Event saved."
+                        })
                         .catch(err => {
                             this.komubotrestService.sendErrorToDevTest(client, authorId, err)
                         })
@@ -227,12 +235,16 @@ export class EventCommand implements CommandLineClass {
             .getRawOne();
     }
 
-    async NotiCreateEvent(userMentions: UserDiscord[], author: UserDiscord, checkDate, checkTime) {
+    async NotiCreateEvent(userMentions: UserDiscord[], author: UserDiscord, checkDate, checkTime, attachment, title) {
         await Promise.all(
             userMentions.map(async (item) => {
-                await item.send(`You have an event with ${author}, ${userMentions} on ${checkDate} in ${checkTime}`)
+                await item.send({
+                    content: `You have an event "${title}" with ${author}, ${userMentions} on ${checkDate} in ${checkTime} ` + `\n ${attachment ?? ''}`,
+                })
             })
         )
-        await author.send(`You have an event with ${userMentions} on ${checkDate} in ${checkTime} `)
+        await author.send({
+            content: `You have an event "${title}" with ${userMentions} on ${checkDate} in ${checkTime}` + `\n ${attachment ?? ''}`,
+        })
     }
 }

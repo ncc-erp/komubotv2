@@ -18,26 +18,28 @@ export class EventService {
             .select(`event.*`)
             .execute();
     }
-    async checkEvent(title, users, createdTimestamp, channel_id) {
+    async checkEvent(title, users, createdTimestamp, channel_id, attachment) {
         return await this.eventRepository.findOne({
             where: {
                 title,
                 users,
                 createdTimestamp,
                 channelId: channel_id,
+                attachment,
                 cancel: false
             }
         })
     }
 
-    async saveEvent(title, createdTimestamp, users, channel_id) {
-        const checkEvent = await this.checkEvent(title, users, createdTimestamp, channel_id)
+    async saveEvent(title, createdTimestamp, users, channel_id, attachment) {
+        const checkEvent = await this.checkEvent(title, users, createdTimestamp, channel_id, attachment)
         if (!checkEvent) {
             return await this.eventRepository.insert({
                 title,
                 createdTimestamp,
                 users,
-                channelId: channel_id
+                channelId: channel_id,
+                attachment
             });
         }
     }
