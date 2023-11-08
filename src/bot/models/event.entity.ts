@@ -13,6 +13,9 @@ export class EventEntity {
     @Column({ type: "text", nullable: true })
     title: string;
 
+    @Column({ type: "text", nullable: true })
+    channelId: string;
+
     @Column({ nullable: true, default: false })
     cancel: boolean;
 
@@ -21,4 +24,7 @@ export class EventEntity {
 
     @Column({ nullable: true, type: "text", array: true })
     users: string[]
+
+    @Column({ nullable: true, type: 'text' })
+    attachment: string
 }
