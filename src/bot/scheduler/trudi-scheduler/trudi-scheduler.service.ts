@@ -2,7 +2,6 @@ import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { CronJob } from "cron";
 import axios from "axios";
-import puppeteer from "puppeteer";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Client, TextChannel } from "discord.js";
 
@@ -68,7 +67,7 @@ export class TrudiSchedulerService {
           link = this.TRUDI_URL + link;
         }
         await axios.get(link);
-              } catch (error) {
+      } catch (error) {
         const errorMessage = `Error fetching CSS from ${link}: ${error.message}`;
         this.sendDiscordMessage(errorMessage);
       }
