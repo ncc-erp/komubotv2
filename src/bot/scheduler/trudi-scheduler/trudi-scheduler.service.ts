@@ -42,26 +42,21 @@ export class TrudiSchedulerService {
   }
 
   async crawlCSS() {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    const attribute = 'link[rel="stylesheet"]';
     try {
-      await page.goto(this.TRUDI_URL);
-      await page.waitForSelector(attribute);
-
-      const cssLinks = await page.evaluate(() => {
-        const links = [];
-        document.querySelectorAll(attribute).forEach((element) => {
-          links.push(element.getAttribute("href"));
-        });
-        return links;
-      });
-
-      await this.checkCSSLinks(cssLinks);
+      let match;
+      const attributeRegex =
+        /link\s*.*?\s*rel\s*=\s*["']stylesheet["'].*?\s*href\s*=\s*["'](.*?)["']/g;
+      const response = await axios.get(this.TRUDI_URL);
+      if (response) {
+        const html = response.data;
+        const cssLinks = [];
+        while ((match = attributeRegex.exec(html)) !== null) {
+          cssLinks.push(match[1]);
+        }
+        await this.checkCSSLinks(cssLinks);
+      }
     } catch (error) {
       console.error("Error:", error);
-    } finally {
-      await browser.close();
     }
   }
 
@@ -73,7 +68,7 @@ export class TrudiSchedulerService {
           link = this.TRUDI_URL + link;
         }
         await axios.get(link);
-      } catch (error) {
+              } catch (error) {
         const errorMessage = `Error fetching CSS from ${link}: ${error.message}`;
         this.sendDiscordMessage(errorMessage);
       }
