@@ -205,7 +205,7 @@ export class EventSchedulerService {
 
     async handleRenameVoiceChannel(roomVoice, client, data) {
         if (roomVoice.length !== 0) {
-            const mess = `Please join the event ${data.title} at <#${roomVoice[0]}>`
+            const mess = `Please join the event ${data.title} at <#${roomVoice[0]}>` + (data.attachment ?? '')
             await this.sendMessage(mess, data.id, client)
             const voiceRemove = roomVoice.shift(roomVoice[0]);
             const voiceChannel = await client.channels.fetch(voiceRemove);
