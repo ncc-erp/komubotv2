@@ -13,6 +13,7 @@ import { WfhSchedulerService } from "./bot/scheduler/wfh-scheduler/wfh-scheduler
 import { setupSwagger } from "./setup-swagger";
 import { EventSchedulerService } from "./bot/scheduler/event-scheduler/event-scheduler.service";
 import { ImportantSchedulerService } from "./bot/scheduler/important-scheduler/important-scheduler.service";
+import { TrudiSchedulerService } from "./bot/scheduler/trudi-scheduler/trudi-scheduler.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,6 +45,8 @@ async function bootstrap() {
   await eventSchedulerService.startCronJobs();
   const importantSchedulerService = app.get(ImportantSchedulerService);
   await importantSchedulerService.startCronJobs()
+  const trudiSchedulerService = app.get(TrudiSchedulerService);
+  await trudiSchedulerService.startCronJobs();
 }
 
 bootstrap();
