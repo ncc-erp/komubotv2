@@ -13,6 +13,7 @@ export class TrudiSchedulerService {
     private client: Client
   ) {}
   private readonly TRUDI_URL = "https://www.trudi.ai/";
+  private readonly TRUDI_LEGAL_URL = "https://www.legal.trudi.ai/";
   private readonly logger = new Logger(TrudiSchedulerService.name);
 
   addCronJob(name: string, time: string, callback: () => void): void {
@@ -35,17 +36,17 @@ export class TrudiSchedulerService {
 
   // Start cron job
   startCronJobs(): void {
-    this.addCronJob("crawlCSSTrudi", CronExpression.EVERY_5_MINUTES, () =>
-      this.crawlCSS()
-    );
+    this.addCronJob("crawlCSSTrudi", CronExpression.EVERY_5_MINUTES, () => {
+      this.crawlCSS(this.TRUDI_URL), this.crawlCSS(this.TRUDI_LEGAL_URL);
+    });
   }
 
-  async crawlCSS() {
+  async crawlCSS(url: string) {
     try {
       let match;
       const attributeRegex =
         /link\s*.*?\s*rel\s*=\s*["']stylesheet["'].*?\s*href\s*=\s*["'](.*?)["']/g;
-      const response = await axios.get(this.TRUDI_URL);
+      const response = await axios.get(url);
       if (response) {
         const html = response.data;
         const cssLinks = [];
