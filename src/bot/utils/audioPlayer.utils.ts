@@ -53,7 +53,8 @@ export class AudioPlayer {
         dataMp3 = await this.uploadFileData
           .createQueryBuilder()
           .where('"episode" IS NOT NULL')
-          .orderBy("episode", "DESC")
+          .orderBy('"episode"', "DESC")
+          .addOrderBy('"createTimestamp"', "DESC")
           .limit(1)
           .select("*")
           .execute();
@@ -61,9 +62,13 @@ export class AudioPlayer {
         // if (checkTimeSchulderNCC8()) {
         //   return message.reply("scheduled playing");
         // }
-        dataMp3 = await this.uploadFileData.findBy({
-          episode: episode,
-        });
+        dataMp3 = await this.uploadFileData
+          .createQueryBuilder()
+          .where('"episode" = :episode', { episode })
+          .orderBy('"createTimestamp"', "DESC")
+          .limit(1)
+          .select("*")
+          .execute();
         if (dataMp3.length === 0) {
           return message.reply("not released yet");
         }
