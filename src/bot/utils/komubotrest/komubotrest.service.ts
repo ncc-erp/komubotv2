@@ -1017,7 +1017,7 @@ export class KomubotrestService {
       const user = users.find((u) => u.email === email);
       return {
         userId: user ? user.userId : "",
-        email: user ? user.email : "",
+        username: user ? user.email : "",
       };
     });
   }
