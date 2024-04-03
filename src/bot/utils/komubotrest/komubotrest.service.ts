@@ -11,7 +11,10 @@ import {
 } from "discord.js";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { TABLE } from "src/bot/constants/table";
-import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
+import {
+  GetListInfoUserDto,
+  GetUserIdByEmailDTO,
+} from "src/bot/dto/getUserIdByEmail";
 import { GetUserIdByUsernameDTO } from "src/bot/dto/getUserIdByUsername";
 import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
 import {
@@ -24,7 +27,7 @@ import { Channel } from "src/bot/models/channel.entity";
 import { Msg } from "src/bot/models/msg.entity";
 import { User } from "src/bot/models/user.entity";
 import { WorkFromHome } from "src/bot/models/wfh.entity";
-import { Brackets, Repository } from "typeorm";
+import { Brackets, In, Repository } from "typeorm";
 import { Daily } from "src/bot/models/daily.entity";
 import { UtilsService } from "../utils.service";
 import { Uploadfile } from "src/bot/models/uploadFile.entity";
@@ -50,7 +53,7 @@ export class KomubotrestService {
     @InjectRepository(Daily)
     private dailyRepository: Repository<Daily>,
     private clientConfig: ClientConfigService
-  ) { }
+  ) {}
   private data;
   async findUserData(_pramams) {
     return await this.userRepository
@@ -992,5 +995,30 @@ export class KomubotrestService {
         return channel.send({ embeds: [discord_message] });
       }
     }
+  }
+  async getListInfoUser(getListInfoUser: GetListInfoUserDto) {
+    const emails = getListInfoUser.emails;
+    if (emails.length === 0) {
+      return [];
+    }
+    const users = await this.userRepository.find({
+      select: ["userId", "email"],
+      where: {
+        email: In(emails),
+        deactive: false,
+      },
+    });
+
+    if (users.length === 0) {
+      return [];
+    }
+
+    return emails.map((email) => {
+      const user = users.find((u) => u.email === email);
+      return {
+        userId: user ? user.userId : "",
+        email: user ? user.email : "",
+      };
+    });
   }
 }

@@ -37,7 +37,7 @@ import {
   SendImageLabelToUserDTO,
 } from "src/bot/dto/sendImageCheckInToUser";
 import { SendEmbedMessageDTO } from "src/bot/dto/sendEmbedMessage";
-import { GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
+import { GetListInfoUserDto, GetUserIdByEmailDTO } from "src/bot/dto/getUserIdByEmail";
 import { RegexEmailPipe } from "src/bot/middleware/regex-email";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import { ReportDailyDTO } from "./komubotrest.dto";
@@ -355,5 +355,9 @@ export class KomubotrestController {
       this.client,
       data
     );
+  }
+  @Post("/getListInfoUser")
+  async getListInfoUser(@Body() getListInfoUser: GetListInfoUserDto) {
+    return await this.komubotrestService.getListInfoUser(getListInfoUser);
   }
 }
