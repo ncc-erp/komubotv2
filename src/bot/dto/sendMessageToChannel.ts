@@ -37,4 +37,8 @@ export class SendMessageToChannelDTO {
   @ApiProperty({ required: true })
   @IsOptional()
   createdate?: Date;
+
+  @ApiProperty({ required: true, default: false })
+  @IsOptional()
+  timesheet?: boolean;
 }

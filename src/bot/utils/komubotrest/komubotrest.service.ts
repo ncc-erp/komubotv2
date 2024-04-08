@@ -498,6 +498,10 @@ export class KomubotrestService {
       ) as any;
     }
 
+    if (sendMessageToChannelDTO.timesheet) {
+      message = await this.processMessage(message);
+    }
+
     try {
       const channel = await client.channels.fetch(channelid);
       await channel.send(message);
@@ -768,7 +772,8 @@ export class KomubotrestService {
     return await this.dailyRepository
       .createQueryBuilder("daily")
       .where(
-        `"createdAt" BETWEEN ${this.utilsService.getYesterdayDate() - 86400000
+        `"createdAt" BETWEEN ${
+          this.utilsService.getYesterdayDate() - 86400000
         } AND ${this.utilsService.getYesterdayDate()}`
       )
       .select("daily.email")
@@ -804,7 +809,7 @@ export class KomubotrestService {
           ) {
             const channelParent = await client.channels
               .fetch((fetchChannel as any).parentId)
-              .catch((err) => { });
+              .catch((err) => {});
             if (channelParent) {
               return {
                 ...item,
@@ -819,7 +824,7 @@ export class KomubotrestService {
         const result = await Promise.all(promises);
         return { result };
       }
-    } catch (error) { }
+    } catch (error) {}
   }
 
   async downloadFile() {
@@ -833,63 +838,75 @@ export class KomubotrestService {
 
   async jiraWebhook(client, data) {
     try {
-      const channel: any = client.channels.cache.get(this.clientConfig.jiraWebhookChannelId);
+      const channel: any = client.channels.cache.get(
+        this.clientConfig.jiraWebhookChannelId
+      );
       const issueKey = data.key;
       const summary = data.fields.summary;
       let sprintName = data.fields.customfield_10010;
-      sprintName = sprintName && sprintName.length ? (sprintName[0]?.name || 'N/A') : 'N/A'
-      const assigneeDisplayName = data.fields.assignee?.displayName || 'Unassigned';
-      const projectName = data.fields.project?.name || 'N/A';
+      sprintName =
+        sprintName && sprintName.length ? sprintName[0]?.name || "N/A" : "N/A";
+      const assigneeDisplayName =
+        data.fields.assignee?.displayName || "Unassigned";
+      const projectName = data.fields.project?.name || "N/A";
       const keyName = data.fields.project.key || "N/A";
       let boardId = data.fields.customfield_10010;
-      boardId = boardId && boardId.length ? (boardId[0]?.boardId || 'N/A') : 'N/A';
+      boardId =
+        boardId && boardId.length ? boardId[0]?.boardId || "N/A" : "N/A";
       const getURL = data.self;
-      const reporterDisplayName = data.fields.reporter?.displayName || 'Unknown Reporter';
-      const statusName = data.fields.status?.name || 'N/A';
-      const logoTrudi = "https://media.discordapp.net/attachments/1047723734250827806/1153150577761599498/280x280bb.png"
-      const handleUrl = getURL.split('/rest')[0];
+      const reporterDisplayName =
+        data.fields.reporter?.displayName || "Unknown Reporter";
+      const statusName = data.fields.status?.name || "N/A";
+      const logoTrudi =
+        "https://media.discordapp.net/attachments/1047723734250827806/1153150577761599498/280x280bb.png";
+      const handleUrl = getURL.split("/rest")[0];
 
       const createdTimestamp = data.fields.created || Date.now();
       const timestampUpdated = data.fields.updated || Date.now();
       const currentTimestamp = Date.now();
       const timeDifferenceMs = currentTimestamp - timestampUpdated;
-      const timeDifferenceHours = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+      const timeDifferenceHours = Math.floor(
+        timeDifferenceMs / (1000 * 60 * 60)
+      );
       const daysPassed = Math.floor(timeDifferenceHours / 24);
       const hoursRemaining = timeDifferenceHours % 24;
       const createdDate = new Date(createdTimestamp);
       const formattedCreatedTime = createdDate.toUTCString();
 
       const discord_message = new EmbedBuilder()
-        .setColor('#34EBE5')
+        .setColor("#34EBE5")
         .setTitle(`Ticket ${issueKey}: ${summary}`)
-        .setDescription('Ticket has not been updated for a long time')
+        .setDescription("Ticket has not been updated for a long time")
         .addFields(
-          { name: 'Project', value: projectName, inline: false },
-          { name: 'Sprint', value: sprintName, inline: true },
-          { name: 'Status', value: statusName, inline: true },
+          { name: "Project", value: projectName, inline: false },
+          { name: "Sprint", value: sprintName, inline: true },
+          { name: "Status", value: statusName, inline: true },
           {
-            name: 'Ticket has not been updated for',
+            name: "Ticket has not been updated for",
             value: `${daysPassed} days and ${hoursRemaining} hours`,
             inline: false,
           },
-          { name: 'Created at', value: formattedCreatedTime, inline: false },
-          { name: 'Assignee', value: assigneeDisplayName, inline: true },
-          { name: 'Reporter', value: reporterDisplayName, inline: true }
+          { name: "Created at", value: formattedCreatedTime, inline: false },
+          { name: "Assignee", value: assigneeDisplayName, inline: true },
+          { name: "Reporter", value: reporterDisplayName, inline: true }
         )
         .setThumbnail(logoTrudi)
-        .setURL(`${handleUrl}/jira/software/projects/${keyName}/boards/${boardId}/?selectedIssue=${issueKey}`);
+        .setURL(
+          `${handleUrl}/jira/software/projects/${keyName}/boards/${boardId}/?selectedIssue=${issueKey}`
+        );
 
       return channel.send({ embeds: [discord_message] });
-
     } catch (error) {
-      console.error('Error handling Jira webhook:', error);
-      throw new Error('Failed to handle Jira webhook');
+      console.error("Error handling Jira webhook:", error);
+      throw new Error("Failed to handle Jira webhook");
     }
   }
 
   async bitbucketWebhook(client, data, event) {
-    const channel: any = client.channels.cache.get(this.clientConfig.bitbucketWebhookChannelId);
-    const branch = ["attic", "staging", "pre-prod", "master"]
+    const channel: any = client.channels.cache.get(
+      this.clientConfig.bitbucketWebhookChannelId
+    );
+    const branch = ["attic", "staging", "pre-prod", "master"];
     if (event == this.clientConfig.StatusBuild) {
       const commit_refname = data.commit_status.refname;
       if (branch.includes(commit_refname)) {
@@ -905,10 +922,10 @@ export class KomubotrestService {
             .setTitle(name_build)
             .setDescription(
               `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
+                `**Author**: ${author_name}\n\n` +
+                `**State**: ${commit_state}\n\n` +
+                `**Branch Destination**: ${commit_refname}\n\n` +
+                `**Commit Message**:${commit_message}`
             );
 
           return channel.send({ embeds: [discord_message] });
@@ -918,10 +935,10 @@ export class KomubotrestService {
             .setTitle(name_build)
             .setDescription(
               `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
+                `**Author**: ${author_name}\n\n` +
+                `**State**: ${commit_state}\n\n` +
+                `**Branch Destination**: ${commit_refname}\n\n` +
+                `**Commit Message**:${commit_message}`
             );
 
           return channel.send({ embeds: [discord_message] });
@@ -931,10 +948,10 @@ export class KomubotrestService {
             .setTitle(name_build)
             .setDescription(
               `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
+                `**Author**: ${author_name}\n\n` +
+                `**State**: ${commit_state}\n\n` +
+                `**Branch Destination**: ${commit_refname}\n\n` +
+                `**Commit Message**:${commit_message}`
             );
           return channel.send({ embeds: [discord_message] });
         } else {
@@ -943,10 +960,10 @@ export class KomubotrestService {
             .setTitle(name_build)
             .setDescription(
               `**Repository**: ${repository_nane} \n\n` +
-              `**Author**: ${author_name}\n\n` +
-              `**State**: ${commit_state}\n\n` +
-              `**Branch Destination**: ${commit_refname}\n\n` +
-              `**Commit Message**:${commit_message}`
+                `**Author**: ${author_name}\n\n` +
+                `**State**: ${commit_state}\n\n` +
+                `**Branch Destination**: ${commit_refname}\n\n` +
+                `**Commit Message**:${commit_message}`
             );
 
           return channel.send({ embeds: [discord_message] });
@@ -1020,5 +1037,34 @@ export class KomubotrestService {
         username: user ? user.email : "",
       };
     });
+  }
+  async processMessage(message: string): Promise<string> {
+    const regex = /{([^{}]+)}/g;
+    const matches = message.match(regex);
+    if (!matches) {
+      return message;
+    }
+
+    for (const match of matches) {
+      const email = match.substring(1, match.length - 1);
+      const userId = await this.replaceMessageToChannel(email);
+      if (userId !== null) {
+        message = message.replace(match, `<@${userId}>`);
+      }
+    }
+    return message;
+  }
+  async replaceMessageToChannel(email: string): Promise<string> {
+    const user = await this.userRepository.findOne({
+      select: ["userId"],
+      where: {
+        email: email,
+        deactive: false,
+      },
+    });
+    if (!user) {
+      return null;
+    }
+    return user.userId;
   }
 }
