@@ -19,7 +19,7 @@ export async function getUserOffWork(date?) {
   try {
     let userOffFullday = [];
     let userOffMorning = [];
-    let userOffAffternoon = [];
+    let userOffAfternoon = [];
 
     const url = date
       ? `https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay?date=${date.toDateString()}`
@@ -39,7 +39,7 @@ export async function getUserOffWork(date?) {
       userOffMorning = (response as any).data.result
         .filter((user) => user.message.includes("Off Morning"))
         .map((item) => item.emailAddress.replace("@ncc.asia", ""));
-      userOffAffternoon = (response as any).data.result
+      userOffAfternoon = (response as any).data.result
         .filter((user) => user.message.includes("Off Afternoon"))
         .map((item) => item.emailAddress.replace("@ncc.asia", ""));
     }
@@ -47,9 +47,9 @@ export async function getUserOffWork(date?) {
     let notSendUser =
       getStatusDay() === "Morning"
         ? [...userOffFullday, ...userOffMorning]
-        : [...userOffFullday, ...userOffAffternoon];
+        : [...userOffFullday, ...userOffAfternoon];
 
-    return { notSendUser, userOffFullday, userOffMorning, userOffAffternoon };
+    return { notSendUser, userOffFullday, userOffMorning, userOffAfternoon };
   } catch (error) {
     console.log(error);
   }

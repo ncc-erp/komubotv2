@@ -297,7 +297,7 @@ export class KomubotrestController {
   }
 
   @Get("/getUserNotDaily")
-  async getUserNotDaily() {
+  async getUserNotDaily() {  
     return await this.komubotrestService.getUserNotDaily();
   }
 
@@ -305,7 +305,6 @@ export class KomubotrestController {
   async getDailyReport(@Query() query: { date: string }) {
     const date = parse(query.date, 'dd/MM/yyyy', new Date());
     const { notDaily } = await this.userNotDailyService.getUserNotDaily(date);
-
     const mention = await this.reportWFHService.reportMachleo(date);
 
     return { daily: notDaily, mention };

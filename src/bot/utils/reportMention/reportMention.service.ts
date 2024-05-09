@@ -69,7 +69,7 @@ export class ReportMentionService {
       });
     } else {
       const punishUsers = mentionFullday.reduce((result, user) => {
-        if (offUsers.userOffAffternoon.find((offUser) => offUser === user.email)) {
+        if (offUsers.userOffAfternoon.find((offUser) => offUser === user.email)) {
           user.userOffAffternoon = true;
         }
         

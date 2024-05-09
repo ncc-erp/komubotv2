@@ -44,8 +44,12 @@ export class ReportWFHService {
           statusACTIVE: "ACTIVE",
           statusAPPROVED: "APPROVED",
           pmconfirm: false,
-          firstDay: this.utilsService.getTimeToDayMention(fomatDate).firstDay.getTime(),
-          lastDay: this.utilsService.getTimeToDayMention(fomatDate).lastDay.getTime(),
+          firstDay: this.utilsService
+            .getTimeToDayMention(fomatDate)
+            .firstDay.getTime(),
+          lastDay: this.utilsService
+            .getTimeToDayMention(fomatDate)
+            .lastDay.getTime(),
         }
       )
       .groupBy("m.username")
@@ -153,14 +157,19 @@ export class ReportWFHService {
       .createQueryBuilder("wfh")
       .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
       .where(
-        '("status" = :statusACCEPT AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusACTIVE AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay)',
+        '("status" = :statusACCEPT AND "type" = :type AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusACTIVE AND "type" = :type AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay) OR ("status" = :statusAPPROVED AND pmconfirm = :pmconfirm AND "type" = :type AND wfh.createdAt >= :firstDay AND wfh.createdAt <= :lastDay)',
         {
+          type: "mention",
           statusACCEPT: "ACCEPT",
           statusACTIVE: "ACTIVE",
           statusAPPROVED: "APPROVED",
           pmconfirm: false,
-          firstDay: this.utilsService.getTimeToDayMention(formatDate).firstDay.getTime(),
-          lastDay: this.utilsService.getTimeToDayMention(formatDate).lastDay.getTime(),
+          firstDay: this.utilsService
+            .getTimeToDayMention(formatDate)
+            .firstDay.getTime(),
+          lastDay: this.utilsService
+            .getTimeToDayMention(formatDate)
+            .lastDay.getTime(),
         }
       )
       .groupBy("m.email")

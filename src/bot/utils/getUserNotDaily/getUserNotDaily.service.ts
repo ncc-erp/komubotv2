@@ -198,12 +198,15 @@ export class UserNotDailyService {
         userNotDaily = await Promise.all(
           notDaily.map((user) =>
             this.userRepository
-              .createQueryBuilder()
+              .createQueryBuilder('user')
               .where(`LOWER("email") = :email`, {
                 email: user.email.toLowerCase(),
               })
               .orWhere(`LOWER("username") = :username`, {
                 username: user.email.toLowerCase(),
+              })
+              .andWhere('("createdAt" < :today)', {
+                today: Date.now() - 86400 * 1000,
               })
               .andWhere(`"deactive" IS NOT TRUE`)
               .select("*")
