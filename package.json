@@ -75,7 +75,8 @@
     "typeorm": "^0.3.9",
     "util": "^0.12.4",
     "uuid": "^9.0.0",
-    "wake_on_lan": "^1.0.0"
+    "wake_on_lan": "^1.0.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@nestjs/cli": "9.0.0",
