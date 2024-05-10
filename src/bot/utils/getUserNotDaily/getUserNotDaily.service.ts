@@ -194,6 +194,7 @@ export class UserNotDailyService {
       }, []);
 
       let userNotDaily;
+      let dayToMilliseconds = 86400 * 1000;
       try {
         userNotDaily = await Promise.all(
           notDaily.map((user) =>
@@ -206,7 +207,7 @@ export class UserNotDailyService {
                 username: user.email.toLowerCase(),
               })
               .andWhere('("createdAt" < :today)', {
-                today: Date.now() - 86400 * 1000,
+                today: Date.now() - dayToMilliseconds,
               })
               .andWhere(`"deactive" IS NOT TRUE`)
               .select("*")
