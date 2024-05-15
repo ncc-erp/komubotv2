@@ -1,3 +1,4 @@
+import { User } from './../../models/user.entity';
 import { Injectable, Logger } from "@nestjs/common";
 import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { InjectDiscordClient } from "@discord-nestjs/core";
@@ -100,13 +101,14 @@ export class ReminderSchedulerService {
   async pingReminder(client) {
     if (await this.utilsService.checkHoliday()) return;
     const remindLists = await this.remindRepository
-      .createQueryBuilder()
+      .createQueryBuilder('remind')
       .where(`"createdTimestamp" >= :gtecreatedTimestamp`, {
         gtecreatedTimestamp: this.utilsService.getYesterdayDate(),
       })
       .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
+      .andWhere(`"authorId" = '${client.user.id}'`)
       .select("*")
       .execute();
 
