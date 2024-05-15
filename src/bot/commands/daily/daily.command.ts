@@ -79,7 +79,7 @@ function checkTimeSheet() {
     setTime(time, 5 + timezone, 0, 0, 0)
   ).getTime();
   const lastTimeAfternoon = new Date(
-    setTime(time, 11 + timezone, 1, 0, 0)
+    setTime(time, 10 + timezone, 1, 0, 0)
   ).getTime();
 
   if (

@@ -18,9 +18,9 @@ export class FindUserVoiceRoomCommand implements CommandLineClass {
   async execute(message: Message, args, client: Client) {
     try {
       if (args[0]) {
-        const emailUser = args[0];
+        const param = args[0].replace(/<@|>/g, "");
         let authorId = message.author.id;
-        const user = await this.findUserVoiceRoomService.getDataUser(emailUser);
+        const user = await this.findUserVoiceRoomService.getDataUser(param);
 
         const guild = await client.guilds.fetch(
           this.configClient.guild_komu_id

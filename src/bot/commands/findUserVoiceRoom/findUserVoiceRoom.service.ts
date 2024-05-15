@@ -13,11 +13,12 @@ export class FindUserVoiceRoomService {
     private readonly userRepository: Repository<User>
   ) {}
 
-  async getDataUser(email) {
+  async getDataUser(param) {
     return await this.userRepository
       .createQueryBuilder()
-      .where(`"email" = :email`, { email: email })
-      .orWhere(`"username" = :username`, { username: email })
+      .where(`"email" = :email`, { email: param })
+      .orWhere(`"username" = :username`, { username: param })
+      .orWhere(`"userId" = :userId`, { userId: param })
       .select("*")
       .getRawOne();
   }
