@@ -65,9 +65,8 @@ export class UserNotDailyService {
       let wfhUserEmail = [];
       if (wfhGetApi && wfhGetApi.data && wfhGetApi.data.result.length > 0) {
         wfhUserEmail = wfhGetApi.data.result.map((item) => {
-          this.utilsService.getUserNameByEmail(item.emailAddress);
-        }
-        );
+          return this.utilsService.getUserNameByEmail(item.emailAddress);
+        });
 
         wfhMorning = wfhGetApi.data.result.filter((item) =>{
           return item.dateTypeName == "Morning" ? this.utilsService.getUserNameByEmail(item.emailAddress) : []
