@@ -152,7 +152,6 @@ export class ReportWFHService {
       month: "2-digit",
       day: "2-digit",
     });
-
     const result = await this.wfhRepository
       .createQueryBuilder("wfh")
       .innerJoinAndSelect("komu_user", "m", "wfh.userId = m.userId")
@@ -177,7 +176,6 @@ export class ReportWFHService {
       .select("m.email, COUNT(wfh.userId) as count")
       .orderBy("count", "DESC")
       .execute();
-
     return result;
   }
 }
