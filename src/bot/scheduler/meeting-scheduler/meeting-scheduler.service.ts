@@ -280,17 +280,15 @@ export class MeetingSchedulerService {
       this.utilsService.isTimeDay(dateScheduler)
     ) {
         const dailyFetchChannel = await client.channels.fetch(data.channelId);
-        if (dailyFetchChannel != undefined) {
-          console.log(dailyFetchChannel);
-          await this.handleRenameVoiceChannel(
-            roomVoice,
-            dailyFetchChannel,
-            client,
-            data
-          );
-        } else {
-          return;
+        if (!dailyFetchChannel) {
+         return; 
         }
+        await this.handleRenameVoiceChannel(
+          roomVoice,
+          dailyFetchChannel,
+          client,
+          data
+        );
       let newCreatedTimestamp = data.createdTimestamp;
       newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
 
