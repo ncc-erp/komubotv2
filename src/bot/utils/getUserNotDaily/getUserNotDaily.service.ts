@@ -59,26 +59,38 @@ export class UserNotDailyService {
         return;
       }
 
-      let wfhMorning = [];
-      let wfhAfternoon = [];
-      let wfhFullday = [];
+      // let wfhMorning = [];
+      // let wfhAfternoon = [];
+      // let wfhFullday = [];
       let wfhUserEmail = [];
       if (wfhGetApi && wfhGetApi.data && wfhGetApi.data.result.length > 0) {
         wfhUserEmail = wfhGetApi.data.result.map((item) =>
           this.utilsService.getUserNameByEmail(item.emailAddress)
         );
 
-        wfhMorning = wfhGetApi.data.result.filter((item) =>{
-          return item.dateTypeName == "Morning" ? this.utilsService.getUserNameByEmail(item.emailAddress) : []
-        });
+        // wfhMorning = wfhGetApi.data.result.filter((item) =>{
+        //   if (item.dateTypeName === "Morning") {
+        //     return this.utilsService.getUserNameByEmail(item.emailAddress);
+        //   } else {
+        //     return null; 
+        //   };
+        // });
 
-        wfhAfternoon = wfhGetApi.data.result.filter((item) =>{
-          return item.dateTypeName == "Afternoon" ? this.utilsService.getUserNameByEmail(item.emailAddress) : []
-        });
+        // wfhAfternoon = wfhGetApi.data.result.filter((item) =>{
+        //   if (item.dateTypeName === "Afternoon") {
+        //     return this.utilsService.getUserNameByEmail(item.emailAddress);
+        //   } else {
+        //     return null; 
+        //   };
+        // });
 
-        wfhFullday = wfhGetApi.data.result.filter((item) =>{
-          return item.dateTypeName == "Fullday" ? this.utilsService.getUserNameByEmail(item.emailAddress) : []
-        });
+        // wfhFullday = wfhGetApi.data.result.filter((item) =>{
+        //   if (item.dateTypeName === "Fullday") {
+        //     return this.utilsService.getUserNameByEmail(item.emailAddress);
+        //   } else {
+        //     return null; 
+        //   };
+        // });
 
         // if no wfh
         if (
@@ -159,26 +171,21 @@ export class UserNotDailyService {
 
       const notDailyMorning = [];
       for (const wfhData of wfhUserEmail) {
-        if(wfhMorning.includes(wfhData.toLowerCase()) || wfhFullday.includes(wfhData.toLowerCase())) {
           if (
             !dailyEmailMorning.includes(wfhData.toLowerCase()) &&
             wfhData !== undefined
           ) {
             notDailyMorning.push(wfhData);
-          }
-        }
-        
+          }  
       }
       const notDailyAfternoon = [];
       for (const wfhData of wfhUserEmail) {
-        if(wfhAfternoon.includes(wfhData.toLowerCase()) || wfhFullday.includes(wfhData.toLowerCase())) {
           if (
             !dailyEmailAfternoon.includes(wfhData.toLowerCase()) &&
             wfhData !== undefined
           ) {
             notDailyAfternoon.push(wfhData);
           }
-        }
       }
       const notDailyFullday = [];
       for (const userNotWFHData of userEmail) {

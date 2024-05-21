@@ -51,6 +51,7 @@ export class ReportTrackerService {
 
   async getUserWFH(date, message: Message, args, client: Client) {
     let wfhGetApi;
+    let wfhUsers;
     try {
       const url = date
         ? `${this.clientConfigService.wfh.api_url}?date=${date}`
@@ -77,6 +78,7 @@ export class ReportTrackerService {
     const wfhUserEmail = wfhGetApi.data.result.map((item) =>
       this.utilsService.getUserNameByEmail(item.emailAddress)
     );
+    wfhUsers = wfhGetApi.data.result;
 
     if (
       (Array.isArray(wfhUserEmail) && wfhUserEmail.length === 0) ||
@@ -85,7 +87,7 @@ export class ReportTrackerService {
       return;
     }
 
-    return wfhUserEmail;
+    return { wfhUserEmail, wfhUsers };
   }
 
   async reportTracker(message: Message, args, client) {
@@ -99,35 +101,65 @@ export class ReportTrackerService {
         }
       );
 
+      const { wfhUsers } = await this.getUserWFH(
+        args[1],
+        message,
+        args,
+        client
+      );
+
+      if (!wfhUsers) {
+        return;
+      }
+
       const { data } = result;
-      const userWfh = data.filter((e) => e.wfh);
-      if (!userWfh.length)
+      // const userWfhs = data.filter((e) => e.wfh);
+
+      const userWfhs = [];
+      for (const e of data) {
+        for (const wfhUser of wfhUsers) {
+          if(e.email.concat('@ncc.asia') == wfhUser.emailAddress){
+            e["dateTypeName"] = wfhUser.dateTypeName;
+            userWfhs.push(e);
+            break;
+          }
+        }
+      }
+
+      if (!userWfhs.length) {
         return message.reply(this.messHelpTime).catch(console.error);
+      }
 
       const pad =
-        userWfh.reduce((a, b) => (a < b.email.length ? b.email.length : a), 0) +
-        2;
-      userWfh.unshift({
+        userWfhs.reduce(
+          (a, b) => (a < b.email.length ? b.email.length : a),
+          0
+        ) + 2;
+      userWfhs.unshift({
         email: "[email]",
         str_spent_time: "[spent]",
         str_call_time: "[call]",
         str_active_time: "[active]",
+        dateTypeName: "[remote]",
       });
-      const messRep = userWfh
+      const messRep = userWfhs
         .map(
           (e) =>
             `${e.email.padEnd(pad)} ${e.str_spent_time.padEnd(
               10
-            )} ${e.str_call_time.padEnd(10)} ${e.str_active_time.padEnd(10)}`
-        )
+            )} ${e.str_active_time.padEnd(
+              10
+            )} ${e.dateTypeName}`
+          )
         .join("\n");
       const Embed = new EmbedBuilder()
         .setTitle(
-          `Danh sách tracker ngày hôm nay tổng là ${userWfh.length} người`
+          `Danh sách tracker ngày hôm nay tổng là ${userWfhs.length} người`
         )
+        .addFields()
         .setColor("Green")
-        .setDescription("```" + `${messRep}` + "```");
-      await message.reply({ embeds: [Embed] }).catch(console.error);
+        .setDescription("```" + `${messRep}` + "```")
+      await message.reply({ embeds: [Embed]}).catch(console.error);
     } catch (error) {
       console.log(error);
     }
@@ -956,6 +988,101 @@ export class ReportTrackerService {
     //     }
     //   }
     // }
+  }
+
+  async reportTrackerNot(dateTime,message: Message, args, client) {
+    try {
+      function changeDateFormat(dateString) {
+
+        const formattedDate = dateString.toLocaleDateString('en-US', {
+          month: '2-digit',
+          day: '2-digit',
+          year: 'numeric',
+        });
+      
+        return formattedDate;
+      }
+      
+      const result = await axios.get(
+        `http://tracker.komu.vn:5600/api/0/report?day=${dateTime}`,
+        {
+          headers: {
+            "X-Secret-Key": this.clientConfigService.komuTrackerApiKey,
+          },
+        }
+      );
+
+      const dateFormat = changeDateFormat(dateTime);
+
+      const { wfhUsers } = await this.getUserWFH(
+        dateFormat,
+        message,
+        args,
+        client
+      );
+
+      if (!wfhUsers) {
+        return;
+      }
+
+      const {data} = result;
+      const userWfhs = [];
+      for (const e of data) {
+        for (const wfhUser of wfhUsers) {
+          if(e.email.concat('@ncc.asia') == wfhUser.emailAddress){
+            e["dateTypeName"] = wfhUser.dateTypeName;
+            userWfhs.push(e);
+            break;
+          }
+        }
+      }
+
+      const regex = /(\d+)h(\d+)m(\d+)s/;
+
+      //convert hour to seconds
+      const secondsFullday = 7*3600; 
+      const secondsMorning = 3*3600;
+      const secondsAfternoon = 4*3600;
+
+      const listTrackerNot = [];
+
+      for (let i = 0; i < userWfhs.length; i++) {
+        const match = userWfhs[i].str_active_time.match(regex);
+        const totalSeconds = parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseInt(match[3]);
+        if( userWfhs[i].dateTypeName == "Fullday" && totalSeconds < secondsFullday
+        || userWfhs[i].dateTypeName == "Morning" && totalSeconds < secondsMorning 
+        ||userWfhs[i].dateTypeName == "Afternoon" && totalSeconds < secondsAfternoon) {
+          listTrackerNot.push(userWfhs[i]);
+        } 
+      }
+
+      const pad =
+      listTrackerNot.reduce(
+          (a, b) => (a < b.email.length ? b.email.length : a),
+          0
+        ) + 2;
+        listTrackerNot.unshift({
+        email: "[email]",
+        str_active_time: "[active]",
+        dateTypeName: "[remote]"
+      });
+      const messRep = listTrackerNot
+        .map(
+          (e) =>
+            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(10)} ${e.dateTypeName.padEnd(10)} `
+        )
+        .join("\n");
+      const Embed = new EmbedBuilder()
+        .setTitle(
+          `Danh sách tracker không đủ thời gian ngày hôm nay tổng là ${listTrackerNot.length} người`
+        )
+        .setColor("Red")
+        .setDescription("```" + `${messRep}` + "```");
+      await message.reply({ embeds: [Embed] }).catch(console.error);
+
+    } catch (error) {
+      console.log(error);
+    }
   }
   // showTrackerTime(spentTime) {
   //   const duration = intervalToDuration({ start: 0, end: spentTime * 1000 });
