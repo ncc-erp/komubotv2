@@ -40,11 +40,11 @@ import { CronjobDto } from "./dto/cronjob.dto";
       }
     } 
 
-    @On('messageCreate')
-  async onMessage(message: Message): Promise<void> {
-    if (!message.author.bot) {
-      await message.reply("I'm watching you");
-    }
+  //   @On('messageCreate')
+  // async onMessage(message: Message): Promise<void> {
+    // if (!message.author.bot) {
+    //   await message.reply("I'm watching you");
+    // }
     // args.at[0].reply({ content: `${dto.message}`, ephemeral: true });
 
       // setTimeout(() => {
@@ -56,6 +56,6 @@ import { CronjobDto } from "./dto/cronjob.dto";
       //     console.error("Error sending cronjob message:", error);
       //   }
       // }, Number(dto.timeout));
-  }
+  // }
 }
   
