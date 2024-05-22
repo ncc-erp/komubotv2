@@ -59,38 +59,26 @@ export class UserNotDailyService {
         return;
       }
 
-      // let wfhMorning = [];
-      // let wfhAfternoon = [];
-      // let wfhFullday = [];
+      let wfhMorning = [];
+      let wfhAfternoon = [];
+      let wfhFullday = [];
       let wfhUserEmail = [];
       if (wfhGetApi && wfhGetApi.data && wfhGetApi.data.result.length > 0) {
         wfhUserEmail = wfhGetApi.data.result.map((item) =>
           this.utilsService.getUserNameByEmail(item.emailAddress)
         );
 
-        // wfhMorning = wfhGetApi.data.result.filter((item) =>{
-        //   if (item.dateTypeName === "Morning") {
-        //     return this.utilsService.getUserNameByEmail(item.emailAddress);
-        //   } else {
-        //     return null; 
-        //   };
-        // });
+        wfhMorning = wfhGetApi.data.result
+        .filter(item => item.dateTypeName === "Morning")
+        .map(item => this.utilsService.getUserNameByEmail(item.emailAddress));
 
-        // wfhAfternoon = wfhGetApi.data.result.filter((item) =>{
-        //   if (item.dateTypeName === "Afternoon") {
-        //     return this.utilsService.getUserNameByEmail(item.emailAddress);
-        //   } else {
-        //     return null; 
-        //   };
-        // });
+        wfhAfternoon = wfhGetApi.data.result
+        .filter(item => item.dateTypeName === "Afternoon")
+        .map(item => this.utilsService.getUserNameByEmail(item.emailAddress));
 
-        // wfhFullday = wfhGetApi.data.result.filter((item) =>{
-        //   if (item.dateTypeName === "Fullday") {
-        //     return this.utilsService.getUserNameByEmail(item.emailAddress);
-        //   } else {
-        //     return null; 
-        //   };
-        // });
+        wfhFullday = wfhGetApi.data.result
+        .filter(item => item.dateTypeName === "Fullday")
+        .map(item => this.utilsService.getUserNameByEmail(item.emailAddress));
 
         // if no wfh
         if (
@@ -171,22 +159,28 @@ export class UserNotDailyService {
 
       const notDailyMorning = [];
       for (const wfhData of wfhUserEmail) {
+        if(wfhMorning.includes(wfhData) || wfhFullday.includes(wfhData)) {
           if (
             !dailyEmailMorning.includes(wfhData.toLowerCase()) &&
             wfhData !== undefined
           ) {
             notDailyMorning.push(wfhData);
-          }  
+          }
+        }
       }
+
       const notDailyAfternoon = [];
       for (const wfhData of wfhUserEmail) {
+        if(wfhAfternoon.includes(wfhData) || wfhFullday.includes(wfhData)) {
           if (
             !dailyEmailAfternoon.includes(wfhData.toLowerCase()) &&
             wfhData !== undefined
           ) {
             notDailyAfternoon.push(wfhData);
           }
+        }
       }
+
       const notDailyFullday = [];
       for (const userNotWFHData of userEmail) {
         if (
@@ -233,7 +227,7 @@ export class UserNotDailyService {
               .orWhere(`LOWER("username") = :username`, {
                 username: user.email.toLowerCase(),
               })
-              .andWhere('("createdAt" < :today)', {
+              .andWhere('("createdAt" = :today)', {
                 today: Date.now() - dayToMilliseconds,
               })
               .andWhere(`"deactive" IS NOT TRUE`)
@@ -241,6 +235,8 @@ export class UserNotDailyService {
               .getRawOne()
           )
         );
+
+
       } catch (error) {
         console.log(error);
       }
