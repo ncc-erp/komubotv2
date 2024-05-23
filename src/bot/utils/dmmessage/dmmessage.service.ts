@@ -65,7 +65,7 @@ export class DmmessageService {
           return this.syncRole.execute(message, args, client);
         case "*call":
           return this.requestVoiceCallCommand.execute(message, args, client);
-        case "*where":
+        case "*reply":
           return this.findUserVoiceRoomCommand.execute(message, args, client);
         case "*event":
           return this.eventCommand.execute(message, args, client);

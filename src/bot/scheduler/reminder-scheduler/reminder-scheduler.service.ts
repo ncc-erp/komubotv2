@@ -108,7 +108,9 @@ export class ReminderSchedulerService {
       .andWhere(`"createdTimestamp" <= :ltecreatedTimestamp`, {
         ltecreatedTimestamp: this.utilsService.getTomorrowDate(),
       })
-      .andWhere(`"authorId" = '${client.user.id}'`)
+      .andWhere(`"authorId" = :authorId`, {
+        authorId: client.user.id
+      })
       .select("*")
       .execute();
 

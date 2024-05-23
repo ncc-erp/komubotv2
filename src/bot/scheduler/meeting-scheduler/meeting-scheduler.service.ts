@@ -1,3 +1,4 @@
+
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Not, Repository } from "typeorm";
@@ -278,14 +279,16 @@ export class MeetingSchedulerService {
       this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
       this.utilsService.isTimeDay(dateScheduler)
     ) {
-      const dailyFetchChannel = await client.channels.fetch(data.channelId);
-      await this.handleRenameVoiceChannel(
-        roomVoice,
-        dailyFetchChannel,
-        client,
-        data
-      );
-
+        const dailyFetchChannel = await client.channels.fetch(data.channelId);
+        if (!dailyFetchChannel) {
+         return; 
+        }
+        await this.handleRenameVoiceChannel(
+          roomVoice,
+          dailyFetchChannel,
+          client,
+          data
+        );
       let newCreatedTimestamp = data.createdTimestamp;
       newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
 
