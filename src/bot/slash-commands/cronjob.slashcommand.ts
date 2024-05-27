@@ -1,44 +1,44 @@
-import {
-    Command,
-    EventParams,
-    Handler,
-    InteractionEvent,
-    On
-  } from "@discord-nestjs/core";
-  import {
-    ChannelManager,
-    Client,
-    ClientEvents,
-    CommandInteraction,
-    Interaction,
-    Message
-  } from "discord.js";
-import { SlashCommandPipe } from "@discord-nestjs/common";
-import { CronjobDto } from "./dto/cronjob.dto";
+// import {
+//     Command,
+//     EventParams,
+//     Handler,
+//     InteractionEvent,
+//     On
+//   } from "@discord-nestjs/core";
+//   import {
+//     ChannelManager,
+//     Client,
+//     ClientEvents,
+//     CommandInteraction,
+//     Interaction,
+//     Message
+//   } from "discord.js";
+// import { SlashCommandPipe } from "@discord-nestjs/common";
+// import { CronjobDto } from "./dto/cronjob.dto";
 
 
-  @Command({
-    name: "cronjob",
-    description: "cronjob message",
-  })
-  export class CronjobSlashCommand {
+  // @Command({
+  //   name: "cronjob",
+  //   description: "cronjob message",
+  // })
+  // export class CronjobSlashCommand {
 
-    @Handler()
-    async handler(
-      @InteractionEvent(SlashCommandPipe) dto: CronjobDto,
-      @EventParams() args: ClientEvents["interactionCreate"]
-    ): Promise<any> {
-      try {
-        const timeout = dto.timeout;
-        const messageUser = dto.message;
-        // const interaction = args.at(0) as any;
-        // this.onMessage(timeout, messageUser);
-        return { content: "`✅` create message cronjob success!.", ephemeral: true };
-      } catch (error) {
-        console.log("error cronjob: " + error);
-        return { content: "create message cronjob failed!.", ephemeral: true };
-      }
-    } 
+    // @Handler()
+    // async handler(
+    //   @InteractionEvent(SlashCommandPipe) dto: CronjobDto,
+    //   @EventParams() args: ClientEvents["interactionCreate"]
+    // ): Promise<any> {
+    //   try {
+    //     const timeout = dto.timeout;
+    //     const messageUser = dto.message;
+    //     // const interaction = args.at(0) as any;
+    //     // this.onMessage(timeout, messageUser);
+    //     return { content: "`✅` create message cronjob success!.", ephemeral: true };
+    //   } catch (error) {
+    //     console.log("error cronjob: " + error);
+    //     return { content: "create message cronjob failed!.", ephemeral: true };
+    //   }
+    // } 
 
   //   @On('messageCreate')
   // async onMessage(message: Message): Promise<void> {
@@ -57,5 +57,5 @@ import { CronjobDto } from "./dto/cronjob.dto";
       //   }
       // }, Number(dto.timeout));
   // }
-}
+// }
   

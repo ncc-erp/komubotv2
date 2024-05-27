@@ -59,6 +59,9 @@ export class MentionSchedulerService {
 
   async notifyUser(client, user) {
     const mentionChannel = await client.channels.fetch(user.channelId);
+    if(!mentionChannel) {
+      return;
+    }
     const threadNoti = mentionChannel.type !== ChannelType.GuildText;
     const message = await mentionChannel.messages.fetch(user.messageId);
     const mentionName = await client.users.fetch(user.authorId);

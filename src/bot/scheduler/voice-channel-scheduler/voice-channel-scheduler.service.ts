@@ -93,6 +93,11 @@ export class VoiceChannelSchedulerService {
       voiceNow.push(item.channelId);
       if (timeNow - item.start_time >= tenMinutes) {
         const fetchVoiceNcc8 = await client.channels.fetch(item.channelId);
+
+        if(!fetchVoiceNcc8) {
+          return;
+        }
+
         if (fetchVoiceNcc8.members.first) {
           const target = fetchVoiceNcc8.members.first();
           if (target && target.voice)

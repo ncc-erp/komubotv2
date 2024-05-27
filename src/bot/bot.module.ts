@@ -168,7 +168,7 @@ import { WOL } from "./models/wol.entity";
 import { FindUserVoiceRoomCommand } from "./commands/findUserVoiceRoom/findUserVoiceRoom.command";
 import { FindUserVoiceRoomService } from "./commands/findUserVoiceRoom/findUserVoiceRoom.service";
 import { TrudiSchedulerService } from "./scheduler/trudi-scheduler/trudi-scheduler.service";
-import { CronjobSlashCommand } from "./slash-commands/cronjob.slashcommand";
+// import { CronjobSlashCommand } from "./slash-commands/cronjob.slashcommand";
 
 @Module({
   imports: [
@@ -347,7 +347,7 @@ import { CronjobSlashCommand } from "./slash-commands/cronjob.slashcommand";
     ImportantSMSService,
     ImportantSchedulerService,
     TrudiSchedulerService,
-    CronjobSlashCommand
+    // CronjobSlashCommand
   ],
   controllers: [KomubotrestController],
 })
