@@ -153,7 +153,7 @@ export class ReportCommand implements CommandLineClass {
             "*report trackernot dd/MM/YYYY" +
             "```");
           }
-        await this.reportTrackerService.reportTrackerNot(dateTime, message, args, client);
+        await this.reportTrackerService.reportTrackerNot(message, args, client);
         } else {
           return message.channel.send("```" +
             "*report trackernot dd/MM/YYYY" +

@@ -49,13 +49,20 @@ export class ReportTrackerService {
   messHelpDate = "```" + "Không có bản ghi nào trong ngày này" + "```";
   messHelpTime = "```" + "Không có bản ghi nào" + "```";
 
-  async getUserWFH(date, message: Message, args, client: Client) {
+  async getUserWFH( message: Message, args, client: Client) {
     let wfhGetApi;
     let wfhUsers;
+    let url;
     try {
-      const url = date
-        ? `${this.clientConfigService.wfh.api_url}?date=${date}`
-        : this.clientConfigService.wfh.api_url;
+      if(args[1]) {
+        const day = args[1].slice(0, 2);
+        const month = args[1].slice(3, 5);
+        const year = args[1].slice(6);
+        const format = `${month}/${day}/${year}`;
+        url = `${this.clientConfigService.wfh.api_url}?date=${format}`
+      } else {
+        url = this.clientConfigService.wfh.api_url;
+      }
       wfhGetApi = await firstValueFrom(
         this.http
           .get(url, {
@@ -102,7 +109,6 @@ export class ReportTrackerService {
       );
 
       const { wfhUsers } = await this.getUserWFH(
-        args[1],
         message,
         args,
         client
@@ -154,7 +160,7 @@ export class ReportTrackerService {
         .join("\n");
       const Embed = new EmbedBuilder()
         .setTitle(
-          `Danh sách tracker ngày hôm nay tổng là ${userWfhs.length} người`
+          `Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người`
         )
         .addFields()
         .setColor("Green")
@@ -990,21 +996,21 @@ export class ReportTrackerService {
     // }
   }
 
-  async reportTrackerNot(dateTime,message: Message, args, client) {
+  async reportTrackerNot(message: Message, args, client) {
     try {
-      function changeDateFormat(dateString) {
+      // function changeDateFormat(dateString) {
 
-        const formattedDate = dateString.toLocaleDateString('en-US', {
-          month: '2-digit',
-          day: '2-digit',
-          year: 'numeric',
-        });
+      //   const formattedDate = dateString.toLocaleDateString('en-US', {
+      //     month: '2-digit',
+      //     day: '2-digit',
+      //     year: 'numeric',
+      //   });
       
-        return formattedDate;
-      }
+      //   return formattedDate;
+      // }
       
       const result = await axios.get(
-        `http://tracker.komu.vn:5600/api/0/report?day=${dateTime}`,
+        `http://tracker.komu.vn:5600/api/0/report?day=${args[1]}`,
         {
           headers: {
             "X-Secret-Key": this.clientConfigService.komuTrackerApiKey,
@@ -1012,10 +1018,9 @@ export class ReportTrackerService {
         }
       );
 
-      const dateFormat = changeDateFormat(dateTime);
+      // const dateFormat = changeDateFormat(dateTime);
 
       const { wfhUsers } = await this.getUserWFH(
-        dateFormat,
         message,
         args,
         client
@@ -1074,7 +1079,7 @@ export class ReportTrackerService {
         .join("\n");
       const Embed = new EmbedBuilder()
         .setTitle(
-          `Danh sách tracker không đủ thời gian ngày hôm nay tổng là ${listTrackerNot.length} người`
+          `Danh sách tracker không đủ thời gian ngày ${args[1]} tổng là ${listTrackerNot.length} người`
         )
         .setColor("Red")
         .setDescription("```" + `${messRep}` + "```");
