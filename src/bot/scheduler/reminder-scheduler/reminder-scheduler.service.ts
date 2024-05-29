@@ -72,6 +72,9 @@ export class ReminderSchedulerService {
 
   async sendMessageReminder(client, channelId, task, dateTime, mentionUserId) {
     const fetchChannel = await client.channels.fetch(channelId);
+    if(!fetchChannel) {
+      return;
+    }
     if (mentionUserId) {
       const fetchUser = await client.users.fetch(mentionUserId);
       await fetchUser

@@ -227,7 +227,7 @@ export class UserNotDailyService {
               .orWhere(`LOWER("username") = :username`, {
                 username: user.email.toLowerCase(),
               })
-              .andWhere('("createdAt" = :today)', {
+              .andWhere('("createdAt" < :today OR "createdAt" is NULL)', {
                 today: Date.now() - dayToMilliseconds,
               })
               .andWhere(`"deactive" IS NOT TRUE`)
