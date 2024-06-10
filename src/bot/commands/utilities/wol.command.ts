@@ -142,11 +142,11 @@ function handleWoL(message: Message, args) {
       if (!res) {
         throw new Error("no WoL packet sent!");
       }
-      return message.reply("Done, WoL packet sent!");
+      return message.reply("Done, WoL packet sent!").catch(console.error);
     })
     .catch((err) => {
       console.error(err);
-      return message.reply(`Failed, ${err.message}`);
+      return message.reply(`Failed, ${err.message}`).catch(console.error);
     });
 }
 

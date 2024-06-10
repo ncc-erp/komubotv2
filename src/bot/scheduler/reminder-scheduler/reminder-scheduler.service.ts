@@ -71,7 +71,12 @@ export class ReminderSchedulerService {
   }
 
   async sendMessageReminder(client, channelId, task, dateTime, mentionUserId) {
-    const fetchChannel = await client.channels.fetch(channelId);
+    let fetchChannel;
+    try {
+      fetchChannel = await client.channels.fetch(channelId);
+    } catch (error) {
+      console.log('sendMessageReminder: channel not found');
+    }
     if(!fetchChannel) {
       return;
     }
@@ -91,7 +96,7 @@ export class ReminderSchedulerService {
           });
         });
       } else {
-        fetchChannel.members.map(async (item) => {
+        fetchChannel?.members?.map(async (item) => {
           const fetchUserChannel = await client.users.fetch(item.user.id);
           await fetchUserChannel
             .send(`${fetchChannel.name}: ${task} - deadline: ${dateTime}`)

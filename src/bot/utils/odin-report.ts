@@ -96,14 +96,15 @@ export async function handleKomuWeeklyReport(message: Message, args) {
       throw Error("invalid date provided");
     }
 
-    const report = await getKomuWeeklyReport({
-      reportName: "komu-weekly",
-      url: process.env.ODIN_URL,
-      username: process.env.ODIN_USERNAME,
-      password: process.env.ODIN_PASSWORD,
-      screenUrl: process.env.ODIN_KOMU_REPORT_WEEKLY_URL,
-      date,
-    });
+    let report;
+    // const report = await getKomuWeeklyReport({
+    //   reportName: "komu-weekly",
+    //   url: process.env.ODIN_URL,
+    //   username: process.env.ODIN_USERNAME,
+    //   password: process.env.ODIN_PASSWORD,
+    //   screenUrl: process.env.ODIN_KOMU_REPORT_WEEKLY_URL,
+    //   date,
+    // });
 
     if (!report || !report.filePath || !fs.existsSync(report.filePath)) {
       throw new Error("requested report is not found");
