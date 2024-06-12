@@ -89,19 +89,23 @@ export class ReminderSchedulerService {
       if (fetchChannel.type === ChannelType.GuildPublicThread) {
         fetchChannel.members.fetch().then((members) => {
           members.forEach(async (member) => {
-            const fetchUser = await client.users.fetch(member.user.id);
-            await fetchUser
-              .send(`${fetchChannel.name}: ${task} - deadline: ${dateTime}`)
-              .catch((err) => {});
+            if (member?.user?.id) {
+              const fetchUser = await client.users.fetch(member.user.id);
+              await fetchUser
+                .send(`${fetchChannel.name}: ${task} - deadline: ${dateTime}`)
+                .catch((err) => {});
+            }
           });
         });
       } else {
-        fetchChannel?.members?.map(async (item) => {
-          const fetchUserChannel = await client.users.fetch(item.user.id);
-          await fetchUserChannel
-            .send(`${fetchChannel.name}: ${task} - deadline: ${dateTime}`)
-            .catch((err) => {});
-        });
+        if (fetchChannel?.members?.map) {
+          fetchChannel?.members?.map(async (item) => {
+            const fetchUserChannel = await client.users.fetch(item.user.id);
+            await fetchUserChannel
+              .send(`${fetchChannel.name}: ${task} - deadline: ${dateTime}`)
+              .catch((err) => {});
+          });
+        }
       }
     }
   }

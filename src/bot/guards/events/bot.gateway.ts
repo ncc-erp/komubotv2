@@ -114,18 +114,17 @@ export class BotGateway {
     ) {
       const content = message.content;
       let message_include_content;
-      if (content.trim().startsWith("<@!")) {
-        message_include_content = content.slice(22, content.length).trim();
+      if (content.trim().startsWith("<@")) {
+        message_include_content = content.replace(/<.*>/, '').trim();
         const res = await this.dmmessageService.getMessageAI(
           this.dmmessageService.API_URL,
           user_mention,
           message_include_content,
           this.dmmessageService.API_TOKEN
         );
-        if (res && res.data && res.data.length) {
-          res.data.map((item) => {
-            return message.reply(item.text).catch(console.log);
-          });
+        if (res?.data?.Response) {
+          message.reply(res.data.Response).catch(console.log);
+          return;
         } else {
           message.reply("Very busy, too much work today. I'm so tired. BRB.");
           return;

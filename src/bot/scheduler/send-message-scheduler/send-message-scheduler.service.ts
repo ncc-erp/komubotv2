@@ -300,7 +300,7 @@ export class SendMessageSchedulerService {
         const userDiscord = await client.users.fetch(user);
         userDiscord
           .send(`Nhớ bật top tracker <@${user}> nhé!!!`)
-          .catch(console.error);
+          .catch(() => {});
       })
     );
   }

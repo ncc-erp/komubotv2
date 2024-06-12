@@ -30,7 +30,7 @@ export class DmmessageService {
   ) {}
 
   API_TOKEN = "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";
-  API_URL = "http://172.16.100.111:3000/webhooks/rest/webhook";
+  API_URL = "http://172.16.100.116:1500/chatbot";
 
   async getMessageAI(url, sender, message, token) {
     try {
@@ -39,10 +39,8 @@ export class DmmessageService {
           .post(
             url,
             {
-              sender,
-              message,
+              text: message,
             },
-            { headers: { Authorization: `Bearer ${token}` } }
           )
           .pipe((res) => res)
       );
@@ -106,10 +104,8 @@ export class DmmessageService {
         this.API_TOKEN
       );
 
-      if (res && res.data && res.data.length) {
-        res.data.map((item) => {
-          return message.channel.send(item.text).catch(console.log);
-        });
+      if (res?.data?.Response) {
+        return message.channel.send(res.data.Response).catch(console.log);
       } else {
         message.channel
           .send("Very busy, too much work today. I'm so tired. BRB.")
