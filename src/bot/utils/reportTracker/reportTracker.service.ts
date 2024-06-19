@@ -12,6 +12,7 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { ClientConfigService } from "src/bot/config/client-config.service";
 import axios from "axios";
+import https from "https";
 @Injectable()
 export class ReportTrackerService {
   constructor(
@@ -55,10 +56,7 @@ export class ReportTrackerService {
     let url;
     try {
       if(args[1]) {
-        const day = args[1].slice(0, 2);
-        const month = args[1].slice(3, 5);
-        const year = args[1].slice(6);
-        const format = `${month}/${day}/${year}`;
+        const format = this.utilsService.formatDayMonth(args[1]);
         url = `${this.clientConfigService.wfh.api_url}?date=${format}`
       } else {
         url = this.clientConfigService.wfh.api_url;
@@ -74,6 +72,7 @@ export class ReportTrackerService {
           })
           .pipe((res) => res)
       );
+
     } catch (error) {
       console.log(error);
     }
@@ -97,6 +96,35 @@ export class ReportTrackerService {
     return { wfhUserEmail, wfhUsers };
   }
 
+  async getUserOffWork( message: Message, args, client: Client) {
+    let usersOffWork;
+    let url;
+    try {
+      if(args[1]) {
+        const format = this.utilsService.formatDayMonth(args[1]);
+        url = `https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay?date=${format}`
+      } else {
+        url = "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay";
+      }
+      const httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+  
+      const response = await firstValueFrom(
+        new HttpService().get(url, { httpsAgent }).pipe((res) => res)
+      );
+      if (response.data.result) {
+        usersOffWork = response.data.result
+        .filter((user) => user.dayType == 4);
+      }
+      
+    } catch (error) {
+      console.log(error);
+    }
+
+    return usersOffWork;
+  }
+
   async reportTracker(message: Message, args, client) {
     try {
       const result = await axios.get(
@@ -114,23 +142,38 @@ export class ReportTrackerService {
         client
       );
 
+      const usersOffWork = await this.getUserOffWork(
+        message,
+        args,
+        client
+      );
+
       if (!wfhUsers) {
         return;
       }
 
       const { data } = result;
-      // const userWfhs = data.filter((e) => e.wfh);
 
-      const userWfhs = [];
-      for (const e of data) {
-        for (const wfhUser of wfhUsers) {
-          if(e.email.concat('@ncc.asia') == wfhUser.emailAddress){
-            e["dateTypeName"] = wfhUser.dateTypeName;
-            userWfhs.push(e);
-            break;
+      function processUserWfhs(data, wfhUsers, usersOffWork) {
+        const userWfhs = [];
+      
+        for (const user of data) {
+          const matchingWfhUser = wfhUsers.find(wfhUser => wfhUser.emailAddress == user.email.concat('@ncc.asia'));
+      
+          if (matchingWfhUser) {
+            user.dateTypeName = matchingWfhUser.dateTypeName;
+            userWfhs.push(user);
+      
+            const matchingOffWorkUser = usersOffWork.find(offWorkUser => offWorkUser.emailAddress == user.email.concat('@ncc.asia'));
+      
+            user.offWork = matchingOffWorkUser?.message?.replace(/\[.*?\]\s*Off\s+/, "").trim() || "";
           }
         }
+      
+        return userWfhs;
       }
+      
+      const userWfhs = processUserWfhs(data, wfhUsers, usersOffWork);
 
       if (!userWfhs.length) {
         return message.reply(this.messHelpTime).catch(console.error);
@@ -143,29 +186,28 @@ export class ReportTrackerService {
         ) + 2;
       userWfhs.unshift({
         email: "[email]",
-        str_spent_time: "[spent]",
-        str_call_time: "[call]",
+        // str_spent_time: "[spent]",
+        // str_call_time: "[call]",
         str_active_time: "[active]",
         dateTypeName: "[remote]",
+        offWork: "[off_work]"
       });
       const messRep = userWfhs
         .map(
           (e) =>
-            `${e.email.padEnd(pad)} ${e.str_spent_time.padEnd(
-              10
-            )} ${e.str_active_time.padEnd(
-              10
-            )} ${e.dateTypeName}`
+            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(10)}  ${e.dateTypeName.padEnd(12)} ${e.offWork}`
           )
         .join("\n");
-      const Embed = new EmbedBuilder()
-        .setTitle(
-          `Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người`
-        )
-        .addFields()
-        .setColor("Green")
-        .setDescription("```" + `${messRep}` + "```")
-      await message.reply({ embeds: [Embed]}).catch(console.error);
+      // const Embed = new EmbedBuilder()
+      //   .setTitle(
+      //     `Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người`
+      //   )
+      //   .setColor("Green")
+      //   .setDescription("```" + `${messRep}` + "```")
+      await message.reply({ 
+        // embeds: [Embed],
+        content: "```" + `[Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người] \n\n` + `${messRep}` + "```"
+      }).catch(console.error);
     } catch (error) {
       console.log(error);
     }
@@ -998,17 +1040,6 @@ export class ReportTrackerService {
 
   async reportTrackerNot(message: Message, args, client) {
     try {
-      // function changeDateFormat(dateString) {
-
-      //   const formattedDate = dateString.toLocaleDateString('en-US', {
-      //     month: '2-digit',
-      //     day: '2-digit',
-      //     year: 'numeric',
-      //   });
-      
-      //   return formattedDate;
-      // }
-      
       const result = await axios.get(
         `http://tracker.komu.vn:5600/api/0/report?day=${args[1]}`,
         {
@@ -1017,9 +1048,6 @@ export class ReportTrackerService {
           },
         }
       );
-
-      // const dateFormat = changeDateFormat(dateTime);
-
       const { wfhUsers } = await this.getUserWFH(
         message,
         args,
