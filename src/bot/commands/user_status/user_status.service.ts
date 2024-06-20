@@ -18,4 +18,12 @@ export class UserStatusService {
       .select("*")
       .execute();
   }
+  async getUserStatusID(Id) {
+    return await this.userRepository
+      .createQueryBuilder()
+      .where(`"userId" = :userId`, { userId: Id })
+      .orWhere(`"email" = :email`, { email: Id })
+      .select("*")
+      .execute();
+  }
 }

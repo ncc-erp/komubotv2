@@ -10,8 +10,13 @@ import { Repository } from "typeorm";
 import { KeepDto } from "./dto/keep.dto";
 import { Keep } from "../models/keep.entity";
 import { SlashCommandPipe } from "@discord-nestjs/common";
+import { CommandSlash } from "../base/slashCommand.base";
 
 @Command({
+  name: "keep",
+  description: "manage yourself note",
+})
+@CommandSlash({
   name: "keep",
   description: "manage yourself note",
 })
@@ -24,7 +29,7 @@ export class KeepSlashCommand {
   @Handler()
   async handler(
     @InteractionEvent(SlashCommandPipe) dto: KeepDto,
-    @EventParams() args: ClientEvents['interactionCreate'],
+    @EventParams() args: ClientEvents["interactionCreate"]
   ): Promise<InteractionReplyOptions> {
     try {
       const interaction = args.at(0);
