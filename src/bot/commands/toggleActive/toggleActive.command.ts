@@ -5,6 +5,7 @@ import { KomubotrestService } from "src/bot/utils/komubotrest/komubotrest.servic
 import { Repository } from "typeorm";
 import { CommandLine, CommandLineClass } from "../../base/command.base";
 import { ToggleActiveService } from "./toggleActive.service";
+import { NotifiService } from "../notification/noti.service";
 
 @CommandLine({
   name: "toggleactivation",
@@ -16,7 +17,8 @@ export class ToggleActiveCommand implements CommandLineClass {
     @InjectRepository(User)
     private userData: Repository<User>,
     private toggleActiveService: ToggleActiveService,
-    private komubotrestService: KomubotrestService
+    private komubotrestService: KomubotrestService,
+    private notifiService: NotifiService
   ) {}
   messHelp =
     "```" +
@@ -58,39 +60,42 @@ export class ToggleActiveCommand implements CommandLineClass {
         await message.reply({ embeds: [Embed] }).catch(console.error);
       } else {
         let authorId = args[0];
-        const findUserId = await this.toggleActiveService.findAcc(authorId);
+        const checkRole = await this.notifiService.checkrole(message.author.id)
 
-        if (findUserId === null)
+        if(checkRole.length > 0 || message.author.id === "922148445626716182") {
+          const findUserId = await this.toggleActiveService.findAcc(authorId);
+          if (!findUserId.deactive) {
+            message
+              .reply({
+                content: "Disable account successfully",
+              })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  message.author.id,
+                  err
+                );
+              });
+
+            await this.toggleActiveService.deactiveAcc(findUserId.userId);
+          } else {
+            await this.toggleActiveService.ActiveAcc(findUserId.userId);
+            message
+              .reply({
+                content: "Enable account successfully",
+              })
+              .catch((err) => {
+                this.komubotrestService.sendErrorToDevTest(
+                  client,
+                  message.author.id,
+                  err
+                );
+              });
+          }
+        } else {
           return message
             .reply({
-              content: `${this.messHelp}`,
-            })
-            .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                message.author.id,
-                err
-              );
-            });
-        if (!findUserId.deactive) {
-          message
-            .reply({
-              content: "Disable account successfully",
-            })
-            .catch((err) => {
-              this.komubotrestService.sendErrorToDevTest(
-                client,
-                message.author.id,
-                err
-              );
-            });
-
-          await this.toggleActiveService.deactiveAcc(findUserId.userId);
-        } else {
-          await this.toggleActiveService.ActiveAcc(findUserId.userId);
-          message
-            .reply({
-              content: "Enable account successfully",
+              content: "```You do not have permission to execute this command!```"
             })
             .catch((err) => {
               this.komubotrestService.sendErrorToDevTest(
