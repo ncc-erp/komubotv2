@@ -22,3 +22,4 @@ export function CommandLine(args: CommandLineArgument) {
     Reflect.defineMetadata(DECORATOR_COMMAND_LINE, args, constructor.prototype);
   };
 }
+

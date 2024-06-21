@@ -155,6 +155,10 @@ import { RenameChannelCommand } from "./commands/renameChannel/renameChannel.com
 import { RenameChannelService } from "./commands/renameChannel/renameChannel.service";
 import { RequestVoiceCallCommand } from "./commands/requestVoiceCall/requestVoiceCall.command";
 import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoiceCall.service";
+import { DynamicService } from "./commands/command/dynamic.service";
+import { Dynamic } from "./models/dynamic.entity";
+import { DynamicSlashCommand } from "./slash-commands/slashcommand.slashcommand";
+import { SlashCommandPipe } from "@discord-nestjs/common";
 
 @Module({
   imports: [
@@ -200,7 +204,8 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
       Wiki,
       Workout,
       Mentioned,
-      IndividualChannel
+      IndividualChannel,
+      Dynamic,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -320,6 +325,9 @@ import { RequestVoiceCallService } from "./commands/requestVoiceCall/requestVoic
     RenameChannelService,
     RequestVoiceCallCommand,
     RequestVoiceCallService,
+    DynamicService,
+    BotGateway,
+    DynamicSlashCommand,
   ],
   controllers: [KomubotrestController],
 })

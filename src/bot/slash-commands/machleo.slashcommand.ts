@@ -8,12 +8,17 @@ import {
 import { Client, TextChannel } from "discord.js";
 import { ClientConfigService } from "../config/client-config.service";
 import { MachleoDto } from "./dto/machleo.dto";
+import { CommandSlash } from "../base/slashCommand.base";
 
 @Command({
   name: "machleo",
   description: "Thích machleo",
 })
-export class MachleoSlashCommand{
+@CommandSlash({
+  name: "machleo",
+  description: "Thích machleo",
+})
+export class MachleoSlashCommand {
   constructor(
     @InjectDiscordClient()
     private client: Client,
