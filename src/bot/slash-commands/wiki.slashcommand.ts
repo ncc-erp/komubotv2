@@ -19,8 +19,13 @@ import { ClientConfigService } from "../config/client-config.service";
 import { User } from "../models/user.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
+import { CommandSlash } from "../base/slashCommand.base";
 
 @Command({
+  name: "wiki",
+  description: "show wiki",
+})
+@CommandSlash({
   name: "wiki",
   description: "show wiki",
 })
