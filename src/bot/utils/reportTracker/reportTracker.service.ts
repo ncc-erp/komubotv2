@@ -57,7 +57,7 @@ export class ReportTrackerService {
     try {
       if(args[1]) {
         const format = this.utilsService.formatDayMonth(args[1]);
-        url = `${this.clientConfigService.wfh.api_url}?date=${format}`
+        url = `${this.clientConfigService.wfh.api_url}?date=${format}`;
       } else {
         url = this.clientConfigService.wfh.api_url;
       }
@@ -72,7 +72,6 @@ export class ReportTrackerService {
           })
           .pipe((res) => res)
       );
-
     } catch (error) {
       console.log(error);
     }
@@ -87,8 +86,7 @@ export class ReportTrackerService {
     wfhUsers = wfhGetApi.data.result;
 
     if (
-      (Array.isArray(wfhUserEmail) && wfhUserEmail.length === 0) ||
-      !wfhUserEmail
+      (Array.isArray(wfhUserEmail) && wfhUserEmail.length === 0) || !wfhUserEmail
     ) {
       return;
     }
@@ -102,22 +100,20 @@ export class ReportTrackerService {
     try {
       if(args[1]) {
         const format = this.utilsService.formatDayMonth(args[1]);
-        url = `https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay?date=${format}`
+        url = `https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay?date=${format}`;
       } else {
         url = "https://timesheetapi.nccsoft.vn/api/services/app/Public/GetAllUserLeaveDay";
       }
       const httpsAgent = new https.Agent({
         rejectUnauthorized: false,
       });
-  
+
       const response = await firstValueFrom(
         new HttpService().get(url, { httpsAgent }).pipe((res) => res)
       );
       if (response.data.result) {
-        usersOffWork = response.data.result
-        .filter((user) => user.dayType == 4);
+        usersOffWork = response.data.result.filter((user) => user.dayType == 4);
       }
-      
     } catch (error) {
       console.log(error);
     }
@@ -136,34 +132,26 @@ export class ReportTrackerService {
         }
       );
 
-      const { wfhUsers } = await this.getUserWFH(
-        message,
-        args,
-        client
-      );
+      const { wfhUsers } = await this.getUserWFH(message, args, client);
 
-      const usersOffWork = await this.getUserOffWork(
-        message,
-        args,
-        client
-      );
+      const usersOffWork = await this.getUserOffWork(message, args, client);
 
       if (!wfhUsers) {
         return;
       }
-
       const { data } = result;
-
       function processUserWfhs(data, wfhUsers, usersOffWork) {
         const userWfhs = [];
-      
+
         for (const user of data) {
-          const matchingWfhUser = wfhUsers.find(wfhUser => wfhUser.emailAddress == user.email.concat('@ncc.asia'));
-      
+          const matchingWfhUser = wfhUsers.find(
+            (wfhUser) => wfhUser.emailAddress == user.email.concat("@ncc.asia")
+          );
+
           if (matchingWfhUser) {
             user.dateTypeName = matchingWfhUser.dateTypeName;
             userWfhs.push(user);
-      
+
             const matchingOffWorkUser = usersOffWork.find(offWorkUser => offWorkUser.emailAddress == user.email.concat('@ncc.asia'));
       
             user.offWork = matchingOffWorkUser?.message?.replace(/\[.*?\]\s*Off\s+/, "").trim() || "";
@@ -172,42 +160,52 @@ export class ReportTrackerService {
       
         return userWfhs;
       }
-      
+
       const userWfhs = processUserWfhs(data, wfhUsers, usersOffWork);
 
       if (!userWfhs.length) {
         return message.reply(this.messHelpTime).catch(console.error);
       }
 
-      const pad =
-        userWfhs.reduce(
+      const pad = userWfhs.reduce(
           (a, b) => (a < b.email.length ? b.email.length : a),
           0
         ) + 2;
       userWfhs.unshift({
         email: "[email]",
-        // str_spent_time: "[spent]",
-        // str_call_time: "[call]",
         str_active_time: "[active]",
         dateTypeName: "[remote]",
-        offWork: "[off_work]"
+        offWork: "[off_work]",
       });
-      const messRep = userWfhs
-        .map(
+      function splitMessage(message, maxLength) {
+        const parts = [];
+        while (message.length > maxLength) {
+          let part = message.slice(0, maxLength);
+          const lastNewline = part.lastIndexOf("\n");
+          if (lastNewline !== -1) {
+            part = part.slice(0, lastNewline + 1);
+          }
+          parts.push(part);
+          message = message.slice(part.length);
+        }
+
+        parts.push(message);
+        return parts;
+      }
+      let mess = userWfhs.map(
           (e) =>
-            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(10)}  ${e.dateTypeName.padEnd(12)} ${e.offWork}`
-          )
-        .join("\n");
-      // const Embed = new EmbedBuilder()
-      //   .setTitle(
-      //     `Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người`
-      //   )
-      //   .setColor("Green")
-      //   .setDescription("```" + `${messRep}` + "```")
-      await message.reply({ 
-        // embeds: [Embed],
-        content: "```" + `[Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người] \n\n` + `${messRep}` + "```"
-      }).catch(console.error);
+            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(10)} ${e.dateTypeName.padEnd(11)} ${e.offWork}`
+        ).join("\n");
+
+      const parts = splitMessage(
+        `[Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người] \n\n${mess}`, 2000);
+
+      for (const part of parts) {
+        await message.reply({
+            content: "```" + part + "```",
+          })
+          .catch(console.error);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -1048,21 +1046,17 @@ export class ReportTrackerService {
           },
         }
       );
-      const { wfhUsers } = await this.getUserWFH(
-        message,
-        args,
-        client
-      );
+      const { wfhUsers } = await this.getUserWFH(message, args, client);
 
       if (!wfhUsers) {
         return;
       }
 
-      const {data} = result;
+      const { data } = result;
       const userWfhs = [];
       for (const e of data) {
         for (const wfhUser of wfhUsers) {
-          if(e.email.concat('@ncc.asia') == wfhUser.emailAddress){
+          if (e.email.concat("@ncc.asia") == wfhUser.emailAddress) {
             e["dateTypeName"] = wfhUser.dateTypeName;
             userWfhs.push(e);
             break;
@@ -1073,36 +1067,46 @@ export class ReportTrackerService {
       const regex = /(\d+)h(\d+)m(\d+)s/;
 
       //convert hour to seconds
-      const secondsFullday = 7*3600; 
-      const secondsMorning = 3*3600;
-      const secondsAfternoon = 4*3600;
+      const secondsFullday = 7 * 3600;
+      const secondsMorning = 3 * 3600;
+      const secondsAfternoon = 4 * 3600;
 
       const listTrackerNot = [];
 
       for (let i = 0; i < userWfhs.length; i++) {
         const match = userWfhs[i].str_active_time.match(regex);
-        const totalSeconds = parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseInt(match[3]);
-        if( userWfhs[i].dateTypeName == "Fullday" && totalSeconds < secondsFullday
-        || userWfhs[i].dateTypeName == "Morning" && totalSeconds < secondsMorning 
-        ||userWfhs[i].dateTypeName == "Afternoon" && totalSeconds < secondsAfternoon) {
+        const totalSeconds =
+          parseInt(match[1]) * 3600 +
+          parseInt(match[2]) * 60 +
+          parseInt(match[3]);
+        if (
+          (userWfhs[i].dateTypeName == "Fullday" &&
+            totalSeconds < secondsFullday) ||
+          (userWfhs[i].dateTypeName == "Morning" &&
+            totalSeconds < secondsMorning) ||
+          (userWfhs[i].dateTypeName == "Afternoon" &&
+            totalSeconds < secondsAfternoon)
+        ) {
           listTrackerNot.push(userWfhs[i]);
-        } 
+        }
       }
 
       const pad =
-      listTrackerNot.reduce(
+        listTrackerNot.reduce(
           (a, b) => (a < b.email.length ? b.email.length : a),
           0
         ) + 2;
-        listTrackerNot.unshift({
+      listTrackerNot.unshift({
         email: "[email]",
         str_active_time: "[active]",
-        dateTypeName: "[remote]"
+        dateTypeName: "[remote]",
       });
       const messRep = listTrackerNot
         .map(
           (e) =>
-            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(10)} ${e.dateTypeName.padEnd(10)} `
+            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(
+              10
+            )} ${e.dateTypeName.padEnd(10)} `
         )
         .join("\n");
       const Embed = new EmbedBuilder()
@@ -1112,7 +1116,6 @@ export class ReportTrackerService {
         .setColor("Red")
         .setDescription("```" + `${messRep}` + "```");
       await message.reply({ embeds: [Embed] }).catch(console.error);
-
     } catch (error) {
       console.log(error);
     }
