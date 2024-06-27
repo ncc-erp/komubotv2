@@ -121,6 +121,22 @@ export class ReportTrackerService {
     return usersOffWork;
   }
 
+  splitMessage(message, maxLength) {
+    const parts = [];
+    while (message.length > maxLength) {
+      let part = message.slice(0, maxLength);
+      const lastNewline = part.lastIndexOf("\n");
+      if (lastNewline !== -1) {
+        part = part.slice(0, lastNewline + 1);
+      }
+      parts.push(part);
+      message = message.slice(part.length);
+    }
+
+    parts.push(message);
+    return parts;
+  }
+
   async reportTracker(message: Message, args, client) {
     try {
       const result = await axios.get(
@@ -177,28 +193,13 @@ export class ReportTrackerService {
         dateTypeName: "[remote]",
         offWork: "[off_work]",
       });
-      function splitMessage(message, maxLength) {
-        const parts = [];
-        while (message.length > maxLength) {
-          let part = message.slice(0, maxLength);
-          const lastNewline = part.lastIndexOf("\n");
-          if (lastNewline !== -1) {
-            part = part.slice(0, lastNewline + 1);
-          }
-          parts.push(part);
-          message = message.slice(part.length);
-        }
-
-        parts.push(message);
-        return parts;
-      }
       let mess = userWfhs.map(
           (e) =>
             `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(10)} ${e.dateTypeName.padEnd(11)} ${e.offWork}`
         ).join("\n");
 
-      const parts = splitMessage(
-        `[Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length} người] \n\n${mess}`, 2000);
+      const parts = this.splitMessage(
+        `[Danh sách tracker ngày ${args[1]} tổng là ${userWfhs.length-1} người] \n\n ${mess}`, 2000);
 
       for (const part of parts) {
         await message.reply({
@@ -1091,6 +1092,19 @@ export class ReportTrackerService {
         }
       }
 
+      const usersOffWork = await this.getUserOffWork(message, args, client);
+
+      for (const user of listTrackerNot) {
+        for (const e of usersOffWork) {
+          if (user.email.concat("@ncc.asia") == e.emailAddress) {
+            user.offWork = e?.message?.replace(/\[.*?\]\s*Off\s+/, "").trim();
+            break;
+          } else {
+            user.offWork = "";
+          }
+        }
+      }
+
       const pad =
         listTrackerNot.reduce(
           (a, b) => (a < b.email.length ? b.email.length : a),
@@ -1100,22 +1114,23 @@ export class ReportTrackerService {
         email: "[email]",
         str_active_time: "[active]",
         dateTypeName: "[remote]",
+        offWork: "[off_work]"
       });
       const messRep = listTrackerNot
         .map(
           (e) =>
-            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(
-              10
-            )} ${e.dateTypeName.padEnd(10)} `
+            `${e.email.padEnd(pad)} ${e.str_active_time.padEnd(10)} ${e.dateTypeName.padEnd(10)} ${e.offWork}`
         )
         .join("\n");
-      const Embed = new EmbedBuilder()
-        .setTitle(
-          `Danh sách tracker không đủ thời gian ngày ${args[1]} tổng là ${listTrackerNot.length} người`
-        )
-        .setColor("Red")
-        .setDescription("```" + `${messRep}` + "```");
-      await message.reply({ embeds: [Embed] }).catch(console.error);
+      const parts = this.splitMessage(
+        `[Danh sách tracker không đủ thời gian ngày ${args[1]} tổng là ${listTrackerNot.length - 1} người] \n\n${messRep}`, 2000);
+
+      for (const part of parts) {
+        await message.reply({
+            content: "```" + part + "```",
+          })
+          .catch(console.error);
+      }
     } catch (error) {
       console.log(error);
     }
