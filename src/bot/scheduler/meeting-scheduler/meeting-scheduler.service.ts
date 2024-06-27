@@ -281,8 +281,7 @@ export class MeetingSchedulerService {
     dateScheduler,
     minuteDb
   ) {
-    if (this.utilsService.isSameDay()) return;
-
+      if (this.utilsService.isSameDay()) return;
     if (
       this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
       this.utilsService.isTimeDay(dateScheduler)
@@ -307,25 +306,28 @@ export class MeetingSchedulerService {
 
       while (await this.utilsService.checkHolidayMeeting(currentDate)) {
         newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
+
+        while (await this.utilsService.checkHolidayMeeting(currentDate)) {
+          newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        await this.meetingRepository
+          .createQueryBuilder()
+          .update(Meeting)
+          .set({ reminder: true, createdTimestamp: newCreatedTimestamp })
+          .where('"id" = :id', { id: data.id })
+          .execute()
+          .catch(console.error);
+
+        const findMeetingAfter = await this.meetingRepository.find({
+          where: {
+            channelId: data.channelId,
+            task: data.task,
+            repeat: data.repeat,
+          },
+        });
+        console.log(findMeetingAfter, "findMeetingAfterUpdate");
       }
-
-      await this.meetingRepository
-        .createQueryBuilder()
-        .update(Meeting)
-        .set({ reminder: true, createdTimestamp: newCreatedTimestamp })
-        .where('"id" = :id', { id: data.id })
-        .execute()
-        .catch(console.error);
-
-      const findMeetingAfter = await this.meetingRepository.find({
-        where: {
-          channelId: data.channelId,
-          task: data.task,
-          repeat: data.repeat,
-        },
-      });
-      console.log(findMeetingAfter, "findMeetingAfterUpdate");
-    }
   }
 
   async handleWeeklyMeeting(
@@ -484,6 +486,11 @@ export class MeetingSchedulerService {
   }
 
   async handleRenameVoiceChannel(roomVoice, channel, client, data) {
+    if(data.task.includes("https")) {
+      await channel.send(`@here our meeting room is ${data.task}`)
+      .catch(console.error);
+      return;
+    }
     if (roomVoice.length !== 0) {
       await channel
         .send(`@here our meeting room is <#${roomVoice[0]}>`)
