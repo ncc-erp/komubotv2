@@ -218,9 +218,8 @@ export class SendMessageSchedulerService {
           .getRawOne();
         if (checkUser && checkUser !== null) {
           const userDiscord = await client.users.fetch(checkUser.userId);
-          userDiscord
-            .send(`Đừng quên checkout trước khi ra về nhé!!!`)
-            .catch(console.error);
+          userDiscord?.send(`Đừng quên checkout trước khi ra về nhé!!!`)
+            .catch(() => {});
         }
       });
     } catch (error) {
@@ -301,7 +300,7 @@ export class SendMessageSchedulerService {
         const userDiscord = await client.users.fetch(user);
         userDiscord
           .send(`Nhớ bật top tracker <@${user}> nhé!!!`)
-          .catch(console.error);
+          .catch(() => {});
       })
     );
   }

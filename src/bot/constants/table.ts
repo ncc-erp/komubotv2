@@ -42,5 +42,6 @@ export const TABLE = {
   INDIVIDUAL_CHANNEL: "komu_individualChannel",
   EVENT: "komu_event",
   IMPORTANT_SMS: "komu_importantSms",
-  WOL: "komu_wol"
+  WOL: "komu_wol",
+  DYNAMIC: "komu_dynamic",
 };

@@ -9,8 +9,13 @@ import {
 import { Client, ClientEvents, Message } from "discord.js";
 import { CallDto } from "./dto/call.dto";
 import { RequestVoiceCallService } from "../commands/requestVoiceCall/requestVoiceCall.service";
+import { CommandSlash } from "../base/slashCommand.base";
 
 @Command({
+  name: "call",
+  description: "call username",
+})
+@CommandSlash({
   name: "call",
   description: "call username",
 })

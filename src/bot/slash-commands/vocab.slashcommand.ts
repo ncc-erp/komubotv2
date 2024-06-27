@@ -12,8 +12,13 @@ import { Keep } from "../models/keep.entity";
 import { VocabDto } from "./dto/vocab.dto";
 import { firstValueFrom } from "rxjs";
 import { HttpService } from "@nestjs/axios";
+import { CommandSlash } from "../base/slashCommand.base";
 
 @Command({
+  name: "vocab",
+  description: "Vocabulary search",
+})
+@CommandSlash({
   name: "vocab",
   description: "Vocabulary search",
 })
@@ -27,7 +32,7 @@ export class VocabSlashCommand {
   @Handler()
   async handler(
     @InteractionEvent(SlashCommandPipe) dto: VocabDto,
-    @EventParams() args: ClientEvents['interactionCreate'],
+    @EventParams() args: ClientEvents["interactionCreate"]
   ): Promise<InteractionReplyOptions> {
     try {
       const word = dto.word;
@@ -38,7 +43,7 @@ export class VocabSlashCommand {
       ).catch((err) => {
         console.log("error", err);
         return {
-          data: undefined
+          data: undefined,
         };
       });
 

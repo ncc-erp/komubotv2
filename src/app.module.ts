@@ -75,10 +75,7 @@ import { ServeStaticModule } from "@nestjs/serve-static";
       }),
       inject: [ConfigService],
     }),
-    BotModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "upload", "ncc8"),
-    }),
+    BotModule
   ],
 })
 export class AppModule {}

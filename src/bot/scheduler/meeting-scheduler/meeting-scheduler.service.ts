@@ -248,7 +248,15 @@ export class MeetingSchedulerService {
       this.utilsService.isSameDate(dateCreatedTimestamp) &&
       this.utilsService.isSameMinute(minuteDb, dateScheduler)
     ) {
-      const onceFetchChannel = await client.channels.fetch(data.channelId);
+      let onceFetchChannel;
+      try {
+        onceFetchChannel = await client.channels.fetch(data.channelId);
+      } catch (error) {
+        console.error('handleOnceMeeting: channel not found');
+      }
+      if (!onceFetchChannel) {
+        return;
+      }
       await this.handleRenameVoiceChannel(
         roomVoice,
         onceFetchChannel,
@@ -274,22 +282,29 @@ export class MeetingSchedulerService {
     minuteDb
   ) {
       if (this.utilsService.isSameDay()) return;
+    if (
+      this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
+      this.utilsService.isTimeDay(dateScheduler)
+    ) {
+        let dailyFetchChannel;
+        try {
+          dailyFetchChannel = await client.channels.fetch(data.channelId);
+        } catch (error) {
+          console.error('handleDailyMeeting: channel not found');
+        }
+        if (!dailyFetchChannel) {
+         return; 
+        }
+        await this.handleRenameVoiceChannel(
+          roomVoice,
+          dailyFetchChannel,
+          client,
+          data
+        );
+      let newCreatedTimestamp = data.createdTimestamp;
+      newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
 
-      if (
-        this.utilsService.isSameMinute(minuteDb, dateScheduler) &&
-        this.utilsService.isTimeDay(dateScheduler)
-      ) {
-          const dailyFetchChannel = await client.channels.fetch(data.channelId);
-          if (!dailyFetchChannel) {
-          return; 
-          }
-          await this.handleRenameVoiceChannel(
-            roomVoice,
-            dailyFetchChannel,
-            client,
-            data
-          );
-        let newCreatedTimestamp = data.createdTimestamp;
+      while (await this.utilsService.checkHolidayMeeting(currentDate)) {
         newCreatedTimestamp = currentDate.setDate(currentDate.getDate() + 1);
 
         while (await this.utilsService.checkHolidayMeeting(currentDate)) {
@@ -328,7 +343,15 @@ export class MeetingSchedulerService {
       this.utilsService.isDiffDay(dateScheduler, 7) &&
       this.utilsService.isTimeDay(dateScheduler)
     ) {
-      const weeklyFetchChannel = await client.channels.fetch(data.channelId);
+      let weeklyFetchChannel;
+      try {
+        weeklyFetchChannel = await client.channels.fetch(data.channelId);
+      } catch (error) {
+        console.log('handleWeeklyMeeting: channel not found');
+      }
+      if (!weeklyFetchChannel) {
+        return;
+      }
       await this.handleRenameVoiceChannel(
         roomVoice,
         weeklyFetchChannel,
@@ -368,7 +391,15 @@ export class MeetingSchedulerService {
       this.utilsService.isDiffDay(dateScheduler, +data.repeatTime) &&
       this.utilsService.isTimeDay(dateScheduler)
     ) {
-      const repeatFetchChannel = await client.channels.fetch(data.channelId);
+      let repeatFetchChannel;
+      try {
+        repeatFetchChannel = await client.channels.fetch(data.channelId);
+      } catch (error) {
+        console.error('handleRepeatMeeting: channel not found');
+      }
+      if (!repeatFetchChannel) {
+        return;
+      }
       await this.handleRenameVoiceChannel(
         roomVoice,
         repeatFetchChannel,
@@ -426,7 +457,15 @@ export class MeetingSchedulerService {
         (isRepeatLast && isCurrentMonthLastDay) ||
         (isRepeatMonthly && isCurrentDateScheduler)
       ) {
-        const monthlyFetchChannel = await client.channels.fetch(data.channelId);
+        let monthlyFetchChannel;
+        try {
+          monthlyFetchChannel = await client.channels.fetch(data.channelId);
+        } catch (error) {
+          console.error('handleMonthlyMeeting: channel not found');
+        }
+        if (!monthlyFetchChannel) {
+          return;
+        }
 
         await this.handleRenameVoiceChannel(
           roomVoice,

@@ -168,6 +168,9 @@ import { WOL } from "./models/wol.entity";
 import { FindUserVoiceRoomCommand } from "./commands/findUserVoiceRoom/findUserVoiceRoom.command";
 import { FindUserVoiceRoomService } from "./commands/findUserVoiceRoom/findUserVoiceRoom.service";
 import { TrudiSchedulerService } from "./scheduler/trudi-scheduler/trudi-scheduler.service";
+import { Dynamic } from "./models/dynamic.entity";
+import { DynamicSlashCommand } from "./slash-commands/slashcommand.slashcommand";
+import { DynamicService } from "./commands/command/dynamic.service";
 // import { CronjobSlashCommand } from "./slash-commands/cronjob.slashcommand";
 
 @Module({
@@ -217,7 +220,8 @@ import { TrudiSchedulerService } from "./scheduler/trudi-scheduler/trudi-schedul
       IndividualChannel,
       EventEntity,
       ImportantSMS,
-      WOL
+      WOL,
+      Dynamic,
     ]),
     CheckListModule,
     NestjsScheduleModule.forRoot(),
@@ -348,7 +352,9 @@ import { TrudiSchedulerService } from "./scheduler/trudi-scheduler/trudi-schedul
     ImportantSchedulerService,
     TrudiSchedulerService,
     // CronjobSlashCommand
+    DynamicService,
+    DynamicSlashCommand,
   ],
   controllers: [KomubotrestController],
 })
-export class BotModule { }
+export class BotModule {}

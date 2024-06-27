@@ -1,11 +1,16 @@
 import { DiscoveryService } from "@nestjs/core";
 import { Client, EmbedBuilder, Message } from "discord.js";
 import { CommandLine, CommandLineClass } from "src/bot/base/command.base";
-import { DECORATOR_COMMAND_LINE } from "src/bot/base/command.constans";
+import {
+  DECORATOR_COMMAND,
+  DECORATOR_COMMAND_LINE,
+} from "src/bot/base/command.constans";
 import { ExtendersService } from "src/bot/utils/extenders/extenders.service";
 import { resolveCategory } from "src/bot/utils/function";
 import { Logger } from "@nestjs/common";
 import { ClientConfigService } from "src/bot/config/client-config.service";
+import { DynamicService } from "../command/dynamic.service";
+
 @CommandLine({
   name: "help",
   description:
@@ -17,11 +22,13 @@ export class HelpCommand implements CommandLineClass {
   constructor(
     private extendersService: ExtendersService,
     private discoveryService: DiscoveryService,
-    private clientConfig: ClientConfigService
+    private clientConfig: ClientConfigService,
+    private dynamicService: DynamicService
   ) {}
 
-  async execute(e, s, client, guildDB) {
+  async execute(e: Message, s, client, guildDB) {
     let t: any = [];
+    let commands: any[] = [];
     if (!s.length) {
       this.discoveryService.getProviders().forEach((provider) => {
         if (typeof provider !== "string") {
@@ -45,6 +52,27 @@ export class HelpCommand implements CommandLineClass {
         }
       });
 
+      this.discoveryService.getProviders().forEach((provider) => {
+        if (typeof provider !== "string") {
+          const instance = provider.instance;
+          if (!instance || typeof instance === "string") return;
+          if (!Reflect.getMetadata(DECORATOR_COMMAND, instance)) return;
+          if (
+            !Reflect.getMetadata(DECORATOR_COMMAND, instance)?.name ||
+            !Reflect.getMetadata(DECORATOR_COMMAND, instance)?.description
+          ) {
+            this.logger.error(
+              "please make property name and description in decorator @Command"
+            );
+          }
+          commands.push({
+            name: Reflect.getMetadata(DECORATOR_COMMAND, instance)?.name,
+            description: Reflect.getMetadata(DECORATOR_COMMAND, instance)
+              ?.description,
+          });
+        }
+      });
+
       const o = await this.extendersService.translateMessage(
           "HELP_FOOTER",
           guildDB.lang
@@ -54,58 +82,68 @@ export class HelpCommand implements CommandLineClass {
         "HELP_CAT",
         guildDB.lang
       );
-      e.channel
-        .send({
-          embeds: [
-            {
-              color: 1752220,
-              author: {
-                name: "KOMU - Help Menu",
-                icon_url: e.client.user.displayAvatarURL({
-                  // dynamic: !0,
-                  size: 512,
-                }),
-              },
-              footer: {
-                text: o.replace("{prefix}", m),
-                icon_url: e.client.user.displayAvatarURL({
-                  // dynamic: !0,
-                  size: 512,
-                }),
-              },
-              description:
-                "A detailed list of commands can be found here: [" +
-                this.clientConfig.linkwebsite +
-                "/commands](https://komu.vn/commands)\nWant to listen rich quality music with me? [Invite me](" +
-                this.clientConfig.linkinvite +
-                ")",
-              fields: [
-                {
-                  name:
-                    "• KOMU (" +
-                    t.filter((item) => item.cat === "komu").length +
-                    ")",
-                  value: t
-                    .filter((item) => item.cat === "komu")
-                    .map((item) => `\`${item.name}\``)
-                    .join(", "),
-                },
-                {
-                  name: `• ${E[3]}  (${
-                    t.filter((item) => item.cat === "utilities").length
-                  })`,
-                  value: t
-                    .filter((item) => item.cat === "utilities")
-                    .map((item) => `\`${item.name}\``)
-                    .join(", "),
-                },
-              ],
+
+      let arrCommand = await this.dynamicService.getAll();
+      e.reply({
+        embeds: [
+          {
+            color: 1752220,
+            author: {
+              name: "KOMU - Help Menu",
+              icon_url: e.client.user.displayAvatarURL({
+                // dynamic: !0,
+                size: 512,
+              }),
             },
-          ],
-        })
-        .catch(async (error) => {
-          console.log(error);
-        });
+            footer: {
+              text: o.replace("{prefix}", m),
+              icon_url: e.client.user.displayAvatarURL({
+                // dynamic: !0,
+                size: 512,
+              }),
+            },
+            description:
+              "A detailed list of commands can be found here: [" +
+              this.clientConfig.linkwebsite +
+              "/commands](https://komu.vn/commands)\nWant to listen rich quality music with me? [Invite me](" +
+              this.clientConfig.linkinvite +
+              ")",
+            fields: [
+              {
+                name:
+                  "• KOMU (" +
+                  t.filter((item) => item.cat === "komu").length +
+                  ")",
+                value: t
+                  .filter((item) => item.cat === "komu")
+                  .map((item) => `\`${item.name}\``)
+                  .join(", "),
+              },
+              {
+                name: "• Custom commands (" + arrCommand.length + ")",
+                value: arrCommand
+                  .map((item) => `\`${item.command}\``)
+                  .join(", "),
+              },
+              {
+                name: "• Slash commands (" + commands.length + ")",
+                value: commands.map((item) => `\`${item.name}\``).join(", "),
+              },
+              {
+                name: `• ${E[3]}  (${
+                  t.filter((item) => item.cat === "utilities").length
+                })`,
+                value: t
+                  .filter((item) => item.cat === "utilities")
+                  .map((item) => `\`${item.name}\``)
+                  .join(", "),
+              },
+            ],
+          },
+        ],
+      }).catch(async (error) => {
+        console.log(error);
+      });
     } else {
       const t = client.commands;
       const c = s[0].toLowerCase(),

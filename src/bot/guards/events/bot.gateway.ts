@@ -37,6 +37,8 @@ import { KomubotrestService } from "../../utils/komubotrest/komubotrest.service"
 import { WfhService } from "src/bot/utils/wfh/wfh.service";
 import { DmmessageService } from "src/bot/utils/dmmessage/dmmessage.service";
 import { WorkoutService } from "src/bot/utils/workout/workout.service";
+import { DynamicService } from "src/bot/commands/command/dynamic.service";
+import { cleanAndExtractValidWords } from "src/bot/commands/command/dynamic.command";
 export type ChanneNotDM =
   | NewsChannel
   | TextChannel
@@ -58,8 +60,9 @@ export class BotGateway {
     private quizService: QuizService,
     private komubotrestService: KomubotrestService,
     private wfhService: WfhService,
-    private workoutService: WorkoutService
-  ) { }
+    private workoutService: WorkoutService,
+    private dynamicService: DynamicService
+  ) {}
   ID_KOMU = "922003239887581205";
 
   @Once("ready")
@@ -114,18 +117,17 @@ export class BotGateway {
     ) {
       const content = message.content;
       let message_include_content;
-      if (content.trim().startsWith("<@!")) {
-        message_include_content = content.slice(22, content.length).trim();
+      if (content.trim().startsWith("<@")) {
+        message_include_content = content.replace(/<.*>/, "").trim();
         const res = await this.dmmessageService.getMessageAI(
           this.dmmessageService.API_URL,
           user_mention,
           message_include_content,
           this.dmmessageService.API_TOKEN
         );
-        if (res && res.data && res.data.length) {
-          res.data.map((item) => {
-            return message.reply(item.text).catch(console.log);
-          });
+        if (res?.data?.Response) {
+          message.reply(res.data.Response).catch(console.log);
+          return;
         } else {
           message.reply("Very busy, too much work today. I'm so tired. BRB.");
           return;
@@ -147,6 +149,15 @@ export class BotGateway {
           .slice("*".length)
           .trim()
           .split(/ +/);
+      }
+      let command = cleanAndExtractValidWords(argument);
+      let filter = await this.dynamicService.getDynamic(command);
+      if (filter.length > 0) {
+        let output = filter[0].output;
+        message.reply({
+          content: output,
+        });
+        return;
       }
       r = argument.shift().toLowerCase();
       // check command and excute
@@ -295,10 +306,11 @@ export class BotGateway {
             description: `${u.replace(
               "{command}",
               r
-            )}\n${read}\n\n**${langUsage}**\n${i.usages
+            )}\n${read}\n\n**${langUsage}**\n${
+              i.usages
                 ? i.usages.map((x) => guildDB.prefix + x).join("\n")
                 : guildDB.prefix + r + " " + i.usage
-              }`,
+            }`,
             footer: {
               text: this.clientConfigService.footer,
               icon_url: message.client.user.displayAvatarURL(),
@@ -317,7 +329,7 @@ export class BotGateway {
     try {
       i.execute(message, argument, client, guildDB, module, this.dataSource);
       return;
-    } catch (error) { }
+    } catch (error) {}
   }
 
   @On("interactionCreate")
@@ -340,7 +352,6 @@ export class BotGateway {
           return;
         }
         if (interaction.customId.startsWith("question_")) {
-
           await (interaction as ButtonInteraction).deferReply();
 
           const { id, key, correct, userid } = queryString.parse(
@@ -476,7 +487,8 @@ export class BotGateway {
       "[32m%s[0m",
       "NEW GUILD ",
       "[0m",
-      `${guild.name} [${guild.memberCount.toLocaleString()} Members]\nID: ${guild.id
+      `${guild.name} [${guild.memberCount.toLocaleString()} Members]\nID: ${
+        guild.id
       }`
     );
     const channel = guild.channels.cache.find(
